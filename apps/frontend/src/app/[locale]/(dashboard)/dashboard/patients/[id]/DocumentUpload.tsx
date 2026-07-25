@@ -110,9 +110,12 @@ export default function DocumentUpload({ patientId, documents }: Props) {
         </form>
       )}
 
-      {documents.length === 0 ? (
-        <p className="px-4 py-6 text-center text-sm text-stone-400">Aucun document.</p>
-      ) : (
+      {documents.length === 0 && !showForm ? (
+        <div className="flex cursor-pointer flex-col items-center justify-center gap-2.5 border-2 border-dashed border-primary/15 px-4 py-11 text-sm text-stone-400 transition-colors duration-200 hover:border-primary-500 hover:bg-primary-50/30" onClick={() => setShowForm(true)}>
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" className="text-stone-400"><path d="M12 16 V5"/><polyline points="7 9 12 4 17 9"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+          Glissez un document ici, ou cliquez pour en ajouter
+        </div>
+      ) : documents.length > 0 && (
         <div className="divide-y divide-stone-100">
           {documents.map(d => (
             <div key={d.id} className="flex items-center justify-between px-4 py-3">

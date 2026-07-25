@@ -42,13 +42,13 @@ export default function PatientTable({
     <div>
       <div className="overflow-x-auto rounded-xl border border-stone-200 bg-white shadow-sm">
         <table className="min-w-[640px] w-full text-left text-sm">
-          <thead className="border-b border-stone-200 bg-stone-50 text-xs uppercase text-stone-500">
+          <thead className="border-b border-stone-200 bg-stone-50">
             <tr>
-              <th className="px-4 py-3 font-medium">Nom</th>
-              <th className="px-4 py-3 font-medium">Âge</th>
-              <th className="px-4 py-3 font-medium">Dernière consultation</th>
-              <th className="px-4 py-3 font-medium">Date de naissance</th>
-              <th className="px-4 py-3 font-medium">CIN</th>
+              <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-wider text-stone-400">Nom</th>
+              <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-wider text-stone-400">Âge</th>
+              <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-wider text-stone-400">Dernière consultation</th>
+              <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-wider text-stone-400">Date de naissance</th>
+              <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-wider text-stone-400">CIN</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-stone-100">
@@ -60,7 +60,7 @@ export default function PatientTable({
               </tr>
             ) : (
               paginated.map((p) => (
-                <tr key={p.id} className="hover:bg-stone-50">
+                <tr key={p.id} className="cursor-pointer hover:bg-[#FBFAF6]">
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-3">
                       <PatientAvatar fullName={p.fullName} gender={p.gender as 'boy' | 'girl' | null} size="sm" />

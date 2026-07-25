@@ -8,7 +8,10 @@ type StatCard = {
   label: string
   count: number
   icon: React.ReactNode
-  color: string
+  borderClass: string
+  iconBg: string
+  iconColor: string
+  pulse?: boolean
 }
 
 type Props = {
@@ -28,22 +31,23 @@ export default async function LiveStatsWidget({ clickable }: Props) {
   ])
 
   const cards: StatCard[] = [
-    { label: 'Programmés', count: scheduled?.totalDocs ?? 0, icon: <Calendar className="size-5" />, color: 'text-primary-600 bg-primary-50' },
-    { label: 'Salle d\'attente', count: waiting?.totalDocs ?? 0, icon: <Users className="size-5" />, color: 'text-primary-700 bg-primary-50' },
-    { label: 'En consultation', count: inConsultation?.totalDocs ?? 0, icon: <ClockArrowDown className="size-5" />, color: 'text-primary-700 bg-primary-50' },
-    { label: 'Terminés aujourd\'hui', count: completed?.totalDocs ?? 0, icon: <CheckCheck className="size-5" />, color: 'text-primary-600 bg-primary-50' },
+    { label: 'Programmés', count: scheduled?.totalDocs ?? 0, icon: <Calendar className="size-5" />, borderClass: 'border-t-primary-600', iconBg: 'bg-primary-50', iconColor: 'text-primary-600' },
+    { label: 'Salle d\'attente', count: waiting?.totalDocs ?? 0, icon: <Users className="size-5" />, borderClass: 'border-t-amber-500', iconBg: 'bg-amber-50', iconColor: 'text-amber-600' },
+    { label: 'En consultation', count: inConsultation?.totalDocs ?? 0, icon: <ClockArrowDown className="size-5" />, borderClass: 'border-t-orange-500', iconBg: 'bg-orange-50', iconColor: 'text-orange-600', pulse: true },
+    { label: 'Terminés aujourd\'hui', count: completed?.totalDocs ?? 0, icon: <CheckCheck className="size-5" />, borderClass: 'border-t-teal-700', iconBg: 'bg-primary-50', iconColor: 'text-primary-600' },
   ]
 
   const inner = (card: StatCard) => (
     <div
       key={card.label}
-      className={`rounded-xl border border-stone-200 bg-white p-4 shadow-sm transition-shadow duration-200 ${
-        clickable ? 'cursor-pointer hover:shadow-md hover:border-primary-200' : ''
+      className={`rounded-xl border border-stone-200 bg-white p-4 shadow-sm transition-shadow duration-200 hover:shadow-md hover:-translate-y-0.5 border-t-4 ${card.borderClass} rounded-t-none ${
+        clickable ? 'cursor-pointer' : ''
       }`}
     >
       <div className="flex items-center justify-between">
         <span className="text-sm font-medium text-stone-500">{card.label}</span>
-        <span className={`flex size-8 items-center justify-center rounded-lg ${card.color}`}>
+        <span className={`relative flex size-8 items-center justify-center rounded-lg ${card.iconBg} ${card.iconColor}`}>
+          {card.pulse && <span className="absolute -top-1 -right-1 size-2 rounded-full bg-orange-500"><span className="absolute inset-0 animate-ping rounded-full bg-orange-500" /></span>}
           {card.icon}
         </span>
       </div>
