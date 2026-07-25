@@ -2,8 +2,8 @@ import { getTenantId } from '@/lib/tenant'
 import { requireAuth } from '@/lib/auth'
 import { fetchCMS } from '@/lib/cms-fetch'
 import { Link } from '@/i18n/navigation'
-import { ArrowRight, Clock } from 'lucide-react'
-import { computeAge } from '@/lib/age'
+import { ArrowRight } from 'lucide-react'
+import PatientAvatar from '@/components/dashboard/PatientAvatar'
 
 type QueueItem = {
   id: string
@@ -36,28 +36,23 @@ export default async function QueuePreview() {
         <div className="divide-y divide-stone-100">
           {items.map((item) => {
             const p = item.patient
-            const initial = p?.fullName?.charAt(0)?.toUpperCase() || '?'
-            const girl = p?.gender === 'girl'
             return (
               <div key={item.id} className="flex items-center gap-3 px-4 py-2.5">
-                <div className={`flex size-8 shrink-0 items-center justify-center rounded-full border-2 text-xs font-bold ${
-                  girl ? 'border-pink-300 bg-pink-100 text-pink-700' : 'border-sky-300 bg-sky-100 text-sky-700'
-                }`}>
-                  {initial}
-                </div>
+                <PatientAvatar fullName={p?.fullName || '?'} gender={(p?.gender as 'boy' | 'girl' | null) || null} size="sm" />
                 <div className="min-w-0 flex-1">
                   <Link href={`/dashboard/patients/${p?.id}`} className="text-sm font-medium text-stone-800 hover:text-primary-600 transition-colors duration-200">
                     {p?.fullName || '—'}
                   </Link>
                   <div className="flex items-center gap-2 text-xs text-stone-500">
-                    {p?.birthDate && <span>{computeAge(p.birthDate)}</span>}
                     <span className="inline-block rounded bg-stone-100 px-1.5 py-0.5 font-medium text-stone-700">{item.visitReason}</span>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-xs text-stone-400">
-                    {item.arrivalTime && <span className="inline-flex items-center gap-0.5"><Clock className="size-3" />{new Date(item.arrivalTime).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}</span>}
-                  </span>
+                  {item.arrivalTime && (
+                    <span className="rounded-full bg-amber-50 px-2.5 py-0.5 text-xs font-semibold text-amber-700">
+                      {new Date(item.arrivalTime).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
+                    </span>
+                  )}
                   <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${
                     item.status === 'in_consultation' ? 'bg-primary/10 text-primary-700' : 'bg-warning/10 text-warning'
                   }`}>

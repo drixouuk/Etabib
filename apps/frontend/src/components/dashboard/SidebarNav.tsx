@@ -24,27 +24,42 @@ function isActive(href: string, pathname: string): boolean {
 
 export default function SidebarNav({ items, adminItems, onNavigate }: Props) {
   const pathname = usePathname()
-
-  const linkClass = (active: boolean, disabled = false) =>
-    `flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
-      disabled ? 'pointer-events-none text-stone-300' : active ? 'bg-primary-50 text-primary-700' : 'text-stone-600 hover:bg-cream-200 hover:text-stone-800'
-    }`
+  const allItems = [...items, ...adminItems]
+  const activeIndex = allItems.findIndex(item => isActive(item.href, pathname))
 
   return (
-    <nav className="flex-1 space-y-0.5 px-3">
-      {items.map((item) => (
-        <Link key={item.label} href={item.href} onClick={onNavigate}
-          className={linkClass(isActive(item.href, pathname), item.disabled)}
-          aria-disabled={item.disabled} tabIndex={item.disabled ? -1 : undefined}>
-          {item.icon}{item.label}
-        </Link>
-      ))}
+    <nav className="relative flex flex-col gap-0.5 flex-1 pt-1 px-0">
+      {items.length > 0 && (
+        <>
+          <div
+            className="absolute left-0 right-0 h-10 rounded-[10px] bg-primary-50 transition-all duration-300 ease-out"
+            style={{
+              transform: `translateY(${activeIndex * 42}px)`,
+              opacity: activeIndex >= 0 ? 1 : 0,
+            }}
+          />
+          {items.map((item) => (
+            <Link key={item.label} href={item.href} onClick={onNavigate}
+              className={`relative z-10 flex items-center gap-[11px] rounded-[10px] px-3 py-[10px] text-[13.5px] font-medium transition-colors duration-200 ${
+                item.disabled ? 'pointer-events-none text-stone-200' :
+                isActive(item.href, pathname) ? 'text-primary-700 font-semibold' :
+                'text-stone-400 hover:text-stone-800'
+              }`}
+              aria-disabled={item.disabled} tabIndex={item.disabled ? -1 : undefined}>
+              {item.icon}{item.label}
+            </Link>
+          ))}
+        </>
+      )}
       {adminItems.length > 0 && (
         <>
-          <div className="my-2 border-t border-cream-200" />
+          <div className="my-2 border-t border-primary/15" />
           {adminItems.map((item) => (
             <Link key={item.label} href={item.href} onClick={onNavigate}
-              className={linkClass(isActive(item.href, pathname))}>
+              className={`relative z-10 flex items-center gap-[11px] rounded-[10px] px-3 py-[10px] text-[13.5px] font-medium transition-colors duration-200 ${
+                isActive(item.href, pathname) ? 'text-primary-700 font-semibold' :
+                'text-stone-400 hover:text-stone-800'
+              }`}>
               {item.icon}{item.label}
             </Link>
           ))}

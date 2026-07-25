@@ -7,6 +7,12 @@ import PatientSearchBar from '@/components/dashboard/PatientSearchBar'
 import QueuePreview from '@/components/dashboard/QueuePreview'
 import VaccinationAlerts from '@/components/dashboard/VaccinationAlerts'
 
+function greeterName(name?: string): string {
+  if (!name) return ''
+  const short = name.replace(/^(Dr\.?\s*|Pr\.?\s*|M\.?\s*|Mme\.?\s*)/i, '').trim()
+  return short.split(' ')[0] || name
+}
+
 export default async function DashboardPage() {
   const user = await requireAuth()
   const isSuperadmin = user.roles?.includes('superadmin')
@@ -15,14 +21,16 @@ export default async function DashboardPage() {
   const tenant = tenantId ? await getTenantById(tenantId) : null
   const isPediatrie = tenant?.settings?.specialty === 'pediatrie'
 
+  const today = new Date().toLocaleDateString('fr-FR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
+
   return (
     <div className="mx-auto max-w-container px-4 py-12 md:px-6 lg:px-8">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="font-heading text-3xl font-bold text-stone-800">Vue d&apos;ensemble</h1>
-          <p className="mt-1 text-stone-500">
-            Bienvenue{user.name ? `, ${user.name}` : ''}
-          </p>
+          <h1 className="text-[27px] font-bold tracking-tight text-stone-800">
+            Bonjour{user.name ? `, Dr. ${greeterName(user.name)}` : ''} 👋
+          </h1>
+          <p className="mt-1 text-[13.5px] text-stone-400 first-letter:capitalize">{today}</p>
         </div>
         <nav className="flex flex-wrap gap-2">
           <Link href="/dashboard/patients" className="rounded-lg border border-stone-200 bg-white px-3 py-1.5 text-sm font-medium text-stone-600 hover:bg-stone-50 hover:text-primary-700 transition-colors duration-200">

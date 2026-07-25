@@ -3,7 +3,8 @@ import { requireAuth } from '@/lib/auth'
 import { fetchCMS } from '@/lib/cms-fetch'
 import { getTenantById, getDoctorProfile, getPracticeInfo } from '@/lib/payload'
 import { notFound } from 'next/navigation'
-import { AlertCircle } from 'lucide-react'
+import { Link } from '@/i18n/navigation'
+import { ArrowLeft, AlertCircle } from 'lucide-react'
 import PatientClinicalFields from './PatientClinicalFields'
 import AddToQueueButton from './AddToQueueButton'
 import ConsultationForm from './ConsultationForm'
@@ -174,6 +175,12 @@ export default async function PatientDetailPage({ params }: Props) {
 
   return (
     <div className="mx-auto max-w-container px-4 py-12 md:px-6 lg:px-8">
+      {/* Back link */}
+      <Link href="/dashboard/patients" className="inline-flex items-center gap-1.5 pb-3.5 text-[13px] text-stone-400 hover:text-primary-700">
+        <ArrowLeft className="size-[15px]" />
+        Retour aux patients
+      </Link>
+
       {/* En-tête compact */}
       <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
         <div className="flex items-center gap-4">

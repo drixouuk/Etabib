@@ -43,12 +43,12 @@ export default async function VaccinationAlerts() {
 
   if (alerts.length === 0) {
     return (
-      <div className="rounded-xl border border-stone-200 bg-white p-4 shadow-sm">
+      <div className="rounded-xl border border-primary/15 bg-primary-50 p-4">
         <div className="flex items-center gap-2">
-          <CalendarCheck className="size-5 text-success-500" />
-          <h3 className="font-heading text-base font-semibold text-stone-800">Rappels vaccinaux</h3>
+          <CalendarCheck className="size-5 text-primary-600" />
+          <h3 className="font-heading text-base font-semibold text-primary-700">Rappels vaccinaux</h3>
         </div>
-        <p className="mt-2 text-sm text-success-600">Tous les patients sont à jour</p>
+        <p className="mt-2 text-sm text-primary-600">Tous les patients sont à jour</p>
       </div>
     )
   }

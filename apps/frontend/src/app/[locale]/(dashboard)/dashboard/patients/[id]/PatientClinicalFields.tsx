@@ -68,7 +68,7 @@ export default function PatientClinicalFields({ patientId, initialData }: Props)
         const val = values[f.key]
         const isOpen = expandedSection === f.key
         return (
-          <div key={f.key} className="border-b border-stone-100 last:border-0">
+          <div key={f.key} className={`border-b border-stone-100 last:border-0 ${f.key === 'allergies' && val ? 'border-red-200 bg-red-50/30' : ''}`}>
             <button
               type="button"
               onClick={() => setExpandedSection(isOpen ? null : f.key)}
@@ -77,7 +77,7 @@ export default function PatientClinicalFields({ patientId, initialData }: Props)
               <div className="min-w-0 flex-1">
                 <span className="text-sm font-medium text-stone-700">{f.label}</span>
                 {!isOpen && val && (
-                  <p className="mt-0.5 truncate text-xs text-stone-400">{val.slice(0, 80)}{val.length > 80 ? '...' : ''}</p>
+                  <p className="mt-0.5 truncate text-xs text-stone-500">{val.slice(0, 80)}{val.length > 80 ? '...' : ''}</p>
                 )}
                 {!isOpen && !val && (
                   <p className="mt-0.5 text-xs italic text-stone-300">Aucune information</p>

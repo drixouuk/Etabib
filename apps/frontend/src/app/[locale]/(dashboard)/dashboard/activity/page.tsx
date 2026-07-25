@@ -153,6 +153,19 @@ export default async function ActivityPage({ searchParams }: Props) {
   return (
     <div className="mx-auto max-w-container px-4 py-12 md:px-6 lg:px-8">
       <h1 className="font-heading text-2xl font-bold text-stone-800">Activité</h1>
+
+      <p className="mt-7 mb-3 text-xs font-semibold uppercase tracking-[0.06em] text-stone-400 first:mt-0">Croissance du cabinet</p>
+      <div className="rounded-xl border border-stone-200 bg-white p-5 shadow-sm">
+        <div className="flex items-baseline justify-between">
+          <div>
+            <p className="text-[11.5px] font-semibold uppercase tracking-[0.04em] text-stone-400">Total patients suivis</p>
+            <p className="text-[20px] font-bold text-stone-800">{patients.length}</p>
+          </div>
+          <span className="rounded-full bg-primary-50 px-2 py-0.5 text-[10.5px] font-semibold text-primary-700">cumulé</span>
+        </div>
+      </div>
+
+      <p className="mt-7 mb-3 text-xs font-semibold uppercase tracking-[0.06em] text-stone-400 first:mt-0">Activité clinique</p>
       <div className="mt-6">
         <ActivityView
           period={period}
@@ -164,6 +177,13 @@ export default async function ActivityPage({ searchParams }: Props) {
           sourceData={sourceData}
           chartData={chartData}
         />
+      </div>
+
+      <p className="mt-7 mb-3 text-xs font-semibold uppercase tracking-[0.06em] text-stone-400 first:mt-0">Fonctionnement</p>
+      <div className="rounded-xl border border-stone-200 bg-white p-5 shadow-sm">
+        <h3 className="mb-2 font-heading text-sm font-semibold text-stone-700">Présence aux rendez-vous</h3>
+        <p className="text-[34px] font-bold text-stone-800">—</p>
+        <p className="text-[12.5px] text-stone-400">Statistiques en cours de collecte</p>
       </div>
     </div>
   )

@@ -63,7 +63,10 @@ export default async function PatientsListPage({ searchParams }: Props) {
   return (
     <div className="mx-auto max-w-container px-4 py-12 md:px-6 lg:px-8">
       <div className="flex items-center justify-between">
-        <h1 className="font-heading text-3xl font-bold text-stone-800">Patients</h1>
+        <div>
+          <h1 className="font-heading text-3xl font-bold text-stone-800">Patients</h1>
+          <p className="mt-1 text-[13.5px] text-stone-400">{patients.length} patients suivis</p>
+        </div>
         <Link
           href="/dashboard/patients/new"
           className="rounded-lg bg-primary-700 px-4 py-2 text-sm font-medium text-white hover:bg-primary-800"
@@ -73,24 +76,19 @@ export default async function PatientsListPage({ searchParams }: Props) {
       </div>
 
       <form method="GET" className="mt-6">
-        <div className="flex flex-col sm:flex-row gap-2">
+        <div className="flex items-center gap-2 rounded-xl border border-primary/15 bg-white py-2.5 px-[14px] transition-all duration-200 hover:border-primary-500 hover:shadow-[0_0_0_3px_rgba(13,148,136,0.08)]">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="shrink-0 text-stone-400"><circle cx="10" cy="10" r="7"/><line x1="21" y1="21" x2="15.5" y2="15.5"/></svg>
           <input
             type="text"
             name="q"
             defaultValue={q || ''}
             placeholder="Rechercher par nom ou CIN…"
-            className="w-full max-w-md rounded-lg border border-stone-300 bg-white px-4 py-2.5 text-sm text-stone-800 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
+            className="flex-1 border-none bg-transparent text-sm text-stone-800 placeholder:text-stone-400 focus:outline-none"
           />
-          <button
-            type="submit"
-            className="rounded-lg bg-primary-700 px-4 py-2.5 text-sm font-medium text-white hover:bg-primary-800"
-          >
-            Rechercher
-          </button>
           {q && (
             <Link
               href="/dashboard/patients"
-              className="rounded-lg border border-stone-300 bg-white px-4 py-2.5 text-sm font-medium text-stone-600 hover:bg-stone-50"
+              className="shrink-0 text-sm font-medium text-stone-500 hover:text-stone-700"
             >
               Effacer
             </Link>
