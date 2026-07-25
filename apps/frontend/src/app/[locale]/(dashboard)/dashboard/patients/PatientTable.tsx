@@ -3,6 +3,8 @@
 import { useState } from 'react'
 import { Link } from '@/i18n/navigation'
 import PatientActionsDropdown from '@/components/dashboard/PatientActionsDropdown'
+import PatientAvatar from '@/components/dashboard/PatientAvatar'
+import { Badge } from '@/components/ui/badge'
 import { computeAge } from '@/lib/age'
 
 type Patient = {
@@ -16,6 +18,12 @@ type Patient = {
 }
 
 const PER_PAGE = 10
+
+function isRecent(iso: string): boolean {
+  const thirtyDaysAgo = new Date()
+  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
+  return new Date(iso) >= thirtyDaysAgo
+}
 
 export default function PatientTable({
   patients,
@@ -54,23 +62,30 @@ export default function PatientTable({
               paginated.map((p) => (
                 <tr key={p.id} className="hover:bg-stone-50">
                   <td className="px-4 py-3">
-                    <div className="flex items-center gap-2">
-                      <PatientActionsDropdown patientId={p.id} patientName={p.fullName} />
-                      <Link
-                        href={`/dashboard/patients/${p.id}`}
-                        className="font-medium text-stone-800 hover:text-primary-600 transition-colors duration-200"
-                      >
-                        {p.fullName}
-                      </Link>
+                    <div className="flex items-center gap-3">
+                      <PatientAvatar fullName={p.fullName} gender={p.gender as 'boy' | 'girl' | null} size="sm" />
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <PatientActionsDropdown patientId={p.id} patientName={p.fullName} />
+                          <Link
+                            href={`/dashboard/patients/${p.id}`}
+                            className="font-medium text-stone-800 hover:text-primary-600 transition-colors duration-200"
+                          >
+                            {p.fullName}
+                          </Link>
+                        </div>
+                      </div>
                     </div>
                   </td>
                   <td className="px-4 py-3 text-stone-500">
                     {p.birthDate ? computeAge(p.birthDate) : '—'}
                   </td>
                   <td className="px-4 py-3 text-stone-500">
-                    {lastConsultations[p.id]
-                      ? new Date(lastConsultations[p.id]).toLocaleDateString('fr-FR')
-                      : '—'}
+                    {lastConsultations[p.id] ? (
+                      <Badge variant={isRecent(lastConsultations[p.id]) ? 'default' : 'secondary'}>
+                        {new Date(lastConsultations[p.id]).toLocaleDateString('fr-FR')}
+                      </Badge>
+                    ) : '—'}
                   </td>
                   <td className="px-4 py-3 text-stone-500">
                     {p.birthDate

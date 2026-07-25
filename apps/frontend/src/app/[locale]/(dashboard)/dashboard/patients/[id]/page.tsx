@@ -3,15 +3,21 @@ import { requireAuth } from '@/lib/auth'
 import { fetchCMS } from '@/lib/cms-fetch'
 import { getTenantById, getDoctorProfile, getPracticeInfo } from '@/lib/payload'
 import { notFound } from 'next/navigation'
+import { AlertCircle } from 'lucide-react'
 import PatientClinicalFields from './PatientClinicalFields'
 import AddToQueueButton from './AddToQueueButton'
 import ConsultationForm from './ConsultationForm'
+import ConsultationHistory from './ConsultationHistory'
 import PrescriptionForm from './PrescriptionForm'
+import PrescriptionHistory from './PrescriptionHistory'
 import DocumentUpload from './DocumentUpload'
 import GrowthChart from './GrowthChart'
 import VaccinationRecord from '@/components/dashboard/VaccinationRecord'
 import ReferringPractitionersWidget from './ReferringPractitionersWidget'
 import SharePatientWidget from './SharePatientWidget'
+import PatientAvatar from '@/components/dashboard/PatientAvatar'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
 
 import { computeAge } from '@/lib/age'
 import type { DoctorInfo, PatientInfo } from '@/lib/generate-pdf'
@@ -168,93 +174,184 @@ export default async function PatientDetailPage({ params }: Props) {
 
   return (
     <div className="mx-auto max-w-container px-4 py-12 md:px-6 lg:px-8">
-      <div className="mb-8">
-        <h1 className="font-heading text-3xl font-bold text-stone-800">{patient.fullName}</h1>
-        <div className="mt-1 space-y-1 text-sm">
-          <div className="flex flex-wrap gap-x-4 gap-y-0.5 text-stone-500">
-            <span>CIN : {patient.nationalId || 'Non renseigné'}</span>
-            {patient.birthDate && (
-              <>
-                <span>Né(e) le {new Date(patient.birthDate).toLocaleDateString('fr-FR')}</span>
-                <span className="font-medium text-stone-700">{computeAge(patient.birthDate)}</span>
-              </>
-            )}
-          </div>
-          <div className="flex flex-wrap gap-x-4 gap-y-0.5 text-stone-500">
-            {patient.address && <span>{patient.address}</span>}
-            {patient.phone && <span>{patient.phone}</span>}
-            {patient.email && <span>{patient.email}</span>}
-            <span className="text-stone-400">Créé le {new Date(patient.createdAt).toLocaleDateString('fr-FR')}</span>
+      {/* En-tête compact */}
+      <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
+        <div className="flex items-center gap-4">
+          <PatientAvatar fullName={patient.fullName} gender={patient.gender as 'boy' | 'girl' | null} size="lg" />
+          <div>
+            <h1 className="font-heading text-3xl font-bold text-stone-800">{patient.fullName}</h1>
+            <div className="mt-1 flex flex-wrap gap-x-3 gap-y-0.5 text-sm text-stone-500">
+              {patient.nationalId && <span>CIN : {patient.nationalId}</span>}
+              {patient.birthDate && (
+                <>
+                  <span>Né(e) le {new Date(patient.birthDate).toLocaleDateString('fr-FR')}</span>
+                  <span className="font-medium text-stone-700">{computeAge(patient.birthDate)}</span>
+                </>
+              )}
+              {patient.phone && <span>{patient.phone}</span>}
+            </div>
+            <div className="mt-0.5 text-sm text-stone-500">
+              {patient.address && <span>{patient.address}</span>}
+              {patient.email && <span className="ml-3">{patient.email}</span>}
+            </div>
           </div>
         </div>
-      </div>
-
-      <div className="mb-8">
         <AddToQueueButton patientId={patient.id} />
       </div>
 
-      <div className="mb-8 rounded-xl border border-stone-200 bg-white shadow-sm">
-        <div className="border-b border-stone-100 px-4 py-3">
-          <h2 className="font-heading text-lg font-semibold text-stone-800">Médecins référents</h2>
+      {/* Bandeau allergie */}
+      {patient.allergies?.trim() && (
+        <div className="mb-4 flex items-center gap-3 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
+          <AlertCircle className="size-5 shrink-0 text-red-500" />
+          Allergie connue : {patient.allergies} — à vérifier avant toute prescription
         </div>
-        <div className="px-4 py-3">
-          <ReferringPractitionersWidget patientId={patient.id} initialIds={(patient as any).referringPractitioners
-            ? Array.isArray((patient as any).referringPractitioners)
-              ? (patient as any).referringPractitioners.map((r: any) => typeof r === 'object' ? r.id : r)
-              : []
-            : []} />
-        </div>
-      </div>
+      )}
 
-      {isClinique && isDoctor && (
-        <div className="mb-8">
-          <SharePatientWidget
+      {/* Onglets */}
+      <Tabs defaultValue="resume" className="mt-2">
+        <TabsList className="mb-6">
+          <TabsTrigger value="resume">Résumé</TabsTrigger>
+          <TabsTrigger value="dossier">Dossier clinique</TabsTrigger>
+          <TabsTrigger value="croissance">Croissance</TabsTrigger>
+          <TabsTrigger value="consultations">Consultations & ordonnances</TabsTrigger>
+          <TabsTrigger value="documents">Documents</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="resume">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+            <div className="rounded-xl border border-stone-200 bg-white p-4 shadow-sm">
+              <p className="text-xs font-medium uppercase text-stone-400">Dernière consultation</p>
+              {consultations.length > 0 ? (
+                <>
+                  <p className="mt-1 font-heading text-lg font-bold text-stone-800">
+                    {new Date(consultations[0].date).toLocaleDateString('fr-FR')}
+                  </p>
+                  <p className="text-sm text-stone-500">{consultations[0].motif || 'Consultation'}</p>
+                </>
+              ) : (
+                <p className="mt-1 text-sm text-stone-400">Aucune consultation</p>
+              )}
+            </div>
+            <div className="rounded-xl border border-stone-200 bg-white p-4 shadow-sm">
+              <p className="text-xs font-medium uppercase text-stone-400">Croissance</p>
+              {consultations.length > 0 && consultations[0].poids ? (
+                <>
+                  <p className="mt-1 font-heading text-lg font-bold text-stone-800">
+                    {consultations[0].poids} kg
+                  </p>
+                  {consultations[0].taille && (
+                    <p className="text-sm text-stone-500">{consultations[0].taille} cm</p>
+                  )}
+                </>
+              ) : (
+                <p className="mt-1 text-sm text-stone-400">Pas de mesure</p>
+              )}
+            </div>
+            <div className="rounded-xl border border-stone-200 bg-white p-4 shadow-sm">
+              <p className="text-xs font-medium uppercase text-stone-400">Traitement en cours</p>
+              {patient.traitementsEnCours?.trim() ? (
+                <p className="mt-1 text-sm text-stone-700 line-clamp-2">{patient.traitementsEnCours}</p>
+              ) : (
+                <p className="mt-1 text-sm text-stone-400">Aucun traitement en cours</p>
+              )}
+            </div>
+          </div>
+          <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
+            {tenant && <ReferringPractitionersWidget patientId={patient.id} initialIds={(patient as any).referringPractitioners
+              ? Array.isArray((patient as any).referringPractitioners)
+                ? (patient as any).referringPractitioners.map((r: any) => typeof r === 'object' ? r.id : r)
+                : []
+              : []} />}
+            {isClinique && isDoctor && (
+              <SharePatientWidget
+                patientId={patient.id}
+                sharedWithIds={sharedWithIds}
+                isClinique={isClinique}
+                currentUserId={user.id}
+              />
+            )}
+          </div>
+        </TabsContent>
+
+        <TabsContent value="dossier">
+          <PatientClinicalFields
             patientId={patient.id}
-            sharedWithIds={sharedWithIds}
-            isClinique={isClinique}
-            currentUserId={user.id}
+            initialData={canViewClinical ? {
+              medicalNotes: patient.medicalNotes,
+              antecedents: patient.antecedents,
+              allergies: patient.allergies,
+              traitementsEnCours: patient.traitementsEnCours,
+            } : null}
           />
-        </div>
-      )}
+        </TabsContent>
 
-      <div className="mb-8">
-        <PatientClinicalFields
-          patientId={patient.id}
-          initialData={canViewClinical ? {
-            medicalNotes: patient.medicalNotes,
-            antecedents: patient.antecedents,
-            allergies: patient.allergies,
-            traitementsEnCours: patient.traitementsEnCours,
-          } : null}
-        />
-      </div>
+        <TabsContent value="croissance">
+          {canViewClinical && isPediatrie && <GrowthChart consultations={consultations} patientBirthDate={patient.birthDate} patientGender={patient.gender} />}
+          {canViewClinical && isPediatrie && (
+            <VaccinationRecord
+              patientId={patient.id}
+              schedule={vaccineSchedule}
+              vaccinations={patientVaccinations}
+              patientGender={patient.gender}
+              patientBirthDate={patient.birthDate}
+            />
+          )}
+        </TabsContent>
 
-      {canViewClinical && isPediatrie && (
-        <GrowthChart consultations={consultations} patientBirthDate={patient.birthDate} patientGender={patient.gender} />
-      )}
+        <TabsContent value="consultations">
+          {canViewClinical && (
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+              <div className="rounded-xl border border-stone-200 bg-white shadow-sm">
+                <div className="flex items-center justify-between border-b border-stone-100 px-4 py-3">
+                  <div className="flex items-center gap-2">
+                    <h2 className="font-heading text-lg font-semibold text-stone-800">Consultations</h2>
+                    {consultations.length > 0 && (
+                      <span className="text-xs text-stone-400">({consultations.length})</span>
+                    )}
+                  </div>
+                  <Sheet>
+                    <SheetTrigger className="rounded-lg bg-primary-700 px-3 py-1.5 text-xs font-medium text-white hover:bg-primary-800">
+                      + Nouvelle consultation
+                    </SheetTrigger>
+                    <SheetContent side="right" className="w-full sm:max-w-[640px] sm:min-w-[420px] overflow-y-auto">
+                      <ConsultationForm patientId={patient.id} consultations={consultations} isPediatrie={isPediatrie} doctorInfo={doctorInfo} patientInfo={patientInfo} />
+                    </SheetContent>
+                  </Sheet>
+                </div>
+                <ConsultationHistory consultations={consultations} doctorInfo={doctorInfo} patientInfo={patientInfo} />
+              </div>
 
-      {canViewClinical && isPediatrie && (
-        <VaccinationRecord
-          patientId={patient.id}
-          schedule={vaccineSchedule}
-          vaccinations={patientVaccinations}
-          patientGender={patient.gender}
-          patientBirthDate={patient.birthDate}
-        />
-      )}
+              <div className="rounded-xl border border-stone-200 bg-white shadow-sm">
+                <div className="flex items-center justify-between border-b border-stone-100 px-4 py-3">
+                  <div className="flex items-center gap-2">
+                    <h2 className="font-heading text-lg font-semibold text-stone-800">Ordonnances</h2>
+                    {prescriptions.length > 0 && (
+                      <span className="text-xs text-stone-400">({prescriptions.length})</span>
+                    )}
+                  </div>
+                  <Sheet>
+                    <SheetTrigger className="rounded-lg bg-primary-700 px-3 py-1.5 text-xs font-medium text-white hover:bg-primary-800">
+                      + Nouvelle ordonnance
+                    </SheetTrigger>
+                    <SheetContent side="right" className="w-full sm:max-w-[640px] sm:min-w-[420px] overflow-y-auto">
+                      <PrescriptionForm patientId={patient.id} prescriptions={prescriptions} consultations={consultations} tenantId={tenantId} doctorInfo={doctorInfo} patientInfo={patientInfo} />
+                    </SheetContent>
+                  </Sheet>
+                </div>
+                <PrescriptionHistory prescriptions={prescriptions} doctorInfo={doctorInfo} patientInfo={patientInfo} />
+              </div>
+            </div>
+          )}
+        </TabsContent>
 
-      {canViewClinical && (
-        <div className="mb-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
-          <ConsultationForm patientId={patient.id} consultations={consultations} isPediatrie={isPediatrie} doctorInfo={doctorInfo} patientInfo={patientInfo} />
-          <PrescriptionForm patientId={patient.id} prescriptions={prescriptions} consultations={consultations} tenantId={tenantId} doctorInfo={doctorInfo} patientInfo={patientInfo} />
-        </div>
-      )}
-
-      {canViewClinical && (
-        <div className="mb-8">
-          <DocumentUpload patientId={patient.id} documents={documents} />
-        </div>
-      )}
+        <TabsContent value="documents">
+          {canViewClinical && (
+            <div className="mb-8">
+              <DocumentUpload patientId={patient.id} documents={documents} />
+            </div>
+          )}
+        </TabsContent>
+      </Tabs>
     </div>
   )
 }

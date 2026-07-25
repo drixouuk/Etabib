@@ -42,6 +42,9 @@
   --color-cta-900: var(--color-orange-900);
   --color-cta-950: var(--color-orange-950);
 
+  --color-avatar-boy: #5B87A6;
+  --color-avatar-girl: #C97B85;
+
   --color-cream-50: #FFFDF7;
   --color-cream-100: #FFFBF0;
   --color-cream-200: #FFF7E0;
