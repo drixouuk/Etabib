@@ -44,10 +44,10 @@ export default function SidebarNav({ items, adminItems, onNavigate }: Props) {
             onClick={onNavigate}
             className={`relative z-10 flex items-center gap-[11px] rounded-[10px] px-3 py-[10px] text-[13.5px] font-medium transition-colors duration-200 ${
               item.disabled
-                ? 'pointer-events-none text-ink-softer'
+                ? 'pointer-events-none text-[#2A241C]-softer'
                 : active
                   ? 'text-primary-700 font-semibold'
-                  : 'text-ink-soft hover:text-ink'
+                  : 'text-[#2A241C]-soft hover:text-[#2A241C]'
             }`}
             aria-disabled={item.disabled}
             tabIndex={item.disabled ? -1 : undefined}
@@ -68,7 +68,7 @@ export default function SidebarNav({ items, adminItems, onNavigate }: Props) {
                 href={item.href}
                 onClick={onNavigate}
                 className={`relative z-10 flex items-center gap-[11px] rounded-[10px] px-3 py-[10px] text-[13.5px] font-medium transition-colors duration-200 ${
-                  active ? 'text-primary-700 font-semibold' : 'text-ink-soft hover:text-ink'
+                  active ? 'text-primary-700 font-semibold' : 'text-[#2A241C]-soft hover:text-[#2A241C]'
                 }`}
               >
                 {item.icon}

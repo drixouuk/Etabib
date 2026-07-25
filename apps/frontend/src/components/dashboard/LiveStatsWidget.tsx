@@ -34,7 +34,7 @@ export default async function LiveStatsWidget({ clickable }: Props) {
   const inner = (card: typeof cards[0]) => (
     <div className={`rounded-xl border border-stone-200 ${card.topColor} bg-white p-4 shadow-sm transition-shadow duration-200 hover:shadow-md hover:-translate-y-1 ${clickable ? 'cursor-pointer' : ''}`}>
       <div className="mb-3 flex items-center justify-between">
-        <span className="text-[12.5px] text-ink-soft">{card.label}</span>
+        <span className="text-[12.5px] text-[#2A241C]-soft">{card.label}</span>
         <span className={`relative flex size-[33px] items-center justify-center rounded-lg ${card.iconBg}`}>
           {card.pulse && (
             <>
@@ -45,7 +45,7 @@ export default async function LiveStatsWidget({ clickable }: Props) {
           {card.icon}
         </span>
       </div>
-      <p className="font-heading text-[28px] font-bold text-ink">{card.count}</p>
+      <p className="font-heading text-[28px] font-bold text-[#2A241C]">{card.count}</p>
     </div>
   )
 
