@@ -1,4 +1,4 @@
-import { Activity, LayoutDashboard, Users, ListOrdered, BarChart3, Calendar, Settings, FileText, ShieldAlert, LogOut } from 'lucide-react'
+import { LayoutDashboard, Users, ListOrdered, BarChart3, Calendar, Settings, FileText, ShieldAlert, LogOut } from 'lucide-react'
 import SidebarNav from './SidebarNav'
 import type { PayloadUser } from '@/lib/auth'
 import type { Tenant } from '@/lib/payload'
@@ -54,32 +54,38 @@ export default function Sidebar({ user, tenant, onNavigate }: Props) {
   }
 
   return (
-    <div className="flex flex-col h-full">
-      <div className="flex items-center gap-[10px] px-[10px] pb-[22px] pt-[2px]">
+    <div className="flex flex-col h-full px-[14px] py-[22px]">
+      <div className="flex items-center gap-[10px] px-[10px] pb-[22px]">
         <div className="flex size-9 shrink-0 items-center justify-center rounded-[11px] bg-primary-600">
-          <Activity className="size-[18px] text-white" />
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M4 12h4l2 6 4-12 2 6h4"/>
+          </svg>
         </div>
         <div>
-          <p className="text-sm font-bold leading-tight text-stone-800">{tenant?.name || 'Cabinet'}</p>
-          <p className="text-[11.5px] text-stone-400">{tenant?.settings?.activeTier ? tierLabels[tenant.settings.activeTier] || tenant.settings.activeTier : ''}</p>
+          <p className="text-sm font-bold leading-tight text-ink">{tenant?.name || 'Cabinet'}</p>
+          <p className="text-[11.5px] text-ink-soft">{tierLabels[tenant?.settings?.activeTier || ''] || ''}</p>
         </div>
       </div>
 
       <SidebarNav items={navItems} adminItems={adminItems} onNavigate={onNavigate} />
 
-      <div className="border-t border-primary/15 px-3 py-4 mt-auto">
-        <div className="flex items-center gap-3">
-          <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary-600 text-xs font-bold text-white">{initials}</div>
+      <div className="border-t border-teal/15 px-[10px] pt-4 mt-auto">
+        <div className="flex items-center gap-[10px]">
+          <div className="flex size-[38px] shrink-0 items-center justify-center rounded-full bg-primary-600 text-[13.5px] font-bold text-white">
+            {initials}
+          </div>
           <div className="min-w-0 flex-1">
-            <p className="truncate text-[13px] font-semibold text-stone-800">{user.name || user.email}</p>
-            <p className="truncate text-[11px] text-stone-400">{roleLabel}</p>
+            <p className="text-[13px] font-semibold text-ink">{user.name || user.email}</p>
+            <p className="text-[11px] text-ink-soft">{roleLabel}</p>
             {user.roles?.includes('substitute') && user.accessExpiresAt && (
-              <p className="mt-0.5 text-xs text-warning">Accès jusqu'au {new Date(user.accessExpiresAt).toLocaleDateString('fr-FR')}</p>
+              <p className="mt-0.5 text-[11px] font-medium text-warning">
+                Expire le {new Date(user.accessExpiresAt).toLocaleDateString('fr-FR')}
+              </p>
             )}
           </div>
         </div>
-        <form action="/api/auth/logout" method="POST">
-          <button type="submit" className="mt-2 flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-stone-600 transition-colors duration-200 hover:text-red-600">
+        <form action="/api/auth/logout" method="POST" className="mt-3">
+          <button type="submit" className="flex w-full items-center gap-2 rounded-[10px] px-3 py-2 text-[13px] font-medium text-ink-soft transition-colors duration-200 hover:text-red-600">
             <LogOut className="size-4" />Déconnexion
           </button>
         </form>

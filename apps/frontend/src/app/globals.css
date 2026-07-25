@@ -64,6 +64,17 @@
   --font-mono: 'ui-monospace', 'SFMono-Regular', monospace;
 
   --width-container: 1200px;
+
+  --color-page-bg: #EFEDE3;
+  --color-sidebar-bg: #FFFDF8;
+  --color-ink: #2A241C;
+  --color-ink-soft: #8A8175;
+  --color-ink-softer: #B9B2A4;
+  --color-border-teal: rgba(13,148,136,0.16);
+  --color-stat-teal: var(--color-teal-500);
+  --color-stat-amber: var(--color-amber-500);
+  --color-stat-orange: var(--color-orange-500);
+  --color-stat-tealdark: var(--color-teal-700);
 }
 
 @theme inline {
@@ -76,6 +87,8 @@
   --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
   --color-sidebar-primary: var(--sidebar-primary);
   --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-page-bg: var(--color-page-bg);
+  --color-sidebar-bg: var(--color-sidebar-bg);
   --color-sidebar: var(--sidebar);
   --color-chart-5: var(--chart-5);
   --color-chart-4: var(--chart-4);

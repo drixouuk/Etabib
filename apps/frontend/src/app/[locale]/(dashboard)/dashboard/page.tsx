@@ -1,17 +1,10 @@
 import { getTenantId } from '@/lib/tenant'
 import { requireAuth } from '@/lib/auth'
 import { getTenantById } from '@/lib/payload'
-import { Link } from '@/i18n/navigation'
 import LiveStatsWidget from '@/components/dashboard/LiveStatsWidget'
 import PatientSearchBar from '@/components/dashboard/PatientSearchBar'
 import QueuePreview from '@/components/dashboard/QueuePreview'
 import VaccinationAlerts from '@/components/dashboard/VaccinationAlerts'
-
-function greeterName(name?: string): string {
-  if (!name) return ''
-  const short = name.replace(/^(Dr\.?\s*|Pr\.?\s*|M\.?\s*|Mme\.?\s*)/i, '').trim()
-  return short.split(' ')[0] || name
-}
 
 export default async function DashboardPage() {
   const user = await requireAuth()
@@ -21,45 +14,38 @@ export default async function DashboardPage() {
   const tenant = tenantId ? await getTenantById(tenantId) : null
   const isPediatrie = tenant?.settings?.specialty === 'pediatrie'
 
-  const today = new Date().toLocaleDateString('fr-FR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
-
   return (
-    <div className="mx-auto max-w-container px-4 py-12 md:px-6 lg:px-8">
-      <div className="flex flex-wrap items-center justify-between gap-4">
+    <div className="p-9">
+      <div className="mb-6 flex flex-wrap items-start justify-between gap-5">
         <div>
-          <h1 className="text-[27px] font-bold tracking-tight text-stone-800">
-            Bonjour{user.name ? `, Dr. ${greeterName(user.name)}` : ''} 👋
+          <h1 className="text-[27px] font-bold tracking-tight text-ink">
+            Bonjour{user.name ? `, Dr. ${user.name.replace(/^Dr\.?\s*/i, '')}` : ''} 👋
           </h1>
-          <p className="mt-1 text-[13.5px] text-stone-400 first-letter:capitalize">{today}</p>
+          <p className="mt-1 text-[13.5px] text-ink-soft">
+            {new Date().toLocaleDateString('fr-FR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+          </p>
         </div>
-        <nav className="flex flex-wrap gap-2">
-          <Link href="/dashboard/patients" className="rounded-lg border border-stone-200 bg-white px-3 py-1.5 text-sm font-medium text-stone-600 hover:bg-stone-50 hover:text-primary-700 transition-colors duration-200">
-            Patients
-          </Link>
-          {(user.roles?.includes('tenant_admin') || isSuperadmin) && (
-            <Link href="/dashboard/audit-logs" className="rounded-lg border border-stone-200 bg-white px-3 py-1.5 text-sm font-medium text-stone-600 hover:bg-stone-50 hover:text-primary-700 transition-colors duration-200">
-              Registre d&apos;audit
-            </Link>
-          )}
-          {isSuperadmin && (
-            <Link href="/dashboard/system-alerts" className="rounded-lg border border-stone-200 bg-white px-3 py-1.5 text-sm font-medium text-stone-600 hover:bg-stone-50 hover:text-primary-700 transition-colors duration-200">
-              Alertes système
-            </Link>
-          )}
-        </nav>
-      </div>
-
-      <div className="mt-6">
         <PatientSearchBar />
       </div>
 
-      <div className="mt-6">
+      <div className="mb-5">
         <LiveStatsWidget clickable />
       </div>
 
-      <div className={`mt-6 grid grid-cols-1 gap-6 ${isPediatrie ? 'lg:grid-cols-2' : ''}`}>
-        <QueuePreview />
-        {isPediatrie && <VaccinationAlerts />}
+      <div className="grid gap-4" style={{ gridTemplateColumns: '1.1fr 1fr' }}>
+        <div className="rounded-2xl border border-stone-200 bg-white p-5 shadow-sm">
+          <h3 className="mb-3 font-heading text-[14.5px] font-semibold text-ink">File d&apos;attente</h3>
+          <QueuePreview />
+        </div>
+        <div className="rounded-2xl border border-stone-200 bg-white p-5 shadow-sm">
+          <h3 className="mb-3 font-heading text-[14.5px] font-semibold text-ink">Rappels vaccinaux</h3>
+          {isPediatrie ? <VaccinationAlerts /> : (
+            <div className="flex items-center gap-2.5 rounded-[10px] bg-primary-50 px-3.5 py-3 text-[13px] text-primary-700">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><circle cx="12" cy="12" r="9"/><polyline points="8 12 11 15 16 9"/></svg>
+              Tous les patients sont à jour
+            </div>
+          )}
+        </div>
       </div>
     </div>
   )

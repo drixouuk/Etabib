@@ -28,15 +28,15 @@ export default function DashboardShell({ user, tenant, children }: Props) {
   }, [sidebarOpen])
 
   return (
-    <div className="flex min-h-screen">
-      <aside className="hidden md:flex w-[252px] shrink-0 flex-col border-r border-primary/15 bg-[#FFFDF8]">
+    <div className="flex min-h-screen bg-page-bg">
+      <aside className="hidden md:flex w-[252px] shrink-0 flex-col border-r border-teal/15 bg-sidebar-bg">
         <Sidebar user={user} tenant={tenant} />
       </aside>
 
       {sidebarOpen && (
         <div className="fixed inset-0 z-50 md:hidden">
           <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setSidebarOpen(false)} />
-          <aside className="absolute inset-y-0 left-0 flex w-64 flex-col border-r border-primary/15 bg-[#FFFDF8] shadow-xl transition-transform duration-300 translate-x-0">
+          <aside className="absolute inset-y-0 left-0 flex w-64 flex-col border-r border-teal/15 bg-sidebar-bg shadow-xl transition-transform duration-300 translate-x-0">
             <div className="flex items-center justify-end px-3 pt-3">
               <button onClick={() => setSidebarOpen(false)} className="rounded-lg p-2 text-stone-500 hover:bg-stone-100 hover:text-stone-700" aria-label="Fermer le menu">
                 <X className="size-5" />

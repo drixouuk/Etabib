@@ -119,6 +119,30 @@ export default async function ActivityPage({ searchParams }: Props) {
   const patientsByDay = groupByPeriod(patients, 'createdAt', period)
   const chartData = mergeChartData(consultationsByDay, patientsByDay)
 
+  const cumulativePatients = patientsByDay.reduce((acc, day, i) => {
+    const prev = i > 0 ? acc[i - 1].cumulative : 0
+    return [...acc, { ...day, cumulative: prev + day.count }]
+  }, [] as { date: string; count: number; cumulative: number }[])
+
+  const cumulativeTotal = cumulativePatients.length > 0
+    ? cumulativePatients[cumulativePatients.length - 1].cumulative
+    : 0
+
+  const allPatientsRes = await fetchCMS<{ docs: { birthDate?: string }[] }>(
+    `/api/patients?where[tenant][equals]=${tenantId}&depth=0&limit=5000`,
+    { revalidate: 60 },
+  )
+  const ageGroups = { '0-1': 0, '1-3': 0, '3-6': 0, '6+': 0 } as Record<string, number>
+  for (const p of (allPatientsRes?.docs ?? [])) {
+    if (!p.birthDate) continue
+    const ageY = (Date.now() - new Date(p.birthDate).getTime()) / (365.25 * 24 * 3600 * 1000)
+    if (ageY < 1) ageGroups['0-1']++
+    else if (ageY < 3) ageGroups['1-3']++
+    else if (ageY < 6) ageGroups['3-6']++
+    else ageGroups['6+']++
+  }
+  const ageData = Object.entries(ageGroups).map(([range, count]) => ({ range, count }))
+
   const completedToday = queueItems.filter(i => i.status === 'completed').length
 
   const sourceCounts: Record<string, number> = {}
@@ -166,25 +190,19 @@ export default async function ActivityPage({ searchParams }: Props) {
       </div>
 
       <p className="mt-7 mb-3 text-xs font-semibold uppercase tracking-[0.06em] text-stone-400 first:mt-0">Activité clinique</p>
-      <div className="mt-6">
-        <ActivityView
-          period={period}
-          newPatients={patients.length}
-          consultationsDone={consultations.length}
-          completedToday={completedToday}
-          reasonData={reasonData}
-          hourlyData={hourlyData}
-          sourceData={sourceData}
-          chartData={chartData}
-        />
-      </div>
-
-      <p className="mt-7 mb-3 text-xs font-semibold uppercase tracking-[0.06em] text-stone-400 first:mt-0">Fonctionnement</p>
-      <div className="rounded-xl border border-stone-200 bg-white p-5 shadow-sm">
-        <h3 className="mb-2 font-heading text-sm font-semibold text-stone-700">Présence aux rendez-vous</h3>
-        <p className="text-[34px] font-bold text-stone-800">—</p>
-        <p className="text-[12.5px] text-stone-400">Statistiques en cours de collecte</p>
-      </div>
+      <ActivityView
+        period={period}
+        newPatients={patients.length}
+        consultationsDone={consultations.length}
+        completedToday={completedToday}
+        reasonData={reasonData}
+        hourlyData={hourlyData}
+        sourceData={sourceData}
+        chartData={chartData}
+        cumulativePatients={cumulativePatients}
+        cumulativeTotal={cumulativeTotal}
+        ageData={ageData}
+      />
     </div>
   )
 }
