@@ -1,0 +1,15 @@
+- generic [active] [ref=f3e1]:
+  - generic [ref=f3e4]:
+    - heading "Espace Praticien" [level=1] [ref=f3e5]
+    - generic [ref=f3e6]:
+      - generic [ref=f3e7]:
+        - generic [ref=f3e8]: Email
+        - textbox "Email" [ref=f3e9]:
+          - /placeholder: votre@email.com
+      - generic [ref=f3e10]:
+        - generic [ref=f3e11]: Mot de passe
+        - textbox "Mot de passe" [ref=f3e12]:
+          - /placeholder: ••••••••
+      - button "Se connecter" [ref=f3e13]
+  - button "Open Next.js Dev Tools" [ref=f3e19] [cursor=pointer]
+  - alert [ref=f3e23]

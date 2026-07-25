@@ -1,0 +1,54 @@
+- generic [active] [ref=f4e1]:
+  - generic [ref=f4e42]:
+    - complementary [ref=f4e43]:
+      - generic [ref=f4e44]:
+        - heading "Dr Guinane Aicha" [level=2] [ref=f4e45]
+        - paragraph [ref=f4e46]: clinique
+      - navigation [ref=f4e47]:
+        - link "Vue d'ensemble" [ref=f4e48] [cursor=pointer]:
+          - /url: /fr/dashboard
+        - link "Patients" [ref=f4e54] [cursor=pointer]:
+          - /url: /fr/dashboard/patients
+        - link "File d'attente" [ref=f4e60] [cursor=pointer]:
+          - /url: /fr/dashboard
+        - link "Rendez-vous" [disabled]:
+          - /url: "#"
+        - link "Registre d'audit" [ref=f4e65] [cursor=pointer]:
+          - /url: /fr/dashboard/audit-logs
+      - generic [ref=f4e69]:
+        - generic [ref=f4e70]:
+          - generic [ref=f4e71]: DG
+          - generic [ref=f4e72]:
+            - paragraph [ref=f4e73]: Dr Guinane Aicha
+            - paragraph [ref=f4e74]: Admin, Médecin
+        - button "Déconnexion" [ref=f4e76]
+    - main [ref=f4e80]:
+      - generic [ref=f4e81]:
+        - generic [ref=f4e82]:
+          - generic [ref=f4e83]:
+            - heading "Tableau de bord" [level=1] [ref=f4e84]
+            - paragraph [ref=f4e85]: Bienvenue, Dr Guinane Aicha
+          - navigation [ref=f4e86]:
+            - link "Patients" [ref=f4e87] [cursor=pointer]:
+              - /url: /fr/dashboard/patients
+            - link "Registre d'audit" [ref=f4e88] [cursor=pointer]:
+              - /url: /fr/dashboard/audit-logs
+        - generic [ref=f4e90]:
+          - generic [ref=f4e91]:
+            - generic [ref=f4e92]: Programmés
+            - paragraph [ref=f4e97]: "0"
+          - generic [ref=f4e98]:
+            - generic [ref=f4e99]: Salle d'attente
+            - paragraph [ref=f4e107]: "0"
+          - generic [ref=f4e108]:
+            - generic [ref=f4e109]: En consultation
+            - paragraph [ref=f4e116]: "0"
+          - generic [ref=f4e117]:
+            - generic [ref=f4e118]: Terminés aujourd'hui
+            - paragraph [ref=f4e124]: "0"
+        - generic [ref=f4e126]:
+          - generic [ref=f4e127]:
+            - heading "File d'attente en direct" [level=2] [ref=f4e128]
+            - button "Rafraîchir" [ref=f4e129]
+          - generic [ref=f4e130]: Aucun patient en attente.
+  - alert [ref=f4e41]

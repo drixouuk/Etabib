@@ -43,6 +43,7 @@ build/
 .qoder/
 .trae/
 .windsurf/
+.playwright-mcp
 *.log
 
 # ==========================================

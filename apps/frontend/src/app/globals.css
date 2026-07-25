@@ -89,6 +89,9 @@
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-page-bg: var(--color-page-bg);
   --color-sidebar-bg: var(--color-sidebar-bg);
+  --color-ink: var(--color-ink);
+  --color-ink-soft: var(--color-ink-soft);
+  --color-ink-softer: var(--color-ink-softer);
   --color-sidebar: var(--sidebar);
   --color-chart-5: var(--chart-5);
   --color-chart-4: var(--chart-4);
