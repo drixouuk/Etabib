@@ -124,7 +124,7 @@ export default function ActivityView({
                     label={({ name, value }: any) => `${name}: ${value}`} labelLine={false}>
                     {reasonData.map((_entry, index) => <Cell key={index} fill={PIE_COLORS[index % PIE_COLORS.length]} />)}
                   </Pie>
-                  <ChartTooltip content={<ChartTooltipContent />} />
+                  <Tooltip contentStyle={{ fontSize: 12, borderRadius: 8, border: `1px solid ${LIGHT_GRID}` }} />
                 </PieChart>
               </ResponsiveContainer>
             </div>
@@ -132,15 +132,15 @@ export default function ActivityView({
           <div>
             <h3 className="mb-2 font-heading text-sm font-semibold text-stone-700">Arrivées par heure</h3>
             <div className="rounded-xl border border-stone-200 bg-white p-4 shadow-sm">
-              <ChartContainer config={chartConfig} className="h-[220px] w-full">
+              <ResponsiveContainer width="100%" height={220}>
                 <BarChart data={hourlyData} margin={{ top: 4, right: 4, bottom: 0, left: -16 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke={LIGHT_GRID} />
                   <XAxis dataKey="hour" tick={{ fontSize: 10, fill: LIGHT_TEXT }} />
                   <YAxis tick={{ fontSize: 10, fill: LIGHT_TEXT }} width={28} allowDecimals={false} />
-                  <ChartTooltip content={<ChartTooltipContent />} />
-                  <Bar dataKey="count" name="Arrivées" fill="var(--color-consultations)" radius={[4, 4, 0, 0]} />
+                  <Tooltip contentStyle={{ fontSize: 12, borderRadius: 8, border: `1px solid ${LIGHT_GRID}` }} />
+                  <Bar dataKey="count" name="Arrivées" fill={PRIMARY} radius={[4, 4, 0, 0]} />
                 </BarChart>
-              </ChartContainer>
+              </ResponsiveContainer>
             </div>
           </div>
         </div>
@@ -156,7 +156,7 @@ export default function ActivityView({
                   label={({ name, value }: any) => `${name}: ${value}`} labelLine={false}>
                   {sourceData.map((_entry: any, i: number) => <Cell key={i} fill={SOURCE_COLORS[i % SOURCE_COLORS.length]} />)}
                 </Pie>
-                <ChartTooltip content={<ChartTooltipContent />} />
+                <Tooltip contentStyle={{ fontSize: 12, borderRadius: 8, border: `1px solid ${LIGHT_GRID}` }} />
               </PieChart>
             </ResponsiveContainer>
           </div>
