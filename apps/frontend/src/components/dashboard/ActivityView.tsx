@@ -2,6 +2,7 @@
 
 import { useRouter, useSearchParams } from 'next/navigation'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tooltip, Legend, PieChart, Pie, Cell } from 'recharts'
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart'
 import { UserPlus, Stethoscope, CheckCheck } from 'lucide-react'
 
 type Props = {
@@ -15,12 +16,12 @@ type Props = {
   chartData: { date: string; consultations: number; newPatients: number }[]
 }
 
-const PRIMARY = '#0F766E'
-const SECONDARY = '#D97706'
+const PRIMARY = 'var(--chart-1)'
+const SECONDARY = 'var(--chart-3)'
 const LIGHT_GRID = '#E7E5E4'
 const LIGHT_TEXT = '#A8A29E'
-const PIE_COLORS = ['#0F766E', '#D97706', '#7C3AED', '#EF4444']
-const SOURCE_COLORS = ['#0F766E', '#D97706', '#2563EB', '#7C3AED', '#EC4899', '#F97316', '#84CC16', '#64748B']
+const PIE_COLORS = ['var(--chart-1)', 'var(--chart-3)', 'var(--chart-4)', 'var(--chart-5)']
+const SOURCE_COLORS = ['var(--chart-1)', 'var(--chart-3)', 'var(--chart-4)', 'var(--chart-2)', 'var(--chart-5)', '#84CC16', '#64748B', '#EC4899']
 
 export default function ActivityView({
   period, newPatients, consultationsDone, completedToday, reasonData, hourlyData, sourceData, chartData,
@@ -43,13 +44,18 @@ export default function ActivityView({
 
   const hasData = chartData.some((d) => d.consultations > 0 || d.newPatients > 0) || completedToday > 0
 
+  const chartConfig = {
+    consultations: { label: 'Consultations', color: 'var(--chart-1)' },
+    newPatients: { label: 'Nouveaux patients', color: 'var(--chart-3)' },
+  }
+
   return (
     <div>
       <div className="mb-6 inline-flex rounded-lg bg-stone-100 p-0.5">
         {periods.map((p) => (
           <button key={p.value} onClick={() => setPeriod(p.value)}
             className={`rounded-md px-4 py-1.5 text-sm font-medium transition-all duration-200 ${
-              period === p.value ? 'bg-white text-stone-800 shadow-sm' : 'text-stone-500 hover:text-stone-700'
+              period === p.value ? 'bg-primary-100 text-primary-700 shadow-sm' : 'text-stone-500 hover:text-stone-700'
             }`}>
             {p.label}
           </button>
@@ -57,7 +63,7 @@ export default function ActivityView({
       </div>
 
       <div className="mb-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="rounded-xl border border-stone-200 bg-white p-4 shadow-sm">
+        <div className="rounded-xl border border-stone-200 bg-white p-4 shadow-sm transition-shadow duration-200 hover:shadow-md hover:-translate-y-0.5">
           <div className="flex items-center gap-3">
             <span className="flex size-10 items-center justify-center rounded-lg bg-primary-50 text-primary-700"><UserPlus className="size-5" /></span>
             <div>
@@ -66,7 +72,7 @@ export default function ActivityView({
             </div>
           </div>
         </div>
-        <div className="rounded-xl border border-stone-200 bg-white p-4 shadow-sm">
+        <div className="rounded-xl border border-stone-200 bg-white p-4 shadow-sm transition-shadow duration-200 hover:shadow-md hover:-translate-y-0.5">
           <div className="flex items-center gap-3">
             <span className="flex size-10 items-center justify-center rounded-lg bg-primary-50 text-primary-700"><Stethoscope className="size-5" /></span>
             <div>
@@ -75,7 +81,7 @@ export default function ActivityView({
             </div>
           </div>
         </div>
-        <div className="rounded-xl border border-stone-200 bg-white p-4 shadow-sm">
+        <div className="rounded-xl border border-stone-200 bg-white p-4 shadow-sm transition-shadow duration-200 hover:shadow-md hover:-translate-y-0.5">
           <div className="flex items-center gap-3">
             <span className="flex size-10 items-center justify-center rounded-lg bg-primary-50 text-primary-700"><CheckCheck className="size-5" /></span>
             <div>
@@ -92,17 +98,17 @@ export default function ActivityView({
         <div className="mb-6">
           <h3 className="mb-2 font-heading text-sm font-semibold text-stone-700">Consultations par jour</h3>
           <div className="rounded-xl border border-stone-200 bg-white p-4 shadow-sm">
-            <ResponsiveContainer width="100%" height={250}>
+            <ChartContainer config={chartConfig} className="h-[250px] w-full">
               <BarChart data={chartData} margin={{ top: 4, right: 4, bottom: 0, left: -16 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke={LIGHT_GRID} />
                 <XAxis dataKey="date" tick={{ fontSize: 11, fill: LIGHT_TEXT }} />
                 <YAxis tick={{ fontSize: 11, fill: LIGHT_TEXT }} width={30} allowDecimals={false} />
-                <Tooltip contentStyle={{ fontSize: 12, borderRadius: 8, border: `1px solid ${LIGHT_GRID}` }} />
+                <ChartTooltip content={<ChartTooltipContent />} />
                 <Legend wrapperStyle={{ fontSize: 12 }} />
-                <Bar dataKey="consultations" name="Consultations" fill={PRIMARY} radius={[4, 4, 0, 0]} />
-                <Bar dataKey="newPatients" name="Nouveaux patients" fill={SECONDARY} radius={[4, 4, 0, 0]} />
+                <Bar dataKey="consultations" name="Consultations" fill="var(--color-consultations)" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="newPatients" name="Nouveaux patients" fill="var(--color-newPatients)" radius={[4, 4, 0, 0]} />
               </BarChart>
-            </ResponsiveContainer>
+            </ChartContainer>
           </div>
         </div>
       )}
@@ -118,7 +124,7 @@ export default function ActivityView({
                     label={({ name, value }: any) => `${name}: ${value}`} labelLine={false}>
                     {reasonData.map((_entry, index) => <Cell key={index} fill={PIE_COLORS[index % PIE_COLORS.length]} />)}
                   </Pie>
-                  <Tooltip contentStyle={{ fontSize: 12, borderRadius: 8, border: `1px solid ${LIGHT_GRID}` }} />
+                  <ChartTooltip content={<ChartTooltipContent />} />
                 </PieChart>
               </ResponsiveContainer>
             </div>
@@ -126,15 +132,15 @@ export default function ActivityView({
           <div>
             <h3 className="mb-2 font-heading text-sm font-semibold text-stone-700">Arrivées par heure</h3>
             <div className="rounded-xl border border-stone-200 bg-white p-4 shadow-sm">
-              <ResponsiveContainer width="100%" height={220}>
+              <ChartContainer config={chartConfig} className="h-[220px] w-full">
                 <BarChart data={hourlyData} margin={{ top: 4, right: 4, bottom: 0, left: -16 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke={LIGHT_GRID} />
                   <XAxis dataKey="hour" tick={{ fontSize: 10, fill: LIGHT_TEXT }} />
                   <YAxis tick={{ fontSize: 10, fill: LIGHT_TEXT }} width={28} allowDecimals={false} />
-                  <Tooltip contentStyle={{ fontSize: 12, borderRadius: 8, border: `1px solid ${LIGHT_GRID}` }} />
-                  <Bar dataKey="count" name="Arrivées" fill={PRIMARY} radius={[4, 4, 0, 0]} />
+                  <ChartTooltip content={<ChartTooltipContent />} />
+                  <Bar dataKey="count" name="Arrivées" fill="var(--color-consultations)" radius={[4, 4, 0, 0]} />
                 </BarChart>
-              </ResponsiveContainer>
+              </ChartContainer>
             </div>
           </div>
         </div>
@@ -150,7 +156,7 @@ export default function ActivityView({
                   label={({ name, value }: any) => `${name}: ${value}`} labelLine={false}>
                   {sourceData.map((_entry: any, i: number) => <Cell key={i} fill={SOURCE_COLORS[i % SOURCE_COLORS.length]} />)}
                 </Pie>
-                <Tooltip contentStyle={{ fontSize: 12, borderRadius: 8, border: `1px solid ${LIGHT_GRID}` }} />
+                <ChartTooltip content={<ChartTooltipContent />} />
               </PieChart>
             </ResponsiveContainer>
           </div>
