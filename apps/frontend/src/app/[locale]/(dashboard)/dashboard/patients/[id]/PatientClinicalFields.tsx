@@ -36,7 +36,7 @@ export default function PatientClinicalFields({ patientId, initialData }: Props)
 
   if (!initialData) {
     return (
-      <div className="rounded-lg border border-warm bg-stone-50 px-4 py-6 text-center text-sm text-stone-500">
+      <div className="rounded-lg border border-warm bg-stone-50 px-4 py-6 text-center text-sm text-ink-soft">
         Dossier clinique — accès restreint aux médecins.
       </div>
     )
@@ -78,12 +78,12 @@ export default function PatientClinicalFields({ patientId, initialData }: Props)
             }`}
           >
             <div className="flex items-center justify-between mb-2">
-              <h4 className="text-[13.5px] font-semibold text-stone-800">{f.label}</h4>
+              <h4 className="text-[13.5px] font-semibold text-ink">{f.label}</h4>
               {!isEditing && (
                 <button
                   type="button"
                   onClick={() => setEditing(f.key)}
-                  className="rounded-lg p-1 text-stone-400 transition-colors duration-200 hover:bg-stone-100 hover:text-stone-600"
+                  className="rounded-lg p-1 text-ink-softer transition-colors duration-200 hover:bg-stone-100 hover:text-stone-600"
                   aria-label={`Modifier ${f.label}`}
                 >
                   <Pencil className="size-3.5" />
@@ -96,7 +96,7 @@ export default function PatientClinicalFields({ patientId, initialData }: Props)
                   rows={4}
                   value={val}
                   onChange={(e) => setValues((prev) => ({ ...prev, [f.key]: e.target.value }))}
-                  className="w-full rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm text-stone-800 placeholder:text-stone-400 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
+                  className="w-full rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm text-ink placeholder:text-ink-softer focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
                   placeholder={`Saisir ${f.label.toLowerCase()}...`}
                 />
                 <div className="flex items-center gap-2">
@@ -104,14 +104,14 @@ export default function PatientClinicalFields({ patientId, initialData }: Props)
                     type="button"
                     onClick={() => handleSave(f.key)}
                     disabled={saving === f.key}
-                    className="rounded-lg bg-primary-700 px-3 py-1.5 text-xs font-medium text-white hover:bg-primary-800 disabled:opacity-50"
+                    className="rounded-lg bg-cta-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-cta-700 disabled:opacity-50"
                   >
                     {saving === f.key ? '…' : 'Enregistrer'}
                   </button>
                   <button
                     type="button"
                     onClick={() => { setEditing(null); setValues((prev) => ({ ...prev, [f.key]: initialData?.[f.key as keyof typeof initialData] ?? '' })) }}
-                    className="text-xs text-stone-500 hover:text-stone-700"
+                    className="text-xs text-ink-soft hover:text-ink"
                   >
                     Annuler
                   </button>
@@ -121,7 +121,7 @@ export default function PatientClinicalFields({ patientId, initialData }: Props)
             ) : (
               <>
                 {val?.trim() ? (
-                  <p className="text-sm text-stone-700 whitespace-pre-wrap">{val}</p>
+                  <p className="text-sm text-ink whitespace-pre-wrap">{val}</p>
                 ) : (
                   <p className="text-xs italic text-stone-300">Aucune information</p>
                 )}

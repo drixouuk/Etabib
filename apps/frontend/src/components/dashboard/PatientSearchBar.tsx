@@ -68,15 +68,15 @@ export default function PatientSearchBar() {
     <div ref={ref} className="relative">
       <form onSubmit={handleSubmit}>
         <div className="flex items-center gap-2 rounded-xl border border-primary/15 bg-white py-[11px] px-[14px] transition-all duration-200 hover:border-primary-500 hover:shadow-[0_0_0_3px_rgba(13,148,136,0.08)]">
-          <Search className="size-4 shrink-0 text-stone-400" />
+          <Search className="size-4 shrink-0 text-ink-softer" />
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Rechercher un patient…"
-            className="flex-1 border-none bg-transparent text-sm text-stone-800 placeholder:text-stone-400 focus:outline-none"
+            className="flex-1 border-none bg-transparent text-sm text-ink placeholder:text-ink-softer focus:outline-none"
           />
-          {loading && <Loader2 className="size-4 animate-spin text-stone-400" />}
-          {!loading && <kbd className="ml-auto rounded-md bg-stone-100 px-2 py-0.5 text-[10.5px] text-stone-400">⌘K</kbd>}
+          {loading && <Loader2 className="size-4 animate-spin text-ink-softer" />}
+          {!loading && <kbd className="ml-auto rounded-md bg-stone-100 px-2 py-0.5 text-[10.5px] text-ink-softer">⌘K</kbd>}
         </div>
       </form>
 
@@ -87,10 +87,10 @@ export default function PatientSearchBar() {
               key={p.id}
               href={`/dashboard/patients/${p.id}`}
               onClick={() => setOpen(false)}
-              className="flex items-center justify-between px-4 py-2 text-sm text-stone-700 transition-colors duration-200 hover:bg-stone-50"
+              className="flex items-center justify-between px-4 py-2 text-sm text-ink transition-colors duration-200 hover:bg-stone-50"
             >
               <span className="font-medium">{p.fullName}</span>
-              {p.nationalId && <span className="text-xs text-stone-400">{p.nationalId}</span>}
+              {p.nationalId && <span className="text-xs text-ink-softer">{p.nationalId}</span>}
             </Link>
           ))}
         </div>

@@ -44,17 +44,17 @@ export default function PatientTable({
         <table className="min-w-[640px] w-full text-left text-sm">
           <thead className="border-b border-warm bg-stone-50">
             <tr>
-              <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-wider text-stone-400">Nom</th>
-              <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-wider text-stone-400">Âge</th>
-              <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-wider text-stone-400">Dernière consultation</th>
-              <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-wider text-stone-400">Date de naissance</th>
-              <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-wider text-stone-400">CIN</th>
+              <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-wider text-ink-softer">Nom</th>
+              <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-wider text-ink-softer">Âge</th>
+              <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-wider text-ink-softer">Dernière consultation</th>
+              <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-wider text-ink-softer">Date de naissance</th>
+              <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-wider text-ink-softer">CIN</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-stone-100">
             {paginated.length === 0 ? (
               <tr>
-                <td colSpan={5} className="px-4 py-8 text-center text-stone-400">
+                <td colSpan={5} className="px-4 py-8 text-center text-ink-softer">
                   {q ? 'Aucun patient trouvé pour cette recherche.' : 'Aucun patient pour le moment.'}
                 </td>
               </tr>
@@ -69,7 +69,7 @@ export default function PatientTable({
                           <PatientActionsDropdown patientId={p.id} patientName={p.fullName} />
                           <Link
                             href={`/dashboard/patients/${p.id}`}
-                            className="font-medium text-stone-800 hover:text-primary-600 transition-colors duration-200"
+                            className="font-medium text-ink hover:text-primary-600 transition-colors duration-200"
                           >
                             {p.fullName}
                           </Link>
@@ -77,22 +77,22 @@ export default function PatientTable({
                       </div>
                     </div>
                   </td>
-                  <td className="px-4 py-3 text-stone-500">
+                  <td className="px-4 py-3 text-ink-soft">
                     {p.birthDate ? computeAge(p.birthDate) : '—'}
                   </td>
-                  <td className="px-4 py-3 text-stone-500">
+                  <td className="px-4 py-3 text-ink-soft">
                     {lastConsultations[p.id] ? (
                       <Badge variant={isRecent(lastConsultations[p.id]) ? 'default' : 'secondary'}>
                         {new Date(lastConsultations[p.id]).toLocaleDateString('fr-FR')}
                       </Badge>
                     ) : '—'}
                   </td>
-                  <td className="px-4 py-3 text-stone-500">
+                  <td className="px-4 py-3 text-ink-soft">
                     {p.birthDate
                       ? new Date(p.birthDate).toLocaleDateString('fr-FR')
                       : '—'}
                   </td>
-                  <td className="px-4 py-3 text-stone-500">{p.nationalId || '—'}</td>
+                  <td className="px-4 py-3 text-ink-soft">{p.nationalId || '—'}</td>
                 </tr>
               ))
             )}
@@ -114,7 +114,7 @@ export default function PatientTable({
               key={p}
               onClick={() => setPage(p)}
               className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
-                p === page ? 'bg-primary-700 text-white' : 'border border-warm bg-white text-stone-600 hover:bg-stone-50'
+                p === page ? 'bg-primary-700 text-white' : 'border border-warm bg-white text-ink-soft hover:bg-stone-50'
               }`}
             >
               {p}

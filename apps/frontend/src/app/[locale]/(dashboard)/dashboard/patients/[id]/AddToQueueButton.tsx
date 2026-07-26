@@ -24,7 +24,7 @@ export default function AddToQueueButton({ patientId }: Props) {
   }, [patientId])
 
   if (active === null) return null
-  if (active) return <p className="text-sm text-stone-500">Patient déjà en file d'attente active.</p>
+  if (active) return <p className="text-sm text-ink-soft">Patient déjà en file d'attente active.</p>
 
   const handleAdd = async () => {
     setSaving(true)
@@ -81,7 +81,7 @@ export default function AddToQueueButton({ patientId }: Props) {
       <button
         onClick={handleAdd}
         disabled={saving}
-        className="rounded-lg bg-primary-700 px-4 py-2 text-sm font-medium text-white hover:bg-primary-800 disabled:opacity-50"
+        className="rounded-lg bg-cta-600 px-4 py-2 text-sm font-medium text-white hover:bg-cta-700 disabled:opacity-50"
       >
         {saving ? 'Ajout…' : 'Ajouter à la file d\'attente du jour'}
       </button>

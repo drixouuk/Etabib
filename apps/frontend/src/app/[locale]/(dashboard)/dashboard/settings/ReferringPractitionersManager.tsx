@@ -43,13 +43,13 @@ export default function ReferringPractitionersManager() {
 
   const inputClass = 'w-full rounded-lg border border-warm bg-white px-3 py-2 text-sm focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none'
 
-  if (loading) return <p className="text-sm text-stone-400">Chargement…</p>
+  if (loading) return <p className="text-sm text-ink-softer">Chargement…</p>
 
   return (
     <div className="rounded-xl border border-warm bg-white shadow-warm-sm">
       <div className="flex items-center justify-between border-b border-stone-100 px-4 py-3">
-        <h2 className="font-heading text-lg font-semibold text-stone-800">Médecins référents</h2>
-        <button onClick={openNew} className="rounded-lg bg-primary-700 px-3 py-1.5 text-xs font-medium text-white hover:bg-primary-800"><Plus className="size-3.5 inline mr-1" />Ajouter</button>
+        <h2 className="font-heading text-lg font-semibold text-ink">Médecins référents</h2>
+        <button onClick={openNew} className="rounded-lg bg-cta-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-cta-700"><Plus className="size-3.5 inline mr-1" />Ajouter</button>
       </div>
       {showNew && (
         <div className="border-b border-stone-100 p-4 space-y-3 bg-stone-50">
@@ -62,26 +62,26 @@ export default function ReferringPractitionersManager() {
           <input value={notes} onChange={e => setNotes(e.target.value)} placeholder="Notes" className={inputClass} />
           {error && <p className="text-xs text-red-600">{error}</p>}
           <div className="flex items-center gap-2">
-            <button onClick={handleSave} disabled={saving} className="rounded-lg bg-primary-700 px-4 py-1.5 text-xs font-medium text-white hover:bg-primary-800 disabled:opacity-50">
+            <button onClick={handleSave} disabled={saving} className="rounded-lg bg-cta-600 px-4 py-1.5 text-xs font-medium text-white hover:bg-cta-700 disabled:opacity-50">
               {saving ? '…' : editing ? 'Modifier' : 'Ajouter'}
             </button>
-            <button onClick={cancel} className="text-xs text-stone-500 hover:text-stone-700">Annuler</button>
+            <button onClick={cancel} className="text-xs text-ink-soft hover:text-ink">Annuler</button>
           </div>
         </div>
       )}
       {practitioners.length === 0 ? (
-        <p className="px-4 py-6 text-center text-sm text-stone-400">Aucun médecin référent enregistré.</p>
+        <p className="px-4 py-6 text-center text-sm text-ink-softer">Aucun médecin référent enregistré.</p>
       ) : (
         <div className="divide-y divide-stone-100">
           {practitioners.map(p => (
             <div key={p.id} className="flex items-center justify-between px-4 py-3">
               <div className="min-w-0 flex-1">
-                <p className="text-sm font-medium text-stone-800">{p.name}</p>
-                <p className="text-xs text-stone-500">{[p.specialty, p.city, p.phone].filter(Boolean).join(' · ') || '—'}</p>
+                <p className="text-sm font-medium text-ink">{p.name}</p>
+                <p className="text-xs text-ink-soft">{[p.specialty, p.city, p.phone].filter(Boolean).join(' · ') || '—'}</p>
               </div>
               <div className="flex items-center gap-1 ml-2">
-                <button onClick={() => openEdit(p)} className="rounded p-1 text-stone-400 hover:text-primary-600"><Pencil className="size-3.5" /></button>
-                <button onClick={() => handleDelete(p.id)} className="rounded p-1 text-stone-400 hover:text-red-600"><Trash2 className="size-3.5" /></button>
+                <button onClick={() => openEdit(p)} className="rounded p-1 text-ink-softer hover:text-primary-600"><Pencil className="size-3.5" /></button>
+                <button onClick={() => handleDelete(p.id)} className="rounded p-1 text-ink-softer hover:text-red-600"><Trash2 className="size-3.5" /></button>
               </div>
             </div>
           ))}

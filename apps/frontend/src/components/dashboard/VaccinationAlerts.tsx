@@ -30,8 +30,8 @@ export default async function VaccinationAlerts() {
   if (patients.length === 0) {
     return (
       <div className="rounded-xl border border-warm bg-white p-4 shadow-warm-sm">
-        <h3 className="font-heading text-base font-semibold text-stone-800">Rappels vaccinaux</h3>
-        <p className="mt-2 text-sm text-stone-400">Aucun patient enregistré</p>
+        <h3 className="font-heading text-base font-semibold text-ink">Rappels vaccinaux</h3>
+        <p className="mt-2 text-sm text-ink-softer">Aucun patient enregistré</p>
       </div>
     )
   }
@@ -57,7 +57,7 @@ export default async function VaccinationAlerts() {
     <div className="rounded-xl border border-warm bg-white shadow-warm-sm">
       <div className="flex items-center gap-2 border-b border-stone-100 px-4 py-3">
         <AlertTriangle className="size-5 text-warning" />
-        <h3 className="font-heading text-base font-semibold text-stone-800">Rappels vaccinaux</h3>
+        <h3 className="font-heading text-base font-semibold text-ink">Rappels vaccinaux</h3>
       </div>
       <div className="divide-y divide-stone-100">
         {alerts.map((a) => (
@@ -65,7 +65,7 @@ export default async function VaccinationAlerts() {
             <div className="min-w-0 flex-1">
               <Link
                 href={`/dashboard/patients/${a!.patientId}`}
-                className="text-sm font-medium text-stone-800 hover:text-primary-600 transition-colors duration-200"
+                className="text-sm font-medium text-ink hover:text-primary-600 transition-colors duration-200"
               >
                 {a!.patientName}
               </Link>
@@ -76,7 +76,7 @@ export default async function VaccinationAlerts() {
                   </span>
                 ))}
                 {a!.vaccines.length > 3 && (
-                  <span className="text-xs text-stone-400">+{a!.vaccines.length - 3}</span>
+                  <span className="text-xs text-ink-softer">+{a!.vaccines.length - 3}</span>
                 )}
               </div>
             </div>

@@ -45,27 +45,27 @@ export default function ConsultationHistory({ consultations, doctorInfo, patient
         <div className="border-b border-stone-100 px-4 py-3">
           <div className="flex flex-wrap items-end gap-2">
             <div className="min-w-[180px] flex-1">
-              <label className="mb-0.5 block text-xs text-stone-500">Rechercher</label>
+              <label className="mb-0.5 block text-xs text-ink-soft">Rechercher</label>
               <input type="text" value={filterQuery} onChange={e => setFilterQuery(e.target.value)}
                 placeholder="Motif, diagnostic..."
-                className="w-full rounded-lg border border-warm bg-white px-3 py-1.5 text-sm text-stone-700 placeholder:text-stone-400 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
+                className="w-full rounded-lg border border-warm bg-white px-3 py-1.5 text-sm text-ink placeholder:text-ink-softer focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
               />
             </div>
             <div>
-              <label className="mb-0.5 block text-xs text-stone-500">Du</label>
+              <label className="mb-0.5 block text-xs text-ink-soft">Du</label>
               <input type="date" value={filterDateFrom} onChange={e => setFilterDateFrom(e.target.value)}
-                className="rounded-lg border border-warm bg-white px-2 py-1.5 text-sm text-stone-700 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
+                className="rounded-lg border border-warm bg-white px-2 py-1.5 text-sm text-ink focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
               />
             </div>
             <div>
-              <label className="mb-0.5 block text-xs text-stone-500">Au</label>
+              <label className="mb-0.5 block text-xs text-ink-soft">Au</label>
               <input type="date" value={filterDateTo} onChange={e => setFilterDateTo(e.target.value)}
-                className="rounded-lg border border-warm bg-white px-2 py-1.5 text-sm text-stone-700 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
+                className="rounded-lg border border-warm bg-white px-2 py-1.5 text-sm text-ink focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
               />
             </div>
             {(filterQuery || filterDateFrom || filterDateTo) && (
               <button onClick={() => { setFilterQuery(''); setFilterDateFrom(''); setFilterDateTo('') }}
-                className="rounded-lg border border-warm bg-white px-3 py-1.5 text-sm text-stone-500 hover:text-stone-700 transition-colors duration-200">
+                className="rounded-lg border border-warm bg-white px-3 py-1.5 text-sm text-ink-soft hover:text-ink transition-colors duration-200">
                 Effacer
               </button>
             )}
@@ -74,7 +74,7 @@ export default function ConsultationHistory({ consultations, doctorInfo, patient
       )}
 
       {filtered.length === 0 ? (
-        <p className="px-4 py-6 text-center text-sm text-stone-400">
+        <p className="px-4 py-6 text-center text-sm text-ink-softer">
           {consultations.length > 0 ? 'Aucune consultation ne correspond à la recherche.' : 'Aucune consultation.'}
         </p>
       ) : (
@@ -82,7 +82,7 @@ export default function ConsultationHistory({ consultations, doctorInfo, patient
           {filtered.map(c => (
             <div key={c.id} className="px-4 py-3">
               <div className="flex items-baseline justify-between">
-                <span className="text-sm font-medium text-stone-800">
+                <span className="text-sm font-medium text-ink">
                   {new Date(c.date).toLocaleDateString('fr-FR')}
                 </span>
                 <span className="flex items-center gap-2">
@@ -102,19 +102,19 @@ export default function ConsultationHistory({ consultations, doctorInfo, patient
                       PDF
                     </button>
                   )}
-                  <span className="text-xs text-stone-400">
+                  <span className="text-xs text-ink-softer">
                     {c.practitioner?.name || c.practitioner?.email || '—'}
                   </span>
                 </span>
               </div>
               {c.motif && <p className="mt-1 text-sm text-stone-600">{c.motif}</p>}
               {(c.poids || c.taille || c.perimetreCranien) && (
-                <p className="mt-0.5 text-xs text-stone-500">
+                <p className="mt-0.5 text-xs text-ink-soft">
                   {c.poids && `${c.poids} kg`}{c.poids && c.taille ? ' · ' : ''}{c.taille && `${c.taille} cm`}
                   {((c.poids || c.taille) && c.perimetreCranien) ? ' · ' : ''}{c.perimetreCranien && `PC ${c.perimetreCranien} cm`}
                 </p>
               )}
-              {c.diagnostic && <p className="mt-0.5 text-xs font-medium text-stone-700">{c.diagnostic}</p>}
+              {c.diagnostic && <p className="mt-0.5 text-xs font-medium text-ink">{c.diagnostic}</p>}
             </div>
           ))}
         </div>

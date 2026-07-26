@@ -49,7 +49,7 @@ export default function BookingListView({ bookings }: Props) {
     switch (status) {
       case 'accepted': return <span className="rounded-full bg-success/10 px-2 py-0.5 text-xs font-medium text-success">Confirmé</span>
       case 'pending': return <span className="rounded-full bg-warning/10 px-2 py-0.5 text-xs font-medium text-warning">En attente</span>
-      case 'cancelled': return <span className="rounded-full bg-stone-100 px-2 py-0.5 text-xs font-medium text-stone-500 line-through decoration-stone-400">Annulé</span>
+      case 'cancelled': return <span className="rounded-full bg-stone-100 px-2 py-0.5 text-xs font-medium text-ink-soft line-through decoration-stone-400">Annulé</span>
       case 'rejected': return <span className="rounded-full bg-error/10 px-2 py-0.5 text-xs font-medium text-error">Refusé</span>
       default: return null
     }
@@ -71,7 +71,7 @@ export default function BookingListView({ bookings }: Props) {
         <button
           onClick={() => { setViewMode('upcoming'); setPage(1) }}
           className={`rounded-md px-4 py-1.5 text-sm font-medium transition-all duration-200 ${
-            viewMode === 'upcoming' ? 'bg-white text-stone-800 shadow-warm-sm' : 'text-stone-500 hover:text-stone-700'
+            viewMode === 'upcoming' ? 'bg-white text-ink shadow-warm-sm' : 'text-ink-soft hover:text-ink'
           }`}
         >
           À venir ({upcoming.length})
@@ -79,7 +79,7 @@ export default function BookingListView({ bookings }: Props) {
         <button
           onClick={() => { setViewMode('past'); setPage(1) }}
           className={`rounded-md px-4 py-1.5 text-sm font-medium transition-all duration-200 ${
-            viewMode === 'past' ? 'bg-white text-stone-800 shadow-warm-sm' : 'text-stone-500 hover:text-stone-700'
+            viewMode === 'past' ? 'bg-white text-ink shadow-warm-sm' : 'text-ink-soft hover:text-ink'
           }`}
         >
           Passés ({past.length})
@@ -89,7 +89,7 @@ export default function BookingListView({ bookings }: Props) {
       {visibleItems.length === 0 && (
         <div className="flex flex-col items-center justify-center rounded-xl border border-warm bg-white py-12 text-center shadow-warm-sm">
           <Calendar className="size-12 text-stone-300" />
-          <p className="mt-4 text-sm font-medium text-stone-500">
+          <p className="mt-4 text-sm font-medium text-ink-soft">
             {viewMode === 'upcoming' ? "Aucun rendez-vous à venir aujourd'hui" : "Aucun rendez-vous passé aujourd'hui"}
           </p>
         </div>
@@ -104,15 +104,15 @@ export default function BookingListView({ bookings }: Props) {
                   <Clock className="size-3.5" />
                   {formatTime(booking.startTime)} — {formatTime(booking.endTime)}
                 </span>
-                <span className="text-xs text-stone-400">({formatDuration(booking.duration)})</span>
+                <span className="text-xs text-ink-softer">({formatDuration(booking.duration)})</span>
               </div>
               {statusBadge(booking.status)}
             </div>
 
             <div className="mt-3 space-y-1">
-              <p className="font-heading text-base font-semibold text-stone-800">{booking.attendeeName || 'Patient'}</p>
-              {booking.title && <p className="text-sm text-stone-500">{booking.title}</p>}
-              <div className="flex flex-wrap gap-3 text-xs text-stone-500">
+              <p className="font-heading text-base font-semibold text-ink">{booking.attendeeName || 'Patient'}</p>
+              {booking.title && <p className="text-sm text-ink-soft">{booking.title}</p>}
+              <div className="flex flex-wrap gap-3 text-xs text-ink-soft">
                 {booking.attendeeEmail && (
                   <span className="inline-flex items-center gap-1"><Mail className="size-3" />{booking.attendeeEmail}</span>
                 )}
@@ -133,7 +133,7 @@ export default function BookingListView({ bookings }: Props) {
             )}
 
             {booking.cancellationReason && (
-              <p className="mt-2 text-xs italic text-stone-400">Motif : {booking.cancellationReason}</p>
+              <p className="mt-2 text-xs italic text-ink-softer">Motif : {booking.cancellationReason}</p>
             )}
           </div>
         ))}

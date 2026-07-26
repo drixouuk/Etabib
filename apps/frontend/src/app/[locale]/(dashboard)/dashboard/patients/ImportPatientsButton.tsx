@@ -152,7 +152,7 @@ export default function ImportPatientsButton() {
       {!parsed && !done && (
         <button
           onClick={() => fileRef.current?.click()}
-          className="flex items-center gap-2 rounded-lg border border-stone-300 bg-white px-4 py-2.5 text-sm font-medium text-stone-700 transition-colors duration-200 hover:bg-stone-50"
+          className="flex items-center gap-2 rounded-lg border border-stone-300 bg-white px-4 py-2.5 text-sm font-medium text-ink transition-colors duration-200 hover:bg-stone-50"
         >
           <Upload className="size-4" />
           Importer un CSV
@@ -161,7 +161,7 @@ export default function ImportPatientsButton() {
 
       {parsed && !importing && (
         <div className="rounded-xl border border-warm bg-white p-4 shadow-warm-sm">
-          <p className="mb-2 text-sm text-stone-700">
+          <p className="mb-2 text-sm text-ink">
             <strong>{parsed.valid.length}</strong> patients valides détectés
             {parsed.errors.length > 0 && (
               <>, <strong>{parsed.errors.length}</strong> ligne(s) avec erreur(s)</>
@@ -178,13 +178,13 @@ export default function ImportPatientsButton() {
           <div className="flex items-center gap-2">
             <button
               onClick={handleImport}
-              className="rounded-lg bg-primary-700 px-4 py-2 text-sm font-medium text-white hover:bg-primary-800"
+              className="rounded-lg bg-cta-600 px-4 py-2 text-sm font-medium text-white hover:bg-cta-700"
             >
               Importer {parsed.valid.length} patient{parsed.valid.length > 1 ? 's' : ''}
             </button>
             <button
               onClick={() => { setParsed(null); setResult(null) }}
-              className="text-sm text-stone-500 hover:text-stone-700"
+              className="text-sm text-ink-soft hover:text-ink"
             >
               Annuler
             </button>
@@ -200,7 +200,7 @@ export default function ImportPatientsButton() {
 
       {done && result && (
         <div className="rounded-xl border border-warm bg-white p-4 shadow-warm-sm">
-          <p className="text-sm text-stone-700">
+          <p className="text-sm text-ink">
             <strong className="text-green-600">{result.imported}</strong> patient{result.imported > 1 ? 's' : ''} importé{result.imported > 1 ? 's' : ''}
             {result.errors.length > 0 && (
               <>, <strong className="text-red-600">{result.errors.length}</strong> ligne{result.errors.length > 1 ? 's' : ''} en erreur</>

@@ -151,13 +151,13 @@ export default function WaitingRoomList({ tenantId, isClinique, currentDoctorId 
   return (
     <div className="rounded-xl border border-warm bg-white shadow-warm-sm">
       <div className="flex flex-wrap items-center justify-between gap-2 border-b border-stone-100 px-4 py-3">
-        <h2 className="font-heading text-lg font-semibold text-stone-800">File d&apos;attente en direct</h2>
+        <h2 className="font-heading text-lg font-semibold text-ink">File d&apos;attente en direct</h2>
         <div className="flex items-center gap-2">
           {isClinique && doctors.length > 0 && (
             <select
               value={selectedDoctorId || ''}
               onChange={(e) => setSelectedDoctorId(e.target.value || undefined)}
-              className="rounded-lg border border-warm bg-white px-3 py-1.5 text-sm text-stone-700 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
+              className="rounded-lg border border-warm bg-white px-3 py-1.5 text-sm text-ink focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
             >
               <option value="">Tous les médecins</option>
               {doctors.map((d) => (
@@ -180,9 +180,9 @@ export default function WaitingRoomList({ tenantId, isClinique, currentDoctorId 
         </div>
       )}
       {loading && items.length === 0 ? (
-        <div className="px-4 py-8 text-center text-sm text-stone-400">Chargement…</div>
+        <div className="px-4 py-8 text-center text-sm text-ink-softer">Chargement…</div>
       ) : activeItems.length === 0 ? (
-        <div className="px-4 py-8 text-center text-sm text-stone-400">Aucun patient en attente.</div>
+        <div className="px-4 py-8 text-center text-sm text-ink-softer">Aucun patient en attente.</div>
       ) : (
         <div className="divide-y divide-stone-100">
           {activeItems.map((item) => {
@@ -204,21 +204,21 @@ export default function WaitingRoomList({ tenantId, isClinique, currentDoctorId 
                   {patient?.id ? (
                     <Link
                       href={`/dashboard/patients/${patient.id}`}
-                      className="truncate text-sm font-semibold text-stone-800 hover:text-primary-600 transition-colors duration-200"
+                      className="truncate text-sm font-semibold text-ink hover:text-primary-600 transition-colors duration-200"
                     >
                       {patient.fullName || '—'}
                     </Link>
                   ) : (
-                    <p className="truncate text-sm font-semibold text-stone-800">{patient?.fullName || '—'}</p>
+                    <p className="truncate text-sm font-semibold text-ink">{patient?.fullName || '—'}</p>
                   )}
-                  <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-stone-500">
-                    {isClinique && item.doctor?.name && <span className="text-stone-400">Dr. {item.doctor.name}</span>}
+                  <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-ink-soft">
+                    {isClinique && item.doctor?.name && <span className="text-ink-softer">Dr. {item.doctor.name}</span>}
                     {patient?.birthDate && <span>{computeAge(patient.birthDate)}</span>}
                     <span className={`inline-block rounded px-1.5 py-0.5 font-medium ${
                       item.visitReason === 'controle' ? 'bg-info/10 text-info' :
                       item.visitReason === 'vaccin' ? 'bg-secondary/10 text-secondary-700' :
                       item.visitReason === 'urgence' ? 'bg-error/10 text-error' :
-                      'bg-stone-100 text-stone-700'
+                      'bg-stone-100 text-ink'
                     }`}>
                       {visitReasonLabel(item.visitReason)}
                     </span>
@@ -238,7 +238,7 @@ export default function WaitingRoomList({ tenantId, isClinique, currentDoctorId 
                 {next && (
                   <button
                     onClick={() => updateStatus(item.id, item.status)}
-                    className="flex shrink-0 items-center gap-1 rounded-lg bg-primary-700 px-3 py-1.5 text-xs font-medium text-white hover:bg-primary-800"
+                    className="flex shrink-0 items-center gap-1 rounded-lg bg-cta-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-cta-700"
                   >
                     {actionIcons[item.status]}
                     {actionLabels[item.status]}

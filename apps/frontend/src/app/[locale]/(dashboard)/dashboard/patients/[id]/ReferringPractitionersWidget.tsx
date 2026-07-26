@@ -33,7 +33,7 @@ export default function ReferringPractitionersWidget({ patientId, initialIds }: 
     router.refresh()
   }
 
-  if (loading) return <p className="text-xs text-stone-400">Chargement…</p>
+  if (loading) return <p className="text-xs text-ink-softer">Chargement…</p>
 
   const selected = practitioners.filter(p => selectedIds.includes(p.id))
   const available = practitioners.filter(p => !selectedIds.includes(p.id))
@@ -59,7 +59,7 @@ export default function ReferringPractitionersWidget({ patientId, initialIds }: 
           ))}
         </select>
       )}
-      {practitioners.length === 0 && <p className="text-xs text-stone-400">Aucun médecin référent enregistré.</p>}
+      {practitioners.length === 0 && <p className="text-xs text-ink-softer">Aucun médecin référent enregistré.</p>}
     </div>
   )
 }

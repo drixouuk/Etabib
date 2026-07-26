@@ -39,28 +39,28 @@ export default function ProfileEditor({ userId, initialName, initialEmail, initi
     setSuccess(true); setSaving(false); router.refresh()
   }
 
-  const inputClass = 'w-full rounded-lg border border-stone-300 bg-white px-4 py-2.5 text-sm text-stone-800 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none'
+  const inputClass = 'w-full rounded-lg border border-stone-300 bg-white px-4 py-2.5 text-sm text-ink focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none'
 
   return (
     <div className="rounded-xl border border-warm bg-white shadow-warm-sm">
-      <div className="border-b border-stone-100 px-4 py-3"><h2 className="font-heading text-lg font-semibold text-stone-800">Mon profil</h2></div>
+      <div className="border-b border-stone-100 px-4 py-3"><h2 className="font-heading text-lg font-semibold text-ink">Mon profil</h2></div>
       <form onSubmit={handleSubmit} className="flex flex-col gap-4 p-4">
         <div>
-          <label className="mb-1 block text-sm font-medium text-stone-700">Nom</label>
+          <label className="mb-1 block text-sm font-medium text-ink">Nom</label>
           <input value={name} onChange={e => setName(e.target.value)} className={inputClass} />
         </div>
         <div>
-          <label className="mb-1 block text-sm font-medium text-stone-700">Email</label>
+          <label className="mb-1 block text-sm font-medium text-ink">Email</label>
           <input type="email" value={email} onChange={e => setEmail(e.target.value)} required className={inputClass} />
         </div>
         <div>
-          <label className="mb-1 block text-sm font-medium text-stone-700">Téléphone professionnel</label>
+          <label className="mb-1 block text-sm font-medium text-ink">Téléphone professionnel</label>
           <input type="tel" value={phone} onChange={e => setPhone(e.target.value)} className={inputClass} placeholder="+212 ..." />
         </div>
         {error && <p className="text-sm text-red-600">{error}</p>}
         {success && <p className="text-sm text-green-600">Profil mis à jour avec succès.</p>}
         <button type="submit" disabled={saving}
-          className="self-start rounded-lg bg-primary-700 px-4 py-2 text-sm font-medium text-white hover:bg-primary-800 disabled:opacity-50">
+          className="self-start rounded-lg bg-cta-600 px-4 py-2 text-sm font-medium text-white hover:bg-cta-700 disabled:opacity-50">
           {saving ? 'Enregistrement…' : 'Enregistrer les modifications'}
         </button>
       </form>

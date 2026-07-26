@@ -5,6 +5,7 @@
 La maquette HTML (`dr-tabibi-refonte-2026.html`) est la **référence visuelle exacte**. L'implémentation actuelle est déjà structurellement proche (bravo — sidebar, stat cards, tabs, drawer consultation/ordonnance sont bien en place), mais plusieurs détails de style et de données s'écartent de la maquette. Ce prompt liste **uniquement les écarts confirmés**, fichier par fichier. Ne touche à rien d'autre.
 
 **Décisions déjà tranchées (ne pas revenir dessus) :**
+
 - L'app reste en plein écran (edge-to-edge). Ne PAS reproduire la carte flottante centrée 1400px de la maquette.
 - Le dark mode / toggle "Mode sombre" est hors scope pour ce lot. Ne pas l'ajouter.
 
@@ -45,11 +46,13 @@ Vérifier après coup que `bg-transparent` a bien priorité sur `bg-muted` dans 
 **Bonne nouvelle :** `ui/tabs.tsx` a déjà une **variante `line`** codée (`data-[variant=line]`) qui fait exactement ce que la maquette demande (fond transparent, soulignement via pseudo-élément `after:`) — elle n'est simplement pas utilisée sur la page patient.
 
 **Fix :**
+
 ```tsx
 <TabsList variant="line" className="mb-6 w-full justify-start gap-6 border-b border-stone-200">
   <TabsTrigger value="resume" className="data-active:text-primary-700 data-active:font-semibold after:bg-primary-500">Résumé</TabsTrigger>
   {/* même className sur chaque TabsTrigger */}
 ```
+
 Vérifier que `after:bg-primary-500` (teal) remplace bien le `after:bg-foreground` par défaut pour la couleur du soulignement actif, et que le texte actif passe en `text-primary-700` (teal-dark) au lieu de `text-foreground`. Garder tous les autres `TabsTrigger` (Dossier clinique, Croissance, Consultations & ordonnances, Documents) avec le même traitement.
 
 ## 0ter. Onglet "Dossier clinique" — structure à refaire, pas juste un style
@@ -68,6 +71,60 @@ L'implémentation actuelle (`PatientClinicalFields.tsx`) est structurellement di
 
 ---
 
+## 0quater. Fond de l'app — mauvaise couleur depuis l'abandon de la carte flottante
+
+**Confirmé :** `components/dashboard/DashboardShell.tsx` applique `bg-[#EFEDE3]` (= `--page-bg` de la maquette) comme fond de toute l'app. Dans la maquette, `--page-bg` n'est visible que dans les marges autour de la carte flottante centrée — le fond réel de l'app (sidebar + contenu) utilise `--cream: #FFFBF0`, plus blanc et plus chaud. Comme la carte flottante n'est pas reproduite (décision prise), il faut que le fond principal utilise directement `#FFFBF0` au lieu de `#EFEDE3`, sinon on garde la teinte "coulisse" plus grisâtre qui donne l'impression de fond gris signalée par Driss.
+
+**Fix :** dans `DashboardShell.tsx`, remplacer `bg-[#EFEDE3]` par `bg-cream-100` (le token `--color-cream-100: #FFFBF0` existe déjà dans `globals.css`). Vérifier qu'aucune autre page/composant du dashboard ne référence `#EFEDE3` ou `bg-page-bg` en dur — chercher `EFEDE3` dans tout `apps/frontend/src` et remplacer par `cream-100` partout où c'est utilisé comme fond principal d'app (pas dans les définitions de token elles-mêmes dans `globals.css`, qui peuvent garder les deux couleurs définies pour un usage futur).
+
+## 0quinquies. Couleurs de texte incohérentes — gris Tailwind vs tokens "ink"
+
+**Confirmé :** `globals.css` définit déjà `--color-ink` (#2A241C), `--color-ink-soft` (#8A8175), `--color-ink-softer` (#B9B2A4) — ces tokens génèrent normalement les utilitaires `text-ink`, `text-ink-soft`, `text-ink-softer`. Mais la majorité des composants dashboard utilisent encore les gris Tailwind par défaut (`text-stone-800`, `text-stone-500`, `text-stone-400`, `text-stone-700`), plus froids/neutres que la palette chaude de la maquette. Résultat : mélange visuel incohérent, moins "premium" que la maquette.
+
+**Fix — recherche/remplacement dans `apps/frontend/src/components/dashboard/**`et`apps/frontend/src/app/[locale]/(dashboard)/**` :**
+
+- `text-stone-800` (titres/texte principal) → `text-ink`
+- `text-stone-700` (texte secondaire foncé) → `text-ink`
+- `text-stone-500` (texte secondaire) → `text-ink-soft`
+- `text-stone-400` (texte tertiaire/placeholder) → `text-ink-soft` ou `text-ink-softer` selon le contexte (labels de section en majuscules → `ink-soft`, texte vraiment discret/désactivé → `ink-softer`)
+- `border-stone-200`/`border-stone-300` → `border-warm` (déjà couvert section 1-2)
+
+Ne pas toucher aux couleurs sémantiques (rouge erreur, vert succès, ambre badge horaire) ni aux couleurs de marque (primary/cta) — uniquement les gris neutres de texte/bordure.
+
+## 0sexies. Accent orange manquant sur les boutons d'action principaux
+
+**Confirmé :** dans la maquette, le teal est réservé à la navigation (sidebar active, tabs, badges) et **l'orange (`--orange`, token `cta` dans le code) est la couleur des actions principales** (`.btn-primary{background:var(--orange)}`). Dans l'app actuelle, ~17 fichiers / 29 boutons utilisent `bg-primary-700` (teal) pour des CTA qui devraient être orange.
+
+**Règle à appliquer :** un bouton est "action principale de la vue" (orange, `bg-cta-600 hover:bg-cta-700 text-white`) s'il déclenche la création/action centrale de la page — ex. "+ Nouveau patient", "Ajouter à la file d'attente", "+ Nouvelle consultation", "+ Nouvelle ordonnance", "Enregistrer la consultation"/"Enregistrer l'ordonnance" dans les drawers, "Enregistrer les modifications" (dossier clinique, profil). Un bouton reste teal (`bg-primary-700`, ou passe en `btn-ghost` — bordure teal, fond transparent) s'il s'agit d'une action secondaire/de navigation — ex. pagination, filtres, "Annuler", liens de navigation, toggle de vue.
+
+**Action :** repasser les 17 fichiers listés ci-dessous et, pour chaque bouton `bg-primary-700` identifié, décider selon la règle ci-dessus s'il doit passer en `bg-cta-600 hover:bg-cta-700` (orange) ou rester teal :
+
+```
+components/dashboard/WaitingRoomList.tsx
+components/dashboard/VaccinationRecord.tsx
+app/[locale]/(dashboard)/dashboard/patients/new/page.tsx
+app/[locale]/(dashboard)/dashboard/patients/[id]/edit/EditPatientForm.tsx
+app/[locale]/(dashboard)/dashboard/patients/[id]/page.tsx
+app/[locale]/(dashboard)/dashboard/patients/[id]/DocumentUpload.tsx
+app/[locale]/(dashboard)/dashboard/patients/[id]/PrescriptionForm.tsx
+app/[locale]/(dashboard)/dashboard/patients/[id]/AddToQueueButton.tsx
+app/[locale]/(dashboard)/dashboard/patients/[id]/PatientClinicalFields.tsx
+app/[locale]/(dashboard)/dashboard/patients/[id]/ConsultationForm.tsx
+app/[locale]/(dashboard)/dashboard/patients/page.tsx
+app/[locale]/(dashboard)/dashboard/patients/PatientTable.tsx
+app/[locale]/(dashboard)/dashboard/patients/ImportPatientsButton.tsx
+app/[locale]/(dashboard)/dashboard/audit-logs/AuditLogTable.tsx
+app/[locale]/(dashboard)/dashboard/settings/ChangePasswordForm.tsx
+app/[locale]/(dashboard)/dashboard/settings/ProfileEditor.tsx
+app/[locale]/(dashboard)/dashboard/settings/ReferringPractitionersManager.tsx
+```
+
+Exemples concrets déjà confirmés à corriger : bouton "Ajouter à la file d'attente" (`AddToQueueButton.tsx`), "+ Nouveau patient" (`patients/page.tsx`), "+ Nouvelle consultation"/"+ Nouvelle ordonnance" (déclencheurs des drawers dans `patients/[id]/page.tsx`), "Enregistrer" dans `ConsultationForm.tsx`/`PrescriptionForm.tsx`.
+
+Ne pas changer la couleur de la sidebar (nav active), des tabs (soulignement), ni des badges de stat cards — ceux-ci restent teal/ambre/orange selon leur rôle déjà défini en section 0bis et dans `LiveStatsWidget.tsx` (déjà correct).
+
+---
+
 ## 1. Tokens de design manquants — `apps/frontend/src/app/globals.css`
 
 La maquette utilise des ombres et bordures "chaudes" (teintées ink `#2A241C`), mais `globals.css` n'a **aucun token d'ombre custom** — tout le monde utilise les ombres Tailwind par défaut (grises, plates), ce qui explique le rendu plus "générique" qu'on voit sur les screenshots comparé à la maquette.
@@ -81,14 +138,21 @@ Ajouter dans le bloc `@theme` (ou en `:root` classique si plus simple avec le se
 Et définir des classes utilitaires réutilisables (dans `globals.css`, hors `@theme`, en CSS classique) :
 
 ```css
-.shadow-warm-sm { box-shadow: 0 2px 12px rgba(42,36,28,0.06); }
-.shadow-warm-md { box-shadow: 0 10px 28px rgba(42,36,28,0.10); }
-.shadow-warm-lg { box-shadow: 0 24px 60px rgba(42,36,28,0.16); }
+.shadow-warm-sm {
+  box-shadow: 0 2px 12px rgba(42, 36, 28, 0.06);
+}
+.shadow-warm-md {
+  box-shadow: 0 10px 28px rgba(42, 36, 28, 0.1);
+}
+.shadow-warm-lg {
+  box-shadow: 0 24px 60px rgba(42, 36, 28, 0.16);
+}
 ```
 
 Ces valeurs sont copiées **exactement** depuis les `:root` variables `--shadow-sm/md/lg` de la maquette (lignes 16-18 du HTML).
 
 Idem pour la bordure : la maquette a deux bordures distinctes —
+
 - `--border: rgba(42,36,28,0.08)` → bordure neutre par défaut des cards
 - `--border-teal: rgba(13,148,136,0.16)` → bordure des inputs, sidebar, search
 
@@ -122,12 +186,14 @@ Maquette : une seule card avec un `<h3>File d'attente</h3>`, puis directement le
 Composant actuel : ajoute un sous-en-tête "En attente" avec bordure séparée, un badge de statut (Salle d'attente/En consultation) en plus du badge horaire, et un lien "Voir toute la file d'attente →" en bas de card.
 
 **Action :**
+
 1. Supprimer le bloc sous-en-tête "En attente" (`<div className="flex items-center justify-between border-b ...">`) — le titre de la card doit être uniquement "File d'attente" comme dans la maquette, sans doublon.
 2. Retirer le badge de statut (`item.status === 'in_consultation' ? ... `) à droite de chaque ligne — ne garder que le badge horaire ambre, exactement comme la maquette (`time-badge`).
 3. Le lien "Voir toute la file d'attente →" n'existe pas dans la maquette. **Le garder quand même** (c'est un ajout utile en navigation, pas une régression) mais le simplifier visuellement pour qu'il ne casse pas la card : pas de bordure `border-t` séparée supplémentaire au-dessus si la maquette n'a qu'un seul bloc — un simple lien discret en bas de card suffit, sans étirer la hauteur avec un bandeau distinct.
 4. Reprendre les classes de bordure/ombre définies en section 1-2 de ce prompt (`border-warm`, `shadow-warm-sm`) sur cette card aussi.
 
 Après ce fix, structure finale attendue de la card :
+
 ```
 File d'attente          ← titre unique, pas de sous-en-tête
 [avatar] Nom             09:40   ← badge horaire seul, pas de badge statut
@@ -162,12 +228,12 @@ Implémentation actuelle : deux boutons texte explicites "Exporter en CSV" / "Im
 ## Portée du prompt
 
 Fichiers à modifier :
+
 - `apps/frontend/src/app/globals.css` (ajout tokens)
 - Recherche/remplacement `border-stone-200` → `border-warm` et `shadow-sm`/`hover:shadow-md` → `shadow-warm-sm`/`hover:shadow-warm-md` dans `apps/frontend/src/components/dashboard/**` et `apps/frontend/src/app/[locale]/(dashboard)/**`
 
 Fichiers à NE PAS modifier :
+
 - `PatientAvatar.tsx` (déjà correct)
 - Toolbar Patients (garder les 2 boutons)
 - Toute logique de layout plein écran / dark mode
-
-Après implémentation : fournir un nouveau jeu de screenshots des mêmes pages (dashboard, patients, file d'attente, activité, paramètres, détail patient — tabs résumé/dossier/croissance/consultations/documents) pour vérification par Claude.
