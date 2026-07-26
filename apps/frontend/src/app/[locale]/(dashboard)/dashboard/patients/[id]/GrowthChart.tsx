@@ -89,7 +89,7 @@ export default function GrowthChart({ consultations, patientBirthDate, patientGe
   const chartProps = { margin: { top: 4, right: 4, bottom: 0, left: 0 } }
 
   const renderWeightChart = () => (
-    <div className="rounded-xl border border-stone-200 bg-white p-3 shadow-sm">
+    <div className="rounded-xl border border-warm bg-white p-3 shadow-warm-sm">
       <p className="mb-1 text-xs font-medium text-stone-500">Poids (kg)</p>
       <ResponsiveContainer width="100%" height={220}>
         <LineChart data={poidsData} {...chartProps}>
@@ -118,7 +118,7 @@ export default function GrowthChart({ consultations, patientBirthDate, patientGe
   )
 
   const renderHeightChart = () => (
-    <div className="rounded-xl border border-stone-200 bg-white p-3 shadow-sm">
+    <div className="rounded-xl border border-warm bg-white p-3 shadow-warm-sm">
       <p className="mb-1 text-xs font-medium text-stone-500">Taille (cm)</p>
       <ResponsiveContainer width="100%" height={220}>
         <LineChart data={tailleData} {...chartProps}>
@@ -147,7 +147,7 @@ export default function GrowthChart({ consultations, patientBirthDate, patientGe
   )
 
   const renderPCChart = () => (
-    <div className="rounded-xl border border-stone-200 bg-white p-3 shadow-sm">
+    <div className="rounded-xl border border-warm bg-white p-3 shadow-warm-sm">
       <p className="mb-1 text-xs font-medium text-stone-500">Périmètre crânien (cm)</p>
       <ResponsiveContainer width="100%" height={220}>
         <LineChart data={pcData.length > 0 ? pcData : points} {...chartProps}>

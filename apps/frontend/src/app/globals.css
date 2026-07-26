@@ -71,6 +71,7 @@
   --color-ink-soft: #8A8175;
   --color-ink-softer: #B9B2A4;
   --color-border-teal: rgba(13,148,136,0.16);
+  --color-border-warm: rgba(42,36,28,0.08);
   --color-stat-teal: var(--color-teal-500);
   --color-stat-amber: var(--color-amber-500);
   --color-stat-orange: var(--color-orange-500);
@@ -167,6 +168,11 @@
   right: 1rem;
   z-index: 50;
 }
+
+.shadow-warm-sm { box-shadow: 0 2px 12px rgba(42,36,28,0.06); }
+.shadow-warm-md { box-shadow: 0 10px 28px rgba(42,36,28,0.10); }
+.shadow-warm-lg { box-shadow: 0 24px 60px rgba(42,36,28,0.16); }
+.hover\:shadow-warm-md:hover { box-shadow: 0 10px 28px rgba(42,36,28,0.10); }
 
 @layer base {
   * {

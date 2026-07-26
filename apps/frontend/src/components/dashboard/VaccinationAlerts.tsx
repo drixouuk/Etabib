@@ -29,7 +29,7 @@ export default async function VaccinationAlerts() {
 
   if (patients.length === 0) {
     return (
-      <div className="rounded-xl border border-stone-200 bg-white p-4 shadow-sm">
+      <div className="rounded-xl border border-warm bg-white p-4 shadow-warm-sm">
         <h3 className="font-heading text-base font-semibold text-stone-800">Rappels vaccinaux</h3>
         <p className="mt-2 text-sm text-stone-400">Aucun patient enregistré</p>
       </div>
@@ -54,7 +54,7 @@ export default async function VaccinationAlerts() {
   }
 
   return (
-    <div className="rounded-xl border border-stone-200 bg-white shadow-sm">
+    <div className="rounded-xl border border-warm bg-white shadow-warm-sm">
       <div className="flex items-center gap-2 border-b border-stone-100 px-4 py-3">
         <AlertTriangle className="size-5 text-warning" />
         <h3 className="font-heading text-base font-semibold text-stone-800">Rappels vaccinaux</h3>

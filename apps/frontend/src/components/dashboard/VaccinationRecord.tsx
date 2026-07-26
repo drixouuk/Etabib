@@ -84,9 +84,9 @@ export default function VaccinationRecord({ patientId, schedule, vaccinations, p
     <div className="mb-8">
       <h3 className="mb-3 font-heading text-lg font-semibold text-stone-800">Carnet vaccinal</h3>
       <p className="mb-3 text-xs text-stone-400">Âge du patient : {Math.floor(ageMonths / 12)} ans {ageMonths % 12} mois</p>
-      <div className="overflow-x-auto rounded-xl border border-stone-200 bg-white shadow-sm">
+      <div className="overflow-x-auto rounded-xl border border-warm bg-white shadow-warm-sm">
         <table className="min-w-[640px] w-full text-left text-sm">
-          <thead className="border-b border-stone-200 bg-stone-50 text-xs uppercase text-stone-500">
+          <thead className="border-b border-warm bg-stone-50 text-xs uppercase text-stone-500">
             <tr>
               <th className="px-4 py-2.5 font-medium">Vaccin</th>
               <th className="px-4 py-2.5 font-medium">Dose</th>
@@ -144,9 +144,9 @@ export default function VaccinationRecord({ patientId, schedule, vaccinations, p
                         <button onClick={() => { setActiveForm(key); setDateValue(new Date().toISOString().slice(0, 10)); setRouteValue(''); setLotValue('') }}
                           className="rounded bg-primary-700 px-2.5 py-1 text-xs font-medium text-white hover:bg-primary-800">Administré</button>
                         <button onClick={() => quickStatus(entry, 'contraindicated')}
-                          className="rounded border border-stone-200 bg-white px-2 py-1 text-xs font-medium text-stone-500 hover:text-stone-700">Contre-indiqué</button>
+                          className="rounded border border-warm bg-white px-2 py-1 text-xs font-medium text-stone-500 hover:text-stone-700">Contre-indiqué</button>
                         <button onClick={() => quickStatus(entry, 'refused')}
-                          className="rounded border border-stone-200 bg-white px-2 py-1 text-xs font-medium text-stone-500 hover:text-stone-700">Refusé</button>
+                          className="rounded border border-warm bg-white px-2 py-1 text-xs font-medium text-stone-500 hover:text-stone-700">Refusé</button>
                       </div>
                     )}
                     {showForm && (

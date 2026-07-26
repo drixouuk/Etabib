@@ -45,7 +45,7 @@ export default function SharePatientWidget({ patientId, sharedWithIds, isCliniqu
   const sharedDoctors = doctors.filter(d => shared.includes(d.id))
 
   return (
-    <div className="rounded-xl border border-stone-200 bg-white shadow-sm">
+    <div className="rounded-xl border border-warm bg-white shadow-warm-sm">
       <div className="border-b border-stone-100 px-4 py-3">
         <h2 className="font-heading text-lg font-semibold text-stone-800 flex items-center gap-2">
           <Share2 className="size-4 text-stone-400" /> Partage
@@ -64,7 +64,7 @@ export default function SharePatientWidget({ patientId, sharedWithIds, isCliniqu
         )}
         {doctors.filter(d => !shared.includes(d.id)).length > 0 && (
           <select value="" onChange={(e) => { if (e.target.value) share(e.target.value) }}
-            className="rounded-lg border border-stone-200 bg-white px-3 py-1.5 text-xs text-stone-600 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none">
+            className="rounded-lg border border-warm bg-white px-3 py-1.5 text-xs text-stone-600 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none">
             <option value="">+ Partager avec un confrère</option>
             {doctors.filter(d => !shared.includes(d.id)).map(d => (
               <option key={d.id} value={d.id}>{d.name} — {d.email}</option>

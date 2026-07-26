@@ -149,7 +149,7 @@ export default function WaitingRoomList({ tenantId, isClinique, currentDoctorId 
   const activeItems = items.filter((i) => i.status === 'waiting' || i.status === 'in_consultation')
 
   return (
-    <div className="rounded-xl border border-stone-200 bg-white shadow-sm">
+    <div className="rounded-xl border border-warm bg-white shadow-warm-sm">
       <div className="flex flex-wrap items-center justify-between gap-2 border-b border-stone-100 px-4 py-3">
         <h2 className="font-heading text-lg font-semibold text-stone-800">File d&apos;attente en direct</h2>
         <div className="flex items-center gap-2">
@@ -157,7 +157,7 @@ export default function WaitingRoomList({ tenantId, isClinique, currentDoctorId 
             <select
               value={selectedDoctorId || ''}
               onChange={(e) => setSelectedDoctorId(e.target.value || undefined)}
-              className="rounded-lg border border-stone-200 bg-white px-3 py-1.5 text-sm text-stone-700 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
+              className="rounded-lg border border-warm bg-white px-3 py-1.5 text-sm text-stone-700 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
             >
               <option value="">Tous les médecins</option>
               {doctors.map((d) => (

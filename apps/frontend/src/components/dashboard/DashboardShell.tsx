@@ -48,7 +48,7 @@ export default function DashboardShell({ user, tenant, children }: Props) {
       )}
 
       <div className="flex flex-1 flex-col min-w-0">
-        <div className="sticky top-0 z-30 flex items-center gap-3 border-b border-stone-200 bg-white px-4 py-3 md:hidden">
+        <div className="sticky top-0 z-30 flex items-center gap-3 border-b border-warm bg-white px-4 py-3 md:hidden">
           <button onClick={() => setSidebarOpen(true)} className="rounded-lg p-1.5 text-stone-600 hover:bg-stone-100" aria-label="Ouvrir le menu">
             <Menu className="size-5" />
           </button>

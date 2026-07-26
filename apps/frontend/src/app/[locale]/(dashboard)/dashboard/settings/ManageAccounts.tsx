@@ -33,7 +33,7 @@ function ResetPasswordButton({ userId, userName }: { userId: string; userName: s
     <div className="flex items-center gap-2">
       <input type="password" value={newPassword} onChange={e => setNewPassword(e.target.value)}
         placeholder="Nouveau MDP" minLength={8}
-        className="w-36 rounded-lg border border-stone-200 bg-white px-2 py-1 text-sm focus:border-primary-500 focus:outline-none" />
+        className="w-36 rounded-lg border border-warm bg-white px-2 py-1 text-sm focus:border-primary-500 focus:outline-none" />
       <button onClick={handleReset} disabled={saving}
         className="text-sm font-medium text-primary-600 hover:text-primary-700 disabled:opacity-50">OK</button>
       <button onClick={() => setShowForm(false)} className="text-sm text-stone-400 hover:text-stone-600">✕</button>
@@ -52,7 +52,7 @@ function ResetPasswordButton({ userId, userName }: { userId: string; userName: s
 
 export default function ManageAccounts({ users, currentUserId }: Props) {
   return (
-    <div className="rounded-xl border border-stone-200 bg-white shadow-sm">
+    <div className="rounded-xl border border-warm bg-white shadow-warm-sm">
       <div className="border-b border-stone-100 px-4 py-3"><h2 className="font-heading text-lg font-semibold text-stone-800">Comptes du cabinet</h2></div>
       {users.length === 0 ? (
         <p className="px-4 py-6 text-center text-sm text-stone-400">Aucun utilisateur trouvé.</p>

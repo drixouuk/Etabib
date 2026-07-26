@@ -71,7 +71,7 @@ export default function BookingListView({ bookings }: Props) {
         <button
           onClick={() => { setViewMode('upcoming'); setPage(1) }}
           className={`rounded-md px-4 py-1.5 text-sm font-medium transition-all duration-200 ${
-            viewMode === 'upcoming' ? 'bg-white text-stone-800 shadow-sm' : 'text-stone-500 hover:text-stone-700'
+            viewMode === 'upcoming' ? 'bg-white text-stone-800 shadow-warm-sm' : 'text-stone-500 hover:text-stone-700'
           }`}
         >
           À venir ({upcoming.length})
@@ -79,7 +79,7 @@ export default function BookingListView({ bookings }: Props) {
         <button
           onClick={() => { setViewMode('past'); setPage(1) }}
           className={`rounded-md px-4 py-1.5 text-sm font-medium transition-all duration-200 ${
-            viewMode === 'past' ? 'bg-white text-stone-800 shadow-sm' : 'text-stone-500 hover:text-stone-700'
+            viewMode === 'past' ? 'bg-white text-stone-800 shadow-warm-sm' : 'text-stone-500 hover:text-stone-700'
           }`}
         >
           Passés ({past.length})
@@ -87,7 +87,7 @@ export default function BookingListView({ bookings }: Props) {
       </div>
 
       {visibleItems.length === 0 && (
-        <div className="flex flex-col items-center justify-center rounded-xl border border-stone-200 bg-white py-12 text-center shadow-sm">
+        <div className="flex flex-col items-center justify-center rounded-xl border border-warm bg-white py-12 text-center shadow-warm-sm">
           <Calendar className="size-12 text-stone-300" />
           <p className="mt-4 text-sm font-medium text-stone-500">
             {viewMode === 'upcoming' ? "Aucun rendez-vous à venir aujourd'hui" : "Aucun rendez-vous passé aujourd'hui"}
@@ -97,7 +97,7 @@ export default function BookingListView({ bookings }: Props) {
 
       <div className="space-y-3">
         {visibleItems.map((booking) => (
-          <div key={booking.id} className={`rounded-xl border border-stone-200 bg-white p-4 shadow-sm ${booking.status === 'cancelled' ? 'opacity-60' : ''}`}>
+          <div key={booking.id} className={`rounded-xl border border-warm bg-white p-4 shadow-warm-sm ${booking.status === 'cancelled' ? 'opacity-60' : ''}`}>
             <div className="flex flex-wrap items-start justify-between gap-2">
               <div className="flex items-center gap-2">
                 <span className="inline-flex items-center gap-1 rounded-lg bg-primary-50 px-2 py-1 text-sm font-semibold text-primary-700">
@@ -141,7 +141,7 @@ export default function BookingListView({ bookings }: Props) {
 
       {hasMore && (
         <button onClick={() => setPage((p) => p + 1)}
-          className="mt-4 w-full rounded-lg border border-stone-200 bg-white py-2 text-sm font-medium text-primary-600 transition-colors duration-200 hover:bg-stone-50 hover:text-primary-700">
+          className="mt-4 w-full rounded-lg border border-warm bg-white py-2 text-sm font-medium text-primary-600 transition-colors duration-200 hover:bg-stone-50 hover:text-primary-700">
           Voir plus ({activeList.length - visibleItems.length} restants)
         </button>
       )}

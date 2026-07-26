@@ -40,9 +40,9 @@ export default function PatientTable({
 
   return (
     <div>
-      <div className="overflow-x-auto rounded-xl border border-stone-200 bg-white shadow-sm">
+      <div className="overflow-x-auto rounded-xl border border-warm bg-white shadow-warm-sm">
         <table className="min-w-[640px] w-full text-left text-sm">
-          <thead className="border-b border-stone-200 bg-stone-50">
+          <thead className="border-b border-warm bg-stone-50">
             <tr>
               <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-wider text-stone-400">Nom</th>
               <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-wider text-stone-400">Âge</th>
@@ -105,7 +105,7 @@ export default function PatientTable({
           <button
             onClick={() => setPage(p => Math.max(1, p - 1))}
             disabled={page === 1}
-            className="rounded-lg border border-stone-200 bg-white px-3 py-1.5 text-sm text-stone-600 hover:bg-stone-50 disabled:opacity-40"
+            className="rounded-lg border border-warm bg-white px-3 py-1.5 text-sm text-stone-600 hover:bg-stone-50 disabled:opacity-40"
           >
             ←
           </button>
@@ -114,7 +114,7 @@ export default function PatientTable({
               key={p}
               onClick={() => setPage(p)}
               className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
-                p === page ? 'bg-primary-700 text-white' : 'border border-stone-200 bg-white text-stone-600 hover:bg-stone-50'
+                p === page ? 'bg-primary-700 text-white' : 'border border-warm bg-white text-stone-600 hover:bg-stone-50'
               }`}
             >
               {p}
@@ -123,7 +123,7 @@ export default function PatientTable({
           <button
             onClick={() => setPage(p => Math.min(totalPages, p + 1))}
             disabled={page >= totalPages}
-            className="rounded-lg border border-stone-200 bg-white px-3 py-1.5 text-sm text-stone-600 hover:bg-stone-50 disabled:opacity-40"
+            className="rounded-lg border border-warm bg-white px-3 py-1.5 text-sm text-stone-600 hover:bg-stone-50 disabled:opacity-40"
           >
             →
           </button>

@@ -48,24 +48,24 @@ export default function ConsultationHistory({ consultations, doctorInfo, patient
               <label className="mb-0.5 block text-xs text-stone-500">Rechercher</label>
               <input type="text" value={filterQuery} onChange={e => setFilterQuery(e.target.value)}
                 placeholder="Motif, diagnostic..."
-                className="w-full rounded-lg border border-stone-200 bg-white px-3 py-1.5 text-sm text-stone-700 placeholder:text-stone-400 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
+                className="w-full rounded-lg border border-warm bg-white px-3 py-1.5 text-sm text-stone-700 placeholder:text-stone-400 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
               />
             </div>
             <div>
               <label className="mb-0.5 block text-xs text-stone-500">Du</label>
               <input type="date" value={filterDateFrom} onChange={e => setFilterDateFrom(e.target.value)}
-                className="rounded-lg border border-stone-200 bg-white px-2 py-1.5 text-sm text-stone-700 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
+                className="rounded-lg border border-warm bg-white px-2 py-1.5 text-sm text-stone-700 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
               />
             </div>
             <div>
               <label className="mb-0.5 block text-xs text-stone-500">Au</label>
               <input type="date" value={filterDateTo} onChange={e => setFilterDateTo(e.target.value)}
-                className="rounded-lg border border-stone-200 bg-white px-2 py-1.5 text-sm text-stone-700 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
+                className="rounded-lg border border-warm bg-white px-2 py-1.5 text-sm text-stone-700 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
               />
             </div>
             {(filterQuery || filterDateFrom || filterDateTo) && (
               <button onClick={() => { setFilterQuery(''); setFilterDateFrom(''); setFilterDateTo('') }}
-                className="rounded-lg border border-stone-200 bg-white px-3 py-1.5 text-sm text-stone-500 hover:text-stone-700 transition-colors duration-200">
+                className="rounded-lg border border-warm bg-white px-3 py-1.5 text-sm text-stone-500 hover:text-stone-700 transition-colors duration-200">
                 Effacer
               </button>
             )}

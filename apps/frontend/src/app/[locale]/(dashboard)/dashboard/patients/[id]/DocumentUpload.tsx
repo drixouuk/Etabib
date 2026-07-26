@@ -60,7 +60,7 @@ export default function DocumentUpload({ patientId, documents }: Props) {
   }
 
   return (
-    <div className="rounded-xl border border-stone-200 bg-white shadow-sm">
+    <div className="rounded-xl border border-warm bg-white shadow-warm-sm">
       <div className="flex items-center justify-between border-b border-stone-100 px-4 py-3">
         <h2 className="font-heading text-lg font-semibold text-stone-800">Documents</h2>
         {!showForm && (

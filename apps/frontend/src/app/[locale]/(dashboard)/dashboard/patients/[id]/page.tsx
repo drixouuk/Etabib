@@ -216,17 +216,17 @@ export default async function PatientDetailPage({ params }: Props) {
 
       {/* Onglets */}
       <Tabs defaultValue="resume" className="mt-2">
-        <TabsList className="mb-6">
-          <TabsTrigger value="resume">Résumé</TabsTrigger>
-          <TabsTrigger value="dossier">Dossier clinique</TabsTrigger>
-          <TabsTrigger value="croissance">Croissance</TabsTrigger>
-          <TabsTrigger value="consultations">Consultations & ordonnances</TabsTrigger>
-          <TabsTrigger value="documents">Documents</TabsTrigger>
+        <TabsList variant="line" className="mb-6 w-full justify-start gap-6 border-b border-warm">
+          <TabsTrigger value="resume" className="data-[state=active]:text-primary-700 data-[state=active]:font-semibold after:bg-primary-500">Résumé</TabsTrigger>
+          <TabsTrigger value="dossier" className="data-[state=active]:text-primary-700 data-[state=active]:font-semibold after:bg-primary-500">Dossier clinique</TabsTrigger>
+          <TabsTrigger value="croissance" className="data-[state=active]:text-primary-700 data-[state=active]:font-semibold after:bg-primary-500">Croissance</TabsTrigger>
+          <TabsTrigger value="consultations" className="data-[state=active]:text-primary-700 data-[state=active]:font-semibold after:bg-primary-500">Consultations & ordonnances</TabsTrigger>
+          <TabsTrigger value="documents" className="data-[state=active]:text-primary-700 data-[state=active]:font-semibold after:bg-primary-500">Documents</TabsTrigger>
         </TabsList>
 
         <TabsContent value="resume">
           <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-            <div className="rounded-xl border border-stone-200 bg-white p-4 shadow-sm">
+            <div className="rounded-xl border border-warm bg-white p-4 shadow-warm-sm">
               <p className="text-xs font-medium uppercase text-stone-400">Dernière consultation</p>
               {consultations.length > 0 ? (
                 <>
@@ -239,7 +239,7 @@ export default async function PatientDetailPage({ params }: Props) {
                 <p className="mt-1 text-sm text-stone-400">Aucune consultation</p>
               )}
             </div>
-            <div className="rounded-xl border border-stone-200 bg-white p-4 shadow-sm">
+            <div className="rounded-xl border border-warm bg-white p-4 shadow-warm-sm">
               <p className="text-xs font-medium uppercase text-stone-400">Croissance</p>
               {consultations.length > 0 && consultations[0].poids ? (
                 <>
@@ -254,7 +254,7 @@ export default async function PatientDetailPage({ params }: Props) {
                 <p className="mt-1 text-sm text-stone-400">Pas de mesure</p>
               )}
             </div>
-            <div className="rounded-xl border border-stone-200 bg-white p-4 shadow-sm">
+            <div className="rounded-xl border border-warm bg-white p-4 shadow-warm-sm">
               <p className="text-xs font-medium uppercase text-stone-400">Traitement en cours</p>
               {patient.traitementsEnCours?.trim() ? (
                 <p className="mt-1 text-sm text-stone-700 line-clamp-2">{patient.traitementsEnCours}</p>
@@ -308,7 +308,7 @@ export default async function PatientDetailPage({ params }: Props) {
         <TabsContent value="consultations">
           {canViewClinical && (
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-              <div className="rounded-xl border border-stone-200 bg-white shadow-sm">
+              <div className="rounded-xl border border-warm bg-white shadow-warm-sm">
                 <div className="flex items-center justify-between border-b border-stone-100 px-4 py-3">
                   <div className="flex items-center gap-2">
                     <h2 className="font-heading text-lg font-semibold text-stone-800">Consultations</h2>
@@ -328,7 +328,7 @@ export default async function PatientDetailPage({ params }: Props) {
                 <ConsultationHistory consultations={consultations} doctorInfo={doctorInfo} patientInfo={patientInfo} />
               </div>
 
-              <div className="rounded-xl border border-stone-200 bg-white shadow-sm">
+              <div className="rounded-xl border border-warm bg-white shadow-warm-sm">
                 <div className="flex items-center justify-between border-b border-stone-100 px-4 py-3">
                   <div className="flex items-center gap-2">
                     <h2 className="font-heading text-lg font-semibold text-stone-800">Ordonnances</h2>

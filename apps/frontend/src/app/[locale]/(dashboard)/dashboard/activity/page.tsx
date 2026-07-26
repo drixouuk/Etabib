@@ -179,7 +179,7 @@ export default async function ActivityPage({ searchParams }: Props) {
       <h1 className="font-heading text-2xl font-bold text-stone-800">Activité</h1>
 
       <p className="mt-7 mb-3 text-xs font-semibold uppercase tracking-[0.06em] text-stone-400 first:mt-0">Croissance du cabinet</p>
-      <div className="rounded-xl border border-stone-200 bg-white p-5 shadow-sm">
+      <div className="rounded-xl border border-warm bg-white p-5 shadow-warm-sm">
         <div className="flex items-baseline justify-between">
           <div>
             <p className="text-[11.5px] font-semibold uppercase tracking-[0.04em] text-stone-400">Total patients suivis</p>

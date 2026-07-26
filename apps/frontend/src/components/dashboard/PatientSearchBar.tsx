@@ -81,7 +81,7 @@ export default function PatientSearchBar() {
       </form>
 
       {open && suggestions.length > 0 && (
-        <div className="absolute left-0 top-full z-30 mt-1 w-full rounded-lg border border-stone-200 bg-white py-1 shadow-lg">
+        <div className="absolute left-0 top-full z-30 mt-1 w-full rounded-lg border border-warm bg-white py-1 shadow-lg">
           {suggestions.map((p) => (
             <Link
               key={p.id}

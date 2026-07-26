@@ -54,7 +54,7 @@ export default async function SystemAlertsPage() {
           {alerts.map((a) => (
             <details
               key={a.id}
-              className="overflow-hidden rounded-xl border border-stone-200 bg-white shadow-sm"
+              className="overflow-hidden rounded-xl border border-warm bg-white shadow-warm-sm"
             >
               <summary className="flex cursor-pointer items-center gap-3 px-4 py-3 text-sm hover:bg-stone-50">
                 <span

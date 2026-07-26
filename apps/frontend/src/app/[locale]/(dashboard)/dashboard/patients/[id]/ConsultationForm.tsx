@@ -113,7 +113,7 @@ export default function ConsultationForm({ patientId, consultations, isPediatrie
   const inputClass = 'w-full rounded-lg border border-stone-300 bg-white px-4 py-2.5 text-sm text-stone-800 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none'
 
   return (
-    <div className="rounded-xl border border-stone-200 bg-white shadow-sm">
+    <div className="rounded-xl border border-warm bg-white shadow-warm-sm">
       <div className="flex items-center justify-between border-b border-stone-100 px-4 py-3">
         <div className="flex items-center gap-2">
           <h2 className="font-heading text-lg font-semibold text-stone-800">Consultations</h2>
@@ -146,7 +146,7 @@ export default function ConsultationForm({ patientId, consultations, isPediatrie
                     setCodeActe(t.codeActe || '')
                   }
                 }}
-                className="rounded-lg border border-stone-200 bg-white px-3 py-2 text-sm text-stone-700 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
+                className="rounded-lg border border-warm bg-white px-3 py-2 text-sm text-stone-700 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
               >
                 <option value="">Charger un modèle...</option>
                 {templates.map(t => (
@@ -193,14 +193,14 @@ export default function ConsultationForm({ patientId, consultations, isPediatrie
             </button>
             {!showTemplateSave ? (
               <button type="button" onClick={() => setShowTemplateSave(true)}
-                className="rounded-lg border border-stone-200 bg-white px-3 py-2 text-sm font-medium text-stone-600 hover:bg-stone-50">
+                className="rounded-lg border border-warm bg-white px-3 py-2 text-sm font-medium text-stone-600 hover:bg-stone-50">
                 Sauvegarder comme modèle
               </button>
             ) : (
               <div className="flex items-center gap-2">
                 <input value={templateName} onChange={e => setTemplateName(e.target.value)}
                   placeholder="Nom du modèle" autoFocus
-                  className="rounded-lg border border-stone-200 bg-white px-3 py-2 text-sm text-stone-700 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none" />
+                  className="rounded-lg border border-warm bg-white px-3 py-2 text-sm text-stone-700 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none" />
                 <button type="button" onClick={saveAsTemplate} disabled={savingTemplate || !templateName.trim()}
                   className="rounded-lg bg-primary-700 px-3 py-2 text-sm font-medium text-white hover:bg-primary-800 disabled:opacity-50">
                   Enregistrer

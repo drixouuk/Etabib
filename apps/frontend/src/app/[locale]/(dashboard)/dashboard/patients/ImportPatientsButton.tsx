@@ -160,7 +160,7 @@ export default function ImportPatientsButton() {
       )}
 
       {parsed && !importing && (
-        <div className="rounded-xl border border-stone-200 bg-white p-4 shadow-sm">
+        <div className="rounded-xl border border-warm bg-white p-4 shadow-warm-sm">
           <p className="mb-2 text-sm text-stone-700">
             <strong>{parsed.valid.length}</strong> patients valides détectés
             {parsed.errors.length > 0 && (
@@ -193,13 +193,13 @@ export default function ImportPatientsButton() {
       )}
 
       {importing && (
-        <div className="rounded-xl border border-stone-200 bg-stone-50 p-4">
+        <div className="rounded-xl border border-warm bg-stone-50 p-4">
           <p className="text-sm text-stone-600">Import en cours…</p>
         </div>
       )}
 
       {done && result && (
-        <div className="rounded-xl border border-stone-200 bg-white p-4 shadow-sm">
+        <div className="rounded-xl border border-warm bg-white p-4 shadow-warm-sm">
           <p className="text-sm text-stone-700">
             <strong className="text-green-600">{result.imported}</strong> patient{result.imported > 1 ? 's' : ''} importé{result.imported > 1 ? 's' : ''}
             {result.errors.length > 0 && (

@@ -31,7 +31,7 @@ export default function PatientAvatar({ fullName, gender, size = 'md', className
 
   return (
     <Avatar className={`${SIZE_CLASSES[size]} ${bgColor} ${className}`}>
-      <AvatarFallback className="text-white font-bold">
+      <AvatarFallback className="bg-transparent text-white font-bold">
         {getInitials(fullName)}
       </AvatarFallback>
     </Avatar>

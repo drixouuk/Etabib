@@ -41,12 +41,12 @@ export default function ReferringPractitionersManager() {
     fetchAll(); router.refresh()
   }
 
-  const inputClass = 'w-full rounded-lg border border-stone-200 bg-white px-3 py-2 text-sm focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none'
+  const inputClass = 'w-full rounded-lg border border-warm bg-white px-3 py-2 text-sm focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none'
 
   if (loading) return <p className="text-sm text-stone-400">Chargement…</p>
 
   return (
-    <div className="rounded-xl border border-stone-200 bg-white shadow-sm">
+    <div className="rounded-xl border border-warm bg-white shadow-warm-sm">
       <div className="flex items-center justify-between border-b border-stone-100 px-4 py-3">
         <h2 className="font-heading text-lg font-semibold text-stone-800">Médecins référents</h2>
         <button onClick={openNew} className="rounded-lg bg-primary-700 px-3 py-1.5 text-xs font-medium text-white hover:bg-primary-800"><Plus className="size-3.5 inline mr-1" />Ajouter</button>
