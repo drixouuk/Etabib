@@ -22,7 +22,7 @@ function createAuditLog(req: any, action: string, collectionName: string, doc: a
       collectionName,
       documentId: doc.id as string,
       user: req.user.id,
-      tenant: typeof req.user.tenant === 'object' ? (req.user.tenant as any).id : (req.user as any).tenant,
+      tenant: req.user?.tenant && typeof req.user.tenant === 'object' ? (req.user.tenant as any).id : req.user?.tenant ?? null,
       timestamp: new Date().toISOString(),
     },
   }).catch((err: unknown) => {
