@@ -186,7 +186,7 @@ export async function seedDemo(payload: Payload) {
   if (existing.docs.length > 0) { console.log('→ Demo déjà seedé, skipping'); return }
   console.log('🌱 Seeding Dr. Demo...')
 
-  const tenant = await (payload as any).create({ collection: 'tenants', data: { name: 'Cabinet Dr. Demo', domain: DEMO_DOMAIN, settings: { defaultLocale: 'fr', activeTier: 'dossier', specialty: 'pediatrie' } } })
+  const tenant = await (payload as any).create({ collection: 'tenants', data: { name: 'Cabinet Dr. Demo', domain: DEMO_DOMAIN, settings: { defaultLocale: 'fr', activeTier: 'cabinet', specialty: 'pediatrie' } } })
   console.log('✅ Tenant')
 
   const password = process.env.SEED_DEMO_PASSWORD || 'demo1234'

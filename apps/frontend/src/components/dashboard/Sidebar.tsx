@@ -30,8 +30,7 @@ export default function Sidebar({ user, tenant, onNavigate }: Props) {
   const tierLabels: Record<string, string> = {
     vitrine: 'Site vitrine',
     rdv: 'RDV en ligne',
-    dossier: 'Cabinet individuel',
-    clinique: 'Cabinet de groupe',
+    cabinet: 'Cabinet',
   }
   const roleLabel = user.roles?.map((r) => roleLabels[r] || r).join(', ')
 

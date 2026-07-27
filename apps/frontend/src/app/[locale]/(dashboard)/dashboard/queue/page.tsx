@@ -8,7 +8,7 @@ export default async function QueuePage() {
   const user = await requireAuth()
   const tenantId = getTenantId(user)
   const tenant = tenantId ? await getTenantById(tenantId) : null
-  const isClinique = tenant?.settings?.activeTier === 'clinique'
+  const isClinique = tenant?.settings?.activeTier === 'cabinet'
   const currentDoctorId = getDoctorProfileId(user)
 
   return (

@@ -141,7 +141,7 @@ export default async function PatientDetailPage({ params }: Props) {
 
   if (!patient) notFound()
 
-  const isClinique = tenant?.settings?.activeTier === 'clinique'
+  const isClinique = tenant?.settings?.activeTier === 'cabinet'
   const isDoctor = user.roles?.includes('doctor')
 
   const sharedWithIds: string[] = (patient as any).sharedWith

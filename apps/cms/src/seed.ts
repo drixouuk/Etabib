@@ -66,7 +66,7 @@ async function seedTenant(payload: Payload) {
       domain: TENANT_DOMAIN,
       settings: {
         defaultLocale: "fr",
-        activeTier: "dossier",
+        activeTier: 'cabinet',
         specialty: "pediatrie",
       },
       calcomSettings: {

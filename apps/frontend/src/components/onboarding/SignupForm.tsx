@@ -6,7 +6,7 @@ import { Loader2 } from 'lucide-react'
 const BASE_DOMAIN = process.env.NEXT_PUBLIC_ONBOARDING_BASE_DOMAIN || '.dr-tabibi.ma'
 
 type Props = {
-  tier: 'vitrine' | 'rdv'
+  tier: 'vitrine' | 'rdv' | 'cabinet'
   specialty?: string
   onSuccess: (data: { domain: string; email: string }) => void
   onBack: () => void

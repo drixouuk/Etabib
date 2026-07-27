@@ -7,6 +7,8 @@ import StepIndicator from './StepIndicator'
 import TierCard from './TierCard'
 import SignupForm from './SignupForm'
 
+import { calculateCabinetPrice } from '@/lib/invoiceninja'
+
 const tiers = [
   {
     slug: 'vitrine',
@@ -33,9 +35,9 @@ const tiers = [
     ],
   },
   {
-    slug: 'dossier',
-    name: 'Dossier',
-    price: 299,
+    slug: 'cabinet',
+    name: 'Cabinet',
+    price: 499,
     features: [
       'Tout RDV +',
       'Dossier patient numérique',
@@ -43,14 +45,6 @@ const tiers = [
       'Consultation + Ordonnance',
       'Carnet vaccinal',
       'Courbes de croissance',
-    ],
-  },
-  {
-    slug: 'clinique',
-    name: 'Clinique',
-    price: 499,
-    features: [
-      'Tout Dossier +',
       'Multi-praticiens',
       "Registre d'audit",
       'Statistiques avancées',
@@ -81,15 +75,14 @@ export default function OnboardingFlow() {
   const [contactSent, setContactSent] = useState(false)
 
   const isSelfService = selectedTier === 'vitrine' || selectedTier === 'rdv'
-  const isContact = selectedTier === 'dossier' || selectedTier === 'clinique'
+  const isContact = selectedTier === 'cabinet'
 
   const handleTierClick = (slug: string) => {
     setSelectedTier(slug)
-    // Ne plus changer de step ici — le sélecteur de spécialité et le bouton Continuer gèrent la suite
   }
 
   const handleContinue = () => {
-    if (selectedTier === 'dossier' || selectedTier === 'clinique') {
+    if (selectedTier === 'cabinet') {
       setStep(2)
     } else {
       setStep(1)

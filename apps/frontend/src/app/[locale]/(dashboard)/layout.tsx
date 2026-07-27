@@ -16,7 +16,7 @@ export default async function DashboardLayout({ children }: Props) {
   if (tenantId) {
     const tenant = await getTenantById(tenantId)
     const tier = tenant?.settings?.activeTier
-    if (!tier || (tier !== 'dossier' && tier !== 'clinique')) {
+    if (!tier || (tier !== 'cabinet')) {
       redirect('/')
     }
     return <DashboardShell user={user} tenant={tenant}>{children}</DashboardShell>

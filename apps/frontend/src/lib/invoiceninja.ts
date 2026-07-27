@@ -24,11 +24,14 @@ async function apiRequest<T>(method: string, path: string, body?: unknown): Prom
   }
 }
 
+export function calculateCabinetPrice(doctorCount: number): number {
+  return 499 + Math.max(0, doctorCount - 1) * 199
+}
+
 const TIER_PRICES: Record<string, number> = {
   vitrine: 0,
   rdv: 149,
-  dossier: 299,
-  clinique: 499,
+  cabinet: 499,
 }
 
 export type InvoiceNinjaClient = {
@@ -55,21 +58,24 @@ export async function createClient(tenantData: {
 export async function createSubscriptionInvoice(
   clientId: string,
   tier: string,
+  doctorCount?: number,
 ): Promise<string | null> {
-  const amount = TIER_PRICES[tier]
+  const amount = tier === 'cabinet' && doctorCount !== undefined
+    ? calculateCabinetPrice(doctorCount)
+    : TIER_PRICES[tier]
   if (amount === undefined) return null
+
+  const lineItems: any[] = tier === 'cabinet' && doctorCount !== undefined
+    ? [
+        { product_key: 'abonnement-cabinet-base', notes: 'Abonnement Cabinet — 1 médecin', cost: 499, qty: 1 },
+        ...(doctorCount > 1 ? [{ product_key: 'abonnement-cabinet-extra', notes: `Médecins supplémentaires (${doctorCount - 1})`, cost: 199, qty: doctorCount - 1 }] : []),
+      ]
+    : [{ product_key: `abonnement-${tier}`, notes: `Abonnement dr-tabibi — Offre ${tier}`, cost: amount, qty: 1 }]
 
   const result = await apiRequest<InvoiceNinjaInvoice>('POST', '/invoices', {
     client_id: clientId,
     amount,
-    line_items: [
-      {
-        product_key: `abonnement-${tier}`,
-        notes: `Abonnement dr-tabibi — Offre ${tier}`,
-        cost: amount,
-        qty: 1,
-      },
-    ],
+    line_items: lineItems,
   })
   return result?.data?.id ?? null
 }
