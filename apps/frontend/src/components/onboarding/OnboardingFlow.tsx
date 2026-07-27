@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { Link } from '@/i18n/navigation'
-import { ArrowRight, CheckCircle, ClipboardList } from 'lucide-react'
+import { ArrowRight, CheckCircle, ClipboardList, Minus, Plus } from 'lucide-react'
 import StepIndicator from './StepIndicator'
 import TierCard from './TierCard'
 import SignupForm from './SignupForm'
@@ -65,6 +65,7 @@ export default function OnboardingFlow() {
   const [step, setStep] = useState(0)
   const [selectedTier, setSelectedTier] = useState<string | null>(null)
   const [selectedSpecialty, setSelectedSpecialty] = useState('generaliste')
+  const [doctorCount, setDoctorCount] = useState(1)
   const [success, setSuccess] = useState<SuccessData | null>(null)
 
   // Contact form (#3)
@@ -76,9 +77,11 @@ export default function OnboardingFlow() {
 
   const isSelfService = selectedTier === 'vitrine' || selectedTier === 'rdv'
   const isContact = selectedTier === 'cabinet'
+  const cabinetPrice = selectedTier === 'cabinet' ? calculateCabinetPrice(doctorCount) : 0
 
   const handleTierClick = (slug: string) => {
     setSelectedTier(slug)
+    setDoctorCount(1)
   }
 
   const handleContinue = () => {
@@ -125,8 +128,8 @@ export default function OnboardingFlow() {
                 price={t.price}
                 features={t.features}
                 badge={t.badge}
-                ctaLabel={t.slug === 'dossier' || t.slug === 'clinique' ? 'Sélectionner' : 'Commencer'}
-                ctaVariant={t.slug === 'dossier' || t.slug === 'clinique' ? 'outline' : 'primary'}
+                ctaLabel={t.slug === 'cabinet' ? 'Sélectionner' : 'Commencer'}
+                ctaVariant={t.slug === 'cabinet' ? 'outline' : 'primary'}
                 isActive={selectedTier === t.slug}
                 onClick={() => handleTierClick(t.slug)}
               />
@@ -135,17 +138,33 @@ export default function OnboardingFlow() {
 
           {selectedTier && (
             <div className="mt-6 flex flex-col items-center gap-4">
-              {(selectedTier === 'dossier' || selectedTier === 'clinique') && (
+              <div className="w-full max-w-xs">
+                <label className="mb-1 block text-sm font-medium text-stone-700">Votre spécialité</label>
+                <select value={selectedSpecialty} onChange={(e) => setSelectedSpecialty(e.target.value)}
+                  className="w-full rounded-lg border border-stone-200 bg-white px-3 py-2 text-sm text-stone-700 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none">
+                  <option value="pediatrie">Pédiatrie</option>
+                  <option value="generaliste">Médecine générale</option>
+                  <option value="gynecologie">Gynécologie</option>
+                  <option value="dermatologie">Dermatologie</option>
+                  <option value="autre">Autre</option>
+                </select>
+              </div>
+              {selectedTier === 'cabinet' && (
                 <div className="w-full max-w-xs">
-                  <label className="mb-1 block text-sm font-medium text-stone-700">Votre spécialité</label>
-                  <select value={selectedSpecialty} onChange={(e) => setSelectedSpecialty(e.target.value)}
-                    className="w-full rounded-lg border border-stone-200 bg-white px-3 py-2 text-sm text-stone-700 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none">
-                    <option value="pediatrie">Pédiatrie</option>
-                    <option value="generaliste">Médecine générale</option>
-                    <option value="gynecologie">Gynécologie</option>
-                    <option value="dermatologie">Dermatologie</option>
-                    <option value="autre">Autre</option>
-                  </select>
+                  <label className="mb-1 block text-sm font-medium text-stone-700">Nombre de médecins</label>
+                  <div className="flex items-center gap-3">
+                    <button type="button" onClick={() => setDoctorCount(Math.max(1, doctorCount - 1))}
+                      className="flex size-9 items-center justify-center rounded-lg border border-stone-200 bg-white text-stone-600 hover:bg-stone-50 transition-colors duration-200">
+                      <Minus className="size-4" />
+                    </button>
+                    <span className="min-w-[3ch] text-center text-lg font-semibold text-stone-800">{doctorCount}</span>
+                    <button type="button" onClick={() => setDoctorCount(doctorCount + 1)}
+                      className="flex size-9 items-center justify-center rounded-lg border border-stone-200 bg-white text-stone-600 hover:bg-stone-50 transition-colors duration-200">
+                      <Plus className="size-4" />
+                    </button>
+                  </div>
+                  <p className="mt-2 text-xs text-stone-400">À partir de 499 MAD/mois · +199 MAD/mois par médecin supplémentaire</p>
+                  <p className="mt-1 text-sm font-semibold text-primary-700">Total : {cabinetPrice} MAD/mois</p>
                 </div>
               )}
               <button onClick={handleContinue}
@@ -165,8 +184,9 @@ export default function OnboardingFlow() {
             </span>
           </div>
           <SignupForm
-            tier={selected.slug as 'vitrine' | 'rdv'}
+            tier={selected.slug as 'vitrine' | 'rdv' | 'cabinet'}
             specialty={selectedSpecialty}
+            doctorCount={selected.slug === 'cabinet' ? doctorCount : undefined}
             onSuccess={handleSignupSuccess}
             onBack={() => setStep(0)}
           />
@@ -208,7 +228,7 @@ export default function OnboardingFlow() {
         <div className="mx-auto max-w-md">
           <div className="mb-6 text-center">
             <span className="inline-block rounded-full bg-primary-50 px-3 py-1 text-sm font-medium text-primary-700">
-              {selected.name} — {selected.price} MAD/mois
+              {selected.name} — {selected.slug === 'cabinet' ? cabinetPrice : selected.price} MAD/mois{selected.slug === 'cabinet' && doctorCount > 1 && ` (${doctorCount} médecins)`}
             </span>
             <span className="ml-2 inline-block rounded-full bg-stone-100 px-3 py-1 text-sm text-stone-600">
               {specialtyLabel(selectedSpecialty)}

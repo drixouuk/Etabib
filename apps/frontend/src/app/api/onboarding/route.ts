@@ -19,7 +19,7 @@ async function cmsPost(path: string, data: unknown, token?: string) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { domain, name, email, password, tier = 'vitrine', phone, specialty } = body
+    const { domain, name, email, password, tier = 'vitrine', phone, specialty, doctorCount } = body
 
     if (!domain || !name || !email || !password) {
       return NextResponse.json(
@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const validTiers = ['vitrine', 'rdv', 'dossier', 'clinique']
+    const validTiers = ['vitrine', 'rdv', 'cabinet']
     if (!validTiers.includes(tier)) {
       return NextResponse.json(
         { error: `Tier invalide. Valeurs: ${validTiers.join(', ')}` },
@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
     const tenantRes = await cmsPost('/tenants', {
       name,
       domain,
-      settings: { defaultLocale: 'fr', activeTier: tier, specialty: specialty || 'generaliste' },
+      settings: { defaultLocale: 'fr', activeTier: tier, specialty: specialty || 'generaliste', doctorCount: tier === 'cabinet' ? (doctorCount || 1) : 1 },
       calcomSettings: {
         eventSlug: body.eventSlug || 'consultation',
         username: body.username || '',
