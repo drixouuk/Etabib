@@ -71,7 +71,7 @@ export const Tenants: CollectionConfig = {
         {
           name: 'activeTier',
           type: 'select',
-          options: ['vitrine', 'rdv', 'dossier', 'clinique'],
+          options: ['vitrine', 'rdv', 'cabinet'],
           defaultValue: 'vitrine',
         },
         {
@@ -81,6 +81,21 @@ export const Tenants: CollectionConfig = {
           defaultValue: 'generaliste',
           label: 'Spécialité du cabinet',
           admin: { description: 'Détermine les modules cliniques affichés dans le dossier patient' },
+        },
+        {
+          name: 'doctorCount',
+          type: 'number',
+          min: 1,
+          defaultValue: 1,
+          label: 'Nombre de médecins',
+          admin: { description: 'Utilisé pour le calcul du prix du tier Cabinet' },
+        },
+        {
+          name: 'maxSecretaryAccounts',
+          type: 'number',
+          defaultValue: null,
+          label: 'Nombre max de secrétaires (optionnel)',
+          admin: { description: 'Null = illimité. Limite future sans re-développement.' },
         },
       ],
     },
