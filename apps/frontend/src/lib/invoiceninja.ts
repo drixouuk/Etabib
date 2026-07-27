@@ -30,7 +30,7 @@ export function calculateCabinetPrice(doctorCount: number): number {
 
 const TIER_PRICES: Record<string, number> = {
   vitrine: 0,
-  rdv: 149,
+  rdv: 199,
   cabinet: 499,
 }
 

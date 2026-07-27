@@ -9,12 +9,13 @@ import SignupForm from './SignupForm'
 
 import { calculateCabinetPrice } from '@/lib/invoiceninja'
 
-const tiers = [
+type TierDef = { slug: string; name: string; price: number; features: string[]; badge?: string }
+
+const tiers: TierDef[] = [
   {
     slug: 'vitrine',
     name: 'Vitrine',
     price: 0,
-    badge: 'Gratuit',
     features: [
       'Site vitrine personnalisé',
       '4 langues (fr/en/ar/tzm)',
@@ -26,7 +27,7 @@ const tiers = [
   {
     slug: 'rdv',
     name: 'RDV',
-    price: 149,
+    price: 199,
     features: [
       'Tout Vitrine +',
       'Prise de rendez-vous en ligne (Cal.com)',
