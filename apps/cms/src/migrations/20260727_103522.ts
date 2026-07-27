@@ -10,7 +10,8 @@ export async function up({ db }: MigrateUpArgs): Promise<void> {
    DROP TYPE "public"."enum_tenants_settings_active_tier_old";
    UPDATE "public"."tenants" SET "settings_active_tier" = 'cabinet' WHERE "settings_active_tier" IN ('dossier', 'clinique');
    ALTER TABLE "public"."tenants" ADD COLUMN IF NOT EXISTS "settings_doctor_count" numeric DEFAULT 1;
-   ALTER TABLE "public"."tenants" ADD COLUMN IF NOT EXISTS "settings_max_secretary_accounts" numeric;`)
+   ALTER TABLE "public"."tenants" ADD COLUMN IF NOT EXISTS "settings_max_secretary_accounts" numeric;
+   UPDATE "public"."tenants" SET "settings_doctor_count" = 1 WHERE "settings_doctor_count" IS NULL;`)
 }
 
 export async function down({ db }: MigrateDownArgs): Promise<void> {

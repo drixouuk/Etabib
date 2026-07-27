@@ -93,9 +93,8 @@ export const Tenants: CollectionConfig = {
         {
           name: 'maxSecretaryAccounts',
           type: 'number',
-          defaultValue: null,
           label: 'Nombre max de secrétaires (optionnel)',
-          admin: { description: 'Null = illimité. Limite future sans re-développement.' },
+          admin: { description: 'Vide = illimité. Limite future sans re-développement.' },
         },
       ],
     },
