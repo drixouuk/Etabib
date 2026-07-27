@@ -34,7 +34,7 @@ export default function GrowthChart({ consultations, patientBirthDate, patientGe
     return (
       <div className="mb-8">
         <h3 className="mb-2 font-heading text-lg font-semibold text-ink">Courbes de croissance</h3>
-        <p className="text-sm text-ink-softer">Pas encore assez de données pour une courbe de croissance.</p>
+        <p className="text-sm text-ink-soft">Pas encore assez de données pour une courbe de croissance.</p>
       </div>
     )
   }
@@ -184,7 +184,7 @@ export default function GrowthChart({ consultations, patientBirthDate, patientGe
         {hasPc && renderPCChart()}
       </div>
       {gender && patientBirthDate && (
-        <p className="mt-2 text-xs text-ink-softer">
+        <p className="mt-2 text-xs text-ink-soft">
           Courbes de référence : OMS (0–24 mois) / CDC (2–20 ans). Les percentiles sont indicatifs et ne constituent pas un diagnostic.
         </p>
       )}

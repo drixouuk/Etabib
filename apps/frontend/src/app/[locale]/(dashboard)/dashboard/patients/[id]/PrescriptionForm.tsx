@@ -166,7 +166,7 @@ export default function PrescriptionForm({ patientId, prescriptions, consultatio
         <div className="flex items-center gap-2">
           <h2 className="font-heading text-lg font-semibold text-ink">Ordonnances</h2>
           {prescriptions.length > 0 && (
-            <span className="text-xs text-ink-softer">({prescriptions.length})</span>
+            <span className="text-xs text-ink-soft">({prescriptions.length})</span>
           )}
         </div>
         {!showForm && (
@@ -237,7 +237,7 @@ export default function PrescriptionForm({ patientId, prescriptions, consultatio
                           className="flex w-full items-center justify-between px-3 py-2 text-left text-sm text-ink transition-colors duration-200 hover:bg-primary-50"
                         >
                           <span className="font-medium">{s.nom}</span>
-                          <span className="text-xs text-ink-softer">{s.count !== undefined && `×${s.count}`}</span>
+                          <span className="text-xs text-ink-soft">{s.count !== undefined && `×${s.count}`}</span>
                         </button>
                       ))}
                     </div>
@@ -271,7 +271,7 @@ export default function PrescriptionForm({ patientId, prescriptions, consultatio
           {consultations.length > 0 && (
             <div>
               <label className="mb-1 block text-sm font-medium text-ink">
-                Rattacher à une consultation <span className="text-ink-softer">(optionnel)</span>
+                Rattacher à une consultation <span className="text-ink-soft">(optionnel)</span>
               </label>
               <select
                 value={consultationId}

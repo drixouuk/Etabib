@@ -182,7 +182,7 @@ export default function WaitingRoomList({ tenantId, isClinique, currentDoctorId 
       {loading && items.length === 0 ? (
         <div className="px-4 py-8 text-center text-sm text-ink-softer">Chargement…</div>
       ) : activeItems.length === 0 ? (
-        <div className="px-4 py-8 text-center text-sm text-ink-softer">Aucun patient en attente.</div>
+        <div className="px-4 py-8 text-center text-sm text-ink-soft">Aucun patient en attente.</div>
       ) : (
         <div className="divide-y divide-stone-100">
           {activeItems.map((item) => {
@@ -212,7 +212,7 @@ export default function WaitingRoomList({ tenantId, isClinique, currentDoctorId 
                     <p className="truncate text-sm font-semibold text-ink">{patient?.fullName || '—'}</p>
                   )}
                   <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-ink-soft">
-                    {isClinique && item.doctor?.name && <span className="text-ink-softer">Dr. {item.doctor.name}</span>}
+                    {isClinique && item.doctor?.name && <span className="text-ink-soft">Dr. {item.doctor.name}</span>}
                     {patient?.birthDate && <span>{computeAge(patient.birthDate)}</span>}
                     <span className={`inline-block rounded px-1.5 py-0.5 font-medium ${
                       item.visitReason === 'controle' ? 'bg-info/10 text-info' :

@@ -76,7 +76,7 @@ export default async function VaccinationAlerts() {
                   </span>
                 ))}
                 {a!.vaccines.length > 3 && (
-                  <span className="text-xs text-ink-softer">+{a!.vaccines.length - 3}</span>
+                  <span className="text-xs text-ink-soft">+{a!.vaccines.length - 3}</span>
                 )}
               </div>
             </div>

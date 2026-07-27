@@ -43,7 +43,7 @@ export default function ReferringPractitionersManager() {
 
   const inputClass = 'w-full rounded-lg border border-warm bg-white px-3 py-2 text-sm focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none'
 
-  if (loading) return <p className="text-sm text-ink-softer">Chargement…</p>
+  if (loading) return <p className="text-sm text-ink-soft">Chargement…</p>
 
   return (
     <div className="rounded-xl border border-warm bg-white shadow-warm-sm">
@@ -80,8 +80,8 @@ export default function ReferringPractitionersManager() {
                 <p className="text-xs text-ink-soft">{[p.specialty, p.city, p.phone].filter(Boolean).join(' · ') || '—'}</p>
               </div>
               <div className="flex items-center gap-1 ml-2">
-                <button onClick={() => openEdit(p)} className="rounded p-1 text-ink-softer hover:text-primary-600"><Pencil className="size-3.5" /></button>
-                <button onClick={() => handleDelete(p.id)} className="rounded p-1 text-ink-softer hover:text-red-600"><Trash2 className="size-3.5" /></button>
+                <button onClick={() => openEdit(p)} className="rounded p-1 text-ink-soft hover:text-primary-600"><Pencil className="size-3.5" /></button>
+                <button onClick={() => handleDelete(p.id)} className="rounded p-1 text-ink-soft hover:text-red-600"><Trash2 className="size-3.5" /></button>
               </div>
             </div>
           ))}

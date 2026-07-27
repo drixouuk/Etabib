@@ -104,7 +104,7 @@ export default function BookingListView({ bookings }: Props) {
                   <Clock className="size-3.5" />
                   {formatTime(booking.startTime)} — {formatTime(booking.endTime)}
                 </span>
-                <span className="text-xs text-ink-softer">({formatDuration(booking.duration)})</span>
+                <span className="text-xs text-ink-soft">({formatDuration(booking.duration)})</span>
               </div>
               {statusBadge(booking.status)}
             </div>
@@ -133,7 +133,7 @@ export default function BookingListView({ bookings }: Props) {
             )}
 
             {booking.cancellationReason && (
-              <p className="mt-2 text-xs italic text-ink-softer">Motif : {booking.cancellationReason}</p>
+              <p className="mt-2 text-xs italic text-ink-soft">Motif : {booking.cancellationReason}</p>
             )}
           </div>
         ))}

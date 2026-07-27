@@ -44,11 +44,11 @@ export default function PatientTable({
         <table className="min-w-[640px] w-full text-left text-sm">
           <thead className="border-b border-warm">
             <tr>
-              <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-wider text-ink-softer">Nom</th>
-              <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-wider text-ink-softer">Âge</th>
-              <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-wider text-ink-softer">Dernière consultation</th>
-              <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-wider text-ink-softer">Date de naissance</th>
-              <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-wider text-ink-softer">CIN</th>
+              <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-wider text-ink-soft">Nom</th>
+              <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-wider text-ink-soft">Âge</th>
+              <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-wider text-ink-soft">Dernière consultation</th>
+              <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-wider text-ink-soft">Date de naissance</th>
+              <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-wider text-ink-soft">CIN</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-stone-100">

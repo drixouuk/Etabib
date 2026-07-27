@@ -48,7 +48,7 @@ export default async function SystemAlertsPage() {
       </div>
 
       {alerts.length === 0 ? (
-        <p className="text-ink-softer">Aucune alerte.</p>
+        <p className="text-ink-soft">Aucune alerte.</p>
       ) : (
         <div className="space-y-4">
           {alerts.map((a) => (
@@ -63,7 +63,7 @@ export default async function SystemAlertsPage() {
                   {levelLabels[a.level] || a.level}
                 </span>
                 <span className="flex-1 text-ink">{a.message}</span>
-                <span className="shrink-0 text-xs text-ink-softer">
+                <span className="shrink-0 text-xs text-ink-soft">
                   {new Date(a.timestamp).toLocaleString('fr-FR')}
                 </span>
               </summary>

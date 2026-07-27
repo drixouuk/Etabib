@@ -125,6 +125,89 @@ Ne pas changer la couleur de la sidebar (nav active), des tabs (soulignement), n
 
 ---
 
+## 0septies. RAPPEL — la migration stone→ink (section 0quinquies) n'a pas été appliquée
+
+Vérifié dans le code actuel : `text-ink` / `text-ink-soft` / `text-ink-softer` ont **0 occurrence** dans `components/dashboard` et les routes `(dashboard)`. Les gris Tailwind génériques (`text-stone-800`, `text-stone-700`, `text-stone-500`, `text-stone-400`) sont encore utilisés **246 fois**. C'est la cause du problème "tous mes titres/sous-titres ont la même intensité de noir" — la hiérarchie de couleur de la maquette (ink foncé pour titres, ink-soft pour sous-titres/labels, ink-softer pour texte très discret) n'existe nulle part dans l'app actuelle, tout est resté sur les gris par défaut de Tailwind.
+
+**Ce n'est pas optionnel pour ce lot — c'est probablement le changement qui aura le plus d'impact visuel visible.** Appliquer la règle de la section 0quinquies partout, fichier par fichier, pas seulement sur quelques composants. Exemples concrets à corriger en priorité (liste non exhaustive, la règle s'applique à tout `components/dashboard/**` et `app/[locale]/(dashboard)/**`) :
+
+- `app/[locale]/(dashboard)/dashboard/patients/page.tsx` ligne 67-68 : `<h1 className="... text-stone-800">Patients</h1>` → `text-ink` ; `<p className="... text-stone-400">{patients.length} patients suivis</p>` → `text-ink-soft`
+- Tous les `<h1>`/`<h2>`/`<h3>` avec `text-stone-800` listés ci-dessous → `text-ink` :
+
+```
+components/dashboard/WaitingRoomList.tsx (lignes 154, 207, 212)
+components/dashboard/VaccinationAlerts.tsx (lignes 33, 60)
+components/dashboard/VaccinationRecord.tsx (lignes 34, 78, 85)
+components/dashboard/DashboardShell.tsx (ligne 55)
+components/dashboard/BookingListView.tsx (ligne 113)
+components/dashboard/QueuePreview.tsx (ligne 31)
+app/[locale]/(dashboard)/dashboard/patients/new/page.tsx (ligne 81)
+app/[locale]/(dashboard)/dashboard/patients/[id]/SharePatientWidget.tsx (ligne 50)
+app/[locale]/(dashboard)/dashboard/patients/[id]/edit/page.tsx (ligne 27)
+app/[locale]/(dashboard)/dashboard/patients/[id]/page.tsx (ligne 189)
+```
+
+Et toutes les occurrences restantes de `text-stone-500`/`text-stone-400` (labels, meta-texte, placeholders) → `text-ink-soft`, en balayant tout le dossier — ne pas se limiter à cette liste, elle n'est qu'un échantillon confirmé.
+
+## 0octies. Fond gris sur l'en-tête des tableaux
+
+**Confirmé** dans les 3 tableaux de l'app : `<thead>` a `bg-stone-50` (fond gris plein), alors que la maquette n'a **aucun fond** sur l'en-tête de tableau — juste une bordure basse fine séparant l'en-tête du corps.
+
+**Fix — retirer `bg-stone-50` du `<thead>` dans les 3 fichiers suivants**, garder uniquement la bordure basse (à migrer vers `border-warm` une fois le token en place, section 1-2) et migrer `text-stone-400`/`text-stone-500` des `<th>` vers `text-ink-soft` (section 0septies) :
+
+```
+app/[locale]/(dashboard)/dashboard/patients/PatientTable.tsx  — ligne 45
+components/dashboard/VaccinationRecord.tsx                     — ligne 89
+app/[locale]/(dashboard)/dashboard/audit-logs/AuditLogTable.tsx — ligne 28
+```
+
+Exemple de fix pour `PatientTable.tsx` ligne 45 :
+
+```tsx
+// avant
+<thead className="border-b border-stone-200 bg-stone-50">
+// après
+<thead className="border-b border-warm">
+```
+
+Et pour chaque `<th>` de ces 3 fichiers : `text-stone-400`/`text-stone-500` → `text-ink-soft`.
+
+---
+
+## 0nonies — CORRECTION du mapping ink : `text-ink-softer` sur-appliqué à tort
+
+**Mea culpa sur la règle donnée en 0quinquies.** Après relecture précise du CSS source de la maquette (`dr-tabibi-refonte-2026.html`), `--ink-soft` (#8A8175) est la couleur de **quasiment tout le texte secondaire** — sous-titres (`.sub`), en-têtes de tableau (`th`), labels, badges, tabs inactifs, meta-texte, légendes de graphiques (~30 usages dans la maquette). `--ink-softer` (#B9B2A4), lui, n'apparaît **qu'à un seul endroit** dans toute la maquette : le texte italique des champs vides du dossier clinique (`.clinic-empty` — "Aucune information").
+
+La règle donnée précédemment (`text-stone-400 → text-ink-softer`) était trop agressive : ~68 endroits qui auraient dû rester en `ink-soft` (donc bien lisibles) sont passés en `ink-softer` (très clair, quasi invisible sur fond crème), ce qui aplatit la hiérarchie au lieu de la renforcer — c'est la cause du "pas de nuance" remonté par Driss.
+
+**Fix — dans `components/dashboard/**`et`app/[locale]/(dashboard)/**` :**
+
+Repasser `text-ink-softer` → `text-ink-soft` **partout SAUF** sur le texte des états vides/placeholder de type "Aucune information", "Aucun patient enregistré", "Aucun vaccin dans le calendrier de référence", "Chargement…" (ces messages d'état vide/en italique restent en `ink-softer`, cohérent avec `.clinic-empty` de la maquette).
+
+Exemples concrets à corriger (liste non exhaustive, ~68 occurrences au total à trier avec cette règle) :
+
+```
+components/dashboard/PatientDeleteButton.tsx:48   → ink-soft (bouton d'action, pas un état vide)
+components/dashboard/WaitingRoomList.tsx:215       → ink-soft ("Dr. {nom}" meta-texte)
+components/dashboard/VaccinationAlerts.tsx:79      → ink-soft ("+3" compteur)
+components/dashboard/VaccinationRecord.tsx:86      → ink-soft (âge du patient, meta-texte)
+components/dashboard/VaccinationRecord.tsx:117-118 → ink-soft (statut "Refusé", pas un état vide)
+components/dashboard/VaccinationRecord.tsx:136     → ink-soft (notes de dose)
+components/dashboard/PatientActionsDropdown.tsx:31 → ink-soft (icône de bouton)
+components/dashboard/BookingListView.tsx:107       → ink-soft (durée entre parenthèses)
+
+# Ceux-ci RESTENT en ink-softer (états vides genuine) :
+components/dashboard/WaitingRoomList.tsx:183  "Chargement…"
+components/dashboard/WaitingRoomList.tsx:185  "Aucun patient en attente."
+components/dashboard/VaccinationAlerts.tsx:34  "Aucun patient enregistré"
+components/dashboard/VaccinationRecord.tsx:35  "Date de naissance manquante..."
+components/dashboard/VaccinationRecord.tsx:79  "Aucun vaccin dans le calendrier..."
+```
+
+Règle générale pour trancher les cas non listés : si le texte est un **message d'état vide/absence de données** (souvent en italique dans la maquette) → `ink-softer`. Si c'est du **texte secondaire normal** (label, meta-donnée, sous-titre, compteur, statut) → `ink-soft`. Dans le doute, `ink-soft` est le bon défaut — `ink-softer` doit rester rare.
+
+---
+
 ## 1. Tokens de design manquants — `apps/frontend/src/app/globals.css`
 
 La maquette utilise des ombres et bordures "chaudes" (teintées ink `#2A241C`), mais `globals.css` n'a **aucun token d'ombre custom** — tout le monde utilise les ombres Tailwind par défaut (grises, plates), ce qui explique le rendu plus "générique" qu'on voit sur les screenshots comparé à la maquette.

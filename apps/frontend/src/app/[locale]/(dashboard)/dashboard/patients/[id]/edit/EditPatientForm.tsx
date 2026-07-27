@@ -198,7 +198,7 @@ export default function EditPatientForm({ patient }: Props) {
       )}
 
       <div>
-        <label className="mb-1 block text-sm font-medium text-ink">Détail <span className="text-ink-softer font-normal">(optionnel)</span></label>
+        <label className="mb-1 block text-sm font-medium text-ink">Détail <span className="text-ink-soft font-normal">(optionnel)</span></label>
         <input value={patientSourceDetail} onChange={e => setPatientSourceDetail(e.target.value)} type="text" placeholder="Ex: Groupe Facebook..." className={inputClass} />
       </div>
 

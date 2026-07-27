@@ -176,7 +176,7 @@ export default async function PatientDetailPage({ params }: Props) {
   return (
     <div className="mx-auto max-w-container px-4 py-12 md:px-6 lg:px-8">
       {/* Back link */}
-      <Link href="/dashboard/patients" className="inline-flex items-center gap-1.5 pb-3.5 text-[13px] text-ink-softer hover:text-primary-700">
+      <Link href="/dashboard/patients" className="inline-flex items-center gap-1.5 pb-3.5 text-[13px] text-ink-soft hover:text-primary-700">
         <ArrowLeft className="size-[15px]" />
         Retour aux patients
       </Link>
@@ -227,7 +227,7 @@ export default async function PatientDetailPage({ params }: Props) {
         <TabsContent value="resume">
           <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
             <div className="rounded-xl border border-warm bg-white p-4 shadow-warm-sm">
-              <p className="text-xs font-medium uppercase text-ink-softer">Dernière consultation</p>
+              <p className="text-xs font-medium uppercase text-ink-soft">Dernière consultation</p>
               {consultations.length > 0 ? (
                 <>
                   <p className="mt-1 font-heading text-lg font-bold text-ink">
@@ -236,11 +236,11 @@ export default async function PatientDetailPage({ params }: Props) {
                   <p className="text-sm text-ink-soft">{consultations[0].motif || 'Consultation'}</p>
                 </>
               ) : (
-                <p className="mt-1 text-sm text-ink-softer">Aucune consultation</p>
+                <p className="mt-1 text-sm text-ink-soft">Aucune consultation</p>
               )}
             </div>
             <div className="rounded-xl border border-warm bg-white p-4 shadow-warm-sm">
-              <p className="text-xs font-medium uppercase text-ink-softer">Croissance</p>
+              <p className="text-xs font-medium uppercase text-ink-soft">Croissance</p>
               {consultations.length > 0 && consultations[0].poids ? (
                 <>
                   <p className="mt-1 font-heading text-lg font-bold text-ink">
@@ -251,15 +251,15 @@ export default async function PatientDetailPage({ params }: Props) {
                   )}
                 </>
               ) : (
-                <p className="mt-1 text-sm text-ink-softer">Pas de mesure</p>
+                <p className="mt-1 text-sm text-ink-soft">Pas de mesure</p>
               )}
             </div>
             <div className="rounded-xl border border-warm bg-white p-4 shadow-warm-sm">
-              <p className="text-xs font-medium uppercase text-ink-softer">Traitement en cours</p>
+              <p className="text-xs font-medium uppercase text-ink-soft">Traitement en cours</p>
               {patient.traitementsEnCours?.trim() ? (
                 <p className="mt-1 text-sm text-ink line-clamp-2">{patient.traitementsEnCours}</p>
               ) : (
-                <p className="mt-1 text-sm text-ink-softer">Aucun traitement en cours</p>
+                <p className="mt-1 text-sm text-ink-soft">Aucun traitement en cours</p>
               )}
             </div>
           </div>
@@ -313,7 +313,7 @@ export default async function PatientDetailPage({ params }: Props) {
                   <div className="flex items-center gap-2">
                     <h2 className="font-heading text-lg font-semibold text-ink">Consultations</h2>
                     {consultations.length > 0 && (
-                      <span className="text-xs text-ink-softer">({consultations.length})</span>
+                      <span className="text-xs text-ink-soft">({consultations.length})</span>
                     )}
                   </div>
                   <Sheet>
@@ -333,7 +333,7 @@ export default async function PatientDetailPage({ params }: Props) {
                   <div className="flex items-center gap-2">
                     <h2 className="font-heading text-lg font-semibold text-ink">Ordonnances</h2>
                     {prescriptions.length > 0 && (
-                      <span className="text-xs text-ink-softer">({prescriptions.length})</span>
+                      <span className="text-xs text-ink-soft">({prescriptions.length})</span>
                     )}
                   </div>
                   <Sheet>

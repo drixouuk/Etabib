@@ -118,7 +118,7 @@ export default function ConsultationForm({ patientId, consultations, isPediatrie
         <div className="flex items-center gap-2">
           <h2 className="font-heading text-lg font-semibold text-ink">Consultations</h2>
           {consultations.length > 0 && (
-            <span className="text-xs text-ink-softer">({consultations.length})</span>
+            <span className="text-xs text-ink-soft">({consultations.length})</span>
           )}
         </div>
         {!showForm && (

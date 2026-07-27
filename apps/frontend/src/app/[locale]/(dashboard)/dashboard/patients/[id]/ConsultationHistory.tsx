@@ -48,7 +48,7 @@ export default function ConsultationHistory({ consultations, doctorInfo, patient
               <label className="mb-0.5 block text-xs text-ink-soft">Rechercher</label>
               <input type="text" value={filterQuery} onChange={e => setFilterQuery(e.target.value)}
                 placeholder="Motif, diagnostic..."
-                className="w-full rounded-lg border border-warm bg-white px-3 py-1.5 text-sm text-ink placeholder:text-ink-softer focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
+                className="w-full rounded-lg border border-warm bg-white px-3 py-1.5 text-sm text-ink placeholder:text-ink-soft focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
               />
             </div>
             <div>
@@ -74,7 +74,7 @@ export default function ConsultationHistory({ consultations, doctorInfo, patient
       )}
 
       {filtered.length === 0 ? (
-        <p className="px-4 py-6 text-center text-sm text-ink-softer">
+        <p className="px-4 py-6 text-center text-sm text-ink-soft">
           {consultations.length > 0 ? 'Aucune consultation ne correspond à la recherche.' : 'Aucune consultation.'}
         </p>
       ) : (
@@ -102,7 +102,7 @@ export default function ConsultationHistory({ consultations, doctorInfo, patient
                       PDF
                     </button>
                   )}
-                  <span className="text-xs text-ink-softer">
+                  <span className="text-xs text-ink-soft">
                     {c.practitioner?.name || c.practitioner?.email || '—'}
                   </span>
                 </span>

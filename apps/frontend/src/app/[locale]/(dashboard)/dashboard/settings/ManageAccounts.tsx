@@ -36,7 +36,7 @@ function ResetPasswordButton({ userId, userName }: { userId: string; userName: s
         className="w-36 rounded-lg border border-warm bg-white px-2 py-1 text-sm focus:border-primary-500 focus:outline-none" />
       <button onClick={handleReset} disabled={saving}
         className="text-sm font-medium text-primary-600 hover:text-primary-700 disabled:opacity-50">OK</button>
-      <button onClick={() => setShowForm(false)} className="text-sm text-ink-softer hover:text-stone-600">✕</button>
+      <button onClick={() => setShowForm(false)} className="text-sm text-ink-soft hover:text-stone-600">✕</button>
       {error && <span className="text-xs text-red-500">{error}</span>}
     </div>
   )
@@ -63,7 +63,7 @@ export default function ManageAccounts({ users, currentUserId }: Props) {
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-medium text-ink">
                   {u.name || u.email}
-                  {u.id === currentUserId && <span className="ml-2 text-xs text-ink-softer">(vous)</span>}
+                  {u.id === currentUserId && <span className="ml-2 text-xs text-ink-soft">(vous)</span>}
                 </p>
                 <p className="text-xs text-ink-soft">{u.email} — {u.roles.map(r => roleLabels[r] || r).join(', ')}</p>
               </div>

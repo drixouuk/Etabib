@@ -45,7 +45,7 @@ export default function PatientDeleteButton({ patientId, patientName }: Props) {
             {deleting ? 'Suppression…' : 'Supprimer définitivement'}
           </button>
           <button onClick={() => { setConfirming(false); setError('') }}
-            className="text-sm text-ink-softer hover:text-stone-600">
+            className="text-sm text-ink-soft hover:text-stone-600">
             Annuler
           </button>
         </div>

@@ -83,7 +83,7 @@ export default function PatientClinicalFields({ patientId, initialData }: Props)
                 <button
                   type="button"
                   onClick={() => setEditing(f.key)}
-                  className="rounded-lg p-1 text-ink-softer transition-colors duration-200 hover:bg-stone-100 hover:text-stone-600"
+                  className="rounded-lg p-1 text-ink-soft transition-colors duration-200 hover:bg-stone-100 hover:text-stone-600"
                   aria-label={`Modifier ${f.label}`}
                 >
                   <Pencil className="size-3.5" />
@@ -96,7 +96,7 @@ export default function PatientClinicalFields({ patientId, initialData }: Props)
                   rows={4}
                   value={val}
                   onChange={(e) => setValues((prev) => ({ ...prev, [f.key]: e.target.value }))}
-                  className="w-full rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm text-ink placeholder:text-ink-softer focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
+                  className="w-full rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm text-ink placeholder:text-ink-soft focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
                   placeholder={`Saisir ${f.label.toLowerCase()}...`}
                 />
                 <div className="flex items-center gap-2">

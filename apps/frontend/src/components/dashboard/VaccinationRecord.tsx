@@ -83,7 +83,7 @@ export default function VaccinationRecord({ patientId, schedule, vaccinations, p
   return (
     <div className="mb-8">
       <h3 className="mb-3 font-heading text-lg font-semibold text-ink">Carnet vaccinal</h3>
-      <p className="mb-3 text-xs text-ink-softer">Âge du patient : {Math.floor(ageMonths / 12)} ans {ageMonths % 12} mois</p>
+      <p className="mb-3 text-xs text-ink-soft">Âge du patient : {Math.floor(ageMonths / 12)} ans {ageMonths % 12} mois</p>
       <div className="overflow-x-auto rounded-xl border border-warm bg-white shadow-warm-sm">
         <table className="min-w-[640px] w-full text-left text-sm">
           <thead className="border-b border-warm text-xs uppercase text-ink-soft">
@@ -114,8 +114,8 @@ export default function VaccinationRecord({ patientId, schedule, vaccinations, p
                   statusIcon = <AlertCircle className="size-4 text-purple-500" />
                   statusText = 'Contre-indiqué'; statusColor = 'text-purple-600'
                 } else {
-                  statusIcon = <AlertCircle className="size-4 text-ink-softer" />
-                  statusText = 'Refusé'; statusColor = 'text-ink-softer'
+                  statusIcon = <AlertCircle className="size-4 text-ink-soft" />
+                  statusText = 'Refusé'; statusColor = 'text-ink-soft'
                 }
               } else if (done) {
                 rowBg = 'bg-green-50/30'
@@ -133,7 +133,7 @@ export default function VaccinationRecord({ patientId, schedule, vaccinations, p
               return (
                 <tr key={key} className={`hover:bg-stone-50 ${rowBg}`}>
                   <td className="px-4 py-2.5 font-medium text-ink">{entry.vaccineName}</td>
-                  <td className="px-4 py-2.5 text-stone-600">{entry.doseLabel}{entry.notes && <span className="ml-1 text-xs text-ink-softer">({entry.notes})</span>}</td>
+                  <td className="px-4 py-2.5 text-stone-600">{entry.doseLabel}{entry.notes && <span className="ml-1 text-xs text-ink-soft">({entry.notes})</span>}</td>
                   <td className="px-4 py-2.5 text-ink-soft">{entry.ageMonths < 1 ? 'Naissance' : entry.ageMonths >= 12 ? `${Math.floor(entry.ageMonths / 12)} ans` : `${entry.ageMonths} mois`}</td>
                   <td className={`px-4 py-2.5 ${statusColor}`}><span className="flex items-center gap-1.5">{statusIcon}{statusText}</span></td>
                   <td className="px-4 py-2.5 text-ink-soft hidden md:table-cell">{done?.administrationRoute || '—'}</td>
@@ -161,7 +161,7 @@ export default function VaccinationRecord({ patientId, schedule, vaccinations, p
                           className="w-20 rounded border border-stone-300 px-2 py-1 text-xs focus:border-primary-500 focus:outline-none" />
                         <button onClick={() => handleSubmit(entry)} disabled={saving}
                           className="rounded bg-cta-600 px-2.5 py-1 text-xs font-medium text-white hover:bg-cta-700 disabled:opacity-50">{saving ? '…' : 'OK'}</button>
-                        <button onClick={() => setActiveForm(null)} className="text-xs text-ink-softer hover:text-stone-600">✕</button>
+                        <button onClick={() => setActiveForm(null)} className="text-xs text-ink-soft hover:text-stone-600">✕</button>
                       </div>
                     )}
                   </td>
