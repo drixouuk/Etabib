@@ -86,7 +86,7 @@ export default function VaccinationRecord({ patientId, schedule, vaccinations, p
       <p className="mb-3 text-xs text-ink-softer">Âge du patient : {Math.floor(ageMonths / 12)} ans {ageMonths % 12} mois</p>
       <div className="overflow-x-auto rounded-xl border border-warm bg-white shadow-warm-sm">
         <table className="min-w-[640px] w-full text-left text-sm">
-          <thead className="border-b border-warm bg-stone-50 text-xs uppercase text-ink-soft">
+          <thead className="border-b border-warm text-xs uppercase text-ink-soft">
             <tr>
               <th className="px-4 py-2.5 font-medium">Vaccin</th>
               <th className="px-4 py-2.5 font-medium">Dose</th>

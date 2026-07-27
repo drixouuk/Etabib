@@ -42,7 +42,7 @@ export default function PatientTable({
     <div>
       <div className="overflow-x-auto rounded-xl border border-warm bg-white shadow-warm-sm">
         <table className="min-w-[640px] w-full text-left text-sm">
-          <thead className="border-b border-warm bg-stone-50">
+          <thead className="border-b border-warm">
             <tr>
               <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-wider text-ink-softer">Nom</th>
               <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-wider text-ink-softer">Âge</th>
