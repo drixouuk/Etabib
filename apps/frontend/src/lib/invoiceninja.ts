@@ -24,9 +24,7 @@ async function apiRequest<T>(method: string, path: string, body?: unknown): Prom
   }
 }
 
-export function calculateCabinetPrice(doctorCount: number): number {
-  return 499 + Math.max(0, doctorCount - 1) * 199
-}
+import { calculateCabinetPrice } from './pricing'
 
 const TIER_PRICES: Record<string, number> = {
   vitrine: 0,

@@ -7,7 +7,7 @@ import StepIndicator from './StepIndicator'
 import TierCard from './TierCard'
 import SignupForm from './SignupForm'
 
-import { calculateCabinetPrice } from '@/lib/invoiceninja'
+import { calculateCabinetPrice } from '@/lib/pricing'
 
 type TierDef = { slug: string; name: string; price: number; features: string[]; badge?: string }
 
