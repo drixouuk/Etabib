@@ -8,12 +8,6 @@ import {
   Apple,
   FileCheck,
 } from 'lucide-react'
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
 import type { Service } from '@/lib/payload'
 
 type Props = {
@@ -36,34 +30,31 @@ export default async function ServicesSection({ locale, services }: Props) {
   if (services.length === 0) return null
 
   return (
-    <section id="services" className="scroll-mt-24 bg-gradient-to-b from-white to-cream-100 bg-cream-100 bg-[length:100%_16px] bg-[position:0_0] bg-no-repeat px-4 py-20 md:px-6 md:py-28 lg:px-8">
-      <div className="mx-auto max-w-container">
-        <div className="mx-auto max-w-2xl text-center">
-          <h2 className="font-heading text-3xl font-bold text-stone-800 md:text-4xl">
+    <section id="services" className="scroll-mt-24 border-y border-stone-200 bg-white px-4 py-[88px] md:py-[60px]">
+      <div className="container mx-auto max-w-[1200px]">
+        <div className="mx-auto mb-12 max-w-[620px] text-center">
+          <span className="mb-4 inline-flex items-center gap-1.5 rounded-full bg-cream-200 px-3.5 py-1.5 text-[.8rem] font-bold text-primary-700">
             {t('title')}
+          </span>
+          <h2 className="text-[clamp(1.6rem,3vw,2.15rem)] font-heading font-extrabold text-stone-800">
+            Nos services
           </h2>
-          <p className="mt-3 text-lg text-stone-500">{t('subtitle')}</p>
+          <p className="mt-2.5 text-stone-600">Une prise en charge complète de votre enfant</p>
         </div>
 
-        <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-5.5 sm:grid-cols-2 lg:grid-cols-3">
           {services.map((service) => {
             const Icon = serviceIcons[service.icon] || HeartPulse
             return (
-              <Card key={service.id} className="border-stone-200 bg-white shadow-sm transition-shadow duration-200 hover:shadow-md">
-                <CardHeader>
-                  <div className="flex size-10 items-center justify-center rounded-lg bg-primary-50 text-primary-600">
-                    <Icon className="size-5" />
-                  </div>
-                  <CardTitle className="font-heading text-lg text-stone-800">
-                    {service.title}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="prose prose-sm prose-stone max-w-none [&>*:first-child]:mt-0 [&>*:last-child]:mb-0">
-                    <RichText data={service.description as any} />
-                  </div>
-                </CardContent>
-              </Card>
+              <div key={service.id} className="rounded-2xl border border-stone-200 bg-white p-[26px] transition-all duration-200 hover:-translate-y-1 hover:shadow-md">
+                <div className="mb-4 flex size-11 items-center justify-center rounded-xl bg-primary-50 text-primary-600">
+                  <Icon className="size-[22px]" />
+                </div>
+                <h3 className="mb-1.5 font-heading text-base font-bold text-stone-800">{service.title}</h3>
+                <div className="text-[.89rem] text-stone-600 [&>*:first-child]:mt-0 [&>*:last-child]:mb-0">
+                  <RichText data={service.description as any} />
+                </div>
+              </div>
             )
           })}
         </div>
