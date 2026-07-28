@@ -57,7 +57,7 @@ export default async function HomePage({ params }: Props) {
         <span className="absolute left-[60%] -top-[100px] z-0 size-[340px] rounded-full bg-amber-100/70 blur-[60px]" />
         <span className="absolute -bottom-[60px] -left-[80px] z-0 size-[260px] rounded-full bg-primary-100/80 blur-[60px]" />
 
-        <div className="container relative z-10 mx-auto grid max-w-[1200px] items-center gap-14 md:grid-cols-2">
+        <div className="container relative z-10 mx-auto grid max-w-[1200px] items-center gap-14" style={{ gridTemplateColumns: '1.1fr 0.9fr' }}>
           <div>
             <span className="mb-5 inline-flex items-center gap-1.5 rounded-full border border-primary-200 bg-primary-50 px-3.5 py-1.5 text-[.82rem] font-semibold text-primary-700">
               <MapPin className="size-3.5" />
