@@ -8,12 +8,7 @@ export const AvailabilitySlots: CollectionConfig = {
     group: 'Cabinet',
   },
   access: {
-    read: ({ req: { user } }: any) => {
-      if (user?.roles?.includes('superadmin')) return true
-      const tid = typeof user?.tenant === 'object' ? user.tenant.id : user?.tenant
-      if (!tid) return false
-      return { tenant: { equals: tid } }
-    },
+    read: () => true,
     create: ({ req: { user } }: any): boolean => {
       const roles = user?.roles ?? []
       return roles.includes('superadmin') || roles.includes('tenant_admin') || roles.includes('doctor')
