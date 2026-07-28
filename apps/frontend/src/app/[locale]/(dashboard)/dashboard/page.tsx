@@ -33,11 +33,11 @@ export default async function DashboardPage() {
       </div>
 
       <div className="grid gap-4" style={{ gridTemplateColumns: '1.1fr 1fr' }}>
-        <div className="rounded-2xl border border-warm bg-white p-5 shadow-warm-sm">
+        <div className="rounded-2xl border border-warm bg-white p-5 shadow-sm">
           <h3 className="mb-3 font-heading text-[14.5px] font-semibold text-[#2A241C]">File d&apos;attente</h3>
           <QueuePreview />
         </div>
-        <div className="rounded-2xl border border-warm bg-white p-5 shadow-warm-sm">
+        <div className="rounded-2xl border border-warm bg-white p-5 shadow-sm">
           <h3 className="mb-3 font-heading text-[14.5px] font-semibold text-[#2A241C]">Rappels vaccinaux</h3>
           {isPediatrie ? <VaccinationAlerts /> : (
             <div className="flex items-center gap-2.5 rounded-[10px] bg-primary-50 px-3.5 py-3 text-[13px] text-primary-700">

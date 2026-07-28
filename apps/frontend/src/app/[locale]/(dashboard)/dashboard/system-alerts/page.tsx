@@ -15,7 +15,7 @@ export default async function SystemAlertsPage() {
   if (!user.roles?.includes('superadmin')) {
     return (
       <div className="mx-auto max-w-container px-4 py-12 md:px-6 lg:px-8">
-        <p className="text-ink-soft">Accès réservé aux super-administrateurs.</p>
+        <p className="text-stone-800-soft">Accès réservé aux super-administrateurs.</p>
       </div>
     )
   }
@@ -39,22 +39,22 @@ export default async function SystemAlertsPage() {
   return (
     <div className="mx-auto max-w-container px-4 py-12 md:px-6 lg:px-8">
       <div className="mb-8">
-        <h1 className="font-heading text-3xl font-bold text-ink">
+        <h1 className="font-heading text-3xl font-bold text-stone-800">
           Alertes système
         </h1>
-        <p className="mt-1 text-sm text-ink-soft">
+        <p className="mt-1 text-sm text-stone-800-soft">
           Événements de défaillance technique (écriture audit-log, etc.)
         </p>
       </div>
 
       {alerts.length === 0 ? (
-        <p className="text-ink-soft">Aucune alerte.</p>
+        <p className="text-stone-800-soft">Aucune alerte.</p>
       ) : (
         <div className="space-y-4">
           {alerts.map((a) => (
             <details
               key={a.id}
-              className="overflow-hidden rounded-xl border border-warm bg-white shadow-warm-sm"
+              className="overflow-hidden rounded-xl border border-warm bg-white shadow-sm"
             >
               <summary className="flex cursor-pointer items-center gap-3 px-4 py-3 text-sm hover:bg-stone-50">
                 <span
@@ -62,8 +62,8 @@ export default async function SystemAlertsPage() {
                 >
                   {levelLabels[a.level] || a.level}
                 </span>
-                <span className="flex-1 text-ink">{a.message}</span>
-                <span className="shrink-0 text-xs text-ink-soft">
+                <span className="flex-1 text-stone-800">{a.message}</span>
+                <span className="shrink-0 text-xs text-stone-800-soft">
                   {new Date(a.timestamp).toLocaleString('fr-FR')}
                 </span>
               </summary>

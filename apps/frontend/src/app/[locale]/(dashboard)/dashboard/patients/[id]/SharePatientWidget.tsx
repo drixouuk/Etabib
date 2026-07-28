@@ -45,10 +45,10 @@ export default function SharePatientWidget({ patientId, sharedWithIds, isCliniqu
   const sharedDoctors = doctors.filter(d => shared.includes(d.id))
 
   return (
-    <div className="rounded-xl border border-warm bg-white shadow-warm-sm">
+    <div className="rounded-xl border border-warm bg-white shadow-sm">
       <div className="border-b border-stone-100 px-4 py-3">
-        <h2 className="font-heading text-lg font-semibold text-ink flex items-center gap-2">
-          <Share2 className="size-4 text-ink-soft" /> Partage
+        <h2 className="font-heading text-lg font-semibold text-stone-800 flex items-center gap-2">
+          <Share2 className="size-4 text-stone-800-soft" /> Partage
         </h2>
       </div>
       <div className="px-4 py-3 space-y-2">
@@ -72,7 +72,7 @@ export default function SharePatientWidget({ patientId, sharedWithIds, isCliniqu
           </select>
         )}
         {sharedDoctors.length === 0 && doctors.length === 0 && (
-          <p className="text-xs text-ink-soft">Aucun confrère dans ce cabinet.</p>
+          <p className="text-xs text-stone-800-soft">Aucun confrère dans ce cabinet.</p>
         )}
       </div>
     </div>

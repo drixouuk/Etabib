@@ -29,18 +29,18 @@ export default function ChangePasswordForm({ userId }: Props) {
     setSaving(false)
   }
 
-  const inputClass = 'w-full rounded-lg border border-stone-300 bg-white px-4 py-2.5 text-sm text-ink focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none'
+  const inputClass = 'w-full rounded-lg border border-stone-300 bg-white px-4 py-2.5 text-sm text-stone-800 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none'
 
   return (
-    <div className="rounded-xl border border-warm bg-white shadow-warm-sm">
-      <div className="border-b border-stone-100 px-4 py-3"><h2 className="font-heading text-lg font-semibold text-ink">Changer mon mot de passe</h2></div>
+    <div className="rounded-xl border border-warm bg-white shadow-sm">
+      <div className="border-b border-stone-100 px-4 py-3"><h2 className="font-heading text-lg font-semibold text-stone-800">Changer mon mot de passe</h2></div>
       <form onSubmit={handleSubmit} className="flex flex-col gap-4 p-4">
         <div>
-          <label className="mb-1 block text-sm font-medium text-ink">Nouveau mot de passe</label>
+          <label className="mb-1 block text-sm font-medium text-stone-800">Nouveau mot de passe</label>
           <input type="password" value={newPassword} onChange={e => setNewPassword(e.target.value)} required minLength={8} className={inputClass} />
         </div>
         <div>
-          <label className="mb-1 block text-sm font-medium text-ink">Confirmer le mot de passe</label>
+          <label className="mb-1 block text-sm font-medium text-stone-800">Confirmer le mot de passe</label>
           <input type="password" value={confirm} onChange={e => setConfirm(e.target.value)} required className={inputClass} />
         </div>
         {error && <p className="text-sm text-red-600">{error}</p>}

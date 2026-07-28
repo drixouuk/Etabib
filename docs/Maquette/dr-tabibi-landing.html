@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>dr-tabibi — Le cabinet médical, simplifié</title>
+<meta name="description" content="Site vitrine multilingue, rendez-vous en ligne et dossier patient numérique réunis dans une seule plateforme pensée pour les praticiens indépendants au Maroc.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@500;600;700;800&family=Noto+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#FFFBF0;
+    --cream-deep:#FBF3DF;
+    --teal:#0D9488;
+    --teal-dark:#0B6E64;
+    --teal-tint:#E4F4F1;
+    --amber:#F59E0B;
+    --amber-tint:#FDF0D5;
+    --orange:#EA580C;
+    --orange-dark:#C8480A;
+    --ink:#2A241C;
+    --ink-soft:#8A8175;
+    --ink-faint:#B9B2A4;
+    --border:rgba(42,36,28,.10);
+    --white:#FFFFFF;
+    --shadow-sm:0 2px 12px rgba(42,36,28,.06);
+    --shadow-md:0 10px 28px rgba(42,36,28,.10);
+    --shadow-lg:0 24px 60px rgba(42,36,28,.16);
+    --radius-sm:12px;
+    --radius-md:20px;
+    --radius-lg:28px;
+    --nav-h:64px;
+  }
+
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    font-family:'Noto Sans',sans-serif;
+    color:var(--ink);
+    background:var(--cream);
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  h1,h2,h3,h4{font-family:'Figtree',sans-serif;color:var(--ink);line-height:1.15;font-weight:800;}
+  p{color:var(--ink-soft);}
+  a{color:inherit;text-decoration:none;}
+  img,svg{display:block;max-width:100%;}
+  ul{list-style:none;}
+  button{font-family:inherit;}
+
+  :focus-visible{outline:2.5px solid var(--teal);outline-offset:3px;border-radius:4px;}
+
+  .container{max-width:1160px;margin:0 auto;padding:0 24px;}
+  .eyebrow{
+    display:inline-flex;align-items:center;gap:8px;
+    background:var(--teal-tint);color:var(--teal-dark);
+    font-weight:700;font-size:.82rem;letter-spacing:.2px;
+    padding:8px 16px;border-radius:999px;
+  }
+  .section-head{max-width:640px;margin:0 auto 52px;text-align:center;}
+  .section-head h2{font-size:clamp(1.7rem,3vw,2.35rem);margin-bottom:14px;}
+  .section-head p{font-size:1.05rem;}
+  section{padding:104px 0;}
+  @media(max-width:768px){ section{padding:68px 0;} }
+
+  /* ---------- buttons ---------- */
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:9px;
+    padding:15px 28px;border-radius:999px;font-weight:700;font-size:.97rem;
+    border:none;cursor:pointer;transition:transform .18s ease,box-shadow .18s ease,background .18s ease,color .18s ease;
+    white-space:nowrap;
+  }
+  .btn svg{width:18px;height:18px;flex-shrink:0;}
+  .btn-primary{background:var(--orange);color:#fff;box-shadow:var(--shadow-sm);}
+  .btn-primary:hover{background:var(--orange-dark);transform:translateY(-2px);box-shadow:var(--shadow-md);}
+  .btn-secondary{background:transparent;color:var(--ink);border:1.6px solid var(--border);}
+  .btn-secondary:hover{border-color:var(--teal);color:var(--teal-dark);background:var(--white);}
+  .btn-ghost-white{background:transparent;color:#fff;border:1.6px solid rgba(255,255,255,.55);}
+  .btn-ghost-white:hover{background:rgba(255,255,255,.12);border-color:#fff;}
+  .btn-white{background:#fff;color:var(--teal-dark);box-shadow:var(--shadow-sm);}
+  .btn-white:hover{transform:translateY(-2px);box-shadow:var(--shadow-md);}
+  .btn-sm{padding:10px 20px;font-size:.88rem;}
+  .btn-block{width:100%;}
+
+  /* ---------- reveal ---------- */
+  .reveal{opacity:0;transform:translateY(22px);transition:opacity .7s ease,transform .7s ease;}
+  .reveal.in{opacity:1;transform:none;}
+  @media (prefers-reduced-motion: reduce){
+    .reveal{opacity:1;transform:none;transition:none;}
+    *{scroll-behavior:auto !important;}
+  }
+
+  /* ================= HEADER — floating navbar (identique à drguinane.drixou.uk) ================= */
+  .site-header{
+    position:fixed;top:1rem;left:1rem;right:1rem;z-index:50;
+    transition:transform .3s ease;
+  }
+  .site-header.nav-hidden{transform:translateY(calc(-100% - 1rem));}
+  .header-inner{
+    display:flex;align-items:center;justify-content:space-between;
+    height:auto;padding:12px 16px;border-radius:18px;
+    background:rgba(255,255,255,.8);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+    box-shadow:var(--shadow-sm);max-width:1160px;margin:0 auto;
+  }
+  .logo{display:flex;align-items:center;gap:10px;font-family:'Figtree',sans-serif;font-weight:800;font-size:1.1rem;color:var(--ink);}
+  .logo-mark{width:32px;height:32px;border-radius:9px;background:var(--teal);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .logo-mark svg{width:18px;height:18px;color:#fff;}
+  .logo span{color:var(--teal-dark);}
+  .nav-links{display:flex;align-items:center;gap:4px;}
+  .nav-links a{font-weight:600;font-size:.92rem;color:var(--ink-soft);transition:color .15s ease,background .15s ease;padding:8px 12px;border-radius:10px;}
+  .nav-links a:hover{color:var(--teal-dark);background:var(--teal-tint);}
+  .header-actions{display:flex;align-items:center;gap:14px;}
+  .nav-toggle{display:none;background:none;border:none;cursor:pointer;color:var(--ink);width:36px;height:36px;align-items:center;justify-content:center;}
+  .nav-toggle svg{width:22px;height:22px;}
+
+  @media(max-width:860px){
+    .nav-links{
+      position:absolute;top:calc(100% + 8px);left:0;right:0;
+      background:var(--white);border:1px solid var(--border);border-radius:16px;
+      flex-direction:column;align-items:stretch;gap:2px;padding:8px;
+      max-height:0;overflow:hidden;opacity:0;transition:max-height .3s ease,opacity .2s ease;
+      box-shadow:var(--shadow-md);
+    }
+    .nav-links.open{max-height:320px;opacity:1;}
+    .nav-links a{width:100%;padding:12px 14px;}
+    .header-actions .btn-sm-desktop{display:none;}
+    .nav-toggle{display:flex;}
+  }
+
+  /* ================= HERO ================= */
+  .hero{position:relative;padding:130px 0 60px;overflow:hidden;}
+  @media(max-width:860px){ .hero{padding-top:112px;} }
+  .hero .container{display:grid;grid-template-columns:1.05fr .95fr;gap:56px;align-items:center;position:relative;z-index:2;}
+  .hero-blob{position:absolute;border-radius:50%;filter:blur(70px);opacity:.35;z-index:1;}
+  .hero-blob.b1{width:420px;height:420px;background:var(--teal);top:-140px;left:-160px;}
+  .hero-blob.b2{width:340px;height:340px;background:var(--amber);bottom:-120px;right:-100px;opacity:.28;}
+
+  .hero-copy .eyebrow{margin-bottom:22px;}
+  .hero-copy h1{font-size:clamp(2.15rem,4vw,3.15rem);margin-bottom:20px;letter-spacing:-.01em;}
+  .hero-copy h1 em{font-style:normal;color:var(--teal-dark);}
+  .hero-copy>p{font-size:1.13rem;max-width:520px;margin-bottom:34px;}
+  .hero-ctas{display:flex;flex-wrap:wrap;gap:14px;margin-bottom:22px;}
+  .hero-trust{display:flex;flex-wrap:wrap;gap:18px;font-size:.87rem;color:var(--ink-faint);font-weight:600;}
+  .hero-trust span{display:inline-flex;align-items:center;gap:6px;}
+  .hero-trust svg{width:14px;height:14px;color:var(--teal);}
+
+  /* growth chart hero card — signature element */
+  .hero-visual{position:relative;}
+  .clinical-card{
+    background:var(--white);border-radius:var(--radius-lg);
+    box-shadow:var(--shadow-lg);border:1px solid var(--border);
+    padding:26px 26px 20px;position:relative;
+  }
+  .clinical-head{display:flex;align-items:center;gap:12px;margin-bottom:6px;}
+  .clinical-avatar{
+    width:40px;height:40px;border-radius:50%;
+    background:linear-gradient(135deg,var(--amber),var(--orange));
+    color:#fff;font-family:'Figtree',sans-serif;font-weight:800;font-size:.85rem;
+    display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  }
+  .clinical-name{font-family:'Figtree',sans-serif;font-weight:700;font-size:.98rem;color:var(--ink);}
+  .clinical-sub{font-size:.82rem;color:var(--ink-faint);}
+  .clinical-tag{
+    margin-left:auto;background:var(--teal-tint);color:var(--teal-dark);
+    font-size:.74rem;font-weight:700;padding:5px 11px;border-radius:999px;white-space:nowrap;
+  }
+  .chart-title{font-size:.78rem;font-weight:700;color:var(--ink-faint);text-transform:uppercase;letter-spacing:.06em;margin:14px 0 6px;}
+  .growth-svg{width:100%;height:auto;}
+  .grid-line{stroke:var(--border);stroke-width:1;stroke-dasharray:3 4;}
+  .axis-label{font-family:'Noto Sans',sans-serif;font-size:9px;fill:var(--ink-faint);}
+  .band{fill:none;stroke-width:1.6;opacity:.55;}
+  .band-p97{stroke:#CFE4E1;}
+  .band-p50{stroke:#9FCCC5;}
+  .band-p3{stroke:#CFE4E1;}
+  .growth-line{
+    fill:none;stroke:var(--orange);stroke-width:3;stroke-linecap:round;stroke-linejoin:round;
+    stroke-dasharray:640;stroke-dashoffset:640;transition:stroke-dashoffset 1.6s cubic-bezier(.4,.1,.2,1);
+  }
+  .growth-line.animate{stroke-dashoffset:0;}
+  .growth-dot{fill:var(--orange);opacity:0;transform-origin:center;transition:opacity .3s ease,transform .3s ease;transform:scale(0);}
+  .growth-dot.animate{opacity:1;transform:scale(1);}
+  .callout{opacity:0;transition:opacity .4s ease .3s;}
+  .callout.animate{opacity:1;}
+  .callout-box{fill:var(--ink);}
+  .callout-text{font-family:'Figtree',sans-serif;font-size:10.5px;font-weight:700;fill:#fff;}
+  .legend{display:flex;gap:16px;margin-top:8px;flex-wrap:wrap;}
+  .legend-item{display:flex;align-items:center;gap:6px;font-size:.74rem;color:var(--ink-faint);font-weight:600;}
+  .legend-swatch{width:14px;height:3px;border-radius:2px;}
+  .badge-floating{
+    position:absolute;top:-16px;right:22px;background:var(--white);
+    border:1px solid var(--border);box-shadow:var(--shadow-md);
+    border-radius:999px;padding:8px 16px;display:flex;align-items:center;gap:7px;
+    font-size:.78rem;font-weight:700;color:var(--teal-dark);
+  }
+  .badge-floating svg{width:15px;height:15px;color:var(--teal);}
+
+  @media(max-width:1024px){
+    .hero .container{grid-template-columns:1fr;}
+    .hero-visual{max-width:460px;margin:0 auto;}
+  }
+
+  /* ================= TRUST BAR ================= */
+  .trust-bar{padding:34px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
+  .trust-bar .container{display:flex;justify-content:center;align-items:center;flex-wrap:wrap;gap:38px;}
+  .trust-item{display:flex;align-items:center;gap:10px;font-weight:700;font-size:.92rem;color:var(--ink-soft);}
+  .trust-item svg{width:20px;height:20px;color:var(--teal);flex-shrink:0;}
+
+  /* ================= PROBLEM / SOLUTION ================= */
+  .ps-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:26px;}
+  .ps-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius-md);padding:30px;}
+  .ps-row{display:flex;gap:12px;align-items:flex-start;padding:11px 0;}
+  .ps-row.before p{color:var(--ink-faint);font-size:.92rem;}
+  .ps-row.before .dot{width:7px;height:7px;border-radius:50%;background:var(--ink-faint);margin-top:8px;flex-shrink:0;}
+  .ps-row.after{border-top:1px dashed var(--border);margin-top:4px;padding-top:18px;}
+  .ps-row.after p{color:var(--ink);font-weight:600;font-size:.96rem;}
+  .ps-row.after svg{width:19px;height:19px;color:var(--teal);flex-shrink:0;margin-top:2px;}
+  @media(max-width:900px){ .ps-grid{grid-template-columns:1fr;} }
+
+  /* ================= FEATURES ================= */
+  .features-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:22px;}
+  .feature-card{
+    background:var(--white);border:1px solid var(--border);border-radius:var(--radius-md);
+    padding:28px 24px;transition:transform .2s ease,box-shadow .2s ease;position:relative;
+  }
+  .feature-card:hover{transform:translateY(-5px);box-shadow:var(--shadow-md);}
+  .feature-icon{
+    width:46px;height:46px;border-radius:13px;background:var(--teal-tint);
+    display:flex;align-items:center;justify-content:center;margin-bottom:18px;
+  }
+  .feature-icon svg{width:23px;height:23px;color:var(--teal-dark);}
+  .feature-card h3{font-size:1.02rem;margin-bottom:8px;}
+  .feature-card p{font-size:.9rem;}
+  .feature-exclusive{
+    position:absolute;top:20px;right:20px;background:var(--amber-tint);color:#8a5a05;
+    font-size:.68rem;font-weight:800;padding:4px 9px;border-radius:999px;letter-spacing:.03em;
+  }
+  @media(max-width:900px){ .features-grid{grid-template-columns:repeat(2,1fr);} }
+  @media(max-width:520px){ .features-grid{grid-template-columns:1fr;} }
+
+  /* ================= HOW IT WORKS ================= */
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;position:relative;}
+  .steps::before{
+    content:"";position:absolute;top:29px;left:12%;right:12%;height:2px;
+    background:repeating-linear-gradient(90deg,var(--border) 0 10px,transparent 10px 18px);
+    z-index:0;
+  }
+  .step{text-align:center;position:relative;z-index:1;padding:0 18px;}
+  .step-num{
+    width:58px;height:58px;border-radius:50%;background:var(--white);border:2px solid var(--teal);
+    color:var(--teal-dark);font-family:'Figtree',sans-serif;font-weight:800;font-size:1.25rem;
+    display:flex;align-items:center;justify-content:center;margin:0 auto 20px;
+  }
+  .step h3{font-size:1.05rem;margin-bottom:8px;}
+  .step p{font-size:.9rem;max-width:250px;margin:0 auto;}
+  @media(max-width:768px){
+    .steps{grid-template-columns:1fr;gap:36px;}
+    .steps::before{display:none;}
+  }
+
+  /* ================= DEMO ================= */
+  .demo-section{background:var(--white);border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
+  .demo-inner{display:grid;grid-template-columns:1.1fr .9fr;gap:50px;align-items:center;}
+  .demo-copy h2{font-size:clamp(1.6rem,3vw,2.1rem);margin-bottom:14px;}
+  .demo-copy p{margin-bottom:26px;font-size:1.02rem;max-width:480px;}
+  .cred-card{
+    background:var(--cream);border:1px solid var(--border);border-radius:var(--radius-md);
+    padding:22px 24px;margin-bottom:0;
+  }
+  .cred-row{display:flex;align-items:center;justify-content:space-between;padding:11px 0;}
+  .cred-row+.cred-row{border-top:1px solid var(--border);}
+  .cred-label{font-size:.78rem;font-weight:700;color:var(--ink-faint);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px;}
+  .cred-value{font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;font-size:.98rem;font-weight:600;color:var(--ink);}
+  .copy-btn{
+    display:flex;align-items:center;gap:6px;background:var(--white);border:1px solid var(--border);
+    border-radius:9px;padding:8px 13px;font-size:.82rem;font-weight:700;color:var(--teal-dark);cursor:pointer;
+    transition:background .15s ease,border-color .15s ease;flex-shrink:0;
+  }
+  .copy-btn:hover{background:var(--teal-tint);border-color:var(--teal);}
+  .copy-btn svg{width:14px;height:14px;}
+  .demo-visual{
+    background:var(--cream-deep);border-radius:var(--radius-lg);border:1px solid var(--border);
+    padding:44px 30px;text-align:center;
+  }
+  .demo-visual svg{width:74px;height:74px;color:var(--teal);margin:0 auto 18px;}
+  .demo-visual h4{font-size:1.05rem;margin-bottom:8px;}
+  .demo-visual p{font-size:.88rem;margin-bottom:22px;}
+  .demo-note{font-size:.82rem;color:var(--ink-faint);margin-top:16px;text-align:center;}
+  @media(max-width:900px){ .demo-inner{grid-template-columns:1fr;} }
+
+  /* ================= PRICING ================= */
+  .pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;align-items:stretch;}
+  .price-card{
+    background:var(--white);border:1px solid var(--border);border-radius:var(--radius-lg);
+    padding:34px 28px;display:flex;flex-direction:column;position:relative;
+  }
+  .price-card.featured{border:2px solid var(--teal);box-shadow:var(--shadow-lg);transform:scale(1.03);}
+  .ribbon{
+    position:absolute;top:-15px;left:50%;transform:translateX(-50%);
+    background:var(--teal);color:#fff;font-size:.76rem;font-weight:800;
+    padding:6px 18px;border-radius:999px;white-space:nowrap;box-shadow:var(--shadow-sm);
+  }
+  .price-tier{font-family:'Figtree',sans-serif;font-weight:700;font-size:1.15rem;margin-bottom:10px;}
+  .price-amount{display:flex;align-items:baseline;gap:6px;margin-bottom:4px;}
+  .price-amount .num{font-family:'Figtree',sans-serif;font-weight:800;font-size:2.15rem;color:var(--teal-dark);}
+  .price-amount .per{font-size:.85rem;color:var(--ink-faint);font-weight:600;}
+  .price-note{font-size:.78rem;color:var(--ink-faint);margin-bottom:20px;min-height:16px;}
+  .price-list{margin-bottom:28px;flex-grow:1;}
+  .price-list li{display:flex;align-items:flex-start;gap:9px;padding:7px 0;font-size:.91rem;color:var(--ink-soft);}
+  .price-list li svg{width:16px;height:16px;color:var(--teal);flex-shrink:0;margin-top:3px;}
+  .price-list li strong{color:var(--ink);font-weight:700;}
+  @media(max-width:900px){
+    .pricing-grid{grid-template-columns:1fr;max-width:420px;margin:0 auto;}
+    .price-card.featured{transform:none;}
+  }
+  .pricing-fineprint{text-align:center;color:var(--ink-faint);font-size:.85rem;margin-top:30px;}
+
+  /* ================= SECURITY ================= */
+  .security-row{display:grid;grid-template-columns:repeat(4,1fr);gap:22px;margin-bottom:36px;}
+  .sec-item{text-align:center;}
+  .sec-item .feature-icon{margin:0 auto 14px;}
+  .sec-item h4{font-size:.95rem;margin-bottom:6px;}
+  .sec-item p{font-size:.84rem;}
+  .security-fact{
+    text-align:center;font-size:.92rem;color:var(--ink-soft);font-weight:600;
+    background:var(--teal-tint);border-radius:var(--radius-md);padding:18px 24px;max-width:640px;margin:0 auto;
+  }
+  @media(max-width:900px){ .security-row{grid-template-columns:repeat(2,1fr);} }
+
+  /* ================= FAQ ================= */
+  .faq-list{max-width:760px;margin:0 auto;}
+  .faq-item{border-bottom:1px solid var(--border);}
+  .faq-item summary{
+    padding:22px 4px;font-family:'Figtree',sans-serif;font-weight:700;font-size:1.02rem;
+    cursor:pointer;list-style:none;display:flex;align-items:center;justify-content:space-between;gap:16px;
+  }
+  .faq-item summary::-webkit-details-marker{display:none;}
+  .faq-item summary .chev{width:20px;height:20px;color:var(--teal);flex-shrink:0;transition:transform .2s ease;}
+  .faq-item[open] summary .chev{transform:rotate(45deg);}
+  .faq-item p{padding:0 4px 22px;font-size:.94rem;max-width:640px;}
+
+  /* ================= FINAL CTA ================= */
+  .final-cta{
+    background:linear-gradient(135deg,var(--teal-dark),var(--teal));
+    border-radius:var(--radius-lg);position:relative;overflow:hidden;
+    padding:64px 40px;text-align:center;margin:0 24px;
+  }
+  .final-cta::before{
+    content:"";position:absolute;width:340px;height:340px;border-radius:50%;
+    background:rgba(255,255,255,.08);top:-160px;right:-80px;
+  }
+  .final-cta h2{color:#fff;font-size:clamp(1.6rem,3vw,2.2rem);margin-bottom:12px;position:relative;}
+  .final-cta p{color:rgba(255,255,255,.85);margin-bottom:30px;font-size:1.05rem;position:relative;}
+  .final-cta .hero-ctas{justify-content:center;position:relative;}
+
+  /* ================= FOOTER ================= */
+  .site-footer{padding:70px 0 30px;}
+  .footer-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:36px;padding-bottom:44px;}
+  .footer-brand p{font-size:.88rem;max-width:280px;margin-top:14px;}
+  .footer-col h5{font-family:'Figtree',sans-serif;font-size:.86rem;font-weight:700;margin-bottom:16px;color:var(--ink);}
+  .footer-col a{display:block;font-size:.88rem;color:var(--ink-soft);padding:6px 0;transition:color .15s ease;}
+  .footer-col a:hover{color:var(--teal-dark);}
+  .footer-bottom{
+    border-top:1px solid var(--border);padding-top:24px;
+    display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;
+    font-size:.82rem;color:var(--ink-faint);
+  }
+  @media(max-width:768px){
+    .footer-grid{grid-template-columns:repeat(2,1fr);}
+  }
+  @media(max-width:480px){
+    .footer-grid{grid-template-columns:1fr;}
+    .final-cta{margin:0 12px;padding:48px 22px;}
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ SVG ICON SPRITE ============ -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+<defs>
+  <symbol id="i-heartbeat" viewBox="0 0 24 24"><path d="M2 12h4l2-8l4 16l3-11l2 3h5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M3 12h18" stroke="currentColor" stroke-width="1.6"/><path d="M12 3c3.2 3 3.2 15 0 18c-3.2-3-3.2-15 0-18Z" fill="none" stroke="currentColor" stroke-width="1.6"/></symbol>
+  <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M3.5 9.5h17" stroke="currentColor" stroke-width="1.6"/><path d="M8 3v4M16 3v4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></symbol>
+  <symbol id="i-file" viewBox="0 0 24 24"><path d="M7 3h7l5 5v12a1.2 1.2 0 0 1-1.2 1.2H7A1.2 1.2 0 0 1 5.8 20V4.2A1.2 1.2 0 0 1 7 3Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M14 3v5h5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M9 12.5h6M9 16h6M9 9h2.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3.2l7 2.6v6.1c0 4.8-3 8-7 9c-4-1-7-4.2-7-9V5.8Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M8.7 12.2l2.3 2.3l4.3-4.6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-trend" viewBox="0 0 24 24"><path d="M3.5 17.5l5.5-6l4 3.3l7.5-8.3" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M14.5 6h6v6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8.2" r="3.2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M3.3 19.5c.5-3.6 3-5.8 5.7-5.8s5.2 2.2 5.7 5.8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="17" cy="9.5" r="2.3" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M15.2 14c2.1.3 3.9 2.1 4.3 5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9.2" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8 11V7.5a4 4 0 0 1 8 0V11" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="15.5" r="1.3" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="i-bars" viewBox="0 0 24 24"><path d="M4.5 20V12M10.5 20V5.5M16.5 20v-8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M3 20.5h18" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></symbol>
+  <symbol id="i-message" viewBox="0 0 24 24"><path d="M4 12.3a8 8 0 1 1 3.2 6.3L4 20l1.2-4A7.9 7.9 0 0 1 4 12.3Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M4 12h16M13.5 5.5L20 12l-6.5 6.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8.5" y="8.5" width="11" height="11" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M15.5 8.5V6.2A1.7 1.7 0 0 0 13.8 4.5H6.2A1.7 1.7 0 0 0 4.5 6.2v7.6a1.7 1.7 0 0 0 1.7 1.7h2.3" fill="none" stroke="currentColor" stroke-width="1.6"/></symbol>
+  <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 6.5h16M4 12h16M4 17.5h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+  <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.3" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M10 8.5l6 3.5l-6 3.5Z" fill="currentColor" stroke="none"/></symbol>
+</defs>
+</svg>
+
+<!-- ============ HEADER ============ -->
+<header class="site-header" id="siteHeader">
+  <div class="header-inner">
+    <a href="#" class="logo">
+      <span class="logo-mark"><svg><use href="#i-heartbeat"/></svg></span>
+      dr-<span>tabibi</span>
+    </a>
+    <nav class="nav-links" id="navLinks">
+      <a href="#fonctionnalites">Fonctionnalités</a>
+      <a href="#demo">Démo</a>
+      <a href="#tarifs">Tarifs</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+    <div class="header-actions">
+      <a href="https://demo.drixou.uk/login" target="_blank" rel="noopener" class="btn btn-primary btn-sm btn-sm-desktop">
+        Essayer la démo
+      </a>
+      <button class="nav-toggle" id="navToggle" aria-label="Ouvrir le menu">
+        <svg><use href="#i-menu" id="menuIcon"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <!-- ============ HERO ============ -->
+  <section class="hero">
+    <span class="hero-blob b1"></span>
+    <span class="hero-blob b2"></span>
+    <div class="container">
+      <div class="hero-copy">
+        <span class="eyebrow">🇲🇦 Pensé pour les praticiens indépendants au Maroc</span>
+        <h1>Le cabinet médical, <em>simplifié</em> au quotidien</h1>
+        <p>Site vitrine multilingue, prise de rendez-vous en ligne et dossier patient numérique — réunis dans une seule plateforme, en français, arabe, tamazight et anglais.</p>
+        <div class="hero-ctas">
+          <a href="https://demo.drixou.uk/login" target="_blank" rel="noopener" class="btn btn-primary">
+            Essayer la démo gratuite <svg><use href="#i-arrow"/></svg>
+          </a>
+          <a href="#tarifs" class="btn btn-secondary">Voir les tarifs</a>
+        </div>
+        <div class="hero-trust">
+          <span><svg><use href="#i-check"/></svg>Sans engagement</span>
+          <span><svg><use href="#i-check"/></svg>Hébergement inclus</span>
+          <span><svg><use href="#i-check"/></svg>Support en français</span>
+        </div>
+      </div>
+
+      <div class="hero-visual">
+        <div class="badge-floating"><svg><use href="#i-trend"/></svg>Suivi OMS intégré</div>
+        <div class="clinical-card">
+          <div class="clinical-head">
+            <div class="clinical-avatar">Y.</div>
+            <div>
+              <div class="clinical-name">Yasmine · 18 mois</div>
+              <div class="clinical-sub">Consultation de suivi</div>
+            </div>
+            <span class="clinical-tag">Aujourd'hui</span>
+          </div>
+          <div class="chart-title">Courbe de croissance — Poids / Âge</div>
+          <svg class="growth-svg" viewBox="0 0 400 220" id="growthChart">
+            <line class="grid-line" x1="30" y1="180" x2="380" y2="180"/>
+            <line class="grid-line" x1="30" y1="105" x2="380" y2="105"/>
+            <line class="grid-line" x1="30" y1="35" x2="380" y2="35"/>
+            <text class="axis-label" x="4" y="183">3kg</text>
+            <text class="axis-label" x="4" y="108">7kg</text>
+            <text class="axis-label" x="1" y="38">11kg</text>
+            <path class="band band-p97" d="M30,150 C90,90 150,50 200,35 C260,20 320,15 380,10"/>
+            <path class="band band-p50" d="M30,165 C90,120 150,85 200,68 C260,52 320,42 380,35"/>
+            <path class="band band-p3" d="M30,180 C90,150 150,120 200,105 C260,90 320,78 380,68"/>
+            <path class="growth-line" id="growthLine" d="M30,178 C70,160 110,140 150,120 C190,100 230,80 270,62 C300,50 340,42 380,38"/>
+            <circle class="growth-dot" data-d="0" cx="30" cy="178" r="4"/>
+            <circle class="growth-dot" data-d="1" cx="150" cy="120" r="4"/>
+            <circle class="growth-dot" data-d="2" cx="270" cy="62" r="4"/>
+            <circle class="growth-dot" data-d="3" cx="380" cy="38" r="4"/>
+            <g class="callout" id="callout">
+              <rect class="callout-box" x="272" y="6" width="100" height="24" rx="7"/>
+              <text class="callout-text" x="322" y="22" text-anchor="middle">50ᵉ percentile</text>
+            </g>
+            <text class="axis-label" x="24" y="200">Naissance</text>
+            <text class="axis-label" x="138" y="200">6 mois</text>
+            <text class="axis-label" x="258" y="200">12 mois</text>
+            <text class="axis-label" x="358" y="200">18 mois</text>
+          </svg>
+          <div class="legend">
+            <span class="legend-item"><span class="legend-swatch" style="background:#CFE4E1"></span>P3 – P97</span>
+            <span class="legend-item"><span class="legend-swatch" style="background:var(--orange)"></span>Yasmine</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ TRUST BAR ============ -->
+  <section class="trust-bar" style="padding:34px 0;">
+    <div class="container">
+      <div class="trust-item"><svg><use href="#i-lock"/></svg>Hébergement sécurisé</div>
+      <div class="trust-item"><svg><use href="#i-globe"/></svg>4 langues (FR/AR/EN/ⵜⵎⵣ)</div>
+      <div class="trust-item"><svg><use href="#i-calendar"/></svg>RDV en ligne via Cal.com</div>
+      <div class="trust-item"><svg><use href="#i-shield"/></svg>Conforme loi 09-08</div>
+    </div>
+  </section>
+
+  <!-- ============ PROBLEM / SOLUTION ============ -->
+  <section>
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="eyebrow" style="margin-bottom:16px;">Le constat</span>
+        <h2>Fini la paperasse et les rendez-vous par téléphone</h2>
+        <p>dr-tabibi remplace vos outils dispersés par une seule plateforme, simple à utiliser dès le premier jour.</p>
+      </div>
+      <div class="ps-grid reveal">
+        <div class="ps-card">
+          <div class="ps-row before"><span class="dot"></span><p>Rendez-vous pris par téléphone, agenda papier</p></div>
+          <div class="ps-row after"><svg><use href="#i-check"/></svg><p>Réservation en ligne 24h/24, agenda synchronisé automatiquement</p></div>
+        </div>
+        <div class="ps-card">
+          <div class="ps-row before"><span class="dot"></span><p>Dossiers patients éparpillés, difficiles à retrouver</p></div>
+          <div class="ps-row after"><svg><use href="#i-check"/></svg><p>Dossier numérique centralisé, recherche instantanée</p></div>
+        </div>
+        <div class="ps-card">
+          <div class="ps-row before"><span class="dot"></span><p>Aucune vision d'ensemble de l'activité du cabinet</p></div>
+          <div class="ps-row after"><svg><use href="#i-check"/></svg><p>Statistiques et registre d'audit en un coup d'œil</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FEATURES ============ -->
+  <section id="fonctionnalites" style="background:var(--white);border-top:1px solid var(--border);border-bottom:1px solid var(--border);">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="eyebrow" style="margin-bottom:16px;">Fonctionnalités</span>
+        <h2>Tout ce qu'il faut pour gérer votre cabinet</h2>
+        <p>Des outils pensés pour le quotidien des praticiens marocains, du site vitrine au suivi médical.</p>
+      </div>
+      <div class="features-grid reveal">
+        <div class="feature-card">
+          <div class="feature-icon"><svg><use href="#i-globe"/></svg></div>
+          <h3>Site vitrine multilingue</h3>
+          <p>Un site professionnel et responsive en français, arabe, tamazight et anglais, prêt en quelques minutes.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><svg><use href="#i-calendar"/></svg></div>
+          <h3>Rendez-vous en ligne</h3>
+          <p>Vos patients réservent 24/7 grâce à un agenda synchronisé, propulsé par Cal.com.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><svg><use href="#i-file"/></svg></div>
+          <h3>Dossier patient numérique</h3>
+          <p>Historique, consultations et ordonnances centralisés, accessibles en toute sécurité.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><svg><use href="#i-shield"/></svg></div>
+          <h3>Carnet vaccinal digital</h3>
+          <p>Suivez les vaccinations de chaque patient, sans carnet papier à conserver.</p>
+        </div>
+        <div class="feature-card">
+          <span class="feature-exclusive">Exclusif</span>
+          <div class="feature-icon"><svg><use href="#i-trend"/></svg></div>
+          <h3>Courbes de croissance OMS</h3>
+          <p>Suivi de croissance interactif, directement intégré à vos consultations pédiatriques.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><svg><use href="#i-users"/></svg></div>
+          <h3>Multi-praticiens</h3>
+          <p>Gérez plusieurs médecins avec des files d'attente distinctes pour chacun.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><svg><use href="#i-lock"/></svg></div>
+          <h3>Registre d'audit</h3>
+          <p>Historique complet des actions pour une traçabilité totale du cabinet.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><svg><use href="#i-bars"/></svg></div>
+          <h3>Statistiques avancées</h3>
+          <p>Visualisez l'activité de votre cabinet et son évolution en un coup d'œil.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ HOW IT WORKS ============ -->
+  <section>
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="eyebrow" style="margin-bottom:16px;">Mise en route</span>
+        <h2>Trois étapes pour démarrer</h2>
+        <p>La même progression que dans votre espace d'inscription : formule, configuration, confirmation.</p>
+      </div>
+      <div class="steps reveal">
+        <div class="step">
+          <div class="step-num">1</div>
+          <h3>Choisissez votre formule</h3>
+          <p>Vitrine, RDV ou Cabinet, selon les besoins actuels de votre pratique.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <h3>Configurez votre espace</h3>
+          <p>Renseignez votre spécialité, votre sous-domaine et vos informations en quelques minutes.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <h3>Recevez vos patients en ligne</h3>
+          <p>Votre site et votre agenda sont immédiatement prêts à l'emploi.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ DEMO ============ -->
+  <section class="demo-section" id="demo">
+    <div class="container">
+      <div class="demo-inner">
+        <div class="demo-copy reveal">
+          <span class="eyebrow" style="margin-bottom:16px;">Sans inscription</span>
+          <h2>Essayez dr-tabibi par vous-même</h2>
+          <p>Explorez un cabinet de démonstration avec des données fictives : agenda, dossiers patients, ordonnances et bien plus.</p>
+          <div class="cred-card">
+            <div class="cred-row">
+              <div>
+                <div class="cred-label">Email</div>
+                <div class="cred-value">drdemo@gmail.com</div>
+              </div>
+              <button class="copy-btn" onclick="copyValue('drdemo@gmail.com', this)"><svg><use href="#i-copy"/></svg>Copier</button>
+            </div>
+            <div class="cred-row">
+              <div>
+                <div class="cred-label">Mot de passe</div>
+                <div class="cred-value">demo1234</div>
+              </div>
+              <button class="copy-btn" onclick="copyValue('demo1234', this)"><svg><use href="#i-copy"/></svg>Copier</button>
+            </div>
+          </div>
+        </div>
+        <div class="demo-visual reveal">
+          <svg><use href="#i-play"/></svg>
+          <h4>Cabinet de démonstration</h4>
+          <p>Aucune carte bancaire, aucune inscription. Connectez-vous et explorez librement.</p>
+          <a href="https://demo.drixou.uk/login" target="_blank" rel="noopener" class="btn btn-primary btn-block">
+            Accéder à la démo <svg><use href="#i-arrow"/></svg>
+          </a>
+          <p class="demo-note">demo.drixou.uk/login</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PRICING ============ -->
+  <section id="tarifs">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="eyebrow" style="margin-bottom:16px;">Tarifs</span>
+        <h2>Une formule pour chaque étape de votre pratique</h2>
+        <p>Commencez gratuitement, évoluez vers plus de fonctionnalités quand vous êtes prêt.</p>
+      </div>
+
+      <div class="pricing-grid reveal">
+        <div class="price-card">
+          <div class="price-tier">Vitrine</div>
+          <div class="price-amount"><span class="num">Gratuit</span></div>
+          <div class="price-note">Pour exister en ligne, sans frais</div>
+          <ul class="price-list">
+            <li><svg><use href="#i-check"/></svg>Site vitrine personnalisé</li>
+            <li><svg><use href="#i-check"/></svg>4 langues (fr/en/ar/tzm)</li>
+            <li><svg><use href="#i-check"/></svg>Design responsive</li>
+            <li><svg><use href="#i-check"/></svg>Hébergement inclus</li>
+            <li><svg><use href="#i-check"/></svg>Nom de domaine personnalisé</li>
+          </ul>
+          <a href="https://drdemo.drixou.uk/fr/onboarding" target="_blank" rel="noopener" class="btn btn-secondary btn-block">Commencer gratuitement</a>
+        </div>
+
+        <div class="price-card">
+          <div class="price-tier">RDV</div>
+          <div class="price-amount"><span class="num">199 MAD</span><span class="per">/ mois</span></div>
+          <div class="price-note">Pour ne plus gérer l'agenda au téléphone</div>
+          <ul class="price-list">
+            <li><svg><use href="#i-check"/></svg><strong>Tout Vitrine</strong>, plus :</li>
+            <li><svg><use href="#i-check"/></svg>Prise de rendez-vous en ligne (Cal.com)</li>
+            <li><svg><use href="#i-check"/></svg>Agenda synchronisé</li>
+            <li><svg><use href="#i-check"/></svg>Notifications automatiques</li>
+          </ul>
+          <a href="https://drdemo.drixou.uk/fr/onboarding" target="_blank" rel="noopener" class="btn btn-secondary btn-block">Commencer</a>
+        </div>
+
+        <div class="price-card featured">
+          <span class="ribbon">Le plus complet</span>
+          <div class="price-tier">Cabinet</div>
+          <div class="price-amount"><span class="num">499 MAD</span><span class="per">/ mois</span></div>
+          <div class="price-note">+199 MAD/mois par médecin supplémentaire</div>
+          <ul class="price-list">
+            <li><svg><use href="#i-check"/></svg><strong>Tout RDV</strong>, plus :</li>
+            <li><svg><use href="#i-check"/></svg>Dossier patient numérique</li>
+            <li><svg><use href="#i-check"/></svg>File d'attente</li>
+            <li><svg><use href="#i-check"/></svg>Consultation + Ordonnance</li>
+            <li><svg><use href="#i-check"/></svg>Carnet vaccinal</li>
+            <li><svg><use href="#i-check"/></svg>Courbes de croissance</li>
+            <li><svg><use href="#i-check"/></svg>Multi-praticiens</li>
+            <li><svg><use href="#i-check"/></svg>Registre d'audit</li>
+            <li><svg><use href="#i-check"/></svg>Statistiques avancées</li>
+            <li><svg><use href="#i-check"/></svg>Support prioritaire</li>
+          </ul>
+          <a href="https://drdemo.drixou.uk/fr/onboarding" target="_blank" rel="noopener" class="btn btn-primary btn-block">Demander une démo</a>
+        </div>
+      </div>
+      <p class="pricing-fineprint">Tous les prix sont indiqués en dirhams marocains (MAD).</p>
+    </div>
+  </section>
+
+  <!-- ============ SECURITY ============ -->
+  <section style="background:var(--white);border-top:1px solid var(--border);border-bottom:1px solid var(--border);">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="eyebrow" style="margin-bottom:16px;">Confiance</span>
+        <h2>La confidentialité de vos patients, notre priorité</h2>
+      </div>
+      <div class="security-row reveal">
+        <div class="sec-item">
+          <div class="feature-icon"><svg><use href="#i-lock"/></svg></div>
+          <h4>Hébergement sécurisé</h4>
+          <p>Infrastructure dédiée et surveillée</p>
+        </div>
+        <div class="sec-item">
+          <div class="feature-icon"><svg><use href="#i-shield"/></svg></div>
+          <h4>Loi 09-08</h4>
+          <p>Conforme à la protection des données personnelles</p>
+        </div>
+        <div class="sec-item">
+          <div class="feature-icon"><svg><use href="#i-file"/></svg></div>
+          <h4>Sauvegardes quotidiennes</h4>
+          <p>Vos données sont dupliquées automatiquement</p>
+        </div>
+        <div class="sec-item">
+          <div class="feature-icon"><svg><use href="#i-users"/></svg></div>
+          <h4>Accès par rôle</h4>
+          <p>Médecin et secrétaire, chacun son périmètre</p>
+        </div>
+      </div>
+      <p class="security-fact reveal">🏥 Déjà utilisé en conditions réelles par un cabinet de pédiatrie à Inezgane.</p>
+    </div>
+  </section>
+
+  <!-- ============ FAQ ============ -->
+  <section id="faq">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="eyebrow" style="margin-bottom:16px;">Questions fréquentes</span>
+        <h2>Tout ce que vous vous demandez encore</h2>
+      </div>
+      <div class="faq-list reveal">
+        <details class="faq-item" open>
+          <summary>Dois-je installer un logiciel ?<svg class="chev"><use href="#i-arrow"/></svg></summary>
+          <p>Non. dr-tabibi fonctionne directement dans votre navigateur, sur ordinateur comme sur mobile.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Puis-je changer de formule plus tard ?<svg class="chev"><use href="#i-arrow"/></svg></summary>
+          <p>Oui, vous pouvez passer à une formule supérieure à tout moment depuis votre espace.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Comment fonctionne le tarif pour plusieurs médecins ?<svg class="chev"><use href="#i-arrow"/></svg></summary>
+          <p>La formule Cabinet démarre à 499 MAD/mois pour un médecin, puis +199 MAD/mois par médecin supplémentaire.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Mes données patients sont-elles sécurisées ?<svg class="chev"><use href="#i-arrow"/></svg></summary>
+          <p>Oui. Vos données sont hébergées de manière sécurisée, avec des sauvegardes automatiques quotidiennes.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Puis-je tester avant de m'engager ?<svg class="chev"><use href="#i-arrow"/></svg></summary>
+          <p>Oui, la démo est accessible librement, sans carte bancaire ni inscription préalable.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Le support est-il disponible en français ?<svg class="chev"><use href="#i-arrow"/></svg></summary>
+          <p>Oui, notre équipe vous accompagne en français, et en arabe si besoin.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FINAL CTA ============ -->
+  <section style="padding-top:0;">
+    <div class="final-cta reveal">
+      <h2>Prêt à simplifier la gestion de votre cabinet ?</h2>
+      <p>Rejoignez les praticiens qui font confiance à dr-tabibi.</p>
+      <div class="hero-ctas">
+        <a href="https://demo.drixou.uk/login" target="_blank" rel="noopener" class="btn btn-white">Essayer la démo <svg><use href="#i-arrow"/></svg></a>
+        <a href="#tarifs" class="btn btn-ghost-white">Voir les tarifs</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="#" class="logo">
+          <span class="logo-mark"><svg><use href="#i-heartbeat"/></svg></span>
+          dr-<span>tabibi</span>
+        </a>
+        <p>La plateforme de gestion pensée pour les cabinets médicaux indépendants au Maroc.</p>
+      </div>
+      <div class="footer-col">
+        <h5>Produit</h5>
+        <a href="#fonctionnalites">Fonctionnalités</a>
+        <a href="#tarifs">Tarifs</a>
+        <a href="#demo">Démo</a>
+      </div>
+      <div class="footer-col">
+        <h5>Support</h5>
+        <a href="#faq">FAQ</a>
+        <a href="mailto:contact@dr-tabibi.ma">contact@dr-tabibi.ma</a>
+      </div>
+      <div class="footer-col">
+        <h5>Légal</h5>
+        <a href="#">Mentions légales</a>
+        <a href="#">Confidentialité</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 dr-tabibi. Tous droits réservés.</span>
+      <span>Fait au Maroc 🇲🇦</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // floating navbar — hide on scroll down, show on scroll up (comme useScrollDirection)
+  const header = document.getElementById('siteHeader');
+  let lastY = 0, locked = false;
+  window.addEventListener('scroll', () => {
+    if (locked) return;
+    const y = window.scrollY;
+    header.classList.toggle('nav-hidden', y > lastY && y > 100);
+    lastY = y;
+  }, { passive:true });
+  function showNav(){
+    locked = true;
+    header.classList.remove('nav-hidden');
+    lastY = window.scrollY;
+    setTimeout(() => { lastY = window.scrollY; locked = false; }, 600);
+  }
+
+  // mobile nav toggle
+  const navToggle = document.getElementById('navToggle');
+  const navLinks = document.getElementById('navLinks');
+  const menuIcon = document.getElementById('menuIcon');
+  navToggle.addEventListener('click', () => {
+    const isOpen = navLinks.classList.toggle('open');
+    menuIcon.setAttribute('href', isOpen ? '#i-close' : '#i-menu');
+  });
+  navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+    navLinks.classList.remove('open');
+    menuIcon.setAttribute('href', '#i-menu');
+    showNav();
+  }));
+
+  // copy to clipboard
+  function copyValue(text, btn){
+    navigator.clipboard.writeText(text).then(() => {
+      const original = btn.innerHTML;
+      btn.innerHTML = '<svg><use href="#i-check"/></svg>Copié';
+      setTimeout(() => { btn.innerHTML = original; }, 1600);
+    });
+  }
+
+  // scroll reveal
+  const revealEls = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, { threshold: 0.15 });
+  revealEls.forEach(el => io.observe(el));
+
+  // hero growth chart load sequence
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      document.getElementById('growthLine').classList.add('animate');
+      document.querySelectorAll('.growth-dot').forEach(dot => {
+        const delay = 300 + parseInt(dot.dataset.d) * 380;
+        setTimeout(() => dot.classList.add('animate'), delay);
+      });
+      setTimeout(() => document.getElementById('callout').classList.add('animate'), 1700);
+    }, 350);
+  });
+</script>
+</body>
+</html>

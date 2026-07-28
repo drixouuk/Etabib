@@ -28,7 +28,7 @@ export default function PatientActionsDropdown({ patientId, patientName }: Props
     <div ref={ref} className="relative">
       <button
         onClick={() => setOpen(!open)}
-        className="flex size-7 items-center justify-center rounded-lg text-ink-soft transition-colors duration-200 hover:bg-stone-100 hover:text-stone-600"
+        className="flex size-7 items-center justify-center rounded-lg text-stone-800-soft transition-colors duration-200 hover:bg-stone-100 hover:text-stone-600"
         aria-label="Actions"
       >
         <MoreHorizontal className="size-4" />
@@ -38,7 +38,7 @@ export default function PatientActionsDropdown({ patientId, patientName }: Props
           <Link
             href={`/dashboard/patients/${patientId}/edit`}
             onClick={() => setOpen(false)}
-            className="flex items-center gap-2 px-3 py-2 text-sm text-ink transition-colors duration-200 hover:bg-stone-50"
+            className="flex items-center gap-2 px-3 py-2 text-sm text-stone-800 transition-colors duration-200 hover:bg-stone-50"
           >
             <Pencil className="size-3.5" />
             Éditer

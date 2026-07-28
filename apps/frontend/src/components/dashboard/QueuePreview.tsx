@@ -26,7 +26,7 @@ export default async function QueuePreview() {
   return (
     <div>
       {items.length === 0 ? (
-        <p className="text-sm text-ink-softer">Aucun patient en attente</p>
+        <p className="text-sm text-stone-800-softer">Aucun patient en attente</p>
       ) : (
         <div className="divide-y divide-warm">
           {items.map((item) => {
@@ -35,11 +35,11 @@ export default async function QueuePreview() {
               <div key={item.id} className="flex items-center gap-3 py-2.5 first:pt-0">
                 <PatientAvatar fullName={p?.fullName || '?'} gender={(p?.gender as 'boy' | 'girl' | null) || null} size="sm" />
                 <div className="min-w-0 flex-1">
-                  <Link href={`/dashboard/patients/${p?.id}`} className="text-sm font-medium text-ink hover:text-primary-600 transition-colors duration-200">
+                  <Link href={`/dashboard/patients/${p?.id}`} className="text-sm font-medium text-stone-800 hover:text-primary-600 transition-colors duration-200">
                     {p?.fullName || '—'}
                   </Link>
-                  <div className="text-xs text-ink-soft">
-                    <span className="inline-block rounded bg-stone-100 px-1.5 py-0.5 font-medium text-ink">{item.visitReason}</span>
+                  <div className="text-xs text-stone-800-soft">
+                    <span className="inline-block rounded bg-stone-100 px-1.5 py-0.5 font-medium text-stone-800">{item.visitReason}</span>
                   </div>
                 </div>
                 {item.arrivalTime && (

@@ -19,7 +19,7 @@ export default async function AuditLogsPage() {
   if (!isAdmin) {
     return (
       <div className="mx-auto max-w-container px-4 py-12 md:px-6 lg:px-8">
-        <p className="text-ink-soft">Accès réservé aux administrateurs du cabinet.</p>
+        <p className="text-stone-800-soft">Accès réservé aux administrateurs du cabinet.</p>
       </div>
     )
   }
@@ -33,8 +33,8 @@ export default async function AuditLogsPage() {
   return (
     <div className="mx-auto max-w-container px-4 py-12 md:px-6 lg:px-8">
       <div className="mb-8">
-        <h1 className="font-heading text-3xl font-bold text-ink">Registre d&apos;audit (Loi 09-08)</h1>
-        <p className="mt-1 text-sm text-ink-soft">Historique immuable des accès et modifications des données de santé.</p>
+        <h1 className="font-heading text-3xl font-bold text-stone-800">Registre d&apos;audit (Loi 09-08)</h1>
+        <p className="mt-1 text-sm text-stone-800-soft">Historique immuable des accès et modifications des données de santé.</p>
       </div>
       <AuditLogTable logs={logs} />
     </div>

@@ -40,8 +40,8 @@ export default async function RendezVousPage() {
 
   return (
     <div className="mx-auto max-w-container px-4 py-12 md:px-6 lg:px-8">
-      <h1 className="font-heading text-2xl font-bold text-ink">Rendez-vous</h1>
-      <p className="mt-1 text-sm text-ink-soft capitalize">{dateLabel}</p>
+      <h1 className="font-heading text-2xl font-bold text-stone-800">Rendez-vous</h1>
+      <p className="mt-1 text-sm text-stone-800-soft capitalize">{dateLabel}</p>
       <div className="mt-6">
         <BookingListView bookings={bookings} />
       </div>

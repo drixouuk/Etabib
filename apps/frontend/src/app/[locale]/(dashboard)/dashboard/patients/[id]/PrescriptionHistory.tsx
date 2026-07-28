@@ -51,27 +51,27 @@ export default function PrescriptionHistory({ prescriptions, doctorInfo, patient
         <div className="border-b border-stone-100 px-4 py-3">
           <div className="flex flex-wrap items-end gap-2">
             <div className="min-w-[180px] flex-1">
-              <label className="mb-0.5 block text-xs text-ink-soft">Rechercher</label>
+              <label className="mb-0.5 block text-xs text-stone-800-soft">Rechercher</label>
               <input type="text" value={filterQuery} onChange={e => setFilterQuery(e.target.value)}
                 placeholder="Médicament, notes..."
-                className="w-full rounded-lg border border-warm bg-white px-3 py-1.5 text-sm text-ink placeholder:text-ink-soft focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
+                className="w-full rounded-lg border border-warm bg-white px-3 py-1.5 text-sm text-stone-800 placeholder:text-stone-800-soft focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
               />
             </div>
             <div>
-              <label className="mb-0.5 block text-xs text-ink-soft">Du</label>
+              <label className="mb-0.5 block text-xs text-stone-800-soft">Du</label>
               <input type="date" value={filterDateFrom} onChange={e => setFilterDateFrom(e.target.value)}
-                className="rounded-lg border border-warm bg-white px-2 py-1.5 text-sm text-ink focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
+                className="rounded-lg border border-warm bg-white px-2 py-1.5 text-sm text-stone-800 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
               />
             </div>
             <div>
-              <label className="mb-0.5 block text-xs text-ink-soft">Au</label>
+              <label className="mb-0.5 block text-xs text-stone-800-soft">Au</label>
               <input type="date" value={filterDateTo} onChange={e => setFilterDateTo(e.target.value)}
-                className="rounded-lg border border-warm bg-white px-2 py-1.5 text-sm text-ink focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
+                className="rounded-lg border border-warm bg-white px-2 py-1.5 text-sm text-stone-800 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
               />
             </div>
             {(filterQuery || filterDateFrom || filterDateTo) && (
               <button onClick={() => { setFilterQuery(''); setFilterDateFrom(''); setFilterDateTo('') }}
-                className="rounded-lg border border-warm bg-white px-3 py-1.5 text-sm text-ink-soft hover:text-ink transition-colors duration-200">
+                className="rounded-lg border border-warm bg-white px-3 py-1.5 text-sm text-stone-800-soft hover:text-stone-800 transition-colors duration-200">
                 Effacer
               </button>
             )}
@@ -80,7 +80,7 @@ export default function PrescriptionHistory({ prescriptions, doctorInfo, patient
       )}
 
       {filtered.length === 0 ? (
-        <p className="px-4 py-6 text-center text-sm text-ink-soft">
+        <p className="px-4 py-6 text-center text-sm text-stone-800-soft">
           {prescriptions.length > 0 ? 'Aucune ordonnance ne correspond à la recherche.' : 'Aucune ordonnance.'}
         </p>
       ) : (
@@ -88,7 +88,7 @@ export default function PrescriptionHistory({ prescriptions, doctorInfo, patient
           {filtered.map(p => (
             <div key={p.id} className="px-4 py-3">
               <div className="flex items-baseline justify-between">
-                <span className="text-sm font-medium text-ink">
+                <span className="text-sm font-medium text-stone-800">
                   {new Date(p.date).toLocaleDateString('fr-FR')}
                 </span>
                 <span className="flex items-center gap-2">
@@ -105,7 +105,7 @@ export default function PrescriptionHistory({ prescriptions, doctorInfo, patient
                       PDF
                     </button>
                   )}
-                  <span className="text-xs text-ink-soft">
+                  <span className="text-xs text-stone-800-soft">
                     {p.practitioner?.name || p.practitioner?.email || '—'}
                   </span>
                 </span>
@@ -117,7 +117,7 @@ export default function PrescriptionHistory({ prescriptions, doctorInfo, patient
                   </li>
                 ))}
               </ul>
-              {p.notes && <p className="mt-1 text-xs text-ink-soft">{p.notes}</p>}
+              {p.notes && <p className="mt-1 text-xs text-stone-800-soft">{p.notes}</p>}
             </div>
           ))}
         </div>

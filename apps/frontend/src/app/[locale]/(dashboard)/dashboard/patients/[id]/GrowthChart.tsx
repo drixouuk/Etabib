@@ -33,8 +33,8 @@ export default function GrowthChart({ consultations, patientBirthDate, patientGe
   if (points.length < 2) {
     return (
       <div className="mb-8">
-        <h3 className="mb-2 font-heading text-lg font-semibold text-ink">Courbes de croissance</h3>
-        <p className="text-sm text-ink-soft">Pas encore assez de données pour une courbe de croissance.</p>
+        <h3 className="mb-2 font-heading text-lg font-semibold text-stone-800">Courbes de croissance</h3>
+        <p className="text-sm text-stone-800-soft">Pas encore assez de données pour une courbe de croissance.</p>
       </div>
     )
   }
@@ -89,8 +89,8 @@ export default function GrowthChart({ consultations, patientBirthDate, patientGe
   const chartProps = { margin: { top: 4, right: 4, bottom: 0, left: 0 } }
 
   const renderWeightChart = () => (
-    <div className="rounded-xl border border-warm bg-white p-3 shadow-warm-sm">
-      <p className="mb-1 text-xs font-medium text-ink-soft">Poids (kg)</p>
+    <div className="rounded-xl border border-warm bg-white p-3 shadow-sm">
+      <p className="mb-1 text-xs font-medium text-stone-800-soft">Poids (kg)</p>
       <ResponsiveContainer width="100%" height={220}>
         <LineChart data={poidsData} {...chartProps}>
           <CartesianGrid strokeDasharray="3 3" stroke={LIGHT_GRID} />
@@ -118,8 +118,8 @@ export default function GrowthChart({ consultations, patientBirthDate, patientGe
   )
 
   const renderHeightChart = () => (
-    <div className="rounded-xl border border-warm bg-white p-3 shadow-warm-sm">
-      <p className="mb-1 text-xs font-medium text-ink-soft">Taille (cm)</p>
+    <div className="rounded-xl border border-warm bg-white p-3 shadow-sm">
+      <p className="mb-1 text-xs font-medium text-stone-800-soft">Taille (cm)</p>
       <ResponsiveContainer width="100%" height={220}>
         <LineChart data={tailleData} {...chartProps}>
           <CartesianGrid strokeDasharray="3 3" stroke={LIGHT_GRID} />
@@ -147,8 +147,8 @@ export default function GrowthChart({ consultations, patientBirthDate, patientGe
   )
 
   const renderPCChart = () => (
-    <div className="rounded-xl border border-warm bg-white p-3 shadow-warm-sm">
-      <p className="mb-1 text-xs font-medium text-ink-soft">Périmètre crânien (cm)</p>
+    <div className="rounded-xl border border-warm bg-white p-3 shadow-sm">
+      <p className="mb-1 text-xs font-medium text-stone-800-soft">Périmètre crânien (cm)</p>
       <ResponsiveContainer width="100%" height={220}>
         <LineChart data={pcData.length > 0 ? pcData : points} {...chartProps}>
           <CartesianGrid strokeDasharray="3 3" stroke={LIGHT_GRID} />
@@ -177,14 +177,14 @@ export default function GrowthChart({ consultations, patientBirthDate, patientGe
 
   return (
     <div className="mb-8">
-      <h3 className="mb-3 font-heading text-lg font-semibold text-ink">Courbes de croissance</h3>
+      <h3 className="mb-3 font-heading text-lg font-semibold text-stone-800">Courbes de croissance</h3>
       <div className={`grid grid-cols-1 gap-4 ${(hasPoids && hasTaille) || (hasPoids && hasPc) || (hasTaille && hasPc) ? 'md:grid-cols-3' : ''}`}>
         {hasPoids && renderWeightChart()}
         {hasTaille && renderHeightChart()}
         {hasPc && renderPCChart()}
       </div>
       {gender && patientBirthDate && (
-        <p className="mt-2 text-xs text-ink-soft">
+        <p className="mt-2 text-xs text-stone-800-soft">
           Courbes de référence : OMS (0–24 mois) / CDC (2–20 ans). Les percentiles sont indicatifs et ne constituent pas un diagnostic.
         </p>
       )}

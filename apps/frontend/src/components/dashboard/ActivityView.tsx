@@ -65,7 +65,7 @@ export default function ActivityView({
           </p>
         </div>
         <div className="relative inline-flex shrink-0 rounded-[10px] bg-primary-50 p-[3px] gap-0.5">
-          <div className="absolute top-[3px] bottom-[3px] rounded-lg bg-white shadow-warm-sm transition-all duration-300"
+          <div className="absolute top-[3px] bottom-[3px] rounded-lg bg-white shadow-sm transition-all duration-300"
             style={{ left: `${periods.findIndex(p => p.value === period) * 25}%`, width: '25%' }} />
           {periods.map(p => (
             <button key={p.value} onClick={() => setPeriod(p.value)}
@@ -79,7 +79,7 @@ export default function ActivityView({
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 mb-5">
-        <div className="rounded-xl border border-warm border-t-[3px] border-t-primary-500 rounded-t-[4px] bg-white p-[17px_19px] shadow-warm-sm hover:shadow-warm-md hover:-translate-y-0.5 transition-all duration-200">
+        <div className="rounded-xl border border-warm border-t-[3px] border-t-primary-500 rounded-t-[4px] bg-white p-[17px_19px] shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
           <div className="flex size-[33px] items-center justify-center rounded-lg bg-primary-50 text-primary-600 mb-[11px]">
             <UserPlus className="size-4" />
           </div>
@@ -91,7 +91,7 @@ export default function ActivityView({
           </div>
           <p className="mt-0.5 text-[12.5px] text-[#2A241C]-soft">Nouveaux patients</p>
         </div>
-        <div className="rounded-xl border border-warm border-t-[3px] border-t-secondary-500 rounded-t-[4px] bg-white p-[17px_19px] shadow-warm-sm hover:shadow-warm-md hover:-translate-y-0.5 transition-all duration-200">
+        <div className="rounded-xl border border-warm border-t-[3px] border-t-secondary-500 rounded-t-[4px] bg-white p-[17px_19px] shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
           <div className="flex size-[33px] items-center justify-center rounded-lg bg-amber-50 text-amber-700 mb-[11px]">
             <Stethoscope className="size-4" />
           </div>
@@ -103,7 +103,7 @@ export default function ActivityView({
           </div>
           <p className="mt-0.5 text-[12.5px] text-[#2A241C]-soft">Consultations réalisées</p>
         </div>
-        <div className="rounded-xl border border-warm border-t-[3px] border-t-primary-700 rounded-t-[4px] bg-white p-[17px_19px] shadow-warm-sm hover:shadow-warm-md hover:-translate-y-0.5 transition-all duration-200">
+        <div className="rounded-xl border border-warm border-t-[3px] border-t-primary-700 rounded-t-[4px] bg-white p-[17px_19px] shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
           <div className="flex size-[33px] items-center justify-center rounded-lg bg-primary-50 text-primary-700 mb-[11px]">
             <CheckCheck className="size-4" />
           </div>
@@ -118,7 +118,7 @@ export default function ActivityView({
       </div>
 
       <p className="mt-7 mb-3 text-xs font-semibold uppercase tracking-[0.06em] text-[#2A241C]-soft">Croissance du cabinet</p>
-      <div className="rounded-xl border border-warm bg-white p-5 shadow-warm-sm mb-4">
+      <div className="rounded-xl border border-warm bg-white p-5 shadow-sm mb-4">
         <div className="flex items-baseline justify-between mb-1">
           <div>
             <p className="text-[11.5px] uppercase tracking-wider text-[#2A241C]-soft font-semibold">Total patients suivis</p>
@@ -148,12 +148,12 @@ export default function ActivityView({
       </div>
 
       {sourceData && sourceData.length > 0 && (
-        <div className="rounded-xl border border-warm bg-white p-5 shadow-warm-sm mb-4">
+        <div className="rounded-xl border border-warm bg-white p-5 shadow-sm mb-4">
           <h3 className="mb-3 font-heading text-[14.5px] font-semibold text-[#2A241C]">Provenance des patients</h3>
           <div className="flex flex-col gap-3.5">
             {sourceData.map((s, i) => {
               const maxVal = Math.max(...sourceData.map(d => d.value), 1)
-              const colors = ['bg-primary-500', 'bg-amber-500', 'bg-orange-500', 'bg-ink-soft', 'bg-teal-400', 'bg-lime-500', 'bg-slate-500', 'bg-pink-500']
+              const colors = ['bg-primary-500', 'bg-amber-500', 'bg-orange-500', 'bg-stone-800-soft', 'bg-teal-400', 'bg-lime-500', 'bg-slate-500', 'bg-pink-500']
               return (
                 <div key={s.name} className="flex items-center gap-3">
                   <span className="w-[130px] shrink-0 text-[12.5px] text-[#2A241C]">{s.name}</span>
@@ -171,7 +171,7 @@ export default function ActivityView({
 
       <p className="mt-7 mb-3 text-xs font-semibold uppercase tracking-[0.06em] text-[#2A241C]-soft">Activité clinique</p>
 
-      <div className="rounded-xl border border-warm bg-white p-5 shadow-warm-sm mb-4">
+      <div className="rounded-xl border border-warm bg-white p-5 shadow-sm mb-4">
         <h3 className="mb-3 font-heading text-[14.5px] font-semibold text-[#2A241C]">Consultations par {period === 'year' ? 'mois' : 'jour'}</h3>
         <ChartContainer config={chartConfig} className="h-[160px] w-full">
           <BarChart data={chartData} margin={{ top: 4, right: 4, bottom: 0, left: -16 }}>
@@ -187,7 +187,7 @@ export default function ActivityView({
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
-        <div className="rounded-xl border border-warm bg-white p-5 shadow-warm-sm">
+        <div className="rounded-xl border border-warm bg-white p-5 shadow-sm">
           <h3 className="mb-3 font-heading text-[14.5px] font-semibold text-[#2A241C]">Motifs de visite</h3>
           <div className="flex items-center gap-8 flex-wrap">
             <ResponsiveContainer width={132} height={132}>
@@ -209,7 +209,7 @@ export default function ActivityView({
         </div>
 
         {ageData && ageData.length > 0 && (
-          <div className="rounded-xl border border-warm bg-white p-5 shadow-warm-sm">
+          <div className="rounded-xl border border-warm bg-white p-5 shadow-sm">
             <h3 className="mb-3 font-heading text-[14.5px] font-semibold text-[#2A241C]">Répartition par âge</h3>
             <div className="flex flex-col gap-3.5">
               {ageData.map((a) => {
@@ -232,7 +232,7 @@ export default function ActivityView({
 
       <p className="mt-7 mb-3 text-xs font-semibold uppercase tracking-[0.06em] text-[#2A241C]-soft">Fonctionnement</p>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <div className="rounded-xl border border-warm bg-white p-5 shadow-warm-sm">
+        <div className="rounded-xl border border-warm bg-white p-5 shadow-sm">
           <h3 className="mb-3 font-heading text-[14.5px] font-semibold text-[#2A241C]">Arrivées par heure</h3>
           <ChartContainer config={chartConfig} className="h-[160px] w-full">
             <BarChart data={hourlyData} margin={{ top: 4, right: 4, bottom: 0, left: -16 }}>
@@ -244,7 +244,7 @@ export default function ActivityView({
             </BarChart>
           </ChartContainer>
         </div>
-        <div className="rounded-xl border border-warm bg-white p-5 shadow-warm-sm">
+        <div className="rounded-xl border border-warm bg-white p-5 shadow-sm">
           <h3 className="mb-3 font-heading text-[14.5px] font-semibold text-[#2A241C]">Présence aux rendez-vous</h3>
           <p className="text-[34px] font-bold text-[#2A241C]">—</p>
           <p className="text-[12.5px] text-[#2A241C]-soft">Statistiques en cours de collecte</p>

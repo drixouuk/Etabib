@@ -25,7 +25,7 @@ export default function NewPatientPage() {
       .then(r => r.json()).then(j => setReferringOptions(j.docs ?? []))
   }, [])
 
-  const inputClass = 'w-full rounded-lg border border-stone-300 bg-white px-4 py-2.5 text-sm text-ink focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none'
+  const inputClass = 'w-full rounded-lg border border-stone-300 bg-white px-4 py-2.5 text-sm text-stone-800 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none'
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -78,11 +78,11 @@ export default function NewPatientPage() {
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-12 md:px-6 lg:px-8">
-      <h1 className="font-heading text-3xl font-bold text-ink">Nouveau patient</h1>
+      <h1 className="font-heading text-3xl font-bold text-stone-800">Nouveau patient</h1>
 
       <form onSubmit={handleSubmit} className="mt-8 flex flex-col gap-4">
         <div>
-          <label htmlFor="fullName" className="mb-1 block text-sm font-medium text-ink">
+          <label htmlFor="fullName" className="mb-1 block text-sm font-medium text-stone-800">
             Nom complet *
           </label>
           <input
@@ -96,7 +96,7 @@ export default function NewPatientPage() {
         </div>
 
         <div>
-          <label htmlFor="gender" className="mb-1 block text-sm font-medium text-ink">
+          <label htmlFor="gender" className="mb-1 block text-sm font-medium text-stone-800">
             Sexe *
           </label>
           <select
@@ -113,7 +113,7 @@ export default function NewPatientPage() {
         </div>
 
         <div>
-          <label htmlFor="birthDate" className="mb-1 block text-sm font-medium text-ink">
+          <label htmlFor="birthDate" className="mb-1 block text-sm font-medium text-stone-800">
             Date de naissance
           </label>
           <input
@@ -126,7 +126,7 @@ export default function NewPatientPage() {
         </div>
 
         <div>
-          <label htmlFor="address" className="mb-1 block text-sm font-medium text-ink">
+          <label htmlFor="address" className="mb-1 block text-sm font-medium text-stone-800">
             Adresse
           </label>
           <input
@@ -139,7 +139,7 @@ export default function NewPatientPage() {
         </div>
 
         <div>
-          <label htmlFor="phone" className="mb-1 block text-sm font-medium text-ink">
+          <label htmlFor="phone" className="mb-1 block text-sm font-medium text-stone-800">
             Téléphone
           </label>
           <input
@@ -152,7 +152,7 @@ export default function NewPatientPage() {
         </div>
 
         <div>
-          <label htmlFor="email" className="mb-1 block text-sm font-medium text-ink">
+          <label htmlFor="email" className="mb-1 block text-sm font-medium text-stone-800">
             Email
           </label>
           <input
@@ -165,7 +165,7 @@ export default function NewPatientPage() {
         </div>
 
         <div>
-          <label htmlFor="nationalId" className="mb-1 block text-sm font-medium text-ink">
+          <label htmlFor="nationalId" className="mb-1 block text-sm font-medium text-stone-800">
             CIN (optionnel)
           </label>
           <input
@@ -178,7 +178,7 @@ export default function NewPatientPage() {
         </div>
 
         <div>
-          <label className="mb-1 block text-sm font-medium text-ink">Provenance</label>
+          <label className="mb-1 block text-sm font-medium text-stone-800">Provenance</label>
           <select value={patientSource} onChange={e => setPatientSource(e.target.value)} className={inputClass}>
             <option value="">Non renseigné</option>
             <option value="referring_practitioner">Médecin référent</option>
@@ -194,7 +194,7 @@ export default function NewPatientPage() {
 
         {patientSource === 'referring_practitioner' && (
           <div>
-            <label className="mb-1 block text-sm font-medium text-ink">Médecin référent</label>
+            <label className="mb-1 block text-sm font-medium text-stone-800">Médecin référent</label>
             <select value={referringIds[0] || ''} onChange={e => setReferringIds(e.target.value ? [e.target.value] : [])} className={inputClass}>
               <option value="">Sélectionner…</option>
               {referringOptions.map(r => <option key={r.id} value={r.id}>{r.name}</option>)}
@@ -203,7 +203,7 @@ export default function NewPatientPage() {
         )}
 
         <div>
-          <label className="mb-1 block text-sm font-medium text-ink">Détail <span className="text-ink-soft font-normal">(optionnel)</span></label>
+          <label className="mb-1 block text-sm font-medium text-stone-800">Détail <span className="text-stone-800-soft font-normal">(optionnel)</span></label>
           <input value={patientSourceDetail} onChange={e => setPatientSourceDetail(e.target.value)} type="text" placeholder="Ex: Groupe Facebook mamans Agadir, Dr. Martin..." className={inputClass} />
         </div>
 

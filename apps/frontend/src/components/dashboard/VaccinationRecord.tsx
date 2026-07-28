@@ -31,8 +31,8 @@ export default function VaccinationRecord({ patientId, schedule, vaccinations, p
 
   if (!patientBirthDate) return (
     <div className="mb-8">
-      <h3 className="mb-2 font-heading text-lg font-semibold text-ink">Carnet vaccinal</h3>
-      <p className="text-sm text-ink-softer">Date de naissance manquante — impossible d&apos;évaluer le calendrier vaccinal.</p>
+      <h3 className="mb-2 font-heading text-lg font-semibold text-stone-800">Carnet vaccinal</h3>
+      <p className="text-sm text-stone-800-softer">Date de naissance manquante — impossible d&apos;évaluer le calendrier vaccinal.</p>
     </div>
   )
 
@@ -75,18 +75,18 @@ export default function VaccinationRecord({ patientId, schedule, vaccinations, p
 
   if (sorted.length === 0) return (
     <div className="mb-8">
-      <h3 className="mb-2 font-heading text-lg font-semibold text-ink">Carnet vaccinal</h3>
-      <p className="text-sm text-ink-softer">Aucun vaccin dans le calendrier de référence.</p>
+      <h3 className="mb-2 font-heading text-lg font-semibold text-stone-800">Carnet vaccinal</h3>
+      <p className="text-sm text-stone-800-softer">Aucun vaccin dans le calendrier de référence.</p>
     </div>
   )
 
   return (
     <div className="mb-8">
-      <h3 className="mb-3 font-heading text-lg font-semibold text-ink">Carnet vaccinal</h3>
-      <p className="mb-3 text-xs text-ink-soft">Âge du patient : {Math.floor(ageMonths / 12)} ans {ageMonths % 12} mois</p>
-      <div className="overflow-x-auto rounded-xl border border-warm bg-white shadow-warm-sm">
+      <h3 className="mb-3 font-heading text-lg font-semibold text-stone-800">Carnet vaccinal</h3>
+      <p className="mb-3 text-xs text-stone-800-soft">Âge du patient : {Math.floor(ageMonths / 12)} ans {ageMonths % 12} mois</p>
+      <div className="overflow-x-auto rounded-xl border border-warm bg-white shadow-sm">
         <table className="min-w-[640px] w-full text-left text-sm">
-          <thead className="border-b border-warm text-xs uppercase text-ink-soft">
+          <thead className="border-b border-warm text-xs uppercase text-stone-800-soft">
             <tr>
               <th className="px-4 py-2.5 font-medium">Vaccin</th>
               <th className="px-4 py-2.5 font-medium">Dose</th>
@@ -114,8 +114,8 @@ export default function VaccinationRecord({ patientId, schedule, vaccinations, p
                   statusIcon = <AlertCircle className="size-4 text-purple-500" />
                   statusText = 'Contre-indiqué'; statusColor = 'text-purple-600'
                 } else {
-                  statusIcon = <AlertCircle className="size-4 text-ink-soft" />
-                  statusText = 'Refusé'; statusColor = 'text-ink-soft'
+                  statusIcon = <AlertCircle className="size-4 text-stone-800-soft" />
+                  statusText = 'Refusé'; statusColor = 'text-stone-800-soft'
                 }
               } else if (done) {
                 rowBg = 'bg-green-50/30'
@@ -132,21 +132,21 @@ export default function VaccinationRecord({ patientId, schedule, vaccinations, p
 
               return (
                 <tr key={key} className={`hover:bg-stone-50 ${rowBg}`}>
-                  <td className="px-4 py-2.5 font-medium text-ink">{entry.vaccineName}</td>
-                  <td className="px-4 py-2.5 text-stone-600">{entry.doseLabel}{entry.notes && <span className="ml-1 text-xs text-ink-soft">({entry.notes})</span>}</td>
-                  <td className="px-4 py-2.5 text-ink-soft">{entry.ageMonths < 1 ? 'Naissance' : entry.ageMonths >= 12 ? `${Math.floor(entry.ageMonths / 12)} ans` : `${entry.ageMonths} mois`}</td>
+                  <td className="px-4 py-2.5 font-medium text-stone-800">{entry.vaccineName}</td>
+                  <td className="px-4 py-2.5 text-stone-600">{entry.doseLabel}{entry.notes && <span className="ml-1 text-xs text-stone-800-soft">({entry.notes})</span>}</td>
+                  <td className="px-4 py-2.5 text-stone-800-soft">{entry.ageMonths < 1 ? 'Naissance' : entry.ageMonths >= 12 ? `${Math.floor(entry.ageMonths / 12)} ans` : `${entry.ageMonths} mois`}</td>
                   <td className={`px-4 py-2.5 ${statusColor}`}><span className="flex items-center gap-1.5">{statusIcon}{statusText}</span></td>
-                  <td className="px-4 py-2.5 text-ink-soft hidden md:table-cell">{done?.administrationRoute || '—'}</td>
-                  <td className="px-4 py-2.5 text-ink-soft hidden md:table-cell text-xs font-mono">{done?.lotNumber || '—'}</td>
+                  <td className="px-4 py-2.5 text-stone-800-soft hidden md:table-cell">{done?.administrationRoute || '—'}</td>
+                  <td className="px-4 py-2.5 text-stone-800-soft hidden md:table-cell text-xs font-mono">{done?.lotNumber || '—'}</td>
                   <td className="px-4 py-2.5">
                     {!done && !excluded && !showForm && (
                       <div className="flex items-center gap-1">
                         <button onClick={() => { setActiveForm(key); setDateValue(new Date().toISOString().slice(0, 10)); setRouteValue(''); setLotValue('') }}
                           className="rounded bg-cta-600 px-2.5 py-1 text-xs font-medium text-white hover:bg-cta-700">Administré</button>
                         <button onClick={() => quickStatus(entry, 'contraindicated')}
-                          className="rounded border border-warm bg-white px-2 py-1 text-xs font-medium text-ink-soft hover:text-ink">Contre-indiqué</button>
+                          className="rounded border border-warm bg-white px-2 py-1 text-xs font-medium text-stone-800-soft hover:text-stone-800">Contre-indiqué</button>
                         <button onClick={() => quickStatus(entry, 'refused')}
-                          className="rounded border border-warm bg-white px-2 py-1 text-xs font-medium text-ink-soft hover:text-ink">Refusé</button>
+                          className="rounded border border-warm bg-white px-2 py-1 text-xs font-medium text-stone-800-soft hover:text-stone-800">Refusé</button>
                       </div>
                     )}
                     {showForm && (
@@ -161,7 +161,7 @@ export default function VaccinationRecord({ patientId, schedule, vaccinations, p
                           className="w-20 rounded border border-stone-300 px-2 py-1 text-xs focus:border-primary-500 focus:outline-none" />
                         <button onClick={() => handleSubmit(entry)} disabled={saving}
                           className="rounded bg-cta-600 px-2.5 py-1 text-xs font-medium text-white hover:bg-cta-700 disabled:opacity-50">{saving ? '…' : 'OK'}</button>
-                        <button onClick={() => setActiveForm(null)} className="text-xs text-ink-soft hover:text-stone-600">✕</button>
+                        <button onClick={() => setActiveForm(null)} className="text-xs text-stone-800-soft hover:text-stone-600">✕</button>
                       </div>
                     )}
                   </td>

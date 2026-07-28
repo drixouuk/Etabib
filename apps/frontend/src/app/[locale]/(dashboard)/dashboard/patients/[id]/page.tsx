@@ -176,7 +176,7 @@ export default async function PatientDetailPage({ params }: Props) {
   return (
     <div className="mx-auto max-w-container px-4 py-12 md:px-6 lg:px-8">
       {/* Back link */}
-      <Link href="/dashboard/patients" className="inline-flex items-center gap-1.5 pb-3.5 text-[13px] text-ink-soft hover:text-primary-700">
+      <Link href="/dashboard/patients" className="inline-flex items-center gap-1.5 pb-3.5 text-[13px] text-stone-800-soft hover:text-primary-700">
         <ArrowLeft className="size-[15px]" />
         Retour aux patients
       </Link>
@@ -186,18 +186,18 @@ export default async function PatientDetailPage({ params }: Props) {
         <div className="flex items-center gap-4">
           <PatientAvatar fullName={patient.fullName} gender={patient.gender as 'boy' | 'girl' | null} size="lg" />
           <div>
-            <h1 className="font-heading text-3xl font-bold text-ink">{patient.fullName}</h1>
-            <div className="mt-1 flex flex-wrap gap-x-3 gap-y-0.5 text-sm text-ink-soft">
+            <h1 className="font-heading text-3xl font-bold text-stone-800">{patient.fullName}</h1>
+            <div className="mt-1 flex flex-wrap gap-x-3 gap-y-0.5 text-sm text-stone-800-soft">
               {patient.nationalId && <span>CIN : {patient.nationalId}</span>}
               {patient.birthDate && (
                 <>
                   <span>Né(e) le {new Date(patient.birthDate).toLocaleDateString('fr-FR')}</span>
-                  <span className="font-medium text-ink">{computeAge(patient.birthDate)}</span>
+                  <span className="font-medium text-stone-800">{computeAge(patient.birthDate)}</span>
                 </>
               )}
               {patient.phone && <span>{patient.phone}</span>}
             </div>
-            <div className="mt-0.5 text-sm text-ink-soft">
+            <div className="mt-0.5 text-sm text-stone-800-soft">
               {patient.address && <span>{patient.address}</span>}
               {patient.email && <span className="ml-3">{patient.email}</span>}
             </div>
@@ -226,40 +226,40 @@ export default async function PatientDetailPage({ params }: Props) {
 
         <TabsContent value="resume">
           <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-            <div className="rounded-xl border border-warm bg-white p-4 shadow-warm-sm">
-              <p className="text-xs font-medium uppercase text-ink-soft">Dernière consultation</p>
+            <div className="rounded-xl border border-warm bg-white p-4 shadow-sm">
+              <p className="text-xs font-medium uppercase text-stone-800-soft">Dernière consultation</p>
               {consultations.length > 0 ? (
                 <>
-                  <p className="mt-1 font-heading text-lg font-bold text-ink">
+                  <p className="mt-1 font-heading text-lg font-bold text-stone-800">
                     {new Date(consultations[0].date).toLocaleDateString('fr-FR')}
                   </p>
-                  <p className="text-sm text-ink-soft">{consultations[0].motif || 'Consultation'}</p>
+                  <p className="text-sm text-stone-800-soft">{consultations[0].motif || 'Consultation'}</p>
                 </>
               ) : (
-                <p className="mt-1 text-sm text-ink-soft">Aucune consultation</p>
+                <p className="mt-1 text-sm text-stone-800-soft">Aucune consultation</p>
               )}
             </div>
-            <div className="rounded-xl border border-warm bg-white p-4 shadow-warm-sm">
-              <p className="text-xs font-medium uppercase text-ink-soft">Croissance</p>
+            <div className="rounded-xl border border-warm bg-white p-4 shadow-sm">
+              <p className="text-xs font-medium uppercase text-stone-800-soft">Croissance</p>
               {consultations.length > 0 && consultations[0].poids ? (
                 <>
-                  <p className="mt-1 font-heading text-lg font-bold text-ink">
+                  <p className="mt-1 font-heading text-lg font-bold text-stone-800">
                     {consultations[0].poids} kg
                   </p>
                   {consultations[0].taille && (
-                    <p className="text-sm text-ink-soft">{consultations[0].taille} cm</p>
+                    <p className="text-sm text-stone-800-soft">{consultations[0].taille} cm</p>
                   )}
                 </>
               ) : (
-                <p className="mt-1 text-sm text-ink-soft">Pas de mesure</p>
+                <p className="mt-1 text-sm text-stone-800-soft">Pas de mesure</p>
               )}
             </div>
-            <div className="rounded-xl border border-warm bg-white p-4 shadow-warm-sm">
-              <p className="text-xs font-medium uppercase text-ink-soft">Traitement en cours</p>
+            <div className="rounded-xl border border-warm bg-white p-4 shadow-sm">
+              <p className="text-xs font-medium uppercase text-stone-800-soft">Traitement en cours</p>
               {patient.traitementsEnCours?.trim() ? (
-                <p className="mt-1 text-sm text-ink line-clamp-2">{patient.traitementsEnCours}</p>
+                <p className="mt-1 text-sm text-stone-800 line-clamp-2">{patient.traitementsEnCours}</p>
               ) : (
-                <p className="mt-1 text-sm text-ink-soft">Aucun traitement en cours</p>
+                <p className="mt-1 text-sm text-stone-800-soft">Aucun traitement en cours</p>
               )}
             </div>
           </div>
@@ -308,12 +308,12 @@ export default async function PatientDetailPage({ params }: Props) {
         <TabsContent value="consultations">
           {canViewClinical && (
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-              <div className="rounded-xl border border-warm bg-white shadow-warm-sm">
+              <div className="rounded-xl border border-warm bg-white shadow-sm">
                 <div className="flex items-center justify-between border-b border-stone-100 px-4 py-3">
                   <div className="flex items-center gap-2">
-                    <h2 className="font-heading text-lg font-semibold text-ink">Consultations</h2>
+                    <h2 className="font-heading text-lg font-semibold text-stone-800">Consultations</h2>
                     {consultations.length > 0 && (
-                      <span className="text-xs text-ink-soft">({consultations.length})</span>
+                      <span className="text-xs text-stone-800-soft">({consultations.length})</span>
                     )}
                   </div>
                   <Sheet>
@@ -328,12 +328,12 @@ export default async function PatientDetailPage({ params }: Props) {
                 <ConsultationHistory consultations={consultations} doctorInfo={doctorInfo} patientInfo={patientInfo} />
               </div>
 
-              <div className="rounded-xl border border-warm bg-white shadow-warm-sm">
+              <div className="rounded-xl border border-warm bg-white shadow-sm">
                 <div className="flex items-center justify-between border-b border-stone-100 px-4 py-3">
                   <div className="flex items-center gap-2">
-                    <h2 className="font-heading text-lg font-semibold text-ink">Ordonnances</h2>
+                    <h2 className="font-heading text-lg font-semibold text-stone-800">Ordonnances</h2>
                     {prescriptions.length > 0 && (
-                      <span className="text-xs text-ink-soft">({prescriptions.length})</span>
+                      <span className="text-xs text-stone-800-soft">({prescriptions.length})</span>
                     )}
                   </div>
                   <Sheet>

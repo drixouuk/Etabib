@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dr Guinane Aicha — Pédiatre à Inezgane</title>
+<meta name="description" content="Cabinet pédiatrique du Dr Guinane Aicha à Inezgane. Consultations, vaccinations, suivi de croissance et urgences pédiatriques. Prise de rendez-vous en ligne.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@500;600;700;800&family=Noto+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream-100:#FFFBF0; --cream-200:#FFF7E0; --cream-300:#FEF0C7;
+    --teal-50:#F0FDFA; --teal-100:#CCFBF1; --teal-200:#99F6E4; --teal-400:#2DD4BF;
+    --teal-500:#14B8A6; --teal-600:#0D9488; --teal-700:#0F766E; --teal-800:#115E59;
+    --amber-100:#FEF3C7; --amber-400:#FBBF24; --amber-500:#F59E0B;
+    --orange-700:#C2410C; --orange-800:#9A3412;
+    --ink:#292524; --ink-soft:#57534E; --ink-faint:#78716C; --ink-line:#A8A29E;
+    --border:#E7E5E4; --white:#FFFFFF;
+    --shadow-sm:0 2px 12px rgba(42,36,28,.06);
+    --shadow-md:0 10px 28px rgba(42,36,28,.10);
+    --shadow-lg:0 24px 60px rgba(42,36,28,.16);
+    --radius-sm:12px; --radius-md:20px; --radius-lg:28px;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{font-family:'Noto Sans',sans-serif;color:var(--ink-soft);background:var(--cream-100);line-height:1.65;-webkit-font-smoothing:antialiased;overflow-x:hidden;}
+  h1,h2,h3,h4{font-family:'Figtree',sans-serif;color:var(--ink);line-height:1.15;font-weight:800;}
+  a{color:inherit;text-decoration:none;}
+  svg{display:block;}
+  ul{list-style:none;}
+  :focus-visible{outline:2.5px solid var(--teal-600);outline-offset:3px;border-radius:4px;}
+  .container{max-width:1200px;margin:0 auto;padding:0 24px;}
+  section{scroll-margin-top:96px;}
+  .reveal{opacity:0;transform:translateY(20px);transition:opacity .7s ease,transform .7s ease;}
+  .reveal.in{opacity:1;transform:none;}
+  @media(prefers-reduced-motion:reduce){ .reveal{opacity:1;transform:none;transition:none;} }
+
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:14px 26px;border-radius:12px;font-weight:600;font-size:.95rem;border:none;cursor:pointer;transition:all .18s ease;white-space:nowrap;}
+  .btn svg{width:17px;height:17px;}
+  .btn-cta{background:var(--orange-700);color:#fff;box-shadow:var(--shadow-sm);}
+  .btn-cta:hover{background:var(--orange-800);transform:translateY(-2px);box-shadow:var(--shadow-md);}
+  .btn-outline{background:#fff;color:var(--ink-soft);border:1px solid var(--ink-line);box-shadow:var(--shadow-sm);}
+  .btn-outline:hover{background:var(--cream-200);}
+  .btn-primary{background:var(--teal-700);color:#fff;}
+  .btn-primary:hover{background:var(--teal-800);}
+  .btn-block{width:100%;}
+
+  /* ================= FLOATING NAVBAR — spec réelle Header.tsx ================= */
+  .navbar-floating{position:fixed;top:1rem;left:1rem;right:1rem;z-index:50;transition:transform .3s ease;}
+  .navbar-floating.nav-hidden{transform:translateY(calc(-100% - 1rem));}
+  .nav-inner{display:flex;align-items:center;justify-content:space-between;gap:16px;border-radius:16px;background:rgba(255,255,255,.8);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:var(--shadow-sm);padding:12px 16px;max-width:1200px;margin:0 auto;}
+  .brand{display:flex;align-items:center;gap:9px;font-family:'Figtree',sans-serif;font-weight:700;font-size:1.02rem;color:var(--teal-700);}
+  .brand-mark{width:32px;height:32px;border-radius:9px;background:var(--teal-600);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .brand-mark svg{width:17px;height:17px;color:#fff;}
+  .brand .short{display:none;}
+  .nav-mid{display:flex;align-items:center;gap:2px;}
+  .nav-mid a{font-weight:500;font-size:.92rem;color:var(--ink-soft);padding:9px 13px;border-radius:9px;transition:background .15s ease,color .15s ease;}
+  .nav-mid a:hover{background:var(--cream-200);color:var(--teal-700);}
+  .nav-right{display:flex;align-items:center;gap:10px;}
+  .lang-switch{position:relative;}
+  .lang-btn{display:flex;align-items:center;gap:5px;background:none;border:none;color:var(--ink-soft);font-weight:600;font-size:.85rem;padding:8px 9px;border-radius:9px;cursor:pointer;}
+  .lang-btn:hover{background:var(--cream-200);}
+  .lang-btn svg{width:15px;height:15px;}
+  .lang-menu{position:absolute;top:calc(100% + 8px);right:0;background:#fff;border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow-md);padding:6px;min-width:130px;display:none;}
+  .lang-menu.open{display:block;}
+  .lang-menu button{width:100%;text-align:left;background:none;border:none;padding:9px 11px;border-radius:8px;font-size:.87rem;color:var(--ink-soft);cursor:pointer;font-family:inherit;}
+  .lang-menu button:hover{background:var(--cream-200);}
+  .nav-toggle{display:none;background:none;border:none;color:var(--ink);width:34px;height:34px;align-items:center;justify-content:center;cursor:pointer;}
+  .nav-toggle svg{width:21px;height:21px;}
+  .mobile-panel{position:absolute;left:16px;right:16px;top:calc(100% + 8px);background:#fff;border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow-md);padding:8px;max-height:0;overflow:hidden;opacity:0;transition:max-height .3s ease,opacity .2s ease;}
+  .mobile-panel.open{max-height:340px;opacity:1;}
+  .mobile-panel a,.mobile-panel button{display:block;width:100%;text-align:left;padding:11px 14px;border-radius:9px;font-size:.92rem;font-weight:500;color:var(--ink-soft);background:none;border:none;font-family:inherit;cursor:pointer;}
+  .mobile-panel a:hover,.mobile-panel button:hover{background:var(--cream-200);}
+
+  @media(max-width:860px){
+    .nav-mid,.nav-right .lang-switch{display:none;}
+    .nav-toggle{display:flex;}
+    .brand .full{display:none;} .brand .short{display:inline;}
+  }
+
+  /* ================= HERO ================= */
+  .hero{position:relative;padding:132px 0 70px;overflow:hidden;}
+  @media(max-width:860px){ .hero{padding-top:110px;} }
+  .hero-blob{position:absolute;border-radius:50%;filter:blur(60px);z-index:0;}
+  .hero-blob.b1{width:340px;height:340px;background:var(--amber-100);opacity:.7;top:-100px;left:60%;}
+  .hero-blob.b2{width:260px;height:260px;background:var(--teal-100);opacity:.8;bottom:-60px;left:-80px;}
+  .hero .container{display:grid;grid-template-columns:1.1fr .9fr;gap:56px;align-items:center;position:relative;z-index:1;}
+  .badge{display:inline-flex;align-items:center;gap:7px;background:var(--teal-50);color:var(--teal-700);font-weight:600;font-size:.82rem;padding:7px 14px;border-radius:999px;border:1px solid var(--teal-200);margin-bottom:20px;}
+  .badge svg{width:13px;height:13px;}
+  .hero-copy h1{font-size:clamp(2rem,3.6vw,2.9rem);color:var(--ink);margin-bottom:18px;max-width:520px;}
+  .hero-copy>p.lead{font-size:1.08rem;max-width:480px;margin-bottom:30px;}
+  .hero-ctas{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:26px;}
+  .hero-trust{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:.87rem;color:var(--ink-faint);font-weight:500;}
+  .hero-trust span{display:inline-flex;align-items:center;gap:6px;}
+  .hero-trust svg{width:14px;height:14px;color:var(--amber-500);}
+  .hero-trust .dot{width:5px;height:5px;border-radius:50%;background:var(--teal-400);}
+
+  .portrait-wrap{position:relative;}
+  .portrait{
+    aspect-ratio:4/5;width:100%;max-width:360px;margin:0 auto;border-radius:26px;
+    background:linear-gradient(150deg,var(--teal-50),var(--teal-100) 55%,var(--teal-200));
+    box-shadow:var(--shadow-lg);position:relative;overflow:hidden;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .portrait-medal{width:104px;height:104px;border-radius:50%;background:rgba(255,255,255,.7);display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow-sm);}
+  .portrait-medal svg{width:48px;height:48px;color:var(--teal-700);}
+  .portrait-tag{position:absolute;bottom:14px;right:14px;background:rgba(41,37,36,.55);color:#fff;font-size:.68rem;font-weight:600;padding:5px 10px;border-radius:999px;}
+  .portrait-caption{text-align:center;margin-top:16px;font-family:'Figtree',sans-serif;font-weight:700;color:var(--ink);font-size:1rem;}
+  .portrait-caption span{display:block;font-family:'Noto Sans',sans-serif;font-weight:500;font-size:.85rem;color:var(--ink-faint);margin-top:2px;}
+
+  @media(max-width:900px){ .hero .container{grid-template-columns:1fr;} .portrait-wrap{order:-1;max-width:280px;margin:0 auto;} }
+
+  /* ================= SECTION HEAD ================= */
+  .section-head{max-width:620px;margin:0 auto 48px;text-align:center;}
+  .eyebrow{display:inline-flex;align-items:center;gap:7px;background:var(--cream-200);color:var(--teal-700);font-weight:700;font-size:.8rem;padding:6px 14px;border-radius:999px;margin-bottom:16px;}
+  .section-head h2{font-size:clamp(1.6rem,3vw,2.15rem);margin-bottom:10px;}
+  section.pad{padding:88px 0;}
+  @media(max-width:768px){ section.pad{padding:60px 0;} }
+
+  /* ================= PRESENTATION ================= */
+  .presentation-grid{display:grid;grid-template-columns:.85fr 1.15fr;gap:56px;align-items:start;}
+  .timeline{position:relative;padding-left:26px;}
+  .timeline::before{content:"";position:absolute;left:5px;top:6px;bottom:6px;width:2px;background:var(--border);}
+  .tl-item{position:relative;padding-bottom:26px;}
+  .tl-item:last-child{padding-bottom:0;}
+  .tl-item::before{content:"";position:absolute;left:-26px;top:2px;width:12px;height:12px;border-radius:50%;background:var(--teal-600);border:3px solid var(--cream-100);box-shadow:0 0 0 1px var(--teal-200);}
+  .tl-item h4{font-size:.95rem;margin-bottom:3px;}
+  .tl-item p{font-size:.86rem;color:var(--ink-faint);}
+  .approche p{font-size:1.03rem;margin-bottom:16px;}
+  .approche p:last-child{margin-bottom:0;}
+  .specialty-pill{display:inline-flex;margin-top:22px;background:var(--teal-50);border:1px solid var(--teal-200);color:var(--teal-700);font-weight:600;font-size:.88rem;padding:8px 16px;border-radius:999px;}
+  @media(max-width:860px){ .presentation-grid{grid-template-columns:1fr;gap:36px;} }
+
+  /* ================= SERVICES ================= */
+  .services-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;}
+  .service-card{background:#fff;border:1px solid var(--border);border-radius:var(--radius-md);padding:26px;transition:transform .2s ease,box-shadow .2s ease;}
+  .service-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-md);}
+  .service-icon{width:44px;height:44px;border-radius:12px;background:var(--teal-50);color:var(--teal-600);display:flex;align-items:center;justify-content:center;margin-bottom:16px;}
+  .service-icon svg{width:22px;height:22px;}
+  .service-card h3{font-size:1rem;margin-bottom:7px;}
+  .service-card p{font-size:.89rem;}
+  @media(max-width:900px){ .services-grid{grid-template-columns:repeat(2,1fr);} }
+  @media(max-width:560px){ .services-grid{grid-template-columns:1fr;} }
+
+  /* ================= AVIS — moment signature ================= */
+  .reviews-section{background:linear-gradient(180deg,var(--cream-100),#fff);}
+  .rating-hero{display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:8px;flex-wrap:wrap;}
+  .rating-num{font-family:'Figtree',sans-serif;font-weight:800;font-size:2.6rem;color:var(--ink);}
+  .rating-stars{display:flex;gap:3px;}
+  .rating-stars svg{width:19px;height:19px;color:var(--amber-400);}
+  .rating-sub{color:var(--ink-faint);font-size:.92rem;font-weight:600;}
+  .reviews-track{display:flex;gap:20px;overflow-x:auto;padding:8px 4px 16px;scroll-snap-type:x mandatory;scrollbar-width:none;}
+  .reviews-track::-webkit-scrollbar{display:none;}
+  .review-card{scroll-snap-align:start;flex:0 0 300px;background:var(--cream-100);border:1px solid var(--border);border-radius:var(--radius-md);padding:22px;display:flex;flex-direction:column;gap:12px;}
+  .review-top{display:flex;align-items:center;gap:11px;}
+  .review-avatar{width:38px;height:38px;border-radius:50%;background:var(--teal-600);color:#fff;font-weight:700;font-size:.9rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .review-who{min-width:0;}
+  .review-who p{font-size:.9rem;font-weight:700;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .review-stars{display:flex;gap:2px;margin-top:2px;}
+  .review-stars svg{width:13px;height:13px;color:var(--amber-400);}
+  .google-badge{margin-left:auto;display:flex;align-items:center;gap:5px;flex-shrink:0;}
+  .g-circle{width:15px;height:15px;border-radius:50%;background:#4285F4;color:#fff;font-size:9px;font-weight:800;display:flex;align-items:center;justify-content:center;font-family:Arial,sans-serif;}
+  .google-badge span{font-size:.72rem;color:var(--ink-line);}
+  .review-text{font-size:.89rem;line-height:1.55;flex-grow:1;}
+  .review-text::before{content:"“";color:var(--teal-300,#5EEAD4);font-family:Georgia,serif;font-size:1.3rem;margin-right:2px;}
+  .review-date{font-size:.76rem;color:var(--ink-line);}
+
+  /* ================= RDV ================= */
+  .rdv-card{max-width:640px;margin:0 auto;background:#fff;border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-md);overflow:hidden;}
+  .rdv-cal-head{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid var(--border);}
+  .rdv-cal-head strong{font-family:'Figtree',sans-serif;font-size:.98rem;color:var(--ink);}
+  .rdv-nav-btn{width:28px;height:28px;border-radius:8px;border:1px solid var(--border);background:#fff;display:flex;align-items:center;justify-content:center;color:var(--ink-faint);}
+  .rdv-week{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;padding:18px 22px;}
+  .rdv-day-label{text-align:center;font-size:.7rem;font-weight:700;color:var(--ink-line);text-transform:uppercase;}
+  .rdv-slot{aspect-ratio:1;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:.82rem;font-weight:600;color:var(--ink-faint);background:var(--cream-200);}
+  .rdv-slot.avail{background:var(--teal-50);color:var(--teal-700);border:1.5px solid var(--teal-200);cursor:pointer;}
+  .rdv-slot.picked{background:var(--teal-600);color:#fff;}
+  .rdv-times{display:flex;flex-wrap:wrap;gap:9px;padding:4px 22px 22px;}
+  .rdv-time{padding:8px 14px;border-radius:999px;border:1.5px solid var(--border);font-size:.83rem;font-weight:600;color:var(--ink-soft);background:#fff;}
+  .rdv-time.sel{background:var(--teal-600);border-color:var(--teal-600);color:#fff;}
+  .rdv-footer{padding:18px 22px;border-top:1px solid var(--border);}
+
+  /* ================= INFOS ================= */
+  .infos-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-bottom:40px;}
+  .info-card{background:#fff;border:1px solid var(--border);border-radius:var(--radius-md);padding:22px;}
+  .info-card .service-icon{margin-bottom:14px;}
+  .info-card h4{font-size:.92rem;margin-bottom:6px;}
+  .info-card p{font-size:.85rem;}
+  .infos-lower{display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:start;}
+  .map-card{border-radius:var(--radius-lg);overflow:hidden;border:1px solid var(--border);box-shadow:var(--shadow-sm);height:100%;min-height:280px;position:relative;background:
+    linear-gradient(var(--cream-200) 1px,transparent 1px) 0 0/28px 28px,
+    linear-gradient(90deg,var(--cream-200) 1px,transparent 1px) 0 0/28px 28px,
+    var(--cream-100);
+  }
+  .map-pin{position:absolute;top:50%;left:50%;transform:translate(-50%,-100%);display:flex;flex-direction:column;align-items:center;}
+  .map-pin-icon{width:44px;height:44px;border-radius:50% 50% 50% 0;background:var(--orange-700);transform:rotate(-45deg);display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow-md);}
+  .map-pin-icon svg{width:20px;height:20px;color:#fff;transform:rotate(45deg);}
+  .map-pin-label{margin-top:10px;background:#fff;padding:6px 12px;border-radius:8px;font-size:.78rem;font-weight:700;color:var(--ink);box-shadow:var(--shadow-sm);}
+  .contact-card{background:#fff;border:1px solid var(--border);border-radius:var(--radius-lg);padding:28px;}
+  .contact-card h3{font-size:1.1rem;margin-bottom:18px;}
+  .field{margin-bottom:14px;}
+  .field label{display:block;font-size:.83rem;font-weight:600;color:var(--ink);margin-bottom:6px;}
+  .field input,.field textarea{width:100%;padding:11px 13px;border-radius:10px;border:1px solid var(--border);font-family:inherit;font-size:.92rem;color:var(--ink);background:#fff;}
+  .field input:focus,.field textarea:focus{outline:none;border-color:var(--teal-500);box-shadow:0 0 0 3px rgba(20,184,166,.15);}
+  .field textarea{resize:vertical;min-height:88px;}
+  @media(max-width:900px){ .infos-grid{grid-template-columns:repeat(2,1fr);} .infos-lower{grid-template-columns:1fr;} }
+  @media(max-width:520px){ .infos-grid{grid-template-columns:1fr;} }
+
+  /* ================= FOOTER ================= */
+  .site-footer{background:var(--teal-800);color:#fff;}
+  .footer-fade{height:8px;background:linear-gradient(var(--cream-100),var(--teal-800));}
+  .footer-inner{padding:26px 0;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;text-align:center;}
+  .footer-inner p{color:rgba(255,255,255,.75);font-size:.87rem;}
+  .footer-inner strong{color:#fff;font-weight:700;}
+  .footer-nav{display:flex;gap:18px;flex-wrap:wrap;justify-content:center;}
+  .footer-nav a{font-size:.87rem;color:rgba(255,255,255,.85);}
+  .footer-nav a:hover{color:#fff;}
+  .footer-bottom{text-align:center;padding-bottom:22px;}
+  .footer-bottom a{font-size:.76rem;color:rgba(255,255,255,.55);}
+  .footer-bottom a:hover{color:rgba(255,255,255,.85);}
+  .footer-copy{text-align:center;padding-bottom:22px;font-size:.76rem;color:rgba(255,255,255,.55);}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+<defs>
+  <symbol id="i-heartbeat" viewBox="0 0 24 24"><path d="M2 12h4l2-8l4 16l3-11l2 3h5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-mappin" viewBox="0 0 24 24"><path d="M12 21s7-6.7 7-12.2A7 7 0 0 0 5 8.8C5 14.3 12 21 12 21Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><circle cx="12" cy="8.8" r="2.3" fill="none" stroke="currentColor" stroke-width="1.6"/></symbol>
+  <symbol id="i-phone" viewBox="0 0 24 24"><path d="M5 4h4l1.4 4.3l-2.1 2a11.3 11.3 0 0 0 5.4 5.4l2-2.1L20 15v4a1.4 1.4 0 0 1-1.5 1.4C10.5 20 4 13.5 3.6 5.5A1.4 1.4 0 0 1 5 4Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 7.5v5l3.3 1.9" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></symbol>
+  <symbol id="i-card" viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="13" rx="2.2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M3 10.3h18" stroke="currentColor" stroke-width="1.6"/><path d="M6.5 15h4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></symbol>
+  <symbol id="i-baby" viewBox="0 0 24 24"><circle cx="12" cy="9" r="4.3" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8.3 7.2c0-1.6 1.6-2.6 1.6-2.6M15.7 7.2c0-1.6-1.6-2.6-1.6-2.6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M9.5 9.7s1 1 2.5 1s2.5-1 2.5-1" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M5 20.5c0-3.6 3-6 7-6s7 2.4 7 6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></symbol>
+  <symbol id="i-syringe" viewBox="0 0 24 24"><path d="M20 4l-2.3 2.3M14 6l4 4l-8.5 8.5H6v-3.5L14.5 6.5A2.3 2.3 0 0 1 14 6Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M4 20l2.5-2.5M11 9l2 2M9 11l2 2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></symbol>
+  <symbol id="i-pulse" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.3" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M6.5 12h2.7l1.5-3.3l2.2 6.6l1.5-3.3h3.1" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-stetho" viewBox="0 0 24 24"><path d="M6 4v5a4.5 4.5 0 0 0 9 0V4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M6 4H4.5M15 4h1.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M15 9v3.2a5.3 5.3 0 1 1-10.6 0V9" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="19" cy="15.5" r="2.2" fill="none" stroke="currentColor" stroke-width="1.6"/></symbol>
+  <symbol id="i-apple" viewBox="0 0 24 24"><path d="M15.5 8.2c1.8 0 3.5 1.8 3.5 5c0 3.7-2.5 7.3-4.6 7.3c-1 0-1.4-.6-2.4-.6s-1.5.6-2.4.6C7.4 20.5 5 17 5 13.1c0-3.3 2-5.1 3.8-5.1c1.1 0 2 .7 2.7.7s1.7-.8 2.9-.8Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M12.5 7.5c0-1.5 1-2.7 2.3-3" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></symbol>
+  <symbol id="i-filecheck" viewBox="0 0 24 24"><path d="M7 3h7l5 5v12a1.2 1.2 0 0 1-1.2 1.2H7A1.2 1.2 0 0 1 5.8 20V4.2A1.2 1.2 0 0 1 7 3Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M14 3v5h5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M8.7 14.2l2 2l4-4.3" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24"><path d="M12 3.2l2.7 5.4l5.9.9l-4.3 4.2l1 5.9L12 16.5l-5.3 2.8l1-5.9l-4.3-4.2l5.9-.9Z" fill="currentColor"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M4 12h16M13.5 5.5L20 12l-6.5 6.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-chevdown" viewBox="0 0 24 24"><path d="M6 9l6 6l6-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 6.5h16M4 12h16M4 17.5h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+  <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+  <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M3 12h18M12 3c3.2 3 3.2 15 0 18c-3.2-3-3.2-15 0-18Z" fill="none" stroke="currentColor" stroke-width="1.6"/></symbol>
+  <symbol id="i-chevright" viewBox="0 0 24 24"><path d="M9 6l6 6l-6 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+</defs>
+</svg>
+
+<!-- ============ FLOATING NAVBAR ============ -->
+<header class="navbar-floating" id="navbar">
+  <div class="nav-inner">
+    <a href="#" class="brand"><span class="brand-mark"><svg><use href="#i-heartbeat"/></svg></span><span class="full">Dr Guinane Aicha</span><span class="short">Dr. Guinane</span></a>
+    <nav class="nav-mid" aria-label="Navigation principale">
+      <a href="#">Accueil</a>
+      <a href="#presentation">Présentation</a>
+      <a href="#services">Services</a>
+      <a href="#avis">Avis</a>
+      <a href="#infos">Infos</a>
+    </nav>
+    <div class="nav-right">
+      <div class="lang-switch">
+        <button class="lang-btn" id="langBtn"><svg><use href="#i-globe"/></svg>FR<svg><use href="#i-chevdown"/></svg></button>
+        <div class="lang-menu" id="langMenu">
+          <button>Français</button><button>العربية</button><button>ⵜⴰⵎⴰⵣⵉⵖⵜ</button><button>English</button>
+        </div>
+      </div>
+      <a href="#rdv" class="btn btn-cta" style="padding:10px 18px;font-size:.87rem;">Rendez-vous</a>
+      <button class="nav-toggle" id="navToggle" aria-label="Menu"><svg id="menuIcon"><use href="#i-menu"/></svg></button>
+    </div>
+    <div class="mobile-panel" id="mobilePanel">
+      <a href="#">Accueil</a><a href="#presentation">Présentation</a><a href="#services">Services</a>
+      <a href="#avis">Avis</a><a href="#infos">Infos</a>
+      <a href="#rdv" style="color:var(--orange-700);font-weight:700;">Prendre rendez-vous</a>
+    </div>
+  </div>
+</header>
+
+<main>
+  <!-- ============ HERO ============ -->
+  <section class="hero">
+    <span class="hero-blob b1"></span><span class="hero-blob b2"></span>
+    <div class="container">
+      <div class="hero-copy">
+        <span class="badge"><svg><use href="#i-mappin"/></svg>Inezgane, Souss-Massa</span>
+        <h1>La santé de vos enfants, entre de bonnes mains</h1>
+        <p class="lead">Consultations, suivi de croissance et vaccination, de la naissance à l'adolescence — cabinet pédiatrique installé à Inezgane.</p>
+        <div class="hero-ctas">
+          <a href="#rdv" class="btn btn-cta">Prendre rendez-vous <svg><use href="#i-arrow"/></svg></a>
+          <a href="#presentation" class="btn btn-outline">En savoir plus</a>
+        </div>
+        <div class="hero-trust">
+          <span><svg><use href="#i-star"/></svg>4,9/5 · 11 avis Google</span>
+          <span class="dot"></span>
+          <span>20 ans d'expérience</span>
+          <span class="dot"></span>
+          <span>Plusieurs langues</span>
+        </div>
+      </div>
+      <div class="portrait-wrap">
+        <div class="portrait">
+          <div class="portrait-medal"><svg><use href="#i-stetho"/></svg></div>
+          <span class="portrait-tag">Photo à intégrer</span>
+        </div>
+        <p class="portrait-caption">Dr Guinane Aicha<span>Pédiatre — Inezgane</span></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PRESENTATION ============ -->
+  <section class="pad" id="presentation">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="eyebrow">Présentation</span>
+        <h2>20 ans dédiés au bien-être des enfants</h2>
+      </div>
+      <div class="presentation-grid reveal">
+        <div>
+          <h3 style="font-size:1.05rem;margin-bottom:20px;">Parcours</h3>
+          <div class="timeline">
+            <div class="tl-item"><h4>Faculté de Médecine de Casablanca</h4><p>Diplôme de médecine</p></div>
+            <div class="tl-item"><h4>CHU Ibn Rochd, Casablanca</h4><p>Médecin</p></div>
+            <div class="tl-item"><h4>Hôpital Régional de Biougra</h4><p>Cheffe du service de pédiatrie</p></div>
+            <div class="tl-item"><h4>Cabinet à Inezgane</h4><p>Aujourd'hui</p></div>
+          </div>
+        </div>
+        <div class="approche">
+          <h3 style="font-size:1.05rem;margin-bottom:20px;">Approche</h3>
+          <p>Le Dr Guinane Aicha est une pédiatre expérimentée, dédiée au bien-être des enfants de la naissance à l'adolescence. Formée à Casablanca et forte de vingt années de pratique hospitalière et libérale, elle accompagne aujourd'hui les familles de la région Souss-Massa.</p>
+          <p>Sa pratique privilégie une médecine attentive, bienveillante et à l'écoute — une approche que ses patients soulignent régulièrement dans leurs avis.</p>
+          <span class="specialty-pill">Pédiatre</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SERVICES ============ -->
+  <section class="pad" id="services" style="background:#fff;border-top:1px solid var(--border);border-bottom:1px solid var(--border);">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="eyebrow">Services</span>
+        <h2>Nos services</h2>
+        <p>Une prise en charge complète de votre enfant</p>
+      </div>
+      <div class="services-grid reveal">
+        <div class="service-card"><div class="service-icon"><svg><use href="#i-baby"/></svg></div><h3>Consultation nourrisson</h3><p>Suivi du développement, courbes de croissance, conseils allaitement et nutrition.</p></div>
+        <div class="service-card"><div class="service-icon"><svg><use href="#i-syringe"/></svg></div><h3>Vaccinations</h3><p>Calendrier vaccinal complet selon le programme national marocain.</p></div>
+        <div class="service-card"><div class="service-icon"><svg><use href="#i-pulse"/></svg></div><h3>Suivi pédiatrique régulier</h3><p>Bilans de santé annuels, suivi scolaire, développement psychomoteur.</p></div>
+        <div class="service-card"><div class="service-icon"><svg><use href="#i-stetho"/></svg></div><h3>Consultations urgentes</h3><p>Fièvre, gastro-entérite, infections ORL, allergies — sans rendez-vous selon disponibilité.</p></div>
+        <div class="service-card"><div class="service-icon"><svg><use href="#i-apple"/></svg></div><h3>Nutrition & diététique</h3><p>Conseils personnalisés pour une alimentation équilibrée à chaque âge.</p></div>
+        <div class="service-card"><div class="service-icon"><svg><use href="#i-filecheck"/></svg></div><h3>Certificats médicaux</h3><p>Certificats de bonne santé, aptitude sportive, crèche et école.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ AVIS — signature ============ -->
+  <section class="pad reviews-section" id="avis">
+    <div class="container">
+      <div class="section-head reveal" style="margin-bottom:30px;">
+        <span class="eyebrow">Avis</span>
+        <h2>Ce que disent nos patients</h2>
+        <div class="rating-hero">
+          <span class="rating-num">4,9</span>
+          <div>
+            <div class="rating-stars"><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg></div>
+            <p class="rating-sub">sur 11 avis Google</p>
+          </div>
+        </div>
+      </div>
+      <div class="reviews-track reveal" id="reviewsTrack">
+        <div class="review-card">
+          <div class="review-top"><div class="review-avatar">A</div><div class="review-who"><p>Ahmed Sam</p><div class="review-stars"><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg></div></div><div class="google-badge"><span class="g-circle">G</span><span>Google</span></div></div>
+          <p class="review-text">Docteur très compétente, très à l'écoute, diagnostic rapide bronchite sévère chez ma fille, oxygène directement sur place. Elle prescrit juste ce qu'il faut.</p>
+          <p class="review-date">2025</p>
+        </div>
+        <div class="review-card">
+          <div class="review-top"><div class="review-avatar">B</div><div class="review-who"><p>Brahim Bouhouch</p><div class="review-stars"><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg></div></div><div class="google-badge"><span class="g-circle">G</span><span>Google</span></div></div>
+          <p class="review-text">Je recommande à 100%, une personne très sympathique et très professionnelle, à l'écoute, qui prend le temps d'expliquer et de rassurer les parents et l'enfant.</p>
+          <p class="review-date">2025</p>
+        </div>
+        <div class="review-card">
+          <div class="review-top"><div class="review-avatar">H</div><div class="review-who"><p>Halima Keddar</p><div class="review-stars"><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg></div></div><div class="google-badge"><span class="g-circle">G</span><span>Google</span></div></div>
+          <p class="review-text">Une pédiatre exceptionnelle, dotée d'une grande expertise et de traitements efficaces. Son approche avec les enfants est douce et professionnelle.</p>
+          <p class="review-date">2025</p>
+        </div>
+        <div class="review-card">
+          <div class="review-top"><div class="review-avatar">Z</div><div class="review-who"><p>Zayad Mariam</p><div class="review-stars"><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg></div></div><div class="google-badge"><span class="g-circle">G</span><span>Google</span></div></div>
+          <p class="review-text">Une pédiatre douce, à l'écoute, humaine, professionnelle, toujours souriante. Ma petite fille l'adore. Merci Dr Guinane.</p>
+          <p class="review-date">2025</p>
+        </div>
+        <div class="review-card">
+          <div class="review-top"><div class="review-avatar">A</div><div class="review-who"><p>Anouar El Boukili</p><div class="review-stars"><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg></div></div><div class="google-badge"><span class="g-circle">G</span><span>Google</span></div></div>
+          <p class="review-text">Dès notre première consultation, j'ai été impressionné par son professionnalisme et sa bienveillance. Elle a su mettre mon enfant à l'aise.</p>
+          <p class="review-date">2025</p>
+        </div>
+        <div class="review-card">
+          <div class="review-top"><div class="review-avatar">I</div><div class="review-who"><p>Inès Nejjar</p><div class="review-stars"><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg></div></div><div class="google-badge"><span class="g-circle">G</span><span>Google</span></div></div>
+          <p class="review-text">Médecin humaine, à l'écoute, très satisfaite de la consultation pour mon petit. Elle ne prescrit pas trop de médicaments.</p>
+          <p class="review-date">2025</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ RDV ============ -->
+  <section class="pad" id="rdv" style="background:#fff;border-top:1px solid var(--border);border-bottom:1px solid var(--border);">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="eyebrow">Rendez-vous</span>
+        <h2>Prendre rendez-vous</h2>
+        <p>Choisissez le créneau qui vous convient</p>
+      </div>
+      <div class="rdv-card reveal">
+        <div class="rdv-cal-head">
+          <button class="rdv-nav-btn"><svg style="width:14px;height:14px;transform:rotate(180deg)"><use href="#i-chevright"/></svg></button>
+          <strong>Août 2026</strong>
+          <button class="rdv-nav-btn"><svg style="width:14px;height:14px"><use href="#i-chevright"/></svg></button>
+        </div>
+        <div class="rdv-week">
+          <div class="rdv-day-label">L</div><div class="rdv-day-label">M</div><div class="rdv-day-label">M</div><div class="rdv-day-label">J</div><div class="rdv-day-label">V</div><div class="rdv-day-label">S</div><div class="rdv-day-label">D</div>
+          <div class="rdv-slot">27</div><div class="rdv-slot avail">28</div><div class="rdv-slot avail">29</div><div class="rdv-slot picked">30</div><div class="rdv-slot avail">31</div><div class="rdv-slot avail">1</div><div class="rdv-slot">2</div>
+        </div>
+        <div class="rdv-times">
+          <span class="rdv-time">09:00</span><span class="rdv-time sel">10:30</span><span class="rdv-time">11:00</span><span class="rdv-time">14:00</span><span class="rdv-time">15:30</span>
+        </div>
+        <div class="rdv-footer">
+          <a href="#" class="btn btn-cta btn-block">Confirmer le 30 août à 10:30 <svg><use href="#i-arrow"/></svg></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ INFOS ============ -->
+  <section class="pad" id="infos">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="eyebrow">Infos</span>
+        <h2>Informations pratiques</h2>
+      </div>
+      <div class="infos-grid reveal">
+        <div class="info-card"><div class="service-icon"><svg><use href="#i-mappin"/></svg></div><h4>Adresse</h4><p>Face au souk Al Houria, porte 10, Immeuble Nassim, 1er étage, bureau 4, Inezgane</p></div>
+        <div class="info-card"><div class="service-icon"><svg><use href="#i-clock"/></svg></div><h4>Horaires</h4><p>Lun–Ven 9h–16h30<br>Sam 9h–13h<br>Fermé le dimanche</p></div>
+        <div class="info-card"><div class="service-icon"><svg><use href="#i-card"/></svg></div><h4>Tarifs</h4><p>Paiement en espèces uniquement. Consultation à partir de 250 MAD.</p></div>
+        <div class="info-card"><div class="service-icon"><svg><use href="#i-phone"/></svg></div><h4>Téléphone</h4><p>+212 5 28-83-86-18</p></div>
+      </div>
+      <div class="infos-lower reveal">
+        <div class="map-card">
+          <div class="map-pin"><div class="map-pin-icon"><svg><use href="#i-mappin"/></svg></div><div class="map-pin-label">Cabinet — Inezgane</div></div>
+        </div>
+        <div class="contact-card">
+          <h3>Nous contacter</h3>
+          <form onsubmit="return handleContact(event)">
+            <div class="field"><label>Nom complet</label><input type="text" placeholder="Votre nom" required></div>
+            <div class="field"><label>Téléphone</label><input type="tel" placeholder="Votre numéro de téléphone" required></div>
+            <div class="field"><label>Message</label><textarea placeholder="Votre message" required></textarea></div>
+            <button type="submit" class="btn btn-primary btn-block" id="contactBtn">Envoyer</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- ============ FOOTER ============ -->
+<div class="footer-fade"></div>
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <p><strong>Dr Guinane Aicha</strong> — Pédiatre</p>
+    <nav class="footer-nav">
+      <a href="#">Accueil</a><a href="#presentation">Présentation</a><a href="#services">Services</a><a href="#avis">Avis</a><a href="#infos">Infos</a>
+    </nav>
+    <p>Inezgane, Maroc</p>
+  </div>
+  <div class="footer-bottom"><a href="dr-guinane-login.html">Espace praticien</a></div>
+  <p class="footer-copy">&copy; 2026 Dr Guinane Aicha</p>
+</footer>
+
+<script>
+  // floating navbar hide/show on scroll
+  const navbar = document.getElementById('navbar');
+  let lastY = 0, locked = false;
+  window.addEventListener('scroll', () => {
+    if (locked) return;
+    const y = window.scrollY;
+    navbar.classList.toggle('nav-hidden', y > lastY && y > 100);
+    lastY = y;
+  }, { passive:true });
+  function showNav(){ locked = true; navbar.classList.remove('nav-hidden'); lastY = window.scrollY; setTimeout(() => { lastY = window.scrollY; locked = false; }, 600); }
+  document.querySelectorAll('.nav-mid a, .mobile-panel a').forEach(a => a.addEventListener('click', showNav));
+
+  // language switcher
+  const langBtn = document.getElementById('langBtn');
+  const langMenu = document.getElementById('langMenu');
+  langBtn.addEventListener('click', (e) => { e.stopPropagation(); langMenu.classList.toggle('open'); });
+  document.addEventListener('click', () => langMenu.classList.remove('open'));
+
+  // mobile menu
+  const navToggle = document.getElementById('navToggle');
+  const mobilePanel = document.getElementById('mobilePanel');
+  const menuIcon = document.getElementById('menuIcon');
+  navToggle.addEventListener('click', () => {
+    const open = mobilePanel.classList.toggle('open');
+    menuIcon.setAttribute('href', open ? '#i-close' : '#i-menu');
+  });
+
+  // reviews auto-scroll
+  const track = document.getElementById('reviewsTrack');
+  let paused = false;
+  track.addEventListener('mouseenter', () => paused = true);
+  track.addEventListener('mouseleave', () => paused = false);
+  setInterval(() => {
+    if (paused) return;
+    const card = track.firstElementChild;
+    if (!card) return;
+    const w = card.offsetWidth + 20;
+    if (track.scrollLeft + track.clientWidth >= track.scrollWidth - 1) {
+      track.scrollTo({ left:0, behavior:'smooth' });
+    } else {
+      track.scrollBy({ left:w, behavior:'smooth' });
+    }
+  }, 3500);
+
+  // contact form (mock)
+  function handleContact(e){
+    e.preventDefault();
+    const btn = document.getElementById('contactBtn');
+    btn.textContent = 'Message envoyé ✓';
+    btn.style.background = 'var(--teal-800)';
+    setTimeout(() => { btn.textContent = 'Envoyer'; btn.style.background = ''; e.target.reset(); }, 2200);
+    return false;
+  }
+
+  // scroll reveal
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(en => { if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); } });
+  }, { threshold:.12 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+</script>
+</body>
+</html>
