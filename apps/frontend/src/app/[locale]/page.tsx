@@ -1,6 +1,5 @@
 import { setRequestLocale, getTranslations } from "next-intl/server";
 import { headers } from "next/headers";
-import { Link } from "@/i18n/navigation";
 import PresentationSection from "@/components/sections/PresentationSection";
 import ServicesSection from "@/components/sections/ServicesSection";
 import ReviewsSection from "@/components/sections/ReviewsSection";
@@ -79,18 +78,18 @@ export default async function HomePage({ params }: Props) {
             )}
 
             <div className="flex flex-wrap items-center gap-3">
-              <Link
-                href="/#rdv"
+              <a
+                href={`/${locale}#rdv`}
                 className="inline-flex h-12 items-center justify-center rounded-lg bg-cta-700 px-6 text-base font-bold text-white shadow-sm transition-colors duration-200 hover:bg-cta-800"
               >
                 {t("cta_primary")}
-              </Link>
-              <Link
+              </a>
+              <a
                 href="/#presentation"
                 className="inline-flex h-12 items-center justify-center rounded-lg border border-stone-300 bg-white px-6 text-base font-medium text-stone-700 shadow-sm transition-colors duration-200 hover:bg-cream-200"
               >
                 {t("cta_secondary")}
-              </Link>
+              </a>
             </div>
 
             <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-stone-600">
