@@ -38,7 +38,7 @@ export async function POST(request: NextRequest) {
   }
 
   const endDate = new Date(moroccoDate.getTime() + 30 * 60000)
-  const tenantIdRaw = request.headers.get('x-tenant-id') || ''
+  const tenantIdRaw = body.tenantId || request.headers.get('x-tenant-id') || ''
   const tenantId = parseInt(tenantIdRaw, 10)
   if (!tenantId) {
     return NextResponse.json({ error: 'Tenant invalide' }, { status: 400 })

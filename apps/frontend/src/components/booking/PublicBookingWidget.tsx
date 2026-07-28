@@ -24,7 +24,9 @@ function generateSlots(dateStr: string): string[] {
   return slots
 }
 
-export default function PublicBookingWidget() {
+type Props = { tenantId: string }
+
+export default function PublicBookingWidget({ tenantId }: Props) {
   const t = useTranslations('rdv')
   const [step, setStep] = useState<'calendar' | 'slots' | 'form' | 'done'>('calendar')
   const [selectedDate, setSelectedDate] = useState<string | null>(null)
@@ -58,7 +60,7 @@ export default function PublicBookingWidget() {
       const res = await fetch('/api/bookings', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: name.trim(), phone: phone.trim(), email: email.trim(), startTime }),
+        body: JSON.stringify({ name: name.trim(), phone: phone.trim(), email: email.trim(), startTime, tenantId }),
       })
       if (res.ok) {
         setStep('done')

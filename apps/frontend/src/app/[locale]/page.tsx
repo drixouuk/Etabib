@@ -121,7 +121,7 @@ export default async function HomePage({ params }: Props) {
 
       <ReviewsSection reviews={reviewsData} locale={locale} />
 
-      <PublicBookingWidget />
+      <PublicBookingWidget tenantId={tenantId} />
 
       <InfosSection locale={locale} practiceInfo={practiceInfo} />
     </main>

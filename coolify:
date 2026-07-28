@@ -1,0 +1,4 @@
+=== Container internal test ===
+local:OKlocal:=== Check ports ===
+=== Check if Traefik can reach it ===
+=== Traefik routers ===
