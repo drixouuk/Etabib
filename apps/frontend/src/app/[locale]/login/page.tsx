@@ -2,7 +2,7 @@
 
 import { useState, FormEvent } from 'react'
 import { useRouter, Link } from '@/i18n/navigation'
-import { Heart, Check, ArrowLeft, ArrowRight, Eye, EyeOff, AlertCircle } from 'lucide-react'
+import { Activity, Check, ArrowLeft, ArrowRight, Eye, EyeOff, AlertCircle } from 'lucide-react'
 
 export default function LoginPage() {
   const router = useRouter()
@@ -43,7 +43,7 @@ export default function LoginPage() {
 
         <Link href="/" className="relative z-1 flex items-center gap-[10px] font-heading font-bold text-[1.05rem]">
           <span className="flex size-[34px] items-center justify-center rounded-[9px] bg-white/15">
-            <Heart className="size-[18px]" />
+            <Activity className="size-[18px]" />
           </span>
           Dr Guinane Aicha
         </Link>
