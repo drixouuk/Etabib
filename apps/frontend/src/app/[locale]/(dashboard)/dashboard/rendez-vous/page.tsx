@@ -2,6 +2,7 @@ import { getTenantId } from '@/lib/tenant'
 import { requireAuth } from '@/lib/auth'
 import { fetchCMS } from '@/lib/cms-fetch'
 import BookingListView from '@/components/dashboard/BookingListView'
+import ScheduleXCalendar from '@/components/dashboard/ScheduleXCalendar'
 import { Calendar } from 'lucide-react'
 
 type CalBooking = {
@@ -43,6 +44,16 @@ export default async function RendezVousPage() {
       <h1 className="font-heading text-2xl font-bold text-stone-800">Rendez-vous</h1>
       <p className="mt-1 text-sm text-stone-800-soft capitalize">{dateLabel}</p>
       <div className="mt-6">
+        <div className="mb-8 rounded-2xl border border-stone-200 bg-white p-4 shadow-sm">
+          <ScheduleXCalendar
+            events={bookings.map(b => ({
+              id: b.id,
+              title: `${b.attendeeName || 'Patient'} — ${b.title || 'Consultation'}`,
+              start: b.startTime,
+              end: b.endTime,
+            }))}
+          />
+        </div>
         <BookingListView bookings={bookings} />
       </div>
     </div>

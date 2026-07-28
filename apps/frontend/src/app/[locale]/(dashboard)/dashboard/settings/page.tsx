@@ -5,6 +5,7 @@ import ProfileEditor from './ProfileEditor'
 import ChangePasswordForm from './ChangePasswordForm'
 import ManageAccounts from './ManageAccounts'
 import ReferringPractitionersManager from './ReferringPractitionersManager'
+import AvailabilityManager from './AvailabilityManager'
 
 export default async function SettingsPage() {
   const user = await requireAuth()
@@ -34,6 +35,7 @@ export default async function SettingsPage() {
         <ChangePasswordForm userId={user.id} />
         {isAdmin && <ManageAccounts users={tenantUsers} currentUserId={user.id} />}
         {isAdmin && <ReferringPractitionersManager />}
+        {isAdmin && <AvailabilityManager />}
       </div>
     </div>
   )

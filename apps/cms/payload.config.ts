@@ -25,6 +25,7 @@ import { CalBookings } from "./src/collections/CalBookings";
 import { Templates } from "./src/collections/Templates";
 import { ContactMessages } from "./src/collections/ContactMessages";
 import { ReferringPractitioners } from "./src/collections/ReferringPractitioners";
+import { AvailabilitySlots } from "./src/collections/AvailabilitySlots";
 import { seed } from "./src/seed";
 import { resolveTenant } from "./src/endpoints/resolve-tenant";
 
@@ -60,6 +61,7 @@ export default buildConfig({
     Templates,
     ContactMessages,
     ReferringPractitioners,
+    AvailabilitySlots,
   ],
   db: postgresAdapter({
     pool: {

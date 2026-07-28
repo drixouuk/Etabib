@@ -1,14 +1,13 @@
 import { setRequestLocale, getTranslations } from "next-intl/server";
 import { headers } from "next/headers";
 import { Link } from "@/i18n/navigation";
-import RdvCtaButton from "@/components/ui/RdvCtaButton";
 import PresentationSection from "@/components/sections/PresentationSection";
 import ServicesSection from "@/components/sections/ServicesSection";
 import ReviewsSection from "@/components/sections/ReviewsSection";
-import RdvSection from "@/components/sections/RdvSection";
+import PublicBookingWidget from "@/components/booking/PublicBookingWidget";
 import InfosSection from "@/components/sections/InfosSection";
 import { getServices, getPracticeInfo, getReviews, getTenantById, getDoctorProfile } from "@/lib/payload";
-import type { Service, PracticeInfo, Review, Doctor, Tenant, CalComSettings } from "@/lib/payload";
+import type { Service, PracticeInfo, Review, Doctor, Tenant } from "@/lib/payload";
 
 const DATA_LOCALE: Record<string, string> = {
   fr: 'fr',
@@ -80,9 +79,12 @@ export default async function HomePage({ params }: Props) {
             )}
 
             <div className="flex flex-wrap items-center gap-3">
-              <RdvCtaButton className="h-12 bg-cta-700 px-6 text-base text-white shadow-sm hover:bg-cta-800">
+              <Link
+                href="/fr#rdv"
+                className="inline-flex h-12 items-center justify-center rounded-lg bg-cta-700 px-6 text-base font-bold text-white shadow-sm transition-colors duration-200 hover:bg-cta-800"
+              >
                 {t("cta_primary")}
-              </RdvCtaButton>
+              </Link>
               <Link
                 href="/#presentation"
                 className="inline-flex h-12 items-center justify-center rounded-lg border border-stone-300 bg-white px-6 text-base font-medium text-stone-700 shadow-sm transition-colors duration-200 hover:bg-cream-200"
@@ -120,7 +122,7 @@ export default async function HomePage({ params }: Props) {
 
       <ReviewsSection reviews={reviewsData} locale={locale} />
 
-      <RdvSection calcom={tenant?.calcomSettings} />
+      <PublicBookingWidget />
 
       <InfosSection locale={locale} practiceInfo={practiceInfo} />
     </main>

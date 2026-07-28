@@ -68,9 +68,8 @@ export default function Header({ doctorName, doctorNameShort }: Props) {
             className="rounded-lg p-2 text-stone-600 hover:bg-cream-200 md:hidden" aria-label="Menu">
             {mobileMenuOpen ? <X className="size-5" /> : <Menu className="size-5" />}
           </button>
-          <Link href="/#rdv"
-            className="hidden h-10 items-center justify-center rounded-lg bg-cta-700 px-4 text-sm font-medium text-white shadow-sm transition-colors duration-200 hover:bg-cta-800 md:inline-flex"
-            onClick={() => window.dispatchEvent(new CustomEvent("open-rdv"))}>
+          <Link href="/fr#rdv"
+            className="hidden h-10 items-center justify-center rounded-lg bg-cta-700 px-4 text-sm font-medium text-white shadow-sm transition-colors duration-200 hover:bg-cta-800 md:inline-flex">
             {t('cta')}
           </Link>
         </div>
@@ -85,10 +84,10 @@ export default function Header({ doctorName, doctorNameShort }: Props) {
             </Link>
           ))}
           <hr className="my-1 border-stone-100" />
-          <button onClick={() => { window.dispatchEvent(new CustomEvent("open-rdv")); setMobileMenuOpen(false) }}
-            className="w-full rounded-lg bg-cta-700 px-4 py-2.5 text-sm font-medium text-white hover:bg-cta-800">
+          <Link href="/fr#rdv" onClick={() => setMobileMenuOpen(false)}
+            className="block w-full rounded-lg bg-cta-700 px-4 py-2.5 text-sm font-medium text-white hover:bg-cta-800 text-center">
             {t('cta')}
-          </button>
+          </Link>
         </div>
       )}
     </header>

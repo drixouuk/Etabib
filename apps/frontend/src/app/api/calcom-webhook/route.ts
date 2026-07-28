@@ -42,6 +42,7 @@ function mapStatus(calStatus: string): string {
   return map[calStatus] || 'pending'
 }
 
+/* Désactivé en Phase 1 — remplacé par POST /api/bookings
 export async function POST(request: NextRequest) {
   const secret = request.nextUrl.searchParams.get('secret')
   if (!secret || secret !== WEBHOOK_SECRET) {
@@ -127,3 +128,4 @@ export async function POST(request: NextRequest) {
   }
   return handler()
 }
+*/

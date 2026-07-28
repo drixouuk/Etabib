@@ -41,11 +41,7 @@ export async function POST(request: NextRequest) {
       name,
       domain,
       settings: { defaultLocale: 'fr', activeTier: tier, specialty: specialty || 'generaliste', doctorCount: tier === 'cabinet' ? (doctorCount || 1) : 1 },
-      calcomSettings: {
-        eventSlug: body.eventSlug || 'consultation',
-        username: body.username || '',
-        customUrl: body.customUrl || '',
-      },
+      calcomSettings: null,
     })
     if (!tenantRes.ok) {
       return NextResponse.json(

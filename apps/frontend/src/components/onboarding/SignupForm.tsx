@@ -29,9 +29,7 @@ export default function SignupForm({ tier, specialty, doctorCount, onSuccess, on
     password: '',
     subdomain: '',
     phone: '',
-    eventSlug: 'consultation',
-    username: '',
-    customUrl: '',
+
   })
   const [errors, setErrors] = useState<FieldErrors>({})
   const [apiError, setApiError] = useState('')
@@ -71,11 +69,6 @@ export default function SignupForm({ tier, specialty, doctorCount, onSuccess, on
     }
     if (specialty) body.specialty = specialty
     if (doctorCount !== undefined) body.doctorCount = doctorCount
-    if (tier === 'rdv') {
-      body.eventSlug = form.eventSlug || 'consultation'
-      body.username = form.username || undefined
-      body.customUrl = form.customUrl || undefined
-    }
 
     try {
       const res = await fetch('/api/onboarding', {
@@ -149,23 +142,7 @@ export default function SignupForm({ tier, specialty, doctorCount, onSuccess, on
         <input id="onb-phone" type="tel" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} className={inputClass} />
       </div>
 
-      {tier === 'rdv' && (
-        <fieldset className="space-y-4 rounded-lg border border-stone-200 bg-stone-50 p-4">
-          <legend className="text-sm font-semibold text-stone-700">Cal.com</legend>
-          <div>
-            <label htmlFor="onb-eventSlug" className={labelClass}>Slug événement</label>
-            <input id="onb-eventSlug" value={form.eventSlug} onChange={(e) => setForm({ ...form, eventSlug: e.target.value })} className={inputClass} placeholder="consultation-pediatrique" />
-          </div>
-          <div>
-            <label htmlFor="onb-username" className={labelClass}>Nom d'utilisateur</label>
-            <input id="onb-username" value={form.username} onChange={(e) => setForm({ ...form, username: e.target.value })} className={inputClass} placeholder="dr-martin" />
-          </div>
-          <div>
-            <label htmlFor="onb-customUrl" className={labelClass}>URL instance <span className="text-stone-400 font-normal">(optionnel)</span></label>
-            <input id="onb-customUrl" value={form.customUrl} onChange={(e) => setForm({ ...form, customUrl: e.target.value })} className={inputClass} placeholder="https://calcom.example.com" />
-          </div>
-        </fieldset>
-      )}
+
 
       {apiError && (
         <div className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-600">{apiError}</div>

@@ -87,6 +87,7 @@ export interface Config {
     templates: Template;
     'contact-messages': ContactMessage;
     'referring-practitioners': ReferringPractitioner;
+    'availability-slots': AvailabilitySlot;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -114,6 +115,7 @@ export interface Config {
     templates: TemplatesSelect<false> | TemplatesSelect<true>;
     'contact-messages': ContactMessagesSelect<false> | ContactMessagesSelect<true>;
     'referring-practitioners': ReferringPractitionersSelect<false> | ReferringPractitionersSelect<true>;
+    'availability-slots': AvailabilitySlotsSelect<false> | AvailabilitySlotsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -180,7 +182,7 @@ export interface Tenant {
      */
     doctorCount?: number | null;
     /**
-     * Null = illimité. Limite future sans re-développement.
+     * Vide = illimité. Limite future sans re-développement.
      */
     maxSecretaryAccounts?: number | null;
   };
@@ -676,6 +678,23 @@ export interface ContactMessage {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "availability-slots".
+ */
+export interface AvailabilitySlot {
+  id: number;
+  tenant: number | Tenant;
+  doctor?: (number | null) | Doctor;
+  dayOfWeek: '1' | '2' | '3' | '4' | '5' | '6' | '0';
+  startTime: string;
+  endTime: string;
+  durationMinutes: number;
+  bufferMinutes?: number | null;
+  isActive?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
@@ -777,6 +796,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'referring-practitioners';
         value: number | ReferringPractitioner;
+      } | null)
+    | ({
+        relationTo: 'availability-slots';
+        value: number | AvailabilitySlot;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -1197,6 +1220,22 @@ export interface ReferringPractitionersSelect<T extends boolean = true> {
   phone?: T;
   city?: T;
   notes?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "availability-slots_select".
+ */
+export interface AvailabilitySlotsSelect<T extends boolean = true> {
+  tenant?: T;
+  doctor?: T;
+  dayOfWeek?: T;
+  startTime?: T;
+  endTime?: T;
+  durationMinutes?: T;
+  bufferMinutes?: T;
+  isActive?: T;
   updatedAt?: T;
   createdAt?: T;
 }

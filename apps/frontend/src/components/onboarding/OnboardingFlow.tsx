@@ -30,7 +30,7 @@ const tiers: TierDef[] = [
     price: 199,
     features: [
       'Tout Vitrine +',
-      'Prise de rendez-vous en ligne (Cal.com)',
+      'Prise de rendez-vous en ligne',
       'Agenda synchronisé',
       'Notifications automatiques',
     ],
@@ -218,7 +218,7 @@ export default function OnboardingFlow() {
             <ol className="mt-3 list-inside list-decimal space-y-1.5 text-sm text-stone-600">
               <li>Personnalisez votre site vitrine depuis votre espace</li>
               <li>Ajoutez vos informations de contact, horaires, services</li>
-              {selectedTier === 'rdv' && <li>Configurez vos disponibilités dans Cal.com</li>}
+              {selectedTier === 'rdv' && <li>Configurez vos disponibilités en ligne</li>}
             </ol>
           </div>
         </div>
