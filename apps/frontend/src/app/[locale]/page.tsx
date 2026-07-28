@@ -80,7 +80,7 @@ export default async function HomePage({ params }: Props) {
 
             <div className="flex flex-wrap items-center gap-3">
               <Link
-                href="/fr#rdv"
+                href="/#rdv"
                 className="inline-flex h-12 items-center justify-center rounded-lg bg-cta-700 px-6 text-base font-bold text-white shadow-sm transition-colors duration-200 hover:bg-cta-800"
               >
                 {t("cta_primary")}
