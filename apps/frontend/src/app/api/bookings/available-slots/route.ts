@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-const CMS_URL = process.env.NEXT_PUBLIC_CMS_URL
-if (!CMS_URL) throw new Error('NEXT_PUBLIC_CMS_URL manquant')
+function getCMSURL(): string {
+  const url = process.env.NEXT_PUBLIC_getCMSURL()
+  if (!url) throw new Error('NEXT_PUBLIC_getCMSURL() manquant')
+  return url
+}
 
 export async function GET(request: NextRequest) {
   const date = request.nextUrl.searchParams.get('date')
@@ -16,7 +19,7 @@ export async function GET(request: NextRequest) {
   dayEnd.setHours(23, 59, 59, 999)
 
   const busyRes = await fetch(
-    `${CMS_URL}/api/calbookings?where[tenant][equals]=${encodeURIComponent(tenantId)}&where[startTime][greater_than_equal]=${dayStart.toISOString()}&where[startTime][less_than]=${dayEnd.toISOString()}&where[status][not_equals]=cancelled&depth=0&limit=100`,
+    `${getCMSURL()}/api/calbookings?where[tenant][equals]=${encodeURIComponent(tenantId)}&where[startTime][greater_than_equal]=${dayStart.toISOString()}&where[startTime][less_than]=${dayEnd.toISOString()}&where[status][not_equals]=cancelled&depth=0&limit=100`,
     { headers: { 'Content-Type': 'application/json' } }
   )
   const busyData = await busyRes.json()

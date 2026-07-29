@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-const CMS_URL = process.env.NEXT_PUBLIC_CMS_URL
-if (!CMS_URL) throw new Error('NEXT_PUBLIC_CMS_URL manquant')
+function getCMSURL(): string {
+  const url = process.env.NEXT_PUBLIC_getCMSURL()
+  if (!url) throw new Error('NEXT_PUBLIC_getCMSURL() manquant')
+  return url
+}
 const WEBHOOK_SECRET = process.env.CALCOM_WEBHOOK_SECRET || ''
 
 type CalWebhookPayload = {
@@ -26,7 +29,7 @@ type CalWebhookPayload = {
 }
 
 async function cmsApi(method: string, path: string, body?: unknown) {
-  const res = await fetch(`${CMS_URL}${path}`, {
+  const res = await fetch(`${getCMSURL()}${path}`, {
     method,
     headers: { 'Content-Type': 'application/json' },
     body: body ? JSON.stringify(body) : undefined,

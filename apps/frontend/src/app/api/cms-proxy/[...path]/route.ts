@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-const CMS_URL = process.env.NEXT_PUBLIC_CMS_URL
-if (!CMS_URL) throw new Error('NEXT_PUBLIC_CMS_URL manquant')
+function getCMSURL(): string {
+  const url = process.env.NEXT_PUBLIC_getCMSURL()
+  if (!url) throw new Error('NEXT_PUBLIC_getCMSURL() manquant')
+  return url
+}
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ path: string[] }> }) {
   const { path } = await params
@@ -30,7 +33,7 @@ async function proxyRequest(request: NextRequest, method: string, path: string[]
   }
 
   const queryString = request.nextUrl.searchParams.toString()
-  const url = `${CMS_URL}/api/${path.join('/')}${queryString ? `?${queryString}` : ''}`
+  const url = `${getCMSURL()}/api/${path.join('/')}${queryString ? `?${queryString}` : ''}`
 
   const incomingContentType = request.headers.get('content-type') || ''
   const isMultipart = incomingContentType.startsWith('multipart/form-data')
