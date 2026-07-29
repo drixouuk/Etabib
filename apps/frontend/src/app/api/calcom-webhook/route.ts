@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 
 function getCMSURL(): string {
-  const url = process.env.NEXT_PUBLIC_getCMSURL()
-  if (!url) throw new Error('NEXT_PUBLIC_getCMSURL() manquant')
+  const url = process.env.NEXT_PUBLIC_CMS_URL
+  if (!url) throw new Error('NEXT_PUBLIC_CMS_URL manquant')
   return url
 }
 const WEBHOOK_SECRET = process.env.CALCOM_WEBHOOK_SECRET || ''
