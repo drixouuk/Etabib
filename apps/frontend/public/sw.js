@@ -1,4 +1,4 @@
-const CACHE_NAME = 'dr-tabibi-v1'
+const CACHE_NAME = 'etabib-v1'
 
 self.addEventListener('install', (event) => {
   event.waitUntil(self.skipWaiting())
