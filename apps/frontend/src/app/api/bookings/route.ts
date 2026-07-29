@@ -1,14 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { moroccoWallTimeToUTC } from '@/lib/morocco-time'
 
-const CMS_URL = validateCMSURL()
-
-function validateCMSURL(): string {
+function getCMSURL(): string {
   const url = process.env.NEXT_PUBLIC_CMS_URL
   if (!url) throw new Error('NEXT_PUBLIC_CMS_URL manquant')
   return url
 }
-
 const API_KEY = process.env.INTERNAL_BOOKING_API_KEY
 
 const rateLimit = new Map<string, { count: number; resetAt: number }>()
@@ -57,7 +54,7 @@ export async function POST(request: NextRequest) {
   const dayOfWeek = String(moroccoDate.getDay())
   const timeStr = `${String(moroccoDate.getHours()).padStart(2, '0')}:${String(moroccoDate.getMinutes()).padStart(2, '0')}`
   const slotsCheck = await fetch(
-    `${CMS_URL}/api/availability-slots?where[tenant][equals]=${encodeURIComponent(tenantId)}&where[dayOfWeek][equals]=${dayOfWeek}&where[isActive][equals]=true&where[startTime][less_than_equal]=${timeStr}&where[endTime][greater_than]=${timeStr}&depth=0&limit=1`,
+    `${getCMSURL()}/api/availability-slots?where[tenant][equals]=${encodeURIComponent(tenantId)}&where[dayOfWeek][equals]=${dayOfWeek}&where[isActive][equals]=true&where[startTime][less_than_equal]=${timeStr}&where[endTime][greater_than]=${timeStr}&depth=0&limit=1`,
     { headers: { 'Content-Type': 'application/json' } }
   )
   const slots = await slotsCheck.json()
@@ -66,7 +63,7 @@ export async function POST(request: NextRequest) {
   }
 
   const conflictRes = await fetch(
-    `${CMS_URL}/api/calbookings?where[tenant][equals]=${encodeURIComponent(tenantId)}&where[startTime][less_than]=${endDate.toISOString()}&where[endTime][greater_than]=${moroccoDate.toISOString()}&where[status][not_equals]=cancelled&depth=0&limit=1`,
+    `${getCMSURL()}/api/calbookings?where[tenant][equals]=${encodeURIComponent(tenantId)}&where[startTime][less_than]=${endDate.toISOString()}&where[endTime][greater_than]=${moroccoDate.toISOString()}&where[status][not_equals]=cancelled&depth=0&limit=1`,
     { headers: { 'Content-Type': 'application/json' } }
   )
   const conflicts = await conflictRes.json()
@@ -78,7 +75,7 @@ export async function POST(request: NextRequest) {
   const headers: Record<string, string> = { 'Content-Type': 'application/json' }
   if (API_KEY) headers['x-internal-api-key'] = API_KEY
 
-  const res = await fetch(`${CMS_URL}/api/calbookings`, {
+  const res = await fetch(`${getCMSURL()}/api/calbookings`, {
     method: 'POST',
     headers,
     body: JSON.stringify({
