@@ -142,6 +142,8 @@ export default async function LocaleLayout({ children, params }: Props) {
 
   const h = await headers()
   const tenantId = h.get('x-tenant-id') || 'default'
+  const pathname = h.get('x-pathname') || ''
+  const isLanding = pathname.includes('/landing')
   const dataLocale = DATA_LOCALE[locale] || 'fr'
   const siteUrl = await getSiteUrl()
   const doctor = await getDoctorProfile(tenantId, dataLocale)
@@ -214,8 +216,8 @@ export default async function LocaleLayout({ children, params }: Props) {
       <body className={`${bodyFont} flex min-h-full flex-col bg-cream-100 text-stone-800 antialiased`}>
         <NextIntlClientProvider>
           <LayoutShell
-            header={<Header doctorName={doctorName} doctorNameShort={doctorNameShort} />}
-            footer={<Footer locale={locale} />}
+            header={isLanding ? undefined : <Header doctorName={doctorName} doctorNameShort={doctorNameShort} />}
+            footer={isLanding ? undefined : <Footer locale={locale} />}
           >
             {children}
           </LayoutShell>
