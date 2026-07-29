@@ -14,9 +14,24 @@ export const CalBookings: CollectionConfig = {
       if (!tid) return false
       return { tenant: { equals: tid } }
     },
-    create: () => true,
-    update: () => true,
-    delete: () => true,
+    create: ({ req }: any) => {
+      const apiKey = req.headers?.get?.('x-internal-api-key') || req.headers?.['x-internal-api-key']
+      if (apiKey && apiKey === process.env.INTERNAL_BOOKING_API_KEY) return true
+      const roles = req.user?.roles ?? []
+      return roles.includes('superadmin') || roles.includes('tenant_admin') || roles.includes('doctor') || roles.includes('secretary')
+    },
+    update: ({ req: { user } }: any) => {
+      if (user?.roles?.includes('superadmin')) return true
+      const tid = user?.tenant ? (typeof user.tenant === 'object' ? user.tenant.id : user.tenant) : undefined
+      if (!tid) return false
+      return { tenant: { equals: tid } }
+    },
+    delete: ({ req: { user } }: any) => {
+      if (user?.roles?.includes('superadmin')) return true
+      const tid = user?.tenant ? (typeof user.tenant === 'object' ? user.tenant.id : user.tenant) : undefined
+      if (!tid) return false
+      return { tenant: { equals: tid } }
+    },
   },
   fields: [
     { name: 'bookingUid', type: 'text', unique: true, required: true, label: 'UID Cal.com' },

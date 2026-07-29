@@ -2,7 +2,8 @@ import { getTenantId } from '@/lib/tenant'
 import { requireAuth } from '@/lib/auth'
 import { fetchCMS } from '@/lib/cms-fetch'
 import BookingListView from '@/components/dashboard/BookingListView'
-import ScheduleXCalendar from '@/components/dashboard/ScheduleXCalendar'
+import RendezVousCalendarClient from '@/components/dashboard/RendezVousCalendarClient'
+import { formatDateMorocco } from '@/lib/datetime'
 import { Calendar } from 'lucide-react'
 
 type CalBooking = {
@@ -37,7 +38,7 @@ export default async function RendezVousPage() {
   )
   const bookings = data?.docs ?? []
 
-  const dateLabel = today.toLocaleDateString('fr-FR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
+  const dateLabel = formatDateMorocco(today.toISOString())
 
   return (
     <div className="mx-auto max-w-container px-4 py-12 md:px-6 lg:px-8">
@@ -45,12 +46,13 @@ export default async function RendezVousPage() {
       <p className="mt-1 text-sm text-stone-800-soft capitalize">{dateLabel}</p>
       <div className="mt-6">
         <div className="mb-8 rounded-2xl border border-stone-200 bg-white p-4 shadow-sm">
-          <ScheduleXCalendar
-            events={bookings.map(b => ({
+          <RendezVousCalendarClient
+            initialBookings={bookings.map(b => ({
               id: b.id,
-              title: `${b.attendeeName || 'Patient'} — ${b.title || 'Consultation'}`,
-              start: b.startTime,
-              end: b.endTime,
+              title: b.title,
+              startTime: b.startTime,
+              endTime: b.endTime,
+              attendeeName: b.attendeeName,
             }))}
           />
         </div>

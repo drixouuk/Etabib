@@ -1,6 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { moroccoWallTimeToUTC } from '@/lib/morocco-time'
 
-const CMS_URL = process.env.NEXT_PUBLIC_CMS_URL || 'https://dr-pediatre-cms.vercel.app'
+const CMS_URL = validateCMSURL()
+
+function validateCMSURL(): string {
+  const url = process.env.NEXT_PUBLIC_CMS_URL
+  if (!url) throw new Error('NEXT_PUBLIC_CMS_URL manquant')
+  return url
+}
+
+const API_KEY = process.env.INTERNAL_BOOKING_API_KEY
 
 const rateLimit = new Map<string, { count: number; resetAt: number }>()
 
@@ -28,7 +37,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Nom et créneau requis' }, { status: 400 })
   }
 
-  const moroccoDate = new Date(startTime + '+01:00')
+  const moroccoDate = moroccoWallTimeToUTC(startTime)
   if (isNaN(moroccoDate.getTime())) {
     return NextResponse.json({ error: 'Date invalide' }, { status: 400 })
   }
@@ -66,9 +75,12 @@ export async function POST(request: NextRequest) {
   }
 
   const bookingUid = `booking-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
+  const headers: Record<string, string> = { 'Content-Type': 'application/json' }
+  if (API_KEY) headers['x-internal-api-key'] = API_KEY
+
   const res = await fetch(`${CMS_URL}/api/calbookings`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers,
     body: JSON.stringify({
       bookingUid,
       tenant: tenantId,
@@ -86,6 +98,10 @@ export async function POST(request: NextRequest) {
   })
 
   if (!res.ok) {
+    const errBody = await res.json().catch(() => null)
+    if (errBody?.errors?.[0]?.message?.includes('duplicate') || errBody?.errors?.[0]?.message?.includes('unique')) {
+      return NextResponse.json({ error: 'Créneau déjà réservé' }, { status: 409 })
+    }
     return NextResponse.json({ error: 'Erreur serveur lors de la création' }, { status: 500 })
   }
 

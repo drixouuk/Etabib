@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-const CMS_URL = process.env.NEXT_PUBLIC_CMS_URL || 'https://dr-pediatre-cms.vercel.app'
+const CMS_URL = process.env.NEXT_PUBLIC_CMS_URL
+if (!CMS_URL) throw new Error('NEXT_PUBLIC_CMS_URL manquant')
 
 export async function GET(request: NextRequest) {
   const date = request.nextUrl.searchParams.get('date')

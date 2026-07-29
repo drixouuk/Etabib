@@ -11,9 +11,12 @@ type Props = {
   events: CalendarEvent[]
   onDateClick?: (date: string) => void
   onEventClick?: (event: CalendarEvent) => void
+  onRangeChange?: (start: string, end: string) => void
+  locale?: string
+  isRTL?: boolean
 }
 
-export default function ScheduleXCalendar({ events, onDateClick, onEventClick }: Props) {
+export default function ScheduleXCalendar({ events, onDateClick, onEventClick, onRangeChange, locale, isRTL }: Props) {
   const containerRef = useRef<HTMLDivElement>(null)
   const calendarRef = useRef<ReturnType<typeof createCalendar> | null>(null)
   const eventsServiceRef = useRef<ReturnType<typeof createEventsServicePlugin> | null>(null)
@@ -26,6 +29,7 @@ export default function ScheduleXCalendar({ events, onDateClick, onEventClick }:
       views: [viewMonthGrid, viewWeek],
       defaultView: 'month-grid',
       plugins: [eventsService],
+      locale,
       events: events.map(e => ({ id: e.id, title: e.title, start: e.start, end: e.end })),
       callbacks: {
         onClickDateTime(dateTime) {
@@ -33,6 +37,9 @@ export default function ScheduleXCalendar({ events, onDateClick, onEventClick }:
         },
         onEventClick(event) {
           onEventClick?.({ id: event.id, title: event.title as string, start: event.start.toString(), end: event.end.toString() })
+        },
+        onRangeUpdate(range) {
+          onRangeChange?.(range.start.toString(), range.end.toString())
         },
       },
     })
@@ -45,5 +52,5 @@ export default function ScheduleXCalendar({ events, onDateClick, onEventClick }:
     eventsServiceRef.current?.set(events.map(e => ({ id: e.id, title: e.title, start: e.start, end: e.end })))
   }, [events])
 
-  return <div ref={containerRef} className="schedule-x-calendar" />
+  return <div ref={containerRef} dir={isRTL ? 'rtl' : 'ltr'} className="schedule-x-calendar" />
 }
