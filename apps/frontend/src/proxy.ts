@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { routing } from "./i18n/routing";
 
 const CMS_URL =
-  process.env.NEXT_PUBLIC_CMS_URL || "https://dr-pediatre-cms.vercel.app";
+  process.env.NEXT_PUBLIC_CMS_URL || "https://cms.etabibi.ma";
 
 const intlMiddleware = createMiddleware(routing);
 
@@ -45,7 +45,7 @@ function tenantCacheSet(key: string, value: { id: string; slug: string; name: st
 async function resolveTenant(
   hostname: string,
 ): Promise<{ id: string; slug: string; name: string } | null> {
-  // Nettoie le port si présent (ex: drguinane.drixou.uk:3000 -> drguinane.drixou.uk)
+    // Nettoie le port si présent
   const cleanHostname = hostname.split(":")[0];
 
   const cached = tenantCacheGet(cleanHostname);
@@ -107,8 +107,6 @@ export default async function middleware(request: NextRequest) {
     return response;
   }
 
-  // 4. Plateforme SaaS — domaines sans tenant (etabibi.ma, landing, ...)
-  //    On redirige / vers /landing pour ces domaines
   const SITE_DOMAIN = process.env.NEXT_PUBLIC_SITE_DOMAIN || 'etabibi.ma'
   const isPlatformDomain = !tenant && (hostname === SITE_DOMAIN || hostname === `www.${SITE_DOMAIN}`)
   if (isPlatformDomain && pathname === '/' && !pathname.startsWith('/landing')) {

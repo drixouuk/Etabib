@@ -119,7 +119,7 @@ export const Tenants: CollectionConfig = {
           name: 'customUrl',
           type: 'text',
           label: 'URL personnalisée de l\'instance Cal.com (optionnel)',
-          admin: { placeholder: 'https://calcom.drixou.uk' },
+          admin: { placeholder: 'https://calcom.etabibi.ma' },
         },
       ],
     },

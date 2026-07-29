@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient, createSubscriptionInvoice } from '@/lib/invoiceninja'
 
-const CMS_URL = process.env.NEXT_PUBLIC_CMS_URL || 'https://dr-pediatre-cms.vercel.app'
+const CMS_URL = process.env.NEXT_PUBLIC_CMS_URL || 'https://cms.etabibi.ma'
 
 async function cmsPost(path: string, data: unknown, token?: string) {
   const headers: Record<string, string> = { 'Content-Type': 'application/json' }

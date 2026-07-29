@@ -43,9 +43,9 @@ const lexicalMixed = (
 });
 
 const TENANT_SLUG = "dr-guinane";
-const TENANT_DOMAIN = "drguinane.drixou.uk";
+const TENANT_DOMAIN = "drguinane.etabibi.ma";
 
-const DOCTOR_EMAIL = "drguinane@drixou.uk";
+const DOCTOR_EMAIL = "drguinane@etabibi.ma";
 
 async function seedTenant(payload: Payload) {
   const existing = await payload.find({
@@ -72,7 +72,7 @@ async function seedTenant(payload: Payload) {
       calcomSettings: {
         eventSlug: "consultation-pediatrique",
         username: "drixou",
-        customUrl: "https://calcom.drixou.uk",
+        customUrl: "https://calcom.etabibi.ma",
       },
     },
   });

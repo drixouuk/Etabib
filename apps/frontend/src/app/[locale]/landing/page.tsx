@@ -41,7 +41,7 @@ const steps = [
 
 const faqs = ['faq_1', 'faq_2', 'faq_3', 'faq_4', 'faq_5', 'faq_6'] as const
 
-const DEMO_URL = 'https://demo.drixou.uk/login'
+const DEMO_URL = `https://demo.${SITE_DOMAIN}/login`
 
 function CopyButton({ text }: { text: string }) {
   const [copied, setCopied] = useState(false)
@@ -331,7 +331,7 @@ export default function LandingPage() {
                   className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-cta-500 px-7 py-3.5 text-[.97rem] font-bold text-white shadow-sm transition-all hover:bg-cta-600">
                   {t('demo_card_cta')} <ArrowRight className="size-[18px]" />
                 </a>
-                <p className="text-[.82rem] text-[#B9B2A4] mt-4">demo.drixou.uk/login</p>
+                <p className="text-[.82rem] text-[#B9B2A4] mt-4">{`demo.${SITE_DOMAIN}/login`}</p>
               </div>
             </div>
           </div>
