@@ -109,11 +109,8 @@ export default async function middleware(request: NextRequest) {
 
   // 4. Plateforme SaaS — domaines sans tenant (etabibi.ma, landing, ...)
   //    On redirige / vers /landing pour ces domaines
-  const PLATFORM_DOMAINS = [
-    process.env.NEXT_PUBLIC_SITE_DOMAIN || 'etabibi.ma',
-    'tabibi.ma',
-  ]
-  const isPlatformDomain = !tenant && PLATFORM_DOMAINS.some(d => hostname === d || hostname === `www.${d}`)
+  const SITE_DOMAIN = process.env.NEXT_PUBLIC_SITE_DOMAIN || 'etabibi.ma'
+  const isPlatformDomain = !tenant && (hostname === SITE_DOMAIN || hostname === `www.${SITE_DOMAIN}`)
   if (isPlatformDomain && pathname === '/' && !pathname.startsWith('/landing')) {
     const locale = request.nextUrl.locale || 'fr'
     return NextResponse.redirect(new URL(`/${locale}/landing`, request.url))
