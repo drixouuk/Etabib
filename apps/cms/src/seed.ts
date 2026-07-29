@@ -42,10 +42,12 @@ const lexicalMixed = (
   },
 });
 
-const TENANT_SLUG = "dr-guinane";
-const TENANT_DOMAIN = "drguinane.etabibi.ma";
+const SEED_DOMAIN = process.env.NEXT_PUBLIC_SITE_DOMAIN || 'etabibi.ma';
 
-const DOCTOR_EMAIL = "drguinane@etabibi.ma";
+const TENANT_SLUG = "dr-guinane";
+const TENANT_DOMAIN = `drguinane.${SEED_DOMAIN}`;
+
+const DOCTOR_EMAIL = "drguinane@drixou.uk";
 
 async function seedTenant(payload: Payload) {
   const existing = await payload.find({
@@ -72,7 +74,7 @@ async function seedTenant(payload: Payload) {
       calcomSettings: {
         eventSlug: "consultation-pediatrique",
         username: "drixou",
-        customUrl: "https://calcom.etabibi.ma",
+        customUrl: "",
       },
     },
   });
@@ -82,7 +84,6 @@ async function seedTenant(payload: Payload) {
 }
 
 const ADMIN_EMAIL = process.env.SUPERADMIN_EMAIL || 'admin@etabibi.ma';
-const SEED_DOMAIN = process.env.NEXT_PUBLIC_SITE_DOMAIN || 'etabibi.ma';
 
 async function seedSuperadmin(payload: Payload) {
   const existing = await payload.find({

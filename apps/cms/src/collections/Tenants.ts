@@ -101,25 +101,20 @@ export const Tenants: CollectionConfig = {
     {
       name: 'calcomSettings',
       type: 'group',
-      label: 'Cal.com (prise de rendez-vous)',
+      label: 'Ancienne config Cal.com (obsolète — plus utilisé)',
+      admin: { readOnly: true, hidden: true },
       fields: [
         {
           name: 'eventSlug',
           type: 'text',
-          label: "Slug de l'événement (ex: consultation-pediatrique)",
-          admin: { placeholder: 'consultation-pediatrique' },
         },
         {
           name: 'username',
           type: 'text',
-          label: "Nom d'utilisateur Cal.com (ex: dr-guinane)",
-          admin: { placeholder: 'dr-guinane' },
         },
         {
           name: 'customUrl',
           type: 'text',
-          label: 'URL personnalisée de l\'instance Cal.com (optionnel)',
-          admin: { placeholder: 'https://calcom.etabibi.ma' },
         },
       ],
     },

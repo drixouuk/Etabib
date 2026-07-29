@@ -15,7 +15,7 @@ import LayoutShell from '@/components/layout/LayoutShell'
 import { getDoctorProfile, getPracticeInfo } from '@/lib/payload'
 import type { PracticeInfo } from '@/lib/payload'
 import '../globals.css'
-import { BRAND } from '@/lib/brand'
+import { BRAND, SITE_DOMAIN } from '@/lib/brand'
 
 const figtree = Figtree({
   subsets: ['latin', 'latin-ext'],
@@ -52,7 +52,7 @@ type Props = {
 
 async function getSiteUrl(): Promise<string> {
   const h = await headers()
-  const host = h.get('x-forwarded-host') || h.get('host') || 'drguinane.etabibi.ma'
+  const host = h.get('x-forwarded-host') || h.get('host') || `drguinane.${SITE_DOMAIN}`
   return `https://${host}`
 }
 
