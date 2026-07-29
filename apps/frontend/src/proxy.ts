@@ -107,7 +107,16 @@ export default async function middleware(request: NextRequest) {
     return response;
   }
 
-  // 4. Injection dans la REQUÊTE (indispensable pour headers() dans les Server Components)
+  // 4. Plateforme SaaS — domaines sans tenant (etabibi.ma, landing, ...)
+  //    On redirige / vers /landing pour ces domaines
+  const SITE_DOMAIN = process.env.NEXT_PUBLIC_SITE_DOMAIN || 'etabibi.ma'
+  const isPlatformDomain = !tenant && (hostname === SITE_DOMAIN || hostname === `www.${SITE_DOMAIN}`)
+  if (isPlatformDomain && pathname === '/' && !pathname.startsWith('/landing')) {
+    const locale = request.nextUrl.locale || 'fr'
+    return NextResponse.redirect(new URL(`/${locale}/landing`, request.url))
+  }
+
+  // 5. Injection dans la REQUÊTE (indispensable pour headers() dans les Server Components)
   request.headers.set("x-pathname", pathname);
   if (tenant) {
     request.headers.set("x-tenant-id", tenant.id);
