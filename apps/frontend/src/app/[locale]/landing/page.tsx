@@ -7,7 +7,7 @@ import {
   FileText, Users, BarChart3, Play, Menu, X
 } from 'lucide-react'
 import { useScrollDirection } from '@/hooks/use-scroll-direction'
-import { BRAND } from '@/lib/brand'
+import { BRAND, SITE_DOMAIN, SUPPORT_EMAIL } from '@/lib/brand'
 
 const trustItems = [
   { icon: Lock, key: 'trust_1' },
@@ -488,7 +488,7 @@ export default function LandingPage() {
             <div>
               <h5 className="font-heading text-[.86rem] font-bold text-[#2A241C] mb-4">{t('footer_support')}</h5>
               <a href="#faq" className="block text-[.88rem] text-[#8A8175] py-1.5 hover:text-primary-700">{t('nav_faq')}</a>
-              <a href={`mailto:contact@etabibi.ma`} className="block text-[.88rem] text-[#8A8175] py-1.5 hover:text-primary-700">contact@etabibi.ma</a>
+              <a href={`mailto:${SUPPORT_EMAIL}`} className="block text-[.88rem] text-[#8A8175] py-1.5 hover:text-primary-700">{SUPPORT_EMAIL}</a>
             </div>
             <div>
               <h5 className="font-heading text-[.86rem] font-bold text-[#2A241C] mb-4">{t('footer_legal')}</h5>
