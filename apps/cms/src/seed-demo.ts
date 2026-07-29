@@ -1,7 +1,7 @@
 import type { Payload } from 'payload'
 
 const DEMO_EMAIL = 'drdemo@gmail.com'
-const DEMO_DOMAIN = 'demo.dr-tabibi.ma'
+const DEMO_DOMAIN = process.env.NEXT_PUBLIC_SITE_DOMAIN ? `demo.${process.env.NEXT_PUBLIC_SITE_DOMAIN}` : 'demo.etabibi.ma'
 
 const SERVICES = [
   { title: 'Consultation pédiatrique', icon: 'Stethoscope', order: 1, description: '' },

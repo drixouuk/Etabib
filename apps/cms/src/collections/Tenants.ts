@@ -56,7 +56,7 @@ export const Tenants: CollectionConfig = {
       name: 'domain',
       type: 'text',
       unique: true,
-      label: 'Domaine personnalisé (ex: cabinet-aicha.dr-tabibi.ma)',
+      label: 'Domaine personnalisé (ex: cabinet-aicha.etabibi.ma)',
     },
     {
       name: 'settings',

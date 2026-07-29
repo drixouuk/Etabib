@@ -81,6 +81,9 @@ async function seedTenant(payload: Payload) {
   return tenant;
 }
 
+const ADMIN_EMAIL = process.env.SUPERADMIN_EMAIL || 'admin@etabibi.ma';
+const SEED_DOMAIN = process.env.NEXT_PUBLIC_SITE_DOMAIN || 'etabibi.ma';
+
 async function seedSuperadmin(payload: Payload) {
   const existing = await payload.find({
     collection: 'users',
@@ -94,9 +97,9 @@ async function seedSuperadmin(payload: Payload) {
   const user = await payload.create({
     collection: 'users',
     data: {
-      email: 'admin@dr-tabibi.ma',
+      email: ADMIN_EMAIL,
       password: process.env.SEED_SUPERADMIN_PASSWORD ?? (() => { throw new Error('SEED_SUPERADMIN_PASSWORD manquant — définis cette variable d\'environnement avant de lancer le script.') })(),
-      name: 'SuperAdmin dr-tabibi',
+      name: process.env.SUPERADMIN_NAME || 'SuperAdmin',
       roles: ['superadmin'],
     },
   });

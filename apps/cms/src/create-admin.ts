@@ -1,12 +1,14 @@
 import { getPayload } from 'payload'
 import config from '../payload.config.js'
 
+const ADMIN_EMAIL = process.env.SUPERADMIN_EMAIL || 'admin@etabibi.ma'
+
 async function createAdmin() {
   const payload = await getPayload({ config })
 
   const existing = await payload.find({
     collection: 'users',
-    where: { email: { equals: 'admin@dr-tabibi.ma' } },
+    where: { email: { equals: ADMIN_EMAIL } },
     limit: 1,
   })
 
@@ -18,9 +20,9 @@ async function createAdmin() {
   await payload.create({
     collection: 'users',
     data: {
-      email: 'admin@dr-tabibi.ma',
+      email: ADMIN_EMAIL,
       password: process.env.ADMIN_PASSWORD ?? (() => { throw new Error('ADMIN_PASSWORD manquant — définis cette variable d\'environnement avant de lancer le script.') })(),
-      name: 'Admin',
+      name: process.env.SUPERADMIN_NAME || 'Admin',
       roles: ['superadmin'],
     },
   })

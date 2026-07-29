@@ -3,7 +3,9 @@
 import { useState, FormEvent } from 'react'
 import { Loader2 } from 'lucide-react'
 
-const BASE_DOMAIN = process.env.NEXT_PUBLIC_ONBOARDING_BASE_DOMAIN || '.dr-tabibi.ma'
+import { SITE_DOMAIN } from '@/lib/brand'
+
+const BASE_DOMAIN = process.env.NEXT_PUBLIC_ONBOARDING_BASE_DOMAIN || `.${SITE_DOMAIN}`
 
 type Props = {
   tier: 'vitrine' | 'rdv' | 'cabinet'

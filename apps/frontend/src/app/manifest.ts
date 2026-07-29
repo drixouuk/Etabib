@@ -1,9 +1,10 @@
 import type { MetadataRoute } from 'next'
+import { BRAND } from '@/lib/brand'
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'Dr Tabibi — Cabinet médical',
-    short_name: 'Dr Tabibi',
+    name: `${BRAND.name} — ${BRAND.tagline}`,
+    short_name: BRAND.shortName,
     description: 'Plateforme de gestion de cabinet médical',
     start_url: '/',
     display: 'standalone',

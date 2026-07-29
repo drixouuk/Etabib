@@ -8,6 +8,7 @@ import TierCard from './TierCard'
 import SignupForm from './SignupForm'
 
 import { calculateCabinetPrice } from '@/lib/pricing'
+import { SUPPORT_EMAIL } from '@/lib/brand'
 
 type TierDef = { slug: string; name: string; price: number; features: string[]; badge?: string }
 
@@ -286,7 +287,7 @@ export default function OnboardingFlow() {
           </p>
           <p className="mt-4 text-sm text-stone-400">
             En attendant, vous pouvez nous écrire à :{' '}
-            <a href="mailto:contact@dr-tabibi.ma" className="text-primary-600 hover:text-primary-700 underline">contact@dr-tabibi.ma</a>
+            <a href={`mailto:${SUPPORT_EMAIL}`} className="text-primary-600 hover:text-primary-700 underline">{SUPPORT_EMAIL}</a>
           </p>
           <button onClick={() => { setStep(0); setSelectedTier(null); setContactSent(false) }}
             className="mt-8 text-sm font-medium text-primary-600 hover:text-primary-700 transition-colors duration-200">

@@ -25,6 +25,7 @@ async function apiRequest<T>(method: string, path: string, body?: unknown): Prom
 }
 
 import { calculateCabinetPrice } from './pricing'
+import { BRAND } from './brand'
 
 const TIER_PRICES: Record<string, number> = {
   vitrine: 0,
@@ -68,7 +69,7 @@ export async function createSubscriptionInvoice(
         { product_key: 'abonnement-cabinet-base', notes: 'Abonnement Cabinet — 1 médecin', cost: 499, qty: 1 },
         ...(doctorCount > 1 ? [{ product_key: 'abonnement-cabinet-extra', notes: `Médecins supplémentaires (${doctorCount - 1})`, cost: 199, qty: doctorCount - 1 }] : []),
       ]
-    : [{ product_key: `abonnement-${tier}`, notes: `Abonnement dr-tabibi — Offre ${tier}`, cost: amount, qty: 1 }]
+    : [{ product_key: `abonnement-${tier}`, notes: `Abonnement ${BRAND.name} — Offre ${tier}`, cost: amount, qty: 1 }]
 
   const result = await apiRequest<InvoiceNinjaInvoice>('POST', '/invoices', {
     client_id: clientId,

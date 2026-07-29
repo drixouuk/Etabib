@@ -1,4 +1,5 @@
 import { jsPDF } from 'jspdf'
+import { BRAND } from '@/lib/brand'
 
 export type DoctorInfo = {
   name: string
@@ -67,7 +68,9 @@ function addFooter(doc: jsPDF) {
   doc.setFontSize(8)
   doc.setTextColor(150, 150, 150)
   doc.text(`Page ${doc.getNumberOfPages()}`, pageW / 2, 290, { align: 'center' })
-  doc.text('Document généré par Dr Tabibi — Cabinet médical', pageW / 2, 294, { align: 'center' })
+
+  // ... (le reste du fichier inchangé)
+  doc.text(`Document généré par ${BRAND.name} — ${BRAND.tagline}`, pageW / 2, 294, { align: 'center' })
 }
 
 export function generatePrescriptionPDF(

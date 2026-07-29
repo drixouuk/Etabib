@@ -15,6 +15,7 @@ import LayoutShell from '@/components/layout/LayoutShell'
 import { getDoctorProfile, getPracticeInfo } from '@/lib/payload'
 import type { PracticeInfo } from '@/lib/payload'
 import '../globals.css'
+import { BRAND } from '@/lib/brand'
 
 const figtree = Figtree({
   subsets: ['latin', 'latin-ext'],
@@ -206,7 +207,7 @@ export default async function LocaleLayout({ children, params }: Props) {
         <meta name="theme-color" content="#0D9488" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-        <meta name="apple-mobile-web-app-title" content="Dr Tabibi" />
+        <meta name="apple-mobile-web-app-title" content={BRAND.shortName} />
         <link rel="apple-touch-icon" href="/icons/icon-192.png" />
         <link rel="manifest" href="/manifest.webmanifest" />
       </head>
