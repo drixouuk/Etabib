@@ -17,6 +17,9 @@ type Props = {
   cumulativePatients: { date: string; cumulative: number }[]
   cumulativeTotal: number
   ageData: { range: string; count: number }[]
+  attendanceRate: number | null
+  totalBookings: number
+  cancelledBookings: number
 }
 
 function trendFor(period: string, count: number): string | null {
@@ -31,7 +34,7 @@ const PIE_COLORS = ['var(--chart-1)', 'var(--chart-3)', 'var(--chart-4)', 'var(-
 const LIGHT_GRID = '#E7E5E4'
 
 export default function ActivityView({
-  period, newPatients, consultationsDone, completedToday, reasonData, hourlyData, sourceData, chartData, cumulativePatients, cumulativeTotal, ageData,
+  period, newPatients, consultationsDone, completedToday, reasonData, hourlyData, sourceData, chartData, cumulativePatients, cumulativeTotal, ageData, attendanceRate, totalBookings, cancelledBookings,
 }: Props) {
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -246,8 +249,8 @@ export default function ActivityView({
         </div>
         <div className="rounded-xl border border-warm bg-white p-5 shadow-sm">
           <h3 className="mb-3 font-heading text-[14.5px] font-semibold text-[#2A241C]">Présence aux rendez-vous</h3>
-          <p className="text-[34px] font-bold text-[#2A241C]">—</p>
-          <p className="text-[12.5px] text-[#2A241C]-soft">Statistiques en cours de collecte</p>
+          <p className="text-[34px] font-bold text-[#2A241C]">{attendanceRate !== null ? `${attendanceRate}%` : '—'}</p>
+          <p className="text-[12.5px] text-[#2A241C]-soft">{totalBookings > 0 ? `${totalBookings - cancelledBookings} présents / ${totalBookings} rendez-vous` : 'Aucun rendez-vous sur cette période'}</p>
         </div>
       </div>
     </div>

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { moroccoWallTimeToUTC } from '@/lib/morocco-time'
+import { NOTIFICATIONS_EMAIL, BRAND } from '@/lib/brand'
 
 function getCMSURL(): string {
   const url = process.env.NEXT_PUBLIC_CMS_URL
@@ -102,5 +103,39 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Erreur serveur lors de la création' }, { status: 500 })
   }
 
+  // Envoyer l'email de confirmation
+  if (email?.trim()) {
+    sendConfirmationEmail({ name: name.trim(), email: email.trim(), date: moroccoDate, bookingUid }).catch(() => {})
+  }
+
   return NextResponse.json({ success: true })
+}
+
+async function sendConfirmationEmail({ name, email, date, bookingUid }: { name: string; email: string; date: Date; bookingUid: string }) {
+  const apiKey = process.env.RESEND_API_KEY
+  if (!apiKey) return
+
+  const siteDomain = process.env.NEXT_PUBLIC_SITE_DOMAIN || 'etabibi.ma'
+  const cancelUrl = `https://drguinane.${siteDomain}/api/bookings/cancel?uid=${bookingUid}`
+
+  await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${apiKey}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      from: `${BRAND.name} <${NOTIFICATIONS_EMAIL}>`,
+      to: email,
+      subject: 'Confirmation de votre rendez-vous',
+      html: `
+        <h2>Rendez-vous confirmé</h2>
+        <p>Bonjour ${name},</p>
+        <p>Votre rendez-vous est confirmé le <strong>${date.toLocaleDateString('fr-FR')}</strong> à <strong>${date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}</strong>.</p>
+        <p>À bientôt !</p>
+        <br/>
+        <p style="font-size:12px;color:#888;"><a href="${cancelUrl}">Annuler ce rendez-vous</a></p>
+      `,
+    }),
+  })
 }

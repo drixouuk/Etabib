@@ -96,7 +96,7 @@ export default async function ActivityPage({ searchParams }: Props) {
   const startDate = getStartDate(period)
   const isoStart = formatISO(startDate)
 
-  const [patientsData, consultationsData, queueData] = await Promise.all([
+  const [patientsData, consultationsData, queueData, bookingsData] = await Promise.all([
     fetchCMS<{ docs: { id: string; createdAt: string }[] }>(
       `/api/patients?where[tenant][equals]=${tenantId}&where[createdAt][greater_than_equal]=${isoStart}&limit=5000&depth=0`,
       { revalidate: 0 },
@@ -109,11 +109,16 @@ export default async function ActivityPage({ searchParams }: Props) {
       `/api/queue-items?where[tenant][equals]=${tenantId}&where[arrivalTime][greater_than_equal]=${isoStart}&depth=0&limit=5000`,
       { revalidate: 0 },
     ),
+    fetchCMS<{ docs: { id: string; status: string }[] }>(
+      `/api/calbookings?where[tenant][equals]=${tenantId}&where[startTime][greater_than_equal]=${isoStart}&depth=0&limit=5000`,
+      { revalidate: 0 },
+    ),
   ])
 
   const patients = patientsData?.docs ?? []
   const consultations = consultationsData?.docs ?? []
   const queueItems = queueData?.docs ?? []
+  const bookings = bookingsData?.docs ?? []
 
   const consultationsByDay = groupByPeriod(consultations, 'date', period)
   const patientsByDay = groupByPeriod(patients, 'createdAt', period)
@@ -174,6 +179,10 @@ export default async function ActivityPage({ searchParams }: Props) {
   }
   const hourlyData = Object.entries(hourlyCounts).map(([hour, count]) => ({ hour: `${hour}h`, count }))
 
+  const totalBookings = bookings.length
+  const cancelledBookings = bookings.filter(b => b.status === 'cancelled').length
+  const attendanceRate = totalBookings > 0 ? Math.round(((totalBookings - cancelledBookings) / totalBookings) * 100) : null
+
   return (
     <div className="mx-auto max-w-container px-4 py-12 md:px-6 lg:px-8">
       <h1 className="font-heading text-2xl font-bold text-stone-800">Activité</h1>
@@ -202,6 +211,9 @@ export default async function ActivityPage({ searchParams }: Props) {
         cumulativePatients={cumulativePatients}
         cumulativeTotal={cumulativeTotal}
         ageData={ageData}
+        attendanceRate={attendanceRate}
+        totalBookings={totalBookings}
+        cancelledBookings={cancelledBookings}
       />
     </div>
   )

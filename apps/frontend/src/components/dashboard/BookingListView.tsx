@@ -106,7 +106,25 @@ export default function BookingListView({ bookings }: Props) {
                 </span>
                 <span className="text-xs text-stone-800-soft">({formatDuration(booking.duration)})</span>
               </div>
-              {statusBadge(booking.status)}
+              <div className="flex items-center gap-2">
+                {statusBadge(booking.status)}
+                {booking.status === 'accepted' && viewMode === 'upcoming' && (
+                  <button
+                    onClick={async () => {
+                      if (!confirm('Annuler ce rendez-vous ?')) return
+                      await fetch(`/api/cms-proxy/calbookings/${booking.id}`, {
+                        method: 'PATCH',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ status: 'cancelled', cancellationReason: 'Annulé par le cabinet' }),
+                      })
+                      window.location.reload()
+                    }}
+                    className="rounded px-2 py-0.5 text-xs font-medium text-red-600 hover:bg-red-50 transition-colors duration-200"
+                  >
+                    Annuler
+                  </button>
+                )}
+              </div>
             </div>
 
             <div className="mt-3 space-y-1">
