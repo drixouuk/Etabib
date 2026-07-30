@@ -342,9 +342,9 @@ export async function GET(req: NextRequest) {
   // Si aucun → 404 (token invalide ou déjà utilisé)
   // Si trouvé :
   // 2. PATCH tenant : settings.emailVerified = true, settings.verificationToken = null
-  // 3. Redirect vers /login?verified=true
+  // 3. Redirect vers /fr/login?verified=true (dashboard FR-only, évite double redirect du middleware next-intl)
   
-  return NextResponse.redirect(new URL('/login?verified=true', req.url))
+  return NextResponse.redirect(new URL('/fr/login?verified=true', req.url))
 }
 ```
 
