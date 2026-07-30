@@ -262,14 +262,17 @@ Ajouter dans le groupe `settings` (ou à la racine si plus simple) :
 ⚠️ **Compensation en cas d'échec partiel :**
 ```ts
 let tenantId: string | null = null
+let userId: string | null = null
 try {
-  // étapes 4→11
+  // étape 4 : tenantId = tenantRes.data.doc.id
+  // étape 5 : userId = userRes.data.doc.id
+  // étapes 6→11
 } catch (err) {
-  if (tenantId) {
-    await cmsDelete(`/tenants/${tenantId}`) // cascade : Payload supprime le user lié
-    // Doctor et PracticeInfo sont orphelins mais sans FK cascade → inoffensifs
-    // Invoice Ninja : on garde le client, rollback pas implémentable sans admin key
-  }
+  if (userId) await cmsDelete(`/users/${userId}`)
+  if (tenantId) await cmsDelete(`/tenants/${tenantId}`)
+  // Payload ne fait PAS de cascade delete par défaut → suppression explicite du user avant le tenant
+  // Doctor et PracticeInfo : orphelins mais sans FK cascade, inoffensifs (pas de lien inverse vers tenant)
+  // Invoice Ninja : client conservé, rollback pas implémentable sans admin key
   return NextResponse.json({ error: 'Erreur provisioning, rollback effectué' }, { status: 500 })
 }
 ```
@@ -334,14 +337,18 @@ export async function GET(req: NextRequest) {
   const token = req.nextUrl.searchParams.get('token')
   if (!token) return NextResponse.json({ error: 'token required' }, { status: 400 })
   
-  // Chercher le tenant avec ce verificationToken
-  // PATCH tenant.settings.emailVerified = true
-  // PATCH user._verified = true
-  // Redirect vers le login avec ?verified=true
+  // 1. Chercher le tenant avec ce verificationToken
+  // GET /api/tenants?where[settings.verificationToken][equals]=${token}&limit=1
+  // Si aucun → 404 (token invalide ou déjà utilisé)
+  // Si trouvé :
+  // 2. PATCH tenant : settings.emailVerified = true, settings.verificationToken = null
+  // 3. Redirect vers /login?verified=true
   
   return NextResponse.redirect(new URL('/login?verified=true', req.url))
 }
 ```
+
+> ⚠️ **Invalider le token après usage :** Le PATCH met `verificationToken: null`. Sans ça, le lien reste valide indéfiniment et peut être rejoué.
 
 ### Vérification
 ```bash
@@ -545,16 +552,10 @@ await fetch('/api/cms-proxy/tenants/{id}', {
 })
 ```
 
-### Vérification
+### Vérification P5b
 ```bash
 cd apps/frontend && pnpm build
 ```
-
-### Vérification
-```bash
-cd apps/frontend && pnpm build
-```
-Tester : `/fr/dashboard/settings` → tous les onglets visibles, édition des champs fonctionnelle.
 
 ---
 
@@ -596,6 +597,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ slug
     headers: {
       'Content-Type': 'text/calendar; charset=utf-8',
       'Content-Disposition': `inline; filename="${slug}.ics"`,
+      'Cache-Control': 'public, max-age=300',
     },
   })
 }
@@ -606,7 +608,7 @@ function generateICS(bookings: any[], tenantName: string): string {
     const start = formatICSDate(new Date(b.startTime))
     const end = formatICSDate(new Date(b.endTime))
     const summary = b.title || 'Consultation'
-    const description = `Patient: ${b.attendeeName || 'N/A'}\nTéléphone: ${b.attendeePhone || 'N/A'}`
+    const description = `Patient: ${b.attendeeName || 'N/A'}\\nTéléphone: ${b.attendeePhone || 'N/A'}`
     return `BEGIN:VEVENT
 UID:${uid}
 DTSTART:${start}
@@ -614,8 +616,8 @@ DTEND:${end}
 SUMMARY:${summary}
 DESCRIPTION:${escapeICS(description)}
 END:VEVENT`
-  }).join('\n')
-  
+  }).join('\\n')
+
   return `BEGIN:VCALENDAR
 VERSION:2.0
 PRODID:-//Etabib//FR
@@ -627,7 +629,9 @@ END:VCALENDAR`
 }
 
 function formatICSDate(date: Date): string {
-  return date.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '')
+  return date.toISOString().replace(/[-:]/g, '').replace(/\\.\\d{3}/, '')
+  // ex: 2026-07-31T14:00:00.000Z → 20260731T140000Z
+  // Z suffixe UTC obligatoire RFC 5545 — ne pas le stripper
 }
 
 function escapeICS(text: string): string {
@@ -748,3 +752,4 @@ Body: Votre cabinet {{practiceName}} est prêt.
 6. 🔒 **Sécurité :** Toute page du dashboard hors Vitrine doit avoir un `requireTier()` guard (P4). Le changement de tier est un endpoint dédié serveur, pas un PATCH client (P5b).
 7. ⚠️ **Rollback P3 :** En cas d'échec du provisioning, supprimer le tenant créé (cascade). Logger les ressources orphelines.
 8. ⚡ **Rate limiting :** `POST /api/onboarding` = 3/min/IP. `GET /api/onboarding/check-subdomain` = 30/min/IP. Utiliser une Map en mémoire avec TTL.
+   > **Limite connue :** La Map est par processus. Sur VPS mono-process → correct. Sur Vercel/serverless multi-instances → le limite devient 3×N req/min. Migration vers Redis nécessaire si passage au serverless.
