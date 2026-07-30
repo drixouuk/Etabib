@@ -62,8 +62,8 @@ export default function ActivityView({
     <div>
       <div className="flex flex-wrap items-start justify-between gap-5 mb-6">
         <div>
-          <h1 className="text-[27px] font-bold tracking-tight text-[#2A241C]">Activité</h1>
-          <p className="mt-1 text-[13.5px] text-[#2A241C]-soft">
+          <h1 className="text-[27px] font-bold tracking-tight text-stone-800">Activité</h1>
+          <p className="mt-1 text-[13.5px] text-stone-600">
             {period === 'year' ? 'Année 2026' : period === 'month' ? 'Juillet 2026' : period === 'week' ? 'Semaine du 21/07' : new Date().toLocaleDateString('fr-FR')}
           </p>
         </div>
@@ -73,7 +73,7 @@ export default function ActivityView({
           {periods.map(p => (
             <button key={p.value} onClick={() => setPeriod(p.value)}
               className={`relative z-10 px-[14px] py-2 text-[12.5px] font-medium rounded-lg transition-colors duration-200 ${
-                period === p.value ? 'text-primary-700 font-semibold' : 'text-[#2A241C]-soft hover:text-[#2A241C]'
+                period === p.value ? 'text-primary-700 font-semibold' : 'text-stone-600 hover:text-stone-800'
               }`}>
               {p.label}
             </button>
@@ -87,45 +87,45 @@ export default function ActivityView({
             <UserPlus className="size-4" />
           </div>
           <div className="flex items-baseline gap-2 flex-wrap">
-            <span className="text-[28px] font-bold text-[#2A241C]">{newPatients}</span>
+            <span className="text-[28px] font-bold text-stone-800">{newPatients}</span>
             {trendFor(period, newPatients) && (
               <span className="text-[11px] font-semibold bg-primary-50 text-primary-700 px-2 py-0.5 rounded-full">{trendFor(period, newPatients)}</span>
             )}
           </div>
-          <p className="mt-0.5 text-[12.5px] text-[#2A241C]-soft">Nouveaux patients</p>
+          <p className="mt-0.5 text-[12.5px] text-stone-600">Nouveaux patients</p>
         </div>
         <div className="rounded-xl border border-warm border-t-[3px] border-t-secondary-500 rounded-t-[4px] bg-white p-[17px_19px] shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
           <div className="flex size-[33px] items-center justify-center rounded-lg bg-amber-50 text-amber-700 mb-[11px]">
             <Stethoscope className="size-4" />
           </div>
           <div className="flex items-baseline gap-2 flex-wrap">
-            <span className="text-[28px] font-bold text-[#2A241C]">{consultationsDone}</span>
+            <span className="text-[28px] font-bold text-stone-800">{consultationsDone}</span>
             {trendFor(period, consultationsDone) && (
               <span className="text-[11px] font-semibold bg-primary-50 text-primary-700 px-2 py-0.5 rounded-full">{trendFor(period, consultationsDone)}</span>
             )}
           </div>
-          <p className="mt-0.5 text-[12.5px] text-[#2A241C]-soft">Consultations réalisées</p>
+          <p className="mt-0.5 text-[12.5px] text-stone-600">Consultations réalisées</p>
         </div>
         <div className="rounded-xl border border-warm border-t-[3px] border-t-primary-700 rounded-t-[4px] bg-white p-[17px_19px] shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
           <div className="flex size-[33px] items-center justify-center rounded-lg bg-primary-50 text-primary-700 mb-[11px]">
             <CheckCheck className="size-4" />
           </div>
           <div className="flex items-baseline gap-2 flex-wrap">
-            <span className="text-[28px] font-bold text-[#2A241C]">{completedToday}</span>
+            <span className="text-[28px] font-bold text-stone-800">{completedToday}</span>
             {trendFor(period, completedToday) && (
               <span className="text-[11px] font-semibold bg-primary-50 text-primary-700 px-2 py-0.5 rounded-full">{trendFor(period, completedToday)}</span>
             )}
           </div>
-          <p className="mt-0.5 text-[12.5px] text-[#2A241C]-soft">Patients vus</p>
+          <p className="mt-0.5 text-[12.5px] text-stone-600">Patients vus</p>
         </div>
       </div>
 
-      <p className="mt-7 mb-3 text-xs font-semibold uppercase tracking-[0.06em] text-[#2A241C]-soft">Croissance du cabinet</p>
+      <p className="mt-7 mb-3 text-xs font-semibold uppercase tracking-[0.06em] text-stone-600">Croissance du cabinet</p>
       <div className="rounded-xl border border-warm bg-white p-5 shadow-sm mb-4">
         <div className="flex items-baseline justify-between mb-1">
           <div>
-            <p className="text-[11.5px] uppercase tracking-wider text-[#2A241C]-soft font-semibold">Total patients suivis</p>
-            <p className="text-xl font-bold text-[#2A241C]">{cumulativeTotal} patients</p>
+            <p className="text-[11.5px] uppercase tracking-wider text-stone-600 font-semibold">Total patients suivis</p>
+            <p className="text-xl font-bold text-stone-800">{cumulativeTotal} patients</p>
           </div>
           <span className="rounded-full bg-primary-50 px-2.5 py-0.5 text-[10.5px] font-semibold text-primary-700">cumulé</span>
         </div>
@@ -144,7 +144,7 @@ export default function ActivityView({
             <Area type="monotone" dataKey="cumulative" name="Patients" stroke="var(--chart-1)" strokeWidth={2.6} fill="url(#growthGrad)" dot={{ r: 0 }} activeDot={{ r: 4.5, fill: 'var(--chart-1)' }} />
           </AreaChart>
         </ChartContainer>
-        <div className="flex justify-between text-[11px] text-[#2A241C]-soft">
+        <div className="flex justify-between text-[11px] text-stone-600">
           <span>{cumulativePatients[0]?.date || ''}</span>
           <span>{cumulativePatients[cumulativePatients.length - 1]?.date || ''}</span>
         </div>
@@ -152,19 +152,19 @@ export default function ActivityView({
 
       {sourceData && sourceData.length > 0 && (
         <div className="rounded-xl border border-warm bg-white p-5 shadow-sm mb-4">
-          <h3 className="mb-3 font-heading text-[14.5px] font-semibold text-[#2A241C]">Provenance des patients</h3>
+          <h3 className="mb-3 font-heading text-[14.5px] font-semibold text-stone-800">Provenance des patients</h3>
           <div className="flex flex-col gap-3.5">
             {sourceData.map((s, i) => {
               const maxVal = Math.max(...sourceData.map(d => d.value), 1)
               const colors = ['bg-primary-500', 'bg-amber-500', 'bg-orange-500', 'bg-stone-800-soft', 'bg-teal-400', 'bg-lime-500', 'bg-slate-500', 'bg-pink-500']
               return (
                 <div key={s.name} className="flex items-center gap-3">
-                  <span className="w-[130px] shrink-0 text-[12.5px] text-[#2A241C]">{s.name}</span>
+                  <span className="w-[130px] shrink-0 text-[12.5px] text-stone-800">{s.name}</span>
                   <div className="flex-1 h-2.5 rounded-md bg-stone-200 overflow-hidden">
                     <div className={`h-full rounded-md transition-all duration-700 ${colors[i % colors.length]}`}
                       style={{ width: `${Math.round((s.value / maxVal) * 100)}%` }} />
                   </div>
-                  <span className="w-[30px] text-right text-[12.5px] font-semibold text-[#2A241C]">{s.value}</span>
+                  <span className="w-[30px] text-right text-[12.5px] font-semibold text-stone-800">{s.value}</span>
                 </div>
               )
             })}
@@ -172,10 +172,10 @@ export default function ActivityView({
         </div>
       )}
 
-      <p className="mt-7 mb-3 text-xs font-semibold uppercase tracking-[0.06em] text-[#2A241C]-soft">Activité clinique</p>
+      <p className="mt-7 mb-3 text-xs font-semibold uppercase tracking-[0.06em] text-stone-600">Activité clinique</p>
 
       <div className="rounded-xl border border-warm bg-white p-5 shadow-sm mb-4">
-        <h3 className="mb-3 font-heading text-[14.5px] font-semibold text-[#2A241C]">Consultations par {period === 'year' ? 'mois' : 'jour'}</h3>
+        <h3 className="mb-3 font-heading text-[14.5px] font-semibold text-stone-800">Consultations par {period === 'year' ? 'mois' : 'jour'}</h3>
         <ChartContainer config={chartConfig} className="h-[160px] w-full">
           <BarChart data={chartData} margin={{ top: 4, right: 4, bottom: 0, left: -16 }}>
             <CartesianGrid strokeDasharray="3 3" stroke={LIGHT_GRID} />
@@ -191,7 +191,7 @@ export default function ActivityView({
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
         <div className="rounded-xl border border-warm bg-white p-5 shadow-sm">
-          <h3 className="mb-3 font-heading text-[14.5px] font-semibold text-[#2A241C]">Motifs de visite</h3>
+          <h3 className="mb-3 font-heading text-[14.5px] font-semibold text-stone-800">Motifs de visite</h3>
           <div className="flex items-center gap-8 flex-wrap">
             <ResponsiveContainer width={132} height={132}>
               <PieChart>
@@ -200,11 +200,11 @@ export default function ActivityView({
                 </Pie>
               </PieChart>
             </ResponsiveContainer>
-            <div className="flex flex-col gap-2.5 text-[12.5px] text-[#2A241C]">
+            <div className="flex flex-col gap-2.5 text-[12.5px] text-stone-800">
               {reasonData.map((r, i) => (
                 <div key={r.name} className="flex items-center gap-2">
                   <i className="size-2.5 rounded-sm shrink-0 inline-block" style={{ background: PIE_COLORS[i % PIE_COLORS.length] }} />
-                  {r.name} <b className="text-[#2A241C]-soft font-medium ml-1">{r.value}</b>
+                  {r.name} <b className="text-stone-600 font-medium ml-1">{r.value}</b>
                 </div>
               ))}
             </div>
@@ -213,18 +213,18 @@ export default function ActivityView({
 
         {ageData && ageData.length > 0 && (
           <div className="rounded-xl border border-warm bg-white p-5 shadow-sm">
-            <h3 className="mb-3 font-heading text-[14.5px] font-semibold text-[#2A241C]">Répartition par âge</h3>
+            <h3 className="mb-3 font-heading text-[14.5px] font-semibold text-stone-800">Répartition par âge</h3>
             <div className="flex flex-col gap-3.5">
               {ageData.map((a) => {
                 const maxCount = Math.max(...ageData.map(d => d.count), 1)
                 return (
                   <div key={a.range} className="flex items-center gap-3">
-                    <span className="w-[80px] shrink-0 text-[12.5px] text-[#2A241C]">{a.range} ans</span>
+                    <span className="w-[80px] shrink-0 text-[12.5px] text-stone-800">{a.range} ans</span>
                     <div className="flex-1 h-2.5 rounded-md bg-stone-200 overflow-hidden">
                       <div className="h-full rounded-md bg-primary-500 transition-all duration-700"
                         style={{ width: `${Math.round((a.count / maxCount) * 100)}%` }} />
                     </div>
-                    <span className="w-[30px] text-right text-[12.5px] font-semibold text-[#2A241C]">{a.count}</span>
+                    <span className="w-[30px] text-right text-[12.5px] font-semibold text-stone-800">{a.count}</span>
                   </div>
                 )
               })}
@@ -233,10 +233,10 @@ export default function ActivityView({
         )}
       </div>
 
-      <p className="mt-7 mb-3 text-xs font-semibold uppercase tracking-[0.06em] text-[#2A241C]-soft">Fonctionnement</p>
+      <p className="mt-7 mb-3 text-xs font-semibold uppercase tracking-[0.06em] text-stone-600">Fonctionnement</p>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <div className="rounded-xl border border-warm bg-white p-5 shadow-sm">
-          <h3 className="mb-3 font-heading text-[14.5px] font-semibold text-[#2A241C]">Arrivées par heure</h3>
+          <h3 className="mb-3 font-heading text-[14.5px] font-semibold text-stone-800">Arrivées par heure</h3>
           <ChartContainer config={chartConfig} className="h-[160px] w-full">
             <BarChart data={hourlyData} margin={{ top: 4, right: 4, bottom: 0, left: -16 }}>
               <CartesianGrid strokeDasharray="3 3" stroke={LIGHT_GRID} />
@@ -248,9 +248,9 @@ export default function ActivityView({
           </ChartContainer>
         </div>
         <div className="rounded-xl border border-warm bg-white p-5 shadow-sm">
-          <h3 className="mb-3 font-heading text-[14.5px] font-semibold text-[#2A241C]">Présence aux rendez-vous</h3>
-          <p className="text-[34px] font-bold text-[#2A241C]">{attendanceRate !== null ? `${attendanceRate}%` : '—'}</p>
-          <p className="text-[12.5px] text-[#2A241C]-soft">{totalBookings > 0 ? `${totalBookings - cancelledBookings} présents / ${totalBookings} rendez-vous` : 'Aucun rendez-vous sur cette période'}</p>
+          <h3 className="mb-3 font-heading text-[14.5px] font-semibold text-stone-800">Présence aux rendez-vous</h3>
+          <p className="text-[34px] font-bold text-stone-800">{attendanceRate !== null ? `${attendanceRate}%` : '—'}</p>
+          <p className="text-[12.5px] text-stone-600">{totalBookings > 0 ? `${totalBookings - cancelledBookings} présents / ${totalBookings} rendez-vous` : 'Aucun rendez-vous sur cette période'}</p>
         </div>
       </div>
     </div>

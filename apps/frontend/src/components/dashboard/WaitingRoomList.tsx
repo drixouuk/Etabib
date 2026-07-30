@@ -180,9 +180,9 @@ export default function WaitingRoomList({ tenantId, isClinique, currentDoctorId 
         </div>
       )}
       {loading && items.length === 0 ? (
-        <div className="px-4 py-8 text-center text-sm text-stone-800-softer">Chargement…</div>
+        <div className="px-4 py-8 text-center text-sm text-stone-500">Chargement…</div>
       ) : activeItems.length === 0 ? (
-        <div className="px-4 py-8 text-center text-sm text-stone-800-soft">Aucun patient en attente.</div>
+        <div className="px-4 py-8 text-center text-sm text-stone-600">Aucun patient en attente.</div>
       ) : (
         <div className="divide-y divide-stone-100">
           {activeItems.map((item) => {
@@ -211,8 +211,8 @@ export default function WaitingRoomList({ tenantId, isClinique, currentDoctorId 
                   ) : (
                     <p className="truncate text-sm font-semibold text-stone-800">{patient?.fullName || '—'}</p>
                   )}
-                  <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-stone-800-soft">
-                    {isClinique && item.doctor?.name && <span className="text-stone-800-soft">Dr. {item.doctor.name}</span>}
+                  <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-stone-600">
+                    {isClinique && item.doctor?.name && <span className="text-stone-600">Dr. {item.doctor.name}</span>}
                     {patient?.birthDate && <span>{computeAge(patient.birthDate)}</span>}
                     <span className={`inline-block rounded px-1.5 py-0.5 font-medium ${
                       item.visitReason === 'controle' ? 'bg-info/10 text-info' :

@@ -34,7 +34,7 @@ export default function GrowthChart({ consultations, patientBirthDate, patientGe
     return (
       <div className="mb-8">
         <h3 className="mb-2 font-heading text-lg font-semibold text-stone-800">Courbes de croissance</h3>
-        <p className="text-sm text-stone-800-soft">Pas encore assez de données pour une courbe de croissance.</p>
+        <p className="text-sm text-stone-600">Pas encore assez de données pour une courbe de croissance.</p>
       </div>
     )
   }
@@ -90,7 +90,7 @@ export default function GrowthChart({ consultations, patientBirthDate, patientGe
 
   const renderWeightChart = () => (
     <div className="rounded-xl border border-warm bg-white p-3 shadow-sm">
-      <p className="mb-1 text-xs font-medium text-stone-800-soft">Poids (kg)</p>
+      <p className="mb-1 text-xs font-medium text-stone-600">Poids (kg)</p>
       <ResponsiveContainer width="100%" height={220}>
         <LineChart data={poidsData} {...chartProps}>
           <CartesianGrid strokeDasharray="3 3" stroke={LIGHT_GRID} />
@@ -119,7 +119,7 @@ export default function GrowthChart({ consultations, patientBirthDate, patientGe
 
   const renderHeightChart = () => (
     <div className="rounded-xl border border-warm bg-white p-3 shadow-sm">
-      <p className="mb-1 text-xs font-medium text-stone-800-soft">Taille (cm)</p>
+      <p className="mb-1 text-xs font-medium text-stone-600">Taille (cm)</p>
       <ResponsiveContainer width="100%" height={220}>
         <LineChart data={tailleData} {...chartProps}>
           <CartesianGrid strokeDasharray="3 3" stroke={LIGHT_GRID} />
@@ -148,7 +148,7 @@ export default function GrowthChart({ consultations, patientBirthDate, patientGe
 
   const renderPCChart = () => (
     <div className="rounded-xl border border-warm bg-white p-3 shadow-sm">
-      <p className="mb-1 text-xs font-medium text-stone-800-soft">Périmètre crânien (cm)</p>
+      <p className="mb-1 text-xs font-medium text-stone-600">Périmètre crânien (cm)</p>
       <ResponsiveContainer width="100%" height={220}>
         <LineChart data={pcData.length > 0 ? pcData : points} {...chartProps}>
           <CartesianGrid strokeDasharray="3 3" stroke={LIGHT_GRID} />
@@ -184,7 +184,7 @@ export default function GrowthChart({ consultations, patientBirthDate, patientGe
         {hasPc && renderPCChart()}
       </div>
       {gender && patientBirthDate && (
-        <p className="mt-2 text-xs text-stone-800-soft">
+        <p className="mt-2 text-xs text-stone-600">
           Courbes de référence : OMS (0–24 mois) / CDC (2–20 ans). Les percentiles sont indicatifs et ne constituent pas un diagnostic.
         </p>
       )}

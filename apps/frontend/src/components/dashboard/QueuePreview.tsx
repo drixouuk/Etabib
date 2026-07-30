@@ -26,7 +26,7 @@ export default async function QueuePreview() {
   return (
     <div>
       {items.length === 0 ? (
-        <p className="text-sm text-stone-800-softer">Aucun patient en attente</p>
+        <p className="text-sm text-stone-500">Aucun patient en attente</p>
       ) : (
         <div className="divide-y divide-warm">
           {items.map((item) => {
@@ -38,7 +38,7 @@ export default async function QueuePreview() {
                   <Link href={`/dashboard/patients/${p?.id}`} className="text-sm font-medium text-stone-800 hover:text-primary-600 transition-colors duration-200">
                     {p?.fullName || '—'}
                   </Link>
-                  <div className="text-xs text-stone-800-soft">
+                  <div className="text-xs text-stone-600">
                     <span className="inline-block rounded bg-stone-100 px-1.5 py-0.5 font-medium text-stone-800">{item.visitReason}</span>
                   </div>
                 </div>

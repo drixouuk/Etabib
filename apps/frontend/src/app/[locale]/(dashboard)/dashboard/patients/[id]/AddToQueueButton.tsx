@@ -24,7 +24,7 @@ export default function AddToQueueButton({ patientId }: Props) {
   }, [patientId])
 
   if (active === null) return null
-  if (active) return <p className="text-sm text-stone-800-soft">Patient déjà en file d'attente active.</p>
+  if (active) return <p className="text-sm text-stone-600">Patient déjà en file d'attente active.</p>
 
   const handleAdd = async () => {
     setSaving(true)

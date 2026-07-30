@@ -166,7 +166,7 @@ export default function PrescriptionForm({ patientId, prescriptions, consultatio
         <div className="flex items-center gap-2">
           <h2 className="font-heading text-lg font-semibold text-stone-800">Ordonnances</h2>
           {prescriptions.length > 0 && (
-            <span className="text-xs text-stone-800-soft">({prescriptions.length})</span>
+            <span className="text-xs text-stone-600">({prescriptions.length})</span>
           )}
         </div>
         {!showForm && (
@@ -204,7 +204,7 @@ export default function PrescriptionForm({ patientId, prescriptions, consultatio
           {medications.map((med, i) => (
             <div key={i} className="rounded-lg border border-warm bg-stone-50 p-3">
               <div className="mb-2 flex items-center justify-between">
-                <span className="text-xs font-medium text-stone-800-soft">Médicament {i + 1}</span>
+                <span className="text-xs font-medium text-stone-600">Médicament {i + 1}</span>
                 {medications.length > 1 && (
                   <button type="button" onClick={() => removeMedication(i)} className="text-xs text-red-500 hover:text-red-700">Retirer</button>
                 )}
@@ -237,7 +237,7 @@ export default function PrescriptionForm({ patientId, prescriptions, consultatio
                           className="flex w-full items-center justify-between px-3 py-2 text-left text-sm text-stone-800 transition-colors duration-200 hover:bg-primary-50"
                         >
                           <span className="font-medium">{s.nom}</span>
-                          <span className="text-xs text-stone-800-soft">{s.count !== undefined && `×${s.count}`}</span>
+                          <span className="text-xs text-stone-600">{s.count !== undefined && `×${s.count}`}</span>
                         </button>
                       ))}
                     </div>
@@ -271,7 +271,7 @@ export default function PrescriptionForm({ patientId, prescriptions, consultatio
           {consultations.length > 0 && (
             <div>
               <label className="mb-1 block text-sm font-medium text-stone-800">
-                Rattacher à une consultation <span className="text-stone-800-soft">(optionnel)</span>
+                Rattacher à une consultation <span className="text-stone-600">(optionnel)</span>
               </label>
               <select
                 value={consultationId}
@@ -307,12 +307,12 @@ export default function PrescriptionForm({ patientId, prescriptions, consultatio
                   Enregistrer
                 </button>
                 <button type="button" onClick={() => { setShowTemplateSave(false); setTemplateName('') }}
-                  className="text-sm text-stone-800-soft hover:text-stone-800">
+                  className="text-sm text-stone-600 hover:text-stone-800">
                   Annuler
                 </button>
               </div>
             )}
-            <button type="button" onClick={() => setShowForm(false)} className="text-sm text-stone-800-soft hover:text-stone-800">Annuler</button>
+            <button type="button" onClick={() => setShowForm(false)} className="text-sm text-stone-600 hover:text-stone-800">Annuler</button>
           </div>
           {error && <p className="text-sm text-red-600">{error}</p>}
         </form>

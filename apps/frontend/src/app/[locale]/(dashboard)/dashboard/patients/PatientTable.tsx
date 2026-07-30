@@ -44,17 +44,17 @@ export default function PatientTable({
         <table className="min-w-[640px] w-full text-left text-sm">
           <thead className="border-b border-warm">
             <tr>
-              <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-wider text-stone-800-soft">Nom</th>
-              <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-wider text-stone-800-soft">Âge</th>
-              <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-wider text-stone-800-soft">Dernière consultation</th>
-              <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-wider text-stone-800-soft">Date de naissance</th>
-              <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-wider text-stone-800-soft">CIN</th>
+              <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-wider text-stone-600">Nom</th>
+              <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-wider text-stone-600">Âge</th>
+              <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-wider text-stone-600">Dernière consultation</th>
+              <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-wider text-stone-600">Date de naissance</th>
+              <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-wider text-stone-600">CIN</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-stone-100">
             {paginated.length === 0 ? (
               <tr>
-                <td colSpan={5} className="px-4 py-8 text-center text-stone-800-softer">
+                <td colSpan={5} className="px-4 py-8 text-center text-stone-500">
                   {q ? 'Aucun patient trouvé pour cette recherche.' : 'Aucun patient pour le moment.'}
                 </td>
               </tr>
@@ -77,22 +77,22 @@ export default function PatientTable({
                       </div>
                     </div>
                   </td>
-                  <td className="px-4 py-3 text-stone-800-soft">
+                  <td className="px-4 py-3 text-stone-600">
                     {p.birthDate ? computeAge(p.birthDate) : '—'}
                   </td>
-                  <td className="px-4 py-3 text-stone-800-soft">
+                  <td className="px-4 py-3 text-stone-600">
                     {lastConsultations[p.id] ? (
                       <Badge variant={isRecent(lastConsultations[p.id]) ? 'default' : 'secondary'}>
                         {new Date(lastConsultations[p.id]).toLocaleDateString('fr-FR')}
                       </Badge>
                     ) : '—'}
                   </td>
-                  <td className="px-4 py-3 text-stone-800-soft">
+                  <td className="px-4 py-3 text-stone-600">
                     {p.birthDate
                       ? new Date(p.birthDate).toLocaleDateString('fr-FR')
                       : '—'}
                   </td>
-                  <td className="px-4 py-3 text-stone-800-soft">{p.nationalId || '—'}</td>
+                  <td className="px-4 py-3 text-stone-600">{p.nationalId || '—'}</td>
                 </tr>
               ))
             )}
@@ -114,7 +114,7 @@ export default function PatientTable({
               key={p}
               onClick={() => setPage(p)}
               className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
-                p === page ? 'bg-primary-700 text-white' : 'border border-warm bg-white text-stone-800-soft hover:bg-stone-50'
+                p === page ? 'bg-primary-700 text-white' : 'border border-warm bg-white text-stone-600 hover:bg-stone-50'
               }`}
             >
               {p}

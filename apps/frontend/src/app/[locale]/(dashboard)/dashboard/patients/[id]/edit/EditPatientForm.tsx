@@ -198,7 +198,7 @@ export default function EditPatientForm({ patient }: Props) {
       )}
 
       <div>
-        <label className="mb-1 block text-sm font-medium text-stone-800">Détail <span className="text-stone-800-soft font-normal">(optionnel)</span></label>
+        <label className="mb-1 block text-sm font-medium text-stone-800">Détail <span className="text-stone-600 font-normal">(optionnel)</span></label>
         <input value={patientSourceDetail} onChange={e => setPatientSourceDetail(e.target.value)} type="text" placeholder="Ex: Groupe Facebook..." className={inputClass} />
       </div>
 
@@ -214,7 +214,7 @@ export default function EditPatientForm({ patient }: Props) {
         </button>
         <Link
           href={`/dashboard/patients/${patient.id}`}
-          className="text-sm font-medium text-stone-800-soft hover:text-stone-800"
+          className="text-sm font-medium text-stone-600 hover:text-stone-800"
         >
           Annuler
         </Link>

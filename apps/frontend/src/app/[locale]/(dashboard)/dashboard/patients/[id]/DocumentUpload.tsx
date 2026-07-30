@@ -104,15 +104,15 @@ export default function DocumentUpload({ patientId, documents }: Props) {
             <button type="submit" disabled={saving || !file} className="rounded-lg bg-cta-600 px-4 py-2 text-sm font-medium text-white hover:bg-cta-700 disabled:opacity-50">
               {saving ? 'Upload…' : 'Ajouter le document'}
             </button>
-            <button type="button" onClick={() => setShowForm(false)} className="text-sm text-stone-800-soft hover:text-stone-800">Annuler</button>
+            <button type="button" onClick={() => setShowForm(false)} className="text-sm text-stone-600 hover:text-stone-800">Annuler</button>
           </div>
           {error && <p className="text-sm text-red-600">{error}</p>}
         </form>
       )}
 
       {documents.length === 0 && !showForm ? (
-        <div className="flex cursor-pointer flex-col items-center justify-center gap-2.5 border-2 border-dashed border-primary/15 px-4 py-11 text-sm text-stone-800-soft transition-colors duration-200 hover:border-primary-500 hover:bg-primary-50/30" onClick={() => setShowForm(true)}>
-          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" className="text-stone-800-soft"><path d="M12 16 V5"/><polyline points="7 9 12 4 17 9"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+        <div className="flex cursor-pointer flex-col items-center justify-center gap-2.5 border-2 border-dashed border-primary/15 px-4 py-11 text-sm text-stone-600 transition-colors duration-200 hover:border-primary-500 hover:bg-primary-50/30" onClick={() => setShowForm(true)}>
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" className="text-stone-600"><path d="M12 16 V5"/><polyline points="7 9 12 4 17 9"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
           Glissez un document ici, ou cliquez pour en ajouter
         </div>
       ) : documents.length > 0 && (
@@ -121,7 +121,7 @@ export default function DocumentUpload({ patientId, documents }: Props) {
             <div key={d.id} className="flex items-center justify-between px-4 py-3">
               <div>
                 <span className="text-sm font-medium text-stone-800">{typeLabels[d.documentType] || d.documentType}</span>
-                <p className="text-xs text-stone-800-soft">
+                <p className="text-xs text-stone-600">
                   {new Date(d.createdAt).toLocaleDateString('fr-FR')}
                   {d.filename && ` — ${d.filename}`}
                 </p>

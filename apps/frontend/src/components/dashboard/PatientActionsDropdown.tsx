@@ -28,7 +28,7 @@ export default function PatientActionsDropdown({ patientId, patientName }: Props
     <div ref={ref} className="relative">
       <button
         onClick={() => setOpen(!open)}
-        className="flex size-7 items-center justify-center rounded-lg text-stone-800-soft transition-colors duration-200 hover:bg-stone-100 hover:text-stone-600"
+        className="flex size-7 items-center justify-center rounded-lg text-stone-600 transition-colors duration-200 hover:bg-stone-100 hover:text-stone-600"
         aria-label="Actions"
       >
         <MoreHorizontal className="size-4" />

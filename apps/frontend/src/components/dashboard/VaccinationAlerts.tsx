@@ -31,7 +31,7 @@ export default async function VaccinationAlerts() {
     return (
       <div className="rounded-xl border border-warm bg-white p-4 shadow-sm">
         <h3 className="font-heading text-base font-semibold text-stone-800">Rappels vaccinaux</h3>
-        <p className="mt-2 text-sm text-stone-800-softer">Aucun patient enregistré</p>
+        <p className="mt-2 text-sm text-stone-500">Aucun patient enregistré</p>
       </div>
     )
   }
@@ -76,7 +76,7 @@ export default async function VaccinationAlerts() {
                   </span>
                 ))}
                 {a!.vaccines.length > 3 && (
-                  <span className="text-xs text-stone-800-soft">+{a!.vaccines.length - 3}</span>
+                  <span className="text-xs text-stone-600">+{a!.vaccines.length - 3}</span>
                 )}
               </div>
             </div>

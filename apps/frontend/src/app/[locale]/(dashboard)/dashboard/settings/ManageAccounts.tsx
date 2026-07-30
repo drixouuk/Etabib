@@ -36,7 +36,7 @@ function ResetPasswordButton({ userId, userName }: { userId: string; userName: s
         className="w-36 rounded-lg border border-warm bg-white px-2 py-1 text-sm focus:border-primary-500 focus:outline-none" />
       <button onClick={handleReset} disabled={saving}
         className="text-sm font-medium text-primary-600 hover:text-primary-700 disabled:opacity-50">OK</button>
-      <button onClick={() => setShowForm(false)} className="text-sm text-stone-800-soft hover:text-stone-600">✕</button>
+      <button onClick={() => setShowForm(false)} className="text-sm text-stone-600 hover:text-stone-600">✕</button>
       {error && <span className="text-xs text-red-500">{error}</span>}
     </div>
   )
@@ -55,7 +55,7 @@ export default function ManageAccounts({ users, currentUserId }: Props) {
     <div className="rounded-xl border border-warm bg-white shadow-sm">
       <div className="border-b border-stone-100 px-4 py-3"><h2 className="font-heading text-lg font-semibold text-stone-800">Comptes du cabinet</h2></div>
       {users.length === 0 ? (
-        <p className="px-4 py-6 text-center text-sm text-stone-800-softer">Aucun utilisateur trouvé.</p>
+        <p className="px-4 py-6 text-center text-sm text-stone-500">Aucun utilisateur trouvé.</p>
       ) : (
         <div className="divide-y divide-stone-100">
           {users.map((u) => (
@@ -63,9 +63,9 @@ export default function ManageAccounts({ users, currentUserId }: Props) {
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-medium text-stone-800">
                   {u.name || u.email}
-                  {u.id === currentUserId && <span className="ml-2 text-xs text-stone-800-soft">(vous)</span>}
+                  {u.id === currentUserId && <span className="ml-2 text-xs text-stone-600">(vous)</span>}
                 </p>
-                <p className="text-xs text-stone-800-soft">{u.email} — {u.roles.map(r => roleLabels[r] || r).join(', ')}</p>
+                <p className="text-xs text-stone-600">{u.email} — {u.roles.map(r => roleLabels[r] || r).join(', ')}</p>
               </div>
               <ResetPasswordButton userId={u.id} userName={u.name || u.email} />
             </div>

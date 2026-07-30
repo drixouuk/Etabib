@@ -43,7 +43,7 @@ export default async function RendezVousPage() {
   return (
     <div className="mx-auto max-w-container px-4 py-12 md:px-6 lg:px-8">
       <h1 className="font-heading text-2xl font-bold text-stone-800">Rendez-vous</h1>
-      <p className="mt-1 text-sm text-stone-800-soft capitalize">{dateLabel}</p>
+      <p className="mt-1 text-sm text-stone-600 capitalize">{dateLabel}</p>
       <div className="mt-6">
         <div className="mb-8 rounded-2xl border border-stone-200 bg-white p-4 shadow-sm">
           <RendezVousCalendarClient

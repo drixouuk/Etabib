@@ -36,7 +36,7 @@ export default function PatientClinicalFields({ patientId, initialData }: Props)
 
   if (!initialData) {
     return (
-      <div className="rounded-lg border border-warm bg-stone-50 px-4 py-6 text-center text-sm text-stone-800-soft">
+      <div className="rounded-lg border border-warm bg-stone-50 px-4 py-6 text-center text-sm text-stone-600">
         Dossier clinique — accès restreint aux médecins.
       </div>
     )
@@ -83,7 +83,7 @@ export default function PatientClinicalFields({ patientId, initialData }: Props)
                 <button
                   type="button"
                   onClick={() => setEditing(f.key)}
-                  className="rounded-lg p-1 text-stone-800-soft transition-colors duration-200 hover:bg-stone-100 hover:text-stone-600"
+                  className="rounded-lg p-1 text-stone-600 transition-colors duration-200 hover:bg-stone-100 hover:text-stone-600"
                   aria-label={`Modifier ${f.label}`}
                 >
                   <Pencil className="size-3.5" />
@@ -96,7 +96,7 @@ export default function PatientClinicalFields({ patientId, initialData }: Props)
                   rows={4}
                   value={val}
                   onChange={(e) => setValues((prev) => ({ ...prev, [f.key]: e.target.value }))}
-                  className="w-full rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm text-stone-800 placeholder:text-stone-800-soft focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
+                  className="w-full rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm text-stone-800 placeholder:text-stone-600 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
                   placeholder={`Saisir ${f.label.toLowerCase()}...`}
                 />
                 <div className="flex items-center gap-2">
@@ -111,7 +111,7 @@ export default function PatientClinicalFields({ patientId, initialData }: Props)
                   <button
                     type="button"
                     onClick={() => { setEditing(null); setValues((prev) => ({ ...prev, [f.key]: initialData?.[f.key as keyof typeof initialData] ?? '' })) }}
-                    className="text-xs text-stone-800-soft hover:text-stone-800"
+                    className="text-xs text-stone-600 hover:text-stone-800"
                   >
                     Annuler
                   </button>

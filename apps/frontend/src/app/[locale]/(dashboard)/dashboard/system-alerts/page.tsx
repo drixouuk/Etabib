@@ -15,7 +15,7 @@ export default async function SystemAlertsPage() {
   if (!user.roles?.includes('superadmin')) {
     return (
       <div className="mx-auto max-w-container px-4 py-12 md:px-6 lg:px-8">
-        <p className="text-stone-800-soft">Accès réservé aux super-administrateurs.</p>
+        <p className="text-stone-600">Accès réservé aux super-administrateurs.</p>
       </div>
     )
   }
@@ -42,13 +42,13 @@ export default async function SystemAlertsPage() {
         <h1 className="font-heading text-3xl font-bold text-stone-800">
           Alertes système
         </h1>
-        <p className="mt-1 text-sm text-stone-800-soft">
+        <p className="mt-1 text-sm text-stone-600">
           Événements de défaillance technique (écriture audit-log, etc.)
         </p>
       </div>
 
       {alerts.length === 0 ? (
-        <p className="text-stone-800-soft">Aucune alerte.</p>
+        <p className="text-stone-600">Aucune alerte.</p>
       ) : (
         <div className="space-y-4">
           {alerts.map((a) => (
@@ -63,7 +63,7 @@ export default async function SystemAlertsPage() {
                   {levelLabels[a.level] || a.level}
                 </span>
                 <span className="flex-1 text-stone-800">{a.message}</span>
-                <span className="shrink-0 text-xs text-stone-800-soft">
+                <span className="shrink-0 text-xs text-stone-600">
                   {new Date(a.timestamp).toLocaleString('fr-FR')}
                 </span>
               </summary>

@@ -203,7 +203,7 @@ export default function NewPatientPage() {
         )}
 
         <div>
-          <label className="mb-1 block text-sm font-medium text-stone-800">Détail <span className="text-stone-800-soft font-normal">(optionnel)</span></label>
+          <label className="mb-1 block text-sm font-medium text-stone-800">Détail <span className="text-stone-600 font-normal">(optionnel)</span></label>
           <input value={patientSourceDetail} onChange={e => setPatientSourceDetail(e.target.value)} type="text" placeholder="Ex: Groupe Facebook mamans Agadir, Dr. Martin..." className={inputClass} />
         </div>
 

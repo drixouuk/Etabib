@@ -48,7 +48,7 @@ export default function SharePatientWidget({ patientId, sharedWithIds, isCliniqu
     <div className="rounded-xl border border-warm bg-white shadow-sm">
       <div className="border-b border-stone-100 px-4 py-3">
         <h2 className="font-heading text-lg font-semibold text-stone-800 flex items-center gap-2">
-          <Share2 className="size-4 text-stone-800-soft" /> Partage
+          <Share2 className="size-4 text-stone-600" /> Partage
         </h2>
       </div>
       <div className="px-4 py-3 space-y-2">
@@ -72,7 +72,7 @@ export default function SharePatientWidget({ patientId, sharedWithIds, isCliniqu
           </select>
         )}
         {sharedDoctors.length === 0 && doctors.length === 0 && (
-          <p className="text-xs text-stone-800-soft">Aucun confrère dans ce cabinet.</p>
+          <p className="text-xs text-stone-600">Aucun confrère dans ce cabinet.</p>
         )}
       </div>
     </div>

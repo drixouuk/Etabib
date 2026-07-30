@@ -176,7 +176,7 @@ export default async function PatientDetailPage({ params }: Props) {
   return (
     <div className="mx-auto max-w-container px-4 py-12 md:px-6 lg:px-8">
       {/* Back link */}
-      <Link href="/dashboard/patients" className="inline-flex items-center gap-1.5 pb-3.5 text-[13px] text-stone-800-soft hover:text-primary-700">
+      <Link href="/dashboard/patients" className="inline-flex items-center gap-1.5 pb-3.5 text-[13px] text-stone-600 hover:text-primary-700">
         <ArrowLeft className="size-[15px]" />
         Retour aux patients
       </Link>
@@ -187,7 +187,7 @@ export default async function PatientDetailPage({ params }: Props) {
           <PatientAvatar fullName={patient.fullName} gender={patient.gender as 'boy' | 'girl' | null} size="lg" />
           <div>
             <h1 className="font-heading text-3xl font-bold text-stone-800">{patient.fullName}</h1>
-            <div className="mt-1 flex flex-wrap gap-x-3 gap-y-0.5 text-sm text-stone-800-soft">
+            <div className="mt-1 flex flex-wrap gap-x-3 gap-y-0.5 text-sm text-stone-600">
               {patient.nationalId && <span>CIN : {patient.nationalId}</span>}
               {patient.birthDate && (
                 <>
@@ -197,7 +197,7 @@ export default async function PatientDetailPage({ params }: Props) {
               )}
               {patient.phone && <span>{patient.phone}</span>}
             </div>
-            <div className="mt-0.5 text-sm text-stone-800-soft">
+            <div className="mt-0.5 text-sm text-stone-600">
               {patient.address && <span>{patient.address}</span>}
               {patient.email && <span className="ml-3">{patient.email}</span>}
             </div>
@@ -227,39 +227,39 @@ export default async function PatientDetailPage({ params }: Props) {
         <TabsContent value="resume">
           <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
             <div className="rounded-xl border border-warm bg-white p-4 shadow-sm">
-              <p className="text-xs font-medium uppercase text-stone-800-soft">Dernière consultation</p>
+              <p className="text-xs font-medium uppercase text-stone-600">Dernière consultation</p>
               {consultations.length > 0 ? (
                 <>
                   <p className="mt-1 font-heading text-lg font-bold text-stone-800">
                     {new Date(consultations[0].date).toLocaleDateString('fr-FR')}
                   </p>
-                  <p className="text-sm text-stone-800-soft">{consultations[0].motif || 'Consultation'}</p>
+                  <p className="text-sm text-stone-600">{consultations[0].motif || 'Consultation'}</p>
                 </>
               ) : (
-                <p className="mt-1 text-sm text-stone-800-soft">Aucune consultation</p>
+                <p className="mt-1 text-sm text-stone-600">Aucune consultation</p>
               )}
             </div>
             <div className="rounded-xl border border-warm bg-white p-4 shadow-sm">
-              <p className="text-xs font-medium uppercase text-stone-800-soft">Croissance</p>
+              <p className="text-xs font-medium uppercase text-stone-600">Croissance</p>
               {consultations.length > 0 && consultations[0].poids ? (
                 <>
                   <p className="mt-1 font-heading text-lg font-bold text-stone-800">
                     {consultations[0].poids} kg
                   </p>
                   {consultations[0].taille && (
-                    <p className="text-sm text-stone-800-soft">{consultations[0].taille} cm</p>
+                    <p className="text-sm text-stone-600">{consultations[0].taille} cm</p>
                   )}
                 </>
               ) : (
-                <p className="mt-1 text-sm text-stone-800-soft">Pas de mesure</p>
+                <p className="mt-1 text-sm text-stone-600">Pas de mesure</p>
               )}
             </div>
             <div className="rounded-xl border border-warm bg-white p-4 shadow-sm">
-              <p className="text-xs font-medium uppercase text-stone-800-soft">Traitement en cours</p>
+              <p className="text-xs font-medium uppercase text-stone-600">Traitement en cours</p>
               {patient.traitementsEnCours?.trim() ? (
                 <p className="mt-1 text-sm text-stone-800 line-clamp-2">{patient.traitementsEnCours}</p>
               ) : (
-                <p className="mt-1 text-sm text-stone-800-soft">Aucun traitement en cours</p>
+                <p className="mt-1 text-sm text-stone-600">Aucun traitement en cours</p>
               )}
             </div>
           </div>
@@ -313,7 +313,7 @@ export default async function PatientDetailPage({ params }: Props) {
                   <div className="flex items-center gap-2">
                     <h2 className="font-heading text-lg font-semibold text-stone-800">Consultations</h2>
                     {consultations.length > 0 && (
-                      <span className="text-xs text-stone-800-soft">({consultations.length})</span>
+                      <span className="text-xs text-stone-600">({consultations.length})</span>
                     )}
                   </div>
                   <Sheet>
@@ -333,7 +333,7 @@ export default async function PatientDetailPage({ params }: Props) {
                   <div className="flex items-center gap-2">
                     <h2 className="font-heading text-lg font-semibold text-stone-800">Ordonnances</h2>
                     {prescriptions.length > 0 && (
-                      <span className="text-xs text-stone-800-soft">({prescriptions.length})</span>
+                      <span className="text-xs text-stone-600">({prescriptions.length})</span>
                     )}
                   </div>
                   <Sheet>

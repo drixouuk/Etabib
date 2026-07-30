@@ -68,7 +68,7 @@ export default function AvailabilityManager() {
 
   const inputClass = 'w-full rounded-lg border border-warm bg-white px-3 py-2 text-sm focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none'
 
-  if (loading) return <p className="text-sm text-stone-800-soft">Chargement…</p>
+  if (loading) return <p className="text-sm text-stone-600">Chargement…</p>
 
   return (
     <div className="rounded-xl border border-warm bg-white shadow-sm">
@@ -84,17 +84,17 @@ export default function AvailabilityManager() {
             </select>
             <div className="flex items-center gap-2">
               <input type="time" value={startTime} onChange={e => setStartTime(e.target.value)} className={inputClass} />
-              <span className="text-stone-800-soft">&rarr;</span>
+              <span className="text-stone-600">&rarr;</span>
               <input type="time" value={endTime} onChange={e => setEndTime(e.target.value)} className={inputClass} />
             </div>
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="text-xs text-stone-800-soft">Durée (min)</label>
+              <label className="text-xs text-stone-600">Durée (min)</label>
               <input type="number" value={durationMinutes} onChange={e => setDurationMinutes(Number(e.target.value))} min={15} max={120} className={inputClass} />
             </div>
             <div>
-              <label className="text-xs text-stone-800-soft">Pause (min)</label>
+              <label className="text-xs text-stone-600">Pause (min)</label>
               <input type="number" value={bufferMinutes} onChange={e => setBufferMinutes(Number(e.target.value))} min={0} max={60} className={inputClass} />
             </div>
           </div>
@@ -106,23 +106,23 @@ export default function AvailabilityManager() {
             <button onClick={handleSave} disabled={saving} className="rounded-lg bg-cta-600 px-4 py-1.5 text-xs font-medium text-white hover:bg-cta-700 disabled:opacity-50">
               {saving ? '…' : editing ? 'Modifier' : 'Enregistrer'}
             </button>
-            <button onClick={() => setShowForm(false)} className="text-xs text-stone-800-soft hover:text-stone-800">Annuler</button>
+            <button onClick={() => setShowForm(false)} className="text-xs text-stone-600 hover:text-stone-800">Annuler</button>
           </div>
         </div>
       )}
       {slots.length === 0 ? (
-        <p className="px-4 py-6 text-center text-sm text-stone-800-softer">Aucune plage de disponibilité.</p>
+        <p className="px-4 py-6 text-center text-sm text-stone-500">Aucune plage de disponibilité.</p>
       ) : (
         <div className="divide-y divide-stone-100">
           {slots.map(s => (
             <div key={s.id} className="flex items-center justify-between px-4 py-3">
               <div>
                 <p className="text-sm font-medium text-stone-800">{DAY_LABELS[s.dayOfWeek]} &middot; {s.startTime}&ndash;{s.endTime}</p>
-                <p className="text-xs text-stone-800-soft">{s.durationMinutes}min &middot; pause {s.bufferMinutes}min{!s.isActive && ' · Inactive'}</p>
+                <p className="text-xs text-stone-600">{s.durationMinutes}min &middot; pause {s.bufferMinutes}min{!s.isActive && ' · Inactive'}</p>
               </div>
               <div className="flex items-center gap-1">
-                <button onClick={() => openEdit(s)} className="rounded p-1 text-stone-800-soft hover:text-primary-600"><Pencil className="size-3.5" /></button>
-                <button onClick={() => handleDelete(s.id)} className="rounded p-1 text-stone-800-soft hover:text-red-600"><Trash2 className="size-3.5" /></button>
+                <button onClick={() => openEdit(s)} className="rounded p-1 text-stone-600 hover:text-primary-600"><Pencil className="size-3.5" /></button>
+                <button onClick={() => handleDelete(s.id)} className="rounded p-1 text-stone-600 hover:text-red-600"><Trash2 className="size-3.5" /></button>
               </div>
             </div>
           ))}

@@ -25,7 +25,7 @@ export default function AuditLogTable({ logs }: { logs: AuditLog[] }) {
     <div>
       <div className="overflow-x-auto rounded-xl border border-warm bg-white shadow-sm">
         <table className="min-w-[640px] w-full text-left text-sm">
-          <thead className="border-b border-warm text-xs uppercase text-stone-800-soft">
+          <thead className="border-b border-warm text-xs uppercase text-stone-600">
             <tr>
               <th className="px-4 py-3 font-medium">Action</th>
               <th className="px-4 py-3 font-medium">Collection</th>
@@ -36,7 +36,7 @@ export default function AuditLogTable({ logs }: { logs: AuditLog[] }) {
           </thead>
           <tbody className="divide-y divide-stone-100">
             {paginated.length === 0 ? (
-              <tr><td colSpan={5} className="px-4 py-8 text-center text-stone-800-softer">Aucune entrée d&apos;audit.</td></tr>
+              <tr><td colSpan={5} className="px-4 py-8 text-center text-stone-500">Aucune entrée d&apos;audit.</td></tr>
             ) : (
               paginated.map((log) => (
                 <tr key={log.id} className="hover:bg-stone-50">
@@ -46,9 +46,9 @@ export default function AuditLogTable({ logs }: { logs: AuditLog[] }) {
                     </span>
                   </td>
                   <td className="px-4 py-3 text-stone-600">{log.collectionName}</td>
-                  <td className="px-4 py-3 font-mono text-xs text-stone-800-soft">{log.documentId}</td>
+                  <td className="px-4 py-3 font-mono text-xs text-stone-600">{log.documentId}</td>
                   <td className="px-4 py-3 text-stone-600">{log.user?.name || log.user?.email || '—'}</td>
-                  <td className="px-4 py-3 text-stone-800-soft">{new Date(log.timestamp).toLocaleString('fr-FR')}</td>
+                  <td className="px-4 py-3 text-stone-600">{new Date(log.timestamp).toLocaleString('fr-FR')}</td>
                 </tr>
               ))
             )}
@@ -70,7 +70,7 @@ export default function AuditLogTable({ logs }: { logs: AuditLog[] }) {
               key={p}
               onClick={() => setPage(p)}
               className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
-                p === page ? 'bg-primary-700 text-white' : 'border border-warm bg-white text-stone-800-soft hover:bg-stone-50'
+                p === page ? 'bg-primary-700 text-white' : 'border border-warm bg-white text-stone-600 hover:bg-stone-50'
               }`}
             >
               {p}

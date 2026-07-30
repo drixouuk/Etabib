@@ -43,7 +43,7 @@ export default function ReferringPractitionersManager() {
 
   const inputClass = 'w-full rounded-lg border border-warm bg-white px-3 py-2 text-sm focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none'
 
-  if (loading) return <p className="text-sm text-stone-800-soft">Chargement…</p>
+  if (loading) return <p className="text-sm text-stone-600">Chargement…</p>
 
   return (
     <div className="rounded-xl border border-warm bg-white shadow-sm">
@@ -65,23 +65,23 @@ export default function ReferringPractitionersManager() {
             <button onClick={handleSave} disabled={saving} className="rounded-lg bg-cta-600 px-4 py-1.5 text-xs font-medium text-white hover:bg-cta-700 disabled:opacity-50">
               {saving ? '…' : editing ? 'Modifier' : 'Ajouter'}
             </button>
-            <button onClick={cancel} className="text-xs text-stone-800-soft hover:text-stone-800">Annuler</button>
+            <button onClick={cancel} className="text-xs text-stone-600 hover:text-stone-800">Annuler</button>
           </div>
         </div>
       )}
       {practitioners.length === 0 ? (
-        <p className="px-4 py-6 text-center text-sm text-stone-800-softer">Aucun médecin référent enregistré.</p>
+        <p className="px-4 py-6 text-center text-sm text-stone-500">Aucun médecin référent enregistré.</p>
       ) : (
         <div className="divide-y divide-stone-100">
           {practitioners.map(p => (
             <div key={p.id} className="flex items-center justify-between px-4 py-3">
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-medium text-stone-800">{p.name}</p>
-                <p className="text-xs text-stone-800-soft">{[p.specialty, p.city, p.phone].filter(Boolean).join(' · ') || '—'}</p>
+                <p className="text-xs text-stone-600">{[p.specialty, p.city, p.phone].filter(Boolean).join(' · ') || '—'}</p>
               </div>
               <div className="flex items-center gap-1 ml-2">
-                <button onClick={() => openEdit(p)} className="rounded p-1 text-stone-800-soft hover:text-primary-600"><Pencil className="size-3.5" /></button>
-                <button onClick={() => handleDelete(p.id)} className="rounded p-1 text-stone-800-soft hover:text-red-600"><Trash2 className="size-3.5" /></button>
+                <button onClick={() => openEdit(p)} className="rounded p-1 text-stone-600 hover:text-primary-600"><Pencil className="size-3.5" /></button>
+                <button onClick={() => handleDelete(p.id)} className="rounded p-1 text-stone-600 hover:text-red-600"><Trash2 className="size-3.5" /></button>
               </div>
             </div>
           ))}

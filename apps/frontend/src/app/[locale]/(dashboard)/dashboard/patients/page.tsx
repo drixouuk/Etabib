@@ -65,7 +65,7 @@ export default async function PatientsListPage({ searchParams }: Props) {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="font-heading text-3xl font-bold text-stone-800">Patients</h1>
-          <p className="mt-1 text-[13.5px] text-stone-800-soft">{patients.length} patients suivis</p>
+          <p className="mt-1 text-[13.5px] text-stone-600">{patients.length} patients suivis</p>
         </div>
         <Link
           href="/dashboard/patients/new"
@@ -77,18 +77,18 @@ export default async function PatientsListPage({ searchParams }: Props) {
 
       <form method="GET" className="mt-6">
         <div className="flex items-center gap-2 rounded-xl border border-primary/15 bg-white py-2.5 px-[14px] transition-all duration-200 hover:border-primary-500 hover:shadow-[0_0_0_3px_rgba(13,148,136,0.08)]">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="shrink-0 text-stone-800-soft"><circle cx="10" cy="10" r="7"/><line x1="21" y1="21" x2="15.5" y2="15.5"/></svg>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="shrink-0 text-stone-600"><circle cx="10" cy="10" r="7"/><line x1="21" y1="21" x2="15.5" y2="15.5"/></svg>
           <input
             type="text"
             name="q"
             defaultValue={q || ''}
             placeholder="Rechercher par nom ou CIN…"
-            className="flex-1 border-none bg-transparent text-sm text-stone-800 placeholder:text-stone-800-soft focus:outline-none"
+            className="flex-1 border-none bg-transparent text-sm text-stone-800 placeholder:text-stone-600 focus:outline-none"
           />
           {q && (
             <Link
               href="/dashboard/patients"
-              className="shrink-0 text-sm font-medium text-stone-800-soft hover:text-stone-800"
+              className="shrink-0 text-sm font-medium text-stone-600 hover:text-stone-800"
             >
               Effacer
             </Link>

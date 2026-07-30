@@ -187,18 +187,18 @@ export default async function ActivityPage({ searchParams }: Props) {
     <div className="mx-auto max-w-container px-4 py-12 md:px-6 lg:px-8">
       <h1 className="font-heading text-2xl font-bold text-stone-800">Activité</h1>
 
-      <p className="mt-7 mb-3 text-xs font-semibold uppercase tracking-[0.06em] text-stone-800-soft first:mt-0">Croissance du cabinet</p>
+      <p className="mt-7 mb-3 text-xs font-semibold uppercase tracking-[0.06em] text-stone-600 first:mt-0">Croissance du cabinet</p>
       <div className="rounded-xl border border-warm bg-white p-5 shadow-sm">
         <div className="flex items-baseline justify-between">
           <div>
-            <p className="text-[11.5px] font-semibold uppercase tracking-[0.04em] text-stone-800-soft">Total patients suivis</p>
+            <p className="text-[11.5px] font-semibold uppercase tracking-[0.04em] text-stone-600">Total patients suivis</p>
             <p className="text-[20px] font-bold text-stone-800">{patients.length}</p>
           </div>
           <span className="rounded-full bg-primary-50 px-2 py-0.5 text-[10.5px] font-semibold text-primary-700">cumulé</span>
         </div>
       </div>
 
-      <p className="mt-7 mb-3 text-xs font-semibold uppercase tracking-[0.06em] text-stone-800-soft first:mt-0">Activité clinique</p>
+      <p className="mt-7 mb-3 text-xs font-semibold uppercase tracking-[0.06em] text-stone-600 first:mt-0">Activité clinique</p>
       <ActivityView
         period={period}
         newPatients={patients.length}

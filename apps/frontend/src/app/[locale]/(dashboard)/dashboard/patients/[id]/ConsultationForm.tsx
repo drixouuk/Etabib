@@ -118,7 +118,7 @@ export default function ConsultationForm({ patientId, consultations, isPediatrie
         <div className="flex items-center gap-2">
           <h2 className="font-heading text-lg font-semibold text-stone-800">Consultations</h2>
           {consultations.length > 0 && (
-            <span className="text-xs text-stone-800-soft">({consultations.length})</span>
+            <span className="text-xs text-stone-600">({consultations.length})</span>
           )}
         </div>
         {!showForm && (
@@ -206,12 +206,12 @@ export default function ConsultationForm({ patientId, consultations, isPediatrie
                   Enregistrer
                 </button>
                 <button type="button" onClick={() => { setShowTemplateSave(false); setTemplateName('') }}
-                  className="text-sm text-stone-800-soft hover:text-stone-800">
+                  className="text-sm text-stone-600 hover:text-stone-800">
                   Annuler
                 </button>
               </div>
             )}
-            <button type="button" onClick={() => setShowForm(false)} className="text-sm text-stone-800-soft hover:text-stone-800">
+            <button type="button" onClick={() => setShowForm(false)} className="text-sm text-stone-600 hover:text-stone-800">
               Annuler
             </button>
           </div>

@@ -184,7 +184,7 @@ export default function ImportPatientsButton() {
             </button>
             <button
               onClick={() => { setParsed(null); setResult(null) }}
-              className="text-sm text-stone-800-soft hover:text-stone-800"
+              className="text-sm text-stone-600 hover:text-stone-800"
             >
               Annuler
             </button>
