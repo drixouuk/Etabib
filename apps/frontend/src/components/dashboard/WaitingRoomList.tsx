@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { Link } from '@/i18n/navigation'
 import { Clock, ArrowRight, Check } from 'lucide-react'
+import PatientAvatar from '@/components/dashboard/PatientAvatar'
 
 type Patient = {
   id: string
@@ -187,18 +188,11 @@ export default function WaitingRoomList({ tenantId, isClinique, currentDoctorId 
         <div className="divide-y divide-stone-100">
           {activeItems.map((item) => {
             const patient = item.patient
-            const genderColor =
-              patient?.gender === 'girl'
-                ? 'border-pink-300 bg-pink-100 text-pink-700'
-                : 'border-sky-300 bg-sky-100 text-sky-700'
-
             const next = transitionMap[item.status]
 
             return (
               <div key={item.id} className="flex items-center gap-3 px-4 py-3">
-                <div className={`flex size-10 shrink-0 items-center justify-center rounded-full border-2 text-sm font-bold ${genderColor}`}>
-                  {patient?.fullName?.charAt(0)?.toUpperCase() || '?'}
-                </div>
+                <PatientAvatar fullName={patient?.fullName || '?'} gender={patient?.gender ?? null} size="md" />
 
                 <div className="min-w-0 flex-1">
                   {patient?.id ? (
