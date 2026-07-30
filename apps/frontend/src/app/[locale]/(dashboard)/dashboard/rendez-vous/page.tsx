@@ -1,7 +1,7 @@
 import { getTenantId } from '@/lib/tenant'
 import { requireAuth } from '@/lib/auth'
 import { fetchCMS } from '@/lib/cms-fetch'
-import CalendarWrapper from './CalendarWrapper'
+import RendezVousCalendarClient from '@/components/dashboard/RendezVousCalendarClient'
 import BookingListView from '@/components/dashboard/BookingListView'
 import { formatDateMorocco } from '@/lib/datetime'
 import { Calendar } from 'lucide-react'
@@ -91,7 +91,7 @@ export default async function RendezVousPage() {
       <p className="mt-1 text-sm text-stone-600 capitalize">{dateLabel}</p>
       <div className="mt-6">
         <div className="mb-8 rounded-2xl border border-stone-200 bg-white p-4 shadow-sm">
-          <CalendarWrapper
+          <RendezVousCalendarClient
             initialBookings={bookings.map(b => ({
               id: b.id,
               title: b.title,
