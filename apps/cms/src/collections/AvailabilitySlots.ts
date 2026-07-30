@@ -19,11 +19,13 @@ export const AvailabilitySlots: CollectionConfig = {
       return roles.includes('superadmin') || roles.includes('tenant_admin') || roles.includes('doctor')
     },
     update: ({ req: { user } }: any) => {
+      if (user?.roles?.includes('superadmin')) return true
       const tid = user?.tenant ? (typeof user.tenant === 'object' ? user.tenant.id : user.tenant) : undefined
       if (!tid) return false
       return { tenant: { equals: tid } }
     },
     delete: ({ req: { user } }: any) => {
+      if (user?.roles?.includes('superadmin')) return true
       const tid = user?.tenant ? (typeof user.tenant === 'object' ? user.tenant.id : user.tenant) : undefined
       if (!tid) return false
       return { tenant: { equals: tid } }

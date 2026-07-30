@@ -32,6 +32,7 @@ export default function AvailabilityManager() {
   const [bufferMinutes, setBufferMinutes] = useState(15)
   const [isActive, setIsActive] = useState(true)
   const [saving, setSaving] = useState(false)
+  const [error, setError] = useState('')
 
   const fetchSlots = () => {
     fetch('/api/cms-proxy/availability-slots?depth=0&limit=50')
@@ -52,18 +53,44 @@ export default function AvailabilityManager() {
 
   const handleSave = async () => {
     setSaving(true)
+    setError('')
+    const hasOverlap = !editing && slots.some(s =>
+      s.dayOfWeek === dayOfWeek && s.isActive &&
+      startTime < s.endTime && endTime > s.startTime
+    )
+    if (hasOverlap && !confirm('Une plage active existe déjà ce jour-là et se chevauche avec celle-ci. Continuer quand même ?')) {
+      setSaving(false)
+      return
+    }
     const body = { dayOfWeek, startTime, endTime, durationMinutes, bufferMinutes, isActive }
     const url = editing ? `/api/cms-proxy/availability-slots/${editing.id}` : '/api/cms-proxy/availability-slots'
     const method = editing ? 'PATCH' : 'POST'
-    await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
-    setShowForm(false); fetchSlots(); router.refresh()
+    try {
+      const res = await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
+      if (!res.ok) {
+        const data = await res.json().catch(() => null)
+        setError(data?.errors?.[0]?.message || data?.error || "Échec de l'enregistrement")
+        setSaving(false)
+        return
+      }
+      setShowForm(false)
+      fetchSlots()
+      router.refresh()
+    } catch {
+      setError('Impossible de contacter le serveur')
+    }
     setSaving(false)
   }
 
   const handleDelete = async (id: string) => {
     if (!confirm('Supprimer cette plage ?')) return
-    await fetch(`/api/cms-proxy/availability-slots/${id}`, { method: 'DELETE' })
-    fetchSlots(); router.refresh()
+    try {
+      const res = await fetch(`/api/cms-proxy/availability-slots/${id}`, { method: 'DELETE' })
+      if (!res.ok) { setError('Échec de la suppression'); return }
+      fetchSlots(); router.refresh()
+    } catch {
+      setError('Impossible de contacter le serveur')
+    }
   }
 
   const inputClass = 'w-full rounded-lg border border-warm bg-white px-3 py-2 text-sm focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none'
@@ -78,6 +105,7 @@ export default function AvailabilityManager() {
       </div>
       {showForm && (
         <div className="space-y-3 border-b border-stone-100 bg-stone-50 p-4">
+          {error && <p className="px-2 py-1 text-sm text-red-600">{error}</p>}
           <div className="grid grid-cols-2 gap-3">
             <select value={dayOfWeek} onChange={e => setDayOfWeek(e.target.value)} className={inputClass}>
               {Object.entries(DAY_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}

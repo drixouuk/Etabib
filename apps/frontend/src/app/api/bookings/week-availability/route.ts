@@ -53,11 +53,12 @@ export async function GET(request: NextRequest) {
     const daySlots = availabilityByDay[dow] ?? []
     const iso = toLocalISODate(date)
 
-    const times: string[] = []
+    const times = new Set<string>()
     for (const slot of daySlots) {
       const [sh, sm] = slot.startTime.split(':').map(Number)
       const [eh, em] = slot.endTime.split(':').map(Number)
       const duration = slot.durationMinutes ?? 30
+      const buffer = slot.bufferMinutes ?? 0
       let cursor = sh * 60 + sm
       const endMinutes = eh * 60 + em
       while (cursor + duration <= endMinutes) {
@@ -66,11 +67,11 @@ export async function GET(request: NextRequest) {
         const t = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`
         const slotDateTime = new Date(date)
         slotDateTime.setHours(h, m, 0, 0)
-        if (slotDateTime > now && !(bookedTimes[iso]?.has(t))) times.push(t)
-        cursor += duration
+        if (slotDateTime > now && !(bookedTimes[iso]?.has(t))) times.add(t)
+        cursor += duration + buffer
       }
     }
-    days.push({ iso, dayOfWeek: date.getDay(), available: times.length > 0, times })
+    days.push({ iso, dayOfWeek: date.getDay(), available: times.size > 0, times: [...times].sort() })
   }
 
   return NextResponse.json({ days })
