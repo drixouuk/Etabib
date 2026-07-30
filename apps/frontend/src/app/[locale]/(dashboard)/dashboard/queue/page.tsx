@@ -1,11 +1,11 @@
 import { getTenantId, getDoctorProfileId } from '@/lib/tenant'
-import { requireAuth } from '@/lib/auth'
+import { requireTier } from '@/lib/tier-guard'
 import { getTenantById } from '@/lib/payload'
 import LiveStatsWidget from '@/components/dashboard/LiveStatsWidget'
 import WaitingRoomList from '@/components/dashboard/WaitingRoomList'
 
 export default async function QueuePage() {
-  const user = await requireAuth()
+  const { user } = await requireTier(['cabinet'])
   const tenantId = getTenantId(user)
   const tenant = tenantId ? await getTenantById(tenantId) : null
   const isClinique = tenant?.settings?.activeTier === 'cabinet'

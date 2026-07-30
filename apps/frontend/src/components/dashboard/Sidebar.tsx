@@ -33,15 +33,27 @@ export default function Sidebar({ user, tenant, onNavigate }: Props) {
     cabinet: 'Cabinet',
   }
   const roleLabel = user.roles?.map((r) => roleLabels[r] || r).join(', ')
+  const tier = tenant?.settings?.activeTier
 
-  const navItems: NavItem[] = [
-    { label: 'Vue d\'ensemble', href: '/dashboard', icon: <LayoutDashboard className="size-4" /> },
-    { label: 'Patients', href: '/dashboard/patients', icon: <Users className="size-4" /> },
-    { label: 'File d\'attente', href: '/dashboard/queue', icon: <ListOrdered className="size-4" /> },
-    { label: 'Activité', href: '/dashboard/activity', icon: <BarChart3 className="size-4" /> },
-    { label: 'Rendez-vous', href: '/dashboard/rendez-vous', icon: <Calendar className="size-4" /> },
-    { label: 'Paramètres', href: '/dashboard/settings', icon: <Settings className="size-4" /> },
-  ]
+  const tierNav: Record<string, NavItem[]> = {
+    vitrine: [
+      { label: 'Paramètres', href: '/dashboard/settings', icon: <Settings className="size-4" /> },
+    ],
+    rdv: [
+      { label: 'Rendez-vous', href: '/dashboard/rendez-vous', icon: <Calendar className="size-4" /> },
+      { label: 'Paramètres', href: '/dashboard/settings', icon: <Settings className="size-4" /> },
+    ],
+    cabinet: [
+      { label: 'Vue d\'ensemble', href: '/dashboard', icon: <LayoutDashboard className="size-4" /> },
+      { label: 'Patients', href: '/dashboard/patients', icon: <Users className="size-4" /> },
+      { label: 'File d\'attente', href: '/dashboard/queue', icon: <ListOrdered className="size-4" /> },
+      { label: 'Activité', href: '/dashboard/activity', icon: <BarChart3 className="size-4" /> },
+      { label: 'Rendez-vous', href: '/dashboard/rendez-vous', icon: <Calendar className="size-4" /> },
+      { label: 'Paramètres', href: '/dashboard/settings', icon: <Settings className="size-4" /> },
+    ],
+  }
+
+  const navItems = tierNav[tier || 'vitrine'] || tierNav.vitrine
 
   const adminItems: NavItem[] = []
 

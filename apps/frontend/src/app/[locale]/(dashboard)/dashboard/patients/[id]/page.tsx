@@ -1,5 +1,5 @@
 import { getTenantId } from '@/lib/tenant'
-import { requireAuth } from '@/lib/auth'
+import { requireTier } from '@/lib/tier-guard'
 import { fetchCMS } from '@/lib/cms-fetch'
 import { getTenantById, getDoctorProfile, getPracticeInfo } from '@/lib/payload'
 import { notFound } from 'next/navigation'
@@ -93,7 +93,7 @@ type Props = {
 
 export default async function PatientDetailPage({ params }: Props) {
   const { id } = await params
-  const user = await requireAuth()
+  const { user } = await requireTier(['cabinet'])
 
   const canViewClinical = user.roles?.includes('doctor') || user.roles?.includes('tenant_admin') || user.roles?.includes('superadmin')
 

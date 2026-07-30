@@ -1,7 +1,6 @@
 import { getTenantId } from '@/lib/tenant'
 import { requireAuth } from '@/lib/auth'
 import { getTenantById } from '@/lib/payload'
-import { redirect } from 'next/navigation'
 import DashboardShell from '@/components/dashboard/DashboardShell'
 
 type Props = {
@@ -15,10 +14,6 @@ export default async function DashboardLayout({ children }: Props) {
   const tenantId = getTenantId(user)
   if (tenantId) {
     const tenant = await getTenantById(tenantId)
-    const tier = tenant?.settings?.activeTier
-    if (!tier || (tier !== 'cabinet')) {
-      redirect('/')
-    }
     return <DashboardShell user={user} tenant={tenant}>{children}</DashboardShell>
   }
 

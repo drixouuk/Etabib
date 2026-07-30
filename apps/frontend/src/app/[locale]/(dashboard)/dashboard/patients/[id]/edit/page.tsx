@@ -1,4 +1,4 @@
-import { requireAuth } from '@/lib/auth'
+import { requireTier } from '@/lib/tier-guard'
 import { fetchCMS } from '@/lib/cms-fetch'
 import { notFound } from 'next/navigation'
 import EditPatientForm from './EditPatientForm'
@@ -17,7 +17,7 @@ type Props = {
 
 export default async function EditPatientPage({ params }: Props) {
   const { id } = await params
-  await requireAuth()
+  await requireTier(['cabinet'])
 
   const patient = await fetchCMS<Patient>(`/api/patients/${id}`, { revalidate: 0 })
   if (!patient) notFound()

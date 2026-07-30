@@ -1,5 +1,5 @@
 import { getTenantId } from '@/lib/tenant'
-import { requireAuth } from '@/lib/auth'
+import { requireTier } from '@/lib/tier-guard'
 import { fetchCMS } from '@/lib/cms-fetch'
 import { Link } from '@/i18n/navigation'
 import PatientTable from './PatientTable'
@@ -26,7 +26,7 @@ type Props = {
 
 export default async function PatientsListPage({ searchParams }: Props) {
   const { q } = await searchParams
-  const user = await requireAuth()
+  const { user } = await requireTier(['cabinet'])
   const tenantId = getTenantId(user)
 
   let apiPath = `/api/patients?sort=-updatedAt&limit=50`

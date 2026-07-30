@@ -1,5 +1,5 @@
 import { getTenantId } from '@/lib/tenant'
-import { requireAuth } from '@/lib/auth'
+import { requireTier } from '@/lib/tier-guard'
 import { fetchCMS } from '@/lib/cms-fetch'
 import ActivityView from '@/components/dashboard/ActivityView'
 
@@ -91,7 +91,7 @@ function mergeChartData(
 export default async function ActivityPage({ searchParams }: Props) {
   const { period: periodParam } = await searchParams
   const period: Period = (['day', 'week', 'month', 'year'] as const).includes(periodParam as any) ? (periodParam as Period) : 'week'
-  const user = await requireAuth()
+  const { user } = await requireTier(['cabinet'])
   const tenantId = getTenantId(user)
   const startDate = getStartDate(period)
   const isoStart = formatISO(startDate)

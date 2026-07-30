@@ -1,4 +1,4 @@
-import { requireAuth } from '@/lib/auth'
+import { requireTier } from '@/lib/tier-guard'
 import { fetchCMS } from '@/lib/cms-fetch'
 import { getTenantId } from '@/lib/tenant'
 import AuditLogTable from './AuditLogTable'
@@ -13,7 +13,7 @@ type AuditLog = {
 }
 
 export default async function AuditLogsPage() {
-  const user = await requireAuth()
+  const { user } = await requireTier(['cabinet'])
 
   const isAdmin = user.roles?.includes('superadmin') || user.roles?.includes('tenant_admin')
   if (!isAdmin) {

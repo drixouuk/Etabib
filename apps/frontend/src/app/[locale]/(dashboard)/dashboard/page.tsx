@@ -1,5 +1,5 @@
 import { getTenantId } from '@/lib/tenant'
-import { requireAuth } from '@/lib/auth'
+import { requireTier } from '@/lib/tier-guard'
 import { getTenantById } from '@/lib/payload'
 import LiveStatsWidget from '@/components/dashboard/LiveStatsWidget'
 import PatientSearchBar from '@/components/dashboard/PatientSearchBar'
@@ -7,7 +7,7 @@ import QueuePreview from '@/components/dashboard/QueuePreview'
 import VaccinationAlerts from '@/components/dashboard/VaccinationAlerts'
 
 export default async function DashboardPage() {
-  const user = await requireAuth()
+  const { user } = await requireTier(['cabinet'])
   const isSuperadmin = user.roles?.includes('superadmin')
 
   const tenantId = getTenantId(user)

@@ -1,5 +1,4 @@
-import { getTenantId } from '@/lib/tenant'
-import { requireAuth } from '@/lib/auth'
+import { requireTier } from '@/lib/tier-guard'
 import { fetchCMS } from '@/lib/cms-fetch'
 import RendezVousCalendarClient from '@/components/dashboard/RendezVousCalendarClient'
 import BookingListView from '@/components/dashboard/BookingListView'
@@ -51,12 +50,7 @@ function ErrorState({ message }: { message: string }) {
 }
 
 export default async function RendezVousPage() {
-  const user = await requireAuth()
-  const tenantId = getTenantId(user)
-
-  if (!tenantId) {
-    return <ErrorState message="Tenant introuvable pour cet utilisateur" />
-  }
+  const { user, tenantId } = await requireTier(['rdv', 'cabinet'])
 
   let bookings: CalBooking[] = []
   let renderError: string | null = null
