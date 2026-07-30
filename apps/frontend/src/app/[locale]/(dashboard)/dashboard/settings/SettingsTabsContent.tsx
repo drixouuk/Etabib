@@ -5,6 +5,9 @@ import ProfileEditor from './ProfileEditor'
 import PracticeEditor from './PracticeEditor'
 import ScheduleEditor from './ScheduleEditor'
 import ServicesEditor from './ServicesEditor'
+import SiteEditor from './SiteEditor'
+import CalendarSettings from './CalendarSettings'
+import BillingSettings from './BillingSettings'
 import ManageAccounts from './ManageAccounts'
 import ReferringPractitionersManager from './ReferringPractitionersManager'
 import AvailabilityManager from './AvailabilityManager'
@@ -37,6 +40,9 @@ export default function SettingsTabsContent({
         {isAdmin && <TabsTrigger value="practice">Cabinet</TabsTrigger>}
         {isAdmin && <TabsTrigger value="schedule">Horaires</TabsTrigger>}
         {isAdmin && <TabsTrigger value="services">Services</TabsTrigger>}
+        {isAdmin && <TabsTrigger value="site">Site</TabsTrigger>}
+        {isAdmin && <TabsTrigger value="calendar">Calendrier</TabsTrigger>}
+        {isAdmin && <TabsTrigger value="billing">Facturation</TabsTrigger>}
         {isAdmin && (
           <TabsTrigger value="referents" className="data-[state=active]:text-primary-700 data-[state=active]:font-semibold after:bg-primary-500">
             Référents
@@ -55,6 +61,9 @@ export default function SettingsTabsContent({
         {isAdmin && <TabsContent value="practice"><PracticeEditor /></TabsContent>}
         {isAdmin && <TabsContent value="schedule"><ScheduleEditor /></TabsContent>}
         {isAdmin && <TabsContent value="services"><ServicesEditor /></TabsContent>}
+        {isAdmin && <TabsContent value="site"><SiteEditor /></TabsContent>}
+        {isAdmin && <TabsContent value="calendar"><CalendarSettings /></TabsContent>}
+        {isAdmin && <TabsContent value="billing"><BillingSettings /></TabsContent>}
 
       {isAdmin && (
         <TabsContent value="accounts">
