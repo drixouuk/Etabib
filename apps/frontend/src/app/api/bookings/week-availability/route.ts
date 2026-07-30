@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 
 const CMS_URL = process.env.NEXT_PUBLIC_CMS_URL
+const API_KEY = process.env.INTERNAL_BOOKING_API_KEY
 
 function toLocalISODate(d: Date): string {
   const y = d.getFullYear()
@@ -23,9 +24,12 @@ export async function GET(request: NextRequest) {
   const end = new Date(start)
   end.setDate(end.getDate() + 7)
 
+  const apiHeaders: Record<string, string> = { 'Content-Type': 'application/json' }
+  if (API_KEY) apiHeaders['x-internal-api-key'] = API_KEY
+
   const [slotsRes, bookingsRes] = await Promise.all([
     fetch(`${CMS_URL}/api/availability-slots?where[tenant][equals]=${tid}&where[isActive][equals]=true&depth=0&limit=100`),
-    fetch(`${CMS_URL}/api/calbookings?where[tenant][equals]=${tid}&where[startTime][greater_than_equal]=${start.toISOString()}&where[startTime][less_than]=${end.toISOString()}&where[status][not_equals]=cancelled&depth=0&limit=200`),
+    fetch(`${CMS_URL}/api/calbookings?where[tenant][equals]=${tid}&where[startTime][greater_than_equal]=${start.toISOString()}&where[startTime][less_than]=${end.toISOString()}&where[status][not_equals]=cancelled&depth=0&limit=200`, { headers: apiHeaders }),
   ])
 
   const [slotsData, bookingsData] = await Promise.all([slotsRes.json(), bookingsRes.json()])

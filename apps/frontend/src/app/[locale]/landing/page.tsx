@@ -392,7 +392,7 @@ export default function LandingPage() {
                   <div className="flex size-[46px] items-center justify-center rounded-[13px] bg-primary-50 text-primary-700 mx-auto mb-3.5">
                     <Shield className="size-[23px]" />
                   </div>
-                  <h4 className="text-[.95rem] font-heading font-bold text-[#2A241C] mb-1.5">{t(`${key}_title`)}</h4>
+                  <h3 className="text-[.95rem] font-heading font-bold text-[#2A241C] mb-1.5">{t(`${key}_title`)}</h3>
                   <p className="text-[.84rem] text-[#8A8175]">{t(`${key}_desc`)}</p>
                 </div>
               ))}

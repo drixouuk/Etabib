@@ -106,7 +106,7 @@ export default async function InfosSection({ locale, practiceInfo }: Props) {
               />
             ) : (
               <div className="flex min-h-[280px] items-center justify-center bg-stone-50">
-                <p className="text-sm text-stone-400">Carte non disponible</p>
+                <p className="text-sm text-stone-500">Carte non disponible</p>
               </div>
             )}
             <div className="flex items-center gap-2 border-t border-stone-200 px-5 py-3 text-sm text-stone-500">

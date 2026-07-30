@@ -85,11 +85,11 @@ export default function ReviewsSection({ reviews }: Props) {
                 </div>
                 <div className="ml-auto flex shrink-0 items-center gap-1">
                   <span className="flex size-[15px] items-center justify-center rounded-full bg-[#4285F4] text-[9px] font-extrabold text-white">G</span>
-                  <span className="text-[.72rem] text-stone-400">Google</span>
+                  <span className="text-[.72rem] text-stone-500">Google</span>
                 </div>
               </div>
               <p className="flex-1 text-[.89rem] leading-relaxed text-stone-600 before:mr-0.5 before:text-primary-300 before:font-serif before:text-[1.3rem] before:content-['\201C']">{r.text}</p>
-              <p className="text-[.76rem] text-stone-400">{r.date}</p>
+              <p className="text-[.76rem] text-stone-500">{r.date}</p>
             </div>
           ))}
         </div>

@@ -5,6 +5,10 @@ function getCMSURL(): string {
   if (!url) throw new Error('NEXT_PUBLIC_CMS_URL manquant')
   return url
 }
+const API_KEY = process.env.INTERNAL_BOOKING_API_KEY
+
+const apiHeaders: Record<string, string> = { 'Content-Type': 'application/json' }
+if (API_KEY) apiHeaders['x-internal-api-key'] = API_KEY
 
 export async function GET(request: NextRequest) {
   const bookingUid = request.nextUrl.searchParams.get('uid')
@@ -12,7 +16,7 @@ export async function GET(request: NextRequest) {
     return new NextResponse('Lien invalide.', { status: 400 })
   }
 
-  const res = await fetch(`${getCMSURL()}/api/calbookings?where[bookingUid][equals]=${encodeURIComponent(bookingUid)}&depth=0&limit=1`)
+  const res = await fetch(`${getCMSURL()}/api/calbookings?where[bookingUid][equals]=${encodeURIComponent(bookingUid)}&depth=0&limit=1`, { headers: apiHeaders })
   const data = await res.json()
   const booking = data.docs?.[0]
   if (!booking) {
@@ -21,7 +25,7 @@ export async function GET(request: NextRequest) {
 
   await fetch(`${getCMSURL()}/api/calbookings/${booking.id}`, {
     method: 'PATCH',
-    headers: { 'Content-Type': 'application/json' },
+    headers: apiHeaders,
     body: JSON.stringify({ status: 'cancelled' }),
   })
 

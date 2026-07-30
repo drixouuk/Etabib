@@ -94,17 +94,17 @@ export default async function middleware(request: NextRequest) {
 
   // 3. Pour les routes API, on saute la redirection i18n (localePrefix) pour
   //    ne pas casser les appels fetch POST/PATCH vers /api/auth/login ou /api/cms-proxy.
-  //    On injecte juste les headers tenant dans la réponse et on passe.
+  //    On injecte juste les headers tenant dans la requête.
   if (pathname.startsWith("/api")) {
-    const response = NextResponse.next();
+    const requestHeaders = new Headers(request.headers)
     if (tenant) {
-      response.headers.set("x-tenant-id", tenant.id);
-      response.headers.set("x-tenant-slug", tenant.slug);
+      requestHeaders.set("x-tenant-id", tenant.id);
+      requestHeaders.set("x-tenant-slug", tenant.slug);
     } else {
-      response.headers.set("x-tenant-id", "default");
-      response.headers.set("x-tenant-slug", "default");
+      requestHeaders.set("x-tenant-id", "default");
+      requestHeaders.set("x-tenant-slug", "default");
     }
-    return response;
+    return NextResponse.next({ request: { headers: requestHeaders } });
   }
 
   const SITE_DOMAIN = process.env.NEXT_PUBLIC_SITE_DOMAIN || 'etabibi.ma'

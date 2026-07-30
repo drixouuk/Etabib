@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { randomUUID } from 'crypto'
 import { Resend } from 'resend'
+import { storeDemoToken } from '@/lib/demo-tokens'
 
 function getResend() {
   const key = process.env.RESEND_API_KEY
@@ -18,6 +19,7 @@ export async function POST(req: NextRequest) {
     }
 
     const token = randomUUID()
+    storeDemoToken(token, email, name)
 
     await getResend().emails.send({
       from: `Etabib <noreply@${process.env.RESEND_DOMAIN || 'etabibi.ma'}>`,

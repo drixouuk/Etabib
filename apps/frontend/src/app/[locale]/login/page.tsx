@@ -71,7 +71,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen grid grid-cols-1 md:grid-cols-2">
+    <main className="min-h-screen grid grid-cols-1 md:grid-cols-2">
       {/* Brand panel */}
       <div className="relative flex flex-col justify-between overflow-hidden bg-gradient-to-br from-primary-800 to-primary-600 p-[44px_52px] text-white max-md:p-[26px_24px] max-md:flex-row max-md:items-center max-md:justify-between max-md:min-h-auto">
         <span className="absolute size-[380px] rounded-full bg-white/8 -top-[140px] -right-[120px] max-md:hidden" />
@@ -227,7 +227,7 @@ export default function LoginPage() {
 
           <p className="mt-[36px] text-center text-[.78rem] text-stone-500">&copy; {new Date().getFullYear()} Dr Guinane Aicha</p>
         </div>
-      </div>
-    </div>
+        </div>
+      </main>
   )
 }

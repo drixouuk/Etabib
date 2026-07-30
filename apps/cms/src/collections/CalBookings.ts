@@ -8,9 +8,11 @@ export const CalBookings: CollectionConfig = {
     group: 'Cabinet',
   },
   access: {
-    read: ({ req: { user } }: any) => {
-      if (user?.roles?.includes('superadmin')) return true
-      const tid = user?.tenant ? (typeof user.tenant === 'object' ? user.tenant.id : user.tenant) : undefined
+    read: ({ req }: any) => {
+      const apiKey = req.headers?.get?.('x-internal-api-key') || req.headers?.['x-internal-api-key']
+      if (apiKey && apiKey === process.env.INTERNAL_BOOKING_API_KEY) return true
+      if (req.user?.roles?.includes('superadmin')) return true
+      const tid = req.user?.tenant ? (typeof req.user.tenant === 'object' ? req.user.tenant.id : req.user.tenant) : undefined
       if (!tid) return false
       return { tenant: { equals: tid } }
     },

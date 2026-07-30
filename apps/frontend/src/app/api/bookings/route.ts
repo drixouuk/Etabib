@@ -63,9 +63,12 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Créneau hors plage de disponibilité' }, { status: 400 })
   }
 
+  const conflictHeaders: Record<string, string> = { 'Content-Type': 'application/json' }
+  if (API_KEY) conflictHeaders['x-internal-api-key'] = API_KEY
+
   const conflictRes = await fetch(
     `${getCMSURL()}/api/calbookings?where[tenant][equals]=${encodeURIComponent(tenantId)}&where[startTime][less_than]=${endDate.toISOString()}&where[endTime][greater_than]=${moroccoDate.toISOString()}&where[status][not_equals]=cancelled&depth=0&limit=1`,
-    { headers: { 'Content-Type': 'application/json' } }
+    { headers: conflictHeaders }
   )
   const conflicts = await conflictRes.json()
   if (conflicts.docs?.length > 0) {

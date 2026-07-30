@@ -185,6 +185,9 @@ export interface Tenant {
      * Vide = illimité. Limite future sans re-développement.
      */
     maxSecretaryAccounts?: number | null;
+    calendarToken?: string | null;
+    verificationToken?: string | null;
+    emailVerified?: boolean | null;
   };
   calcomSettings?: {
     eventSlug?: string | null;
@@ -213,6 +216,9 @@ export interface User {
   tenant?: (number | null) | Tenant;
   updatedAt: string;
   createdAt: string;
+  enableAPIKey?: boolean | null;
+  apiKey?: string | null;
+  apiKeyIndex?: string | null;
   email: string;
   resetPasswordToken?: string | null;
   resetPasswordExpiration?: string | null;
@@ -858,6 +864,9 @@ export interface TenantsSelect<T extends boolean = true> {
         specialty?: T;
         doctorCount?: T;
         maxSecretaryAccounts?: T;
+        calendarToken?: T;
+        verificationToken?: T;
+        emailVerified?: T;
       };
   calcomSettings?:
     | T
@@ -881,6 +890,9 @@ export interface UsersSelect<T extends boolean = true> {
   tenant?: T;
   updatedAt?: T;
   createdAt?: T;
+  enableAPIKey?: T;
+  apiKey?: T;
+  apiKeyIndex?: T;
   email?: T;
   resetPasswordToken?: T;
   resetPasswordExpiration?: T;

@@ -188,7 +188,7 @@ export default async function LocaleLayout({ children, params }: Props) {
     <html
       lang={locale}
       dir={dir}
-      className={`${figtree.variable} ${fontVars} ${notoSansTifinagh.variable} h-full`}
+      className={`${figtree.variable} ${fontVars} h-full`}
     >
       <head>
         {routing.locales.map((l) => (

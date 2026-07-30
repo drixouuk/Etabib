@@ -122,21 +122,21 @@ export default function PublicBookingWidget({ tenantId }: Props) {
         ) : (
           <div className="mx-auto max-w-[640px] overflow-hidden rounded-3xl border border-stone-200 bg-white shadow-md">
             <div className="flex items-center justify-between border-b border-stone-200 px-[22px] py-[18px]">
-              <button onClick={prevWeek} className="flex size-7 items-center justify-center rounded-lg border border-stone-200 bg-white text-stone-500">
+              <button onClick={prevWeek} aria-label="Semaine précédente" className="flex size-7 items-center justify-center rounded-lg border border-stone-200 bg-white text-stone-500">
                 <ChevronLeft className="size-3.5" />
               </button>
               <strong className="font-heading text-[.98rem] text-stone-800 capitalize">{monthLabel}</strong>
-              <button onClick={nextWeek} className="flex size-7 items-center justify-center rounded-lg border border-stone-200 bg-white text-stone-500">
+              <button onClick={nextWeek} aria-label="Semaine suivante" className="flex size-7 items-center justify-center rounded-lg border border-stone-200 bg-white text-stone-500">
                 <ChevronRight className="size-3.5" />
               </button>
             </div>
 
             <div className="grid grid-cols-7 gap-2 px-[22px] py-[18px]">
               {FR_DAYS.map((d, i) => (
-                <div key={i} className="text-center text-[.7rem] font-bold uppercase text-stone-400">{d}</div>
+                <div key={i} className="text-center text-[.7rem] font-bold uppercase text-stone-500">{d}</div>
               ))}
               {loading ? (
-                <div className="col-span-7 py-4 text-center text-sm text-stone-400">{t('loading')}</div>
+                <div className="col-span-7 py-4 text-center text-sm text-stone-500">{t('loading')}</div>
               ) : days.length === 7 && days.map((day, i) => (
                 <button
                   key={i}
@@ -145,7 +145,7 @@ export default function PublicBookingWidget({ tenantId }: Props) {
                   className={`aspect-square rounded-[10px] flex items-center justify-center text-[.82rem] font-semibold transition-colors ${
                     day.iso === selectedDate ? 'bg-primary-600 text-white' :
                     day.available ? 'border border-primary-200 bg-primary-50 text-primary-700 cursor-pointer hover:bg-primary-100' :
-                    'bg-cream-200 text-stone-400 cursor-default'
+                    'bg-cream-200 text-stone-500 cursor-default'
                   }`}>
                   {new Date(day.iso).getDate()}
                 </button>
@@ -166,7 +166,7 @@ export default function PublicBookingWidget({ tenantId }: Props) {
               </div>
             )}
             {selectedDay && selectedDay.times.length === 0 && (
-              <p className="px-[22px] pb-[18px] text-sm text-stone-400">Aucun créneau disponible ce jour.</p>
+              <p className="px-[22px] pb-[18px] text-sm text-stone-500">Aucun créneau disponible ce jour.</p>
             )}
 
             {selectedDate && selectedTime && (
