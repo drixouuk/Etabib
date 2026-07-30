@@ -2,9 +2,7 @@ import { getTenantId } from '@/lib/tenant'
 import { requireAuth } from '@/lib/auth'
 import { fetchCMS } from '@/lib/cms-fetch'
 import { Link } from '@/i18n/navigation'
-import ImportPatientsButton from './ImportPatientsButton'
 import PatientTable from './PatientTable'
-import { Download } from 'lucide-react'
 
 type Patient = {
   id: string
@@ -95,18 +93,6 @@ export default async function PatientsListPage({ searchParams }: Props) {
           )}
         </div>
       </form>
-
-      <div className="mt-4 mb-4 flex flex-wrap items-center gap-2">
-        <a
-          href="/api/patients/export"
-          download
-          className="flex items-center gap-2 rounded-lg border border-stone-300 bg-white px-4 py-2.5 text-sm font-medium text-stone-800 transition-colors duration-200 hover:bg-stone-50"
-        >
-          <Download className="size-4" />
-          Exporter en CSV
-        </a>
-        <ImportPatientsButton />
-      </div>
 
       <PatientTable patients={patients} lastConsultations={lastConsultations} q={q} />
     </div>

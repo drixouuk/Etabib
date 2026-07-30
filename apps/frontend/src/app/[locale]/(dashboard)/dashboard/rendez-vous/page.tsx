@@ -27,37 +27,65 @@ export default async function RendezVousPage() {
   const user = await requireAuth()
   const tenantId = getTenantId(user)
 
+  let bookings: CalBooking[] = []
+  let errorMessage = ''
+
+  try {
+    if (!tenantId) throw new Error('Tenant introuvable pour cet utilisateur')
+
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+    const tomorrow = new Date(today)
+    tomorrow.setDate(tomorrow.getDate() + 1)
+
+    const data = await fetchCMS<{ docs: CalBooking[] }>(
+      `/api/calbookings?where[tenant][equals]=${tenantId}&where[startTime][greater_than_equal]=${today.toISOString()}&where[startTime][less_than]=${tomorrow.toISOString()}&sort=startTime&depth=0&limit=100`,
+      { revalidate: 0 },
+    )
+    bookings = data?.docs ?? []
+  } catch (e) {
+    errorMessage = e instanceof Error ? e.message : 'Erreur inconnue'
+  }
+
   const today = new Date()
   today.setHours(0, 0, 0, 0)
-  const tomorrow = new Date(today)
-  tomorrow.setDate(tomorrow.getDate() + 1)
-
-  const data = await fetchCMS<{ docs: CalBooking[] }>(
-    `/api/calbookings?where[tenant][equals]=${tenantId}&where[startTime][greater_than_equal]=${today.toISOString()}&where[startTime][less_than]=${tomorrow.toISOString()}&sort=startTime&depth=0&limit=100`,
-    { revalidate: 0 },
-  )
-  const bookings = data?.docs ?? []
-
   const dateLabel = formatDateMorocco(today.toISOString())
 
   return (
     <div className="mx-auto max-w-container px-4 py-12 md:px-6 lg:px-8">
       <h1 className="font-heading text-2xl font-bold text-stone-800">Rendez-vous</h1>
       <p className="mt-1 text-sm text-stone-600 capitalize">{dateLabel}</p>
-      <div className="mt-6">
-        <div className="mb-8 rounded-2xl border border-stone-200 bg-white p-4 shadow-sm">
-          <RendezVousCalendarClient
-            initialBookings={bookings.map(b => ({
-              id: b.id,
-              title: b.title,
-              startTime: b.startTime,
-              endTime: b.endTime,
-              attendeeName: b.attendeeName,
-            }))}
-          />
+      {errorMessage ? (
+        <div className="mt-6 flex flex-col items-center justify-center rounded-2xl border border-warm bg-white py-16 text-center shadow-sm">
+          <Calendar className="size-12 text-stone-300" />
+          <h2 className="mt-4 font-heading text-lg font-semibold text-stone-800">Service temporairement indisponible</h2>
+          <p className="mt-2 max-w-md text-sm text-stone-600">
+            Impossible de charger les rendez-vous. Veuillez réessayer dans quelques instants.
+          </p>
+          <p className="mt-1 text-xs text-stone-400">{errorMessage}</p>
+          <a
+            href="/dashboard/rendez-vous"
+            className="mt-6 rounded-lg bg-primary-700 px-6 py-2.5 text-sm font-medium text-white shadow-sm transition-colors hover:bg-primary-800"
+          >
+            Réessayer
+          </a>
         </div>
-        <BookingListView bookings={bookings} />
-      </div>
+      ) : (
+        <div className="mt-6">
+          <div className="mb-8 rounded-2xl border border-stone-200 bg-white p-4 shadow-sm">
+            <RendezVousCalendarClient
+              initialBookings={bookings.map(b => ({
+                id: b.id,
+                title: b.title,
+                startTime: b.startTime,
+                endTime: b.endTime,
+                attendeeName: b.attendeeName,
+              }))}
+            />
+          </div>
+          <BookingListView bookings={bookings} />
+        </div>
+      )}
     </div>
   )
 }
