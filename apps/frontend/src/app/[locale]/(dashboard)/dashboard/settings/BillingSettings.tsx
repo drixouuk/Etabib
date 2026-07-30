@@ -33,6 +33,7 @@ export default function BillingSettings() {
     })
     router.refresh()
     setUpgrading(false)
+    window.location.reload()
   }
 
   if (loading) return <p className="text-sm text-stone-500">Chargement…</p>
