@@ -25,6 +25,7 @@
     "badge_langues": "Plusieurs langues"
   },
   "presentation": {
+    "title": "Présentation",
     "section1_title": "Parcours",
     "section2_title": "Approche"
   },
@@ -67,7 +68,7 @@
     "message_placeholder": "Votre message"
   },
   "reviews": {
-    "title": "Ce que disent nos patients"
+    "title": "Avis"
   },
   "dashboard": {
     "overview": "Vue d'ensemble",

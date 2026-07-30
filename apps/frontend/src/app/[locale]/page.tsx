@@ -71,7 +71,7 @@ export default async function HomePage({ params }: Props) {
             </p>
             <div className="mb-6 flex flex-wrap gap-3">
               <a href={`/${locale}#rdv`}
-                className="inline-flex items-center gap-2 rounded-xl bg-cta-700 px-[26px] py-3.5 text-[.95rem] font-semibold text-white shadow-sm transition-all duration-200 hover:bg-cta-800 hover:-translate-y-0.5 hover:shadow-md">
+                className="inline-flex items-center gap-2 rounded-xl bg-cta-600 px-[26px] py-3.5 text-[.95rem] font-semibold text-white shadow-sm transition-all duration-200 hover:bg-cta-700 hover:-translate-y-0.5 hover:shadow-md">
                 {t('cta_primary')}
                 <ArrowRight className="size-[17px]" />
               </a>

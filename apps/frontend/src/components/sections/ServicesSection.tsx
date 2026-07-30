@@ -34,12 +34,12 @@ export default async function ServicesSection({ locale, services }: Props) {
       <div className="container mx-auto max-w-[1200px]">
         <div className="mx-auto mb-12 max-w-[620px] text-center">
           <span className="mb-4 inline-flex items-center gap-1.5 rounded-full bg-cream-200 px-3.5 py-1.5 text-[.8rem] font-bold text-primary-700">
-            {t('title')}
+            Services
           </span>
           <h2 className="text-[clamp(1.6rem,3vw,2.15rem)] font-heading font-extrabold text-stone-800">
-            Nos services
+            {t('title')}
           </h2>
-          <p className="mt-2.5 text-stone-600">Une prise en charge complète de votre enfant</p>
+          <p className="mt-2.5 text-stone-600">{t('subtitle')}</p>
         </div>
 
         <div className="grid grid-cols-1 gap-5.5 sm:grid-cols-2 lg:grid-cols-3">

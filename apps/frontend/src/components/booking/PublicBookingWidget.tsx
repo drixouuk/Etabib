@@ -179,7 +179,7 @@ export default function PublicBookingWidget({ tenantId }: Props) {
                   className="w-full rounded-xl border border-stone-200 bg-white px-4 py-2.5 text-sm focus:border-primary-500 focus:outline-none" />
                 {error && <p className="text-sm text-red-600">{error}</p>}
                 <button onClick={handleSubmit} disabled={saving}
-                  className="flex w-full items-center justify-center gap-2 rounded-xl bg-cta-700 py-3.5 text-[.95rem] font-semibold text-white shadow-sm transition-all duration-200 hover:bg-cta-800">
+                  className="flex w-full items-center justify-center gap-2 rounded-xl bg-cta-600 py-3.5 text-[.95rem] font-semibold text-white shadow-sm transition-all duration-200 hover:bg-cta-700">
                   {saving ? 'Réservation…' : `Confirmer le ${new Date(selectedDate).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })} à ${selectedTime}`}
                   {!saving && <ArrowRight className="size-[17px]" />}
                 </button>

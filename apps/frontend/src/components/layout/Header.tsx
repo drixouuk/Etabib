@@ -48,7 +48,7 @@ export default function Header({ doctorName, doctorNameShort }: Props) {
         <div className="flex items-center gap-2.5">
           <LanguageSwitcher />
           <a href="/fr#rdv"
-            className="hidden h-10 items-center justify-center rounded-xl bg-cta-700 px-[18px] text-[.87rem] font-semibold text-white shadow-sm transition-all duration-200 hover:bg-cta-800 hover:-translate-y-0.5 hover:shadow-md md:inline-flex">
+            className="hidden h-10 items-center justify-center rounded-xl bg-cta-600 px-[18px] text-[.87rem] font-semibold text-white shadow-sm transition-all duration-200 hover:bg-cta-700 hover:-translate-y-0.5 hover:shadow-md md:inline-flex">
             {t('cta')}
           </a>
           <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)}

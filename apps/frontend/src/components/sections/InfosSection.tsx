@@ -69,7 +69,7 @@ export default async function InfosSection({ locale, practiceInfo }: Props) {
       <div className="container mx-auto max-w-[1200px]">
         <div className="mx-auto mb-12 max-w-[620px] text-center">
           <span className="mb-4 inline-flex items-center gap-1.5 rounded-full bg-cream-200 px-3.5 py-1.5 text-[.8rem] font-bold text-primary-700">
-            {t('title')}
+            Infos
           </span>
           <h2 className="text-[clamp(1.6rem,3vw,2.15rem)] font-heading font-extrabold text-stone-800">
             Informations pratiques

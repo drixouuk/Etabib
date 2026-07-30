@@ -2,7 +2,6 @@
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import ProfileEditor from './ProfileEditor'
-import ChangePasswordForm from './ChangePasswordForm'
 import ManageAccounts from './ManageAccounts'
 import ReferringPractitionersManager from './ReferringPractitionersManager'
 import AvailabilityManager from './AvailabilityManager'
@@ -45,10 +44,7 @@ export default function SettingsTabsContent({
       </TabsList>
 
       <TabsContent value="profile">
-        <div className="space-y-8">
-          <ProfileEditor userId={userId} initialName={userName} initialEmail={userEmail} initialPhone={practicePhone} />
-          <ChangePasswordForm userId={userId} />
-        </div>
+        <ProfileEditor userId={userId} initialName={userName} initialEmail={userEmail} initialPhone={practicePhone} />
       </TabsContent>
 
       {isAdmin && (

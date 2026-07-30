@@ -108,11 +108,11 @@ export default function LandingPage() {
             ))}
           </nav>
           <div className="flex items-center gap-3.5">
+            <LanguageSwitcher />
             <a href={DEMO_URL} target="_blank" rel="noopener"
-              className="hidden md:inline-flex items-center gap-2 rounded-full bg-cta-500 px-5 py-2.5 text-[.88rem] font-bold text-white shadow-sm transition-all hover:bg-cta-600 hover:-translate-y-0.5 hover:shadow-md">
+              className="hidden md:inline-flex items-center gap-2 rounded-full bg-cta-600 px-5 py-2.5 text-[.88rem] font-bold text-white shadow-sm transition-all hover:bg-cta-700 hover:-translate-y-0.5 hover:shadow-md">
               {t('header_cta')}
             </a>
-            <LanguageSwitcher />
             <button onClick={() => setMobileOpen(!mobileOpen)} className="flex size-9 items-center justify-center md:hidden" aria-label="Menu">
               {mobileOpen ? <X className="size-[22px]" /> : <Menu className="size-[22px]" />}
             </button>
@@ -125,8 +125,8 @@ export default function LandingPage() {
                   {t(key)}
                 </a>
               ))}
-              <a href={DEMO_URL} target="_blank" rel="noopener"
-                className="block mt-1 rounded-full bg-cta-500 px-4 py-2.5 text-center text-sm font-bold text-white">
+                <a href={DEMO_URL} target="_blank" rel="noopener"
+                    className="block mt-1 rounded-full bg-cta-600 px-4 py-2.5 text-center text-sm font-bold text-white">
                 {t('header_cta')}
               </a>
             </div>
@@ -150,7 +150,7 @@ export default function LandingPage() {
               <p className="text-[1.13rem] text-[#8A8175] max-w-[520px] mb-8">{t('hero_sub')}</p>
               <div className="flex flex-wrap gap-3.5 mb-5">
                 <a href={DEMO_URL} target="_blank" rel="noopener"
-                  className="inline-flex items-center gap-2 rounded-full bg-cta-500 px-7 py-3.5 text-[.97rem] font-bold text-white shadow-sm transition-all hover:bg-cta-600 hover:-translate-y-0.5 hover:shadow-md">
+                  className="inline-flex items-center gap-2 rounded-full bg-cta-600 px-7 py-3.5 text-[.97rem] font-bold text-white shadow-sm transition-all hover:bg-cta-700 hover:-translate-y-0.5 hover:shadow-md">
                   {t('hero_cta_primary')} <ArrowRight className="size-[18px]" />
                 </a>
                 <a href="#tarifs"
@@ -330,7 +330,7 @@ export default function LandingPage() {
                 <h4 className="text-[1.05rem] font-heading font-bold text-[#2A241C] mb-2">{t('demo_card_title')}</h4>
                 <p className="text-[.88rem] text-[#8A8175] mb-[22px]">{t('demo_card_sub')}</p>
                 <a href={DEMO_URL} target="_blank" rel="noopener"
-                  className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-cta-500 px-7 py-3.5 text-[.97rem] font-bold text-white shadow-sm transition-all hover:bg-cta-600">
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-cta-600 px-7 py-3.5 text-[.97rem] font-bold text-white shadow-sm transition-all hover:bg-cta-700">
                   {t('demo_card_cta')} <ArrowRight className="size-[18px]" />
                 </a>
                 <p className="text-[.82rem] text-[#B9B2A4] mt-4">{`drdemo.${SITE_DOMAIN}/login`}</p>
@@ -397,7 +397,7 @@ export default function LandingPage() {
                     </li>
                   ))}
                 </ul>
-                <a href="/fr/onboarding" className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-cta-500 px-6 py-3 text-[.97rem] font-bold text-white shadow-sm transition-all hover:bg-cta-600">{t('price_cta_cabinet')} <ArrowRight className="size-[18px]" /></a>
+                <a href="/fr/onboarding" className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-cta-600 px-6 py-3 text-[.97rem] font-bold text-white shadow-sm transition-all hover:bg-cta-700">{t('price_cta_cabinet')} <ArrowRight className="size-[18px]" /></a>
               </div>
             </div>
             <p className="text-center text-[.85rem] text-[#B9B2A4] mt-[30px]">{t('price_fineprint')}</p>

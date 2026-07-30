@@ -2,7 +2,9 @@
 
 import { useState, useCallback } from 'react'
 import { useLocale } from 'next-intl'
-import ScheduleXCalendar from './ScheduleXCalendar'
+import dynamic from 'next/dynamic'
+
+const ScheduleXCalendar = dynamic(() => import('./ScheduleXCalendar'), { ssr: false })
 
 type CalBooking = {
   id: string
