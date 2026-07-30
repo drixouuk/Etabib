@@ -100,7 +100,8 @@ export default async function PatientDetailPage({ params }: Props) {
   const tenantId = getTenantId(user)
   const tenant = tenantId ? await getTenantById(tenantId) : null
   const isPediatrie = tenant?.settings?.specialty === 'pediatrie'
-  const [patient, consultationsData, prescriptionsData, documentsData, scheduleData, vaccinationsData, doctor, practiceInfo] = await Promise.all([
+  const isClinique = tenant?.settings?.activeTier === 'cabinet'
+  const [patient, consultationsData, prescriptionsData, documentsData, scheduleData, vaccinationsData, doctor, practiceInfo, doctorsData] = await Promise.all([
     fetchCMS<Patient>(`/api/patients/${id}`, { revalidate: 0 }),
     canViewClinical
       ? fetchCMS<{ docs: Consultation[] }>(
@@ -134,12 +135,19 @@ export default async function PatientDetailPage({ params }: Props) {
       : Promise.resolve(null),
     tenantId ? getDoctorProfile(tenantId, 'fr') : Promise.resolve(null),
     tenantId ? getPracticeInfo(tenantId, 'fr') : Promise.resolve(null),
+    tenantId && isClinique
+      ? fetchCMS<{ docs: { id: string }[] }>(
+          `/api/users?where[roles][contains]=doctor&depth=0&limit=50`,
+          { revalidate: 0 },
+        )
+      : Promise.resolve(null),
   ])
 
   if (!patient) notFound()
 
-  const isClinique = tenant?.settings?.activeTier === 'cabinet'
   const isDoctor = user.roles?.includes('doctor')
+  const otherDoctors = doctorsData?.docs?.filter((d: { id: string }) => d.id !== user.id) ?? []
+  const hasMultipleDoctors = otherDoctors.length > 0
 
   const sharedWithIds: string[] = (patient as any).sharedWith
     ? Array.isArray((patient as any).sharedWith) ? (patient as any).sharedWith.map((s: any) => typeof s === 'object' ? s.id : s) : []
@@ -266,7 +274,7 @@ export default async function PatientDetailPage({ params }: Props) {
                 ? (patient as any).referringPractitioners.map((r: any) => typeof r === 'object' ? r.id : r)
                 : []
               : []} />}
-            {isClinique && isDoctor && (
+            {isClinique && isDoctor && hasMultipleDoctors && (
               <SharePatientWidget
                 patientId={patient.id}
                 sharedWithIds={sharedWithIds}
