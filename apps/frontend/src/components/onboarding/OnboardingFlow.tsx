@@ -1,9 +1,9 @@
 'use client'
 
 import { useState } from 'react'
+import { useSearchParams, useRouter } from 'next/navigation'
 import { Link } from '@/i18n/navigation'
-import { ArrowRight, CheckCircle, ClipboardList, Minus, Plus } from 'lucide-react'
-import StepIndicator from './StepIndicator'
+import { ArrowRight, CheckCircle, ClipboardList, Loader2, Minus, Plus, ArrowLeft } from 'lucide-react'
 import TierCard from './TierCard'
 import SignupForm from './SignupForm'
 
@@ -55,22 +55,23 @@ const tiers: TierDef[] = [
   },
 ]
 
-const steps = [
-  { label: 'Formule' },
-  { label: 'Inscription' },
-  { label: 'Confirmation' },
-]
-
 type SuccessData = { domain: string; email: string }
 
+const inputClass = 'w-full rounded-lg border border-stone-300 bg-white px-4 py-2.5 text-sm text-stone-800 placeholder:text-stone-400 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none transition-colors duration-200'
+const labelClass = 'mb-1 block text-sm font-medium text-stone-700'
+
 export default function OnboardingFlow() {
-  const [step, setStep] = useState(0)
-  const [selectedTier, setSelectedTier] = useState<string | null>(null)
+  const searchParams = useSearchParams()
+  const router = useRouter()
+  const plan = searchParams.get('plan')
+  const preselected = plan && ['vitrine', 'rdv', 'cabinet'].includes(plan) ? plan : null
+
+  const [selectedTier, setSelectedTier] = useState<string | null>(preselected)
   const [selectedSpecialty, setSelectedSpecialty] = useState('generaliste')
   const [doctorCount, setDoctorCount] = useState(1)
   const [success, setSuccess] = useState<SuccessData | null>(null)
 
-  // Contact form (#3)
+  // Contact form (cabinet)
   const [contactName, setContactName] = useState('')
   const [contactPhone, setContactPhone] = useState('')
   const [contactEmail, setContactEmail] = useState('')
@@ -81,22 +82,23 @@ export default function OnboardingFlow() {
   const isContact = selectedTier === 'cabinet'
   const cabinetPrice = selectedTier === 'cabinet' ? calculateCabinetPrice(doctorCount) : 0
 
+  const selected = tiers.find((t) => t.slug === selectedTier)
+
   const handleTierClick = (slug: string) => {
     setSelectedTier(slug)
     setDoctorCount(1)
+    setSuccess(null)
+    router.push(`/onboarding?plan=${slug}`)
   }
 
-  const handleContinue = () => {
-    if (selectedTier === 'cabinet') {
-      setStep(2)
-    } else {
-      setStep(1)
-    }
+  const handleChangePlan = () => {
+    setSelectedTier(null)
+    setSuccess(null)
+    router.push('/onboarding')
   }
 
   const handleSignupSuccess = (data: SuccessData) => {
     setSuccess(data)
-    setStep(2)
   }
 
   const specialtyLabel = (s: string) => {
@@ -104,141 +106,153 @@ export default function OnboardingFlow() {
     return labels[s] || s
   }
 
-  const selected = tiers.find((t) => t.slug === selectedTier)
+  // === SUCCESS PAGE ===
+  if (success && selected && isSelfService) {
+    return (
+      <div className="mx-auto max-w-lg text-center">
+        <CheckCircle className="mx-auto size-16 text-success-500" />
+        <h2 className="mt-4 font-heading text-2xl font-bold text-stone-800">
+          Votre cabinet est prêt !
+        </h2>
+        <p className="mt-2 text-stone-500">
+          Votre site est accessible à l'adresse :
+        </p>
+        <a href={`https://${success.domain}`} target="_blank" rel="noopener noreferrer"
+          className="mt-2 inline-block text-lg font-medium text-primary-600 hover:text-primary-700 underline">
+          https://{success.domain}
+        </a>
+        <div className="mt-8 space-y-3">
+          <Link href="/login"
+            className="inline-flex items-center gap-2 rounded-lg bg-primary-700 px-6 py-2.5 text-sm font-medium text-white hover:bg-primary-800 transition-colors duration-200">
+            Accéder à mon espace <ArrowRight className="size-4" />
+          </Link>
+        </div>
+        <div className="mt-8 rounded-lg bg-stone-50 p-6 text-left">
+          <h3 className="font-heading text-sm font-semibold text-stone-700">Prochaines étapes :</h3>
+          <ol className="mt-3 list-inside list-decimal space-y-1.5 text-sm text-stone-600">
+            <li>Personnalisez votre site vitrine depuis votre espace</li>
+            <li>Ajoutez vos informations de contact, horaires, services</li>
+            {selectedTier === 'rdv' && <li>Configurez vos disponibilités en ligne</li>}
+          </ol>
+        </div>
+      </div>
+    )
+  }
 
+  // === CONTACT SENT (cabinet) ===
+  if (success && isContact && contactSent) {
+    return (
+      <div className="mx-auto max-w-lg text-center">
+        <ClipboardList className="mx-auto size-16 text-primary-500" />
+        <h2 className="mt-4 font-heading text-2xl font-bold text-stone-800">Demande envoyée</h2>
+        <p className="mt-2 text-stone-500">
+          Merci pour votre intérêt pour la formule <strong>{selected?.name}</strong> !
+        </p>
+        <p className="mt-4 text-stone-500">
+          Nous vous contacterons dans les 48h pour organiser une démo et configurer votre espace.
+        </p>
+        <p className="mt-4 text-sm text-stone-400">
+          En attendant, vous pouvez nous écrire à :{' '}
+          <a href={`mailto:${SUPPORT_EMAIL}`} className="text-primary-600 hover:text-primary-700 underline">{SUPPORT_EMAIL}</a>
+        </p>
+        <button onClick={handleChangePlan}
+          className="mt-8 text-sm font-medium text-primary-600 hover:text-primary-700 transition-colors duration-200">
+          Choisir une autre formule
+        </button>
+      </div>
+    )
+  }
+
+  // === NO PLAN SELECTED → show tier grid ===
+  if (!selectedTier) {
+    return (
+      <div>
+        <div className="mb-8 text-center">
+          <h1 className="font-heading text-3xl font-bold text-stone-800">
+            Créer votre espace professionnel
+          </h1>
+          <p className="mt-2 text-stone-500">
+            Choisissez la formule adaptée à votre activité
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+          {tiers.map((t) => (
+            <TierCard
+              key={t.slug}
+              slug={t.slug}
+              name={t.name}
+              price={t.price}
+              features={t.features}
+              badge={t.badge}
+              ctaLabel={t.slug === 'cabinet' ? 'Sélectionner' : 'Commencer'}
+              ctaVariant={t.slug === 'cabinet' ? 'outline' : 'primary'}
+              isActive={false}
+              onClick={() => handleTierClick(t.slug)}
+            />
+          ))}
+        </div>
+      </div>
+    )
+  }
+
+  // === PLAN SELECTED → show form ===
   return (
     <div>
-      <div className="mb-8 text-center">
-        <h1 className="font-heading text-3xl font-bold text-stone-800">
-          Créer votre espace professionnel
-        </h1>
-        <p className="mt-2 text-stone-500">
-          Choisissez la formule adaptée à votre activité
+      <button onClick={handleChangePlan}
+        className="mb-6 inline-flex items-center gap-1.5 text-sm text-stone-500 hover:text-stone-700 transition-colors duration-200">
+        <ArrowLeft className="size-4" /> Choisir une autre formule
+      </button>
+
+      <div className="mb-6 rounded-xl border border-primary-200 bg-primary-50 p-4 text-center">
+        <p className="text-sm font-medium text-primary-700">
+          Formule {selected?.name}
+          {selected && (selected.price === 0 ? ' — Gratuite' : ` — ${selected.price} MAD/mois`)}
         </p>
       </div>
 
-      <StepIndicator steps={steps} current={step} />
-
-      {step === 0 && (
-        <>
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
-            {tiers.map((t) => (
-              <TierCard
-                key={t.slug}
-                slug={t.slug}
-                name={t.name}
-                price={t.price}
-                features={t.features}
-                badge={t.badge}
-                ctaLabel={t.slug === 'cabinet' ? 'Sélectionner' : 'Commencer'}
-                ctaVariant={t.slug === 'cabinet' ? 'outline' : 'primary'}
-                isActive={selectedTier === t.slug}
-                onClick={() => handleTierClick(t.slug)}
-              />
-            ))}
-          </div>
-
-          {selectedTier && (
-            <div className="mt-6 flex flex-col items-center gap-4">
-              <div className="w-full max-w-xs">
-                <label className="mb-1 block text-sm font-medium text-stone-700">Votre spécialité</label>
-                <select value={selectedSpecialty} onChange={(e) => setSelectedSpecialty(e.target.value)}
-                  className="w-full rounded-lg border border-stone-200 bg-white px-3 py-2 text-sm text-stone-700 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none">
-                  <option value="pediatrie">Pédiatrie</option>
-                  <option value="generaliste">Médecine générale</option>
-                  <option value="gynecologie">Gynécologie</option>
-                  <option value="dermatologie">Dermatologie</option>
-                  <option value="autre">Autre</option>
-                </select>
-              </div>
-              {selectedTier === 'cabinet' && (
-                <div className="w-full max-w-xs">
-                  <label className="mb-1 block text-sm font-medium text-stone-700">Nombre de médecins</label>
-                  <div className="flex items-center gap-3">
-                    <button type="button" onClick={() => setDoctorCount(Math.max(1, doctorCount - 1))}
-                      className="flex size-9 items-center justify-center rounded-lg border border-stone-200 bg-white text-stone-600 hover:bg-stone-50 transition-colors duration-200">
-                      <Minus className="size-4" />
-                    </button>
-                    <span className="min-w-[3ch] text-center text-lg font-semibold text-stone-800">{doctorCount}</span>
-                    <button type="button" onClick={() => setDoctorCount(doctorCount + 1)}
-                      className="flex size-9 items-center justify-center rounded-lg border border-stone-200 bg-white text-stone-600 hover:bg-stone-50 transition-colors duration-200">
-                      <Plus className="size-4" />
-                    </button>
-                  </div>
-                  <p className="mt-2 text-xs text-stone-400">À partir de 499 MAD/mois · +199 MAD/mois par médecin supplémentaire</p>
-                  <p className="mt-1 text-sm font-semibold text-primary-700">Total : {cabinetPrice} MAD/mois</p>
-                </div>
-              )}
-              <button onClick={handleContinue}
-                className="rounded-lg bg-primary-700 px-6 py-2.5 text-sm font-medium text-white hover:bg-primary-800 transition-colors duration-200">
-                Continuer
-              </button>
-            </div>
-          )}
-        </>
+      {selectedTier === 'vitrine' && (
+        <div className="mb-6 rounded-xl border border-amber-200 bg-amber-50 p-4 text-center">
+          <p className="text-sm text-amber-800">
+            Ajoutez la prise de RDV en ligne pour 199 MAD/mois —{' '}
+            <Link href="/onboarding?plan=rdv" className="font-semibold underline hover:text-amber-900">
+              Voir la formule RDV
+            </Link>
+          </p>
+        </div>
       )}
 
-      {step === 1 && selected && isSelfService && (
-        <div>
-          <div className="mb-6 text-center">
-            <span className="inline-block rounded-full bg-primary-50 px-3 py-1 text-sm font-medium text-primary-700">
-              {selected.name} — {selected.price === 0 ? 'Gratuit' : `${selected.price} MAD/mois`}
-            </span>
+      {isSelfService && !success && (
+        <div className="mx-auto max-w-lg space-y-6">
+          <div className="space-y-4">
+            <div>
+              <label className={labelClass}>Votre spécialité</label>
+              <select value={selectedSpecialty} onChange={(e) => setSelectedSpecialty(e.target.value)} className={inputClass}>
+                <option value="pediatrie">Pédiatrie</option>
+                <option value="generaliste">Médecine générale</option>
+                <option value="gynecologie">Gynécologie</option>
+                <option value="dermatologie">Dermatologie</option>
+                <option value="autre">Autre</option>
+              </select>
+            </div>
           </div>
+
           <SignupForm
-            tier={selected.slug as 'vitrine' | 'rdv' | 'cabinet'}
+            tier={selectedTier as 'vitrine' | 'rdv' | 'cabinet'}
             specialty={selectedSpecialty}
-            doctorCount={selected.slug === 'cabinet' ? doctorCount : undefined}
+            doctorCount={undefined}
             onSuccess={handleSignupSuccess}
-            onBack={() => setStep(0)}
+            onBack={() => {}}
           />
         </div>
       )}
 
-      {step === 2 && isSelfService && success && (
-        <div className="mx-auto max-w-lg text-center">
-          <CheckCircle className="mx-auto size-16 text-success-500" />
-          <h2 className="mt-4 font-heading text-2xl font-bold text-stone-800">
-            Votre cabinet est prêt !
-          </h2>
-          <p className="mt-2 text-stone-500">
-            Votre site est accessible à l'adresse :
-          </p>
-          <a href={`https://${success.domain}`} target="_blank" rel="noopener noreferrer"
-            className="mt-2 inline-block text-lg font-medium text-primary-600 hover:text-primary-700 underline">
-            https://{success.domain}
-          </a>
-          <div className="mt-8 space-y-3">
-            <Link href="/login"
-              className="inline-flex items-center gap-2 rounded-lg bg-primary-700 px-6 py-2.5 text-sm font-medium text-white hover:bg-primary-800 transition-colors duration-200">
-              Accéder à mon espace <ArrowRight className="size-4" />
-            </Link>
-          </div>
-          <div className="mt-8 rounded-lg bg-stone-50 p-6 text-left">
-            <h3 className="font-heading text-sm font-semibold text-stone-700">Prochaines étapes :</h3>
-            <ol className="mt-3 list-inside list-decimal space-y-1.5 text-sm text-stone-600">
-              <li>Personnalisez votre site vitrine depuis votre espace</li>
-              <li>Ajoutez vos informations de contact, horaires, services</li>
-              {selectedTier === 'rdv' && <li>Configurez vos disponibilités en ligne</li>}
-            </ol>
-          </div>
-        </div>
-      )}
-
-      {/* #3 — Formulaire de contact pour dossier/clinique */}
-      {step === 2 && isContact && selected && !contactSent && (
+      {/* Cabinet contact form */}
+      {isContact && !success && !contactSent && (
         <div className="mx-auto max-w-md">
-          <div className="mb-6 text-center">
-            <span className="inline-block rounded-full bg-primary-50 px-3 py-1 text-sm font-medium text-primary-700">
-              {selected.name} — {selected.slug === 'cabinet' ? cabinetPrice : selected.price} MAD/mois{selected.slug === 'cabinet' && doctorCount > 1 && ` (${doctorCount} médecins)`}
-            </span>
-            <span className="ml-2 inline-block rounded-full bg-stone-100 px-3 py-1 text-sm text-stone-600">
-              {specialtyLabel(selectedSpecialty)}
-            </span>
-          </div>
           <h2 className="font-heading text-xl font-bold text-stone-800 text-center">Demander une démo</h2>
           <p className="mt-2 text-sm text-stone-500 text-center">
-            Laissez-nous vos coordonnées, nous vous recontacterons sous 48h.
+            Laissez-nous vos coordonnées, nous vous recontactons sous 48h.
           </p>
           <form onSubmit={async (e) => {
             e.preventDefault(); setContactSending(true)
@@ -247,35 +261,29 @@ export default function OnboardingFlow() {
                 method: 'POST', headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                   name: contactName.trim(), phone: contactPhone.trim(),
-                  message: `Demande de démo — Formule ${selected.name} — Spécialité ${specialtyLabel(selectedSpecialty)} — Email : ${contactEmail.trim()}`,
+                  message: `Demande de démo — Formule ${selected?.name} — Spécialité ${specialtyLabel(selectedSpecialty)} — Email : ${contactEmail.trim()}`,
                 }),
               })
               setContactSent(true)
+              setSuccess({ domain: '', email: contactEmail })
             } catch {}
             setContactSending(false)
           }} className="mt-6 space-y-4">
             <input value={contactName} onChange={e => setContactName(e.target.value)}
-              placeholder="Votre nom" required
-              className="w-full rounded-lg border border-stone-300 bg-white px-4 py-2.5 text-sm focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none" />
+              placeholder="Votre nom" required className={inputClass} />
             <input value={contactPhone} onChange={e => setContactPhone(e.target.value)}
-              placeholder="Téléphone" type="tel" required
-              className="w-full rounded-lg border border-stone-300 bg-white px-4 py-2.5 text-sm focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none" />
+              placeholder="Téléphone" type="tel" required className={inputClass} />
             <input value={contactEmail} onChange={e => setContactEmail(e.target.value)}
-              placeholder="Email" type="email" required
-              className="w-full rounded-lg border border-stone-300 bg-white px-4 py-2.5 text-sm focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none" />
+              placeholder="Email" type="email" required className={inputClass} />
             <button type="submit" disabled={contactSending}
               className="w-full rounded-lg bg-primary-700 py-2.5 text-sm font-medium text-white hover:bg-primary-800 disabled:opacity-50">
               {contactSending ? 'Envoi…' : 'Envoyer ma demande'}
             </button>
           </form>
-          <button onClick={() => { setStep(0); setSelectedTier(null) }}
-            className="mt-4 w-full text-sm text-stone-500 hover:text-stone-700">
-            Choisir une autre formule
-          </button>
         </div>
       )}
 
-      {step === 2 && isContact && contactSent && (
+      {contactSent && isContact && success && !success.domain && (
         <div className="mx-auto max-w-lg text-center">
           <ClipboardList className="mx-auto size-16 text-primary-500" />
           <h2 className="mt-4 font-heading text-2xl font-bold text-stone-800">Demande envoyée</h2>
@@ -289,7 +297,7 @@ export default function OnboardingFlow() {
             En attendant, vous pouvez nous écrire à :{' '}
             <a href={`mailto:${SUPPORT_EMAIL}`} className="text-primary-600 hover:text-primary-700 underline">{SUPPORT_EMAIL}</a>
           </p>
-          <button onClick={() => { setStep(0); setSelectedTier(null); setContactSent(false) }}
+          <button onClick={handleChangePlan}
             className="mt-8 text-sm font-medium text-primary-600 hover:text-primary-700 transition-colors duration-200">
             Choisir une autre formule
           </button>
