@@ -1,14 +1,29 @@
 'use client'
 
 import { useState, FormEvent } from 'react'
-import { useRouter, Link } from '@/i18n/navigation'
-import { Activity, Check, ArrowLeft, ArrowRight, Eye, EyeOff, AlertCircle } from 'lucide-react'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { Link } from '@/i18n/navigation'
+import { Activity, Check, ArrowLeft, ArrowRight, Eye, EyeOff, AlertCircle, ChevronDown } from 'lucide-react'
+
+const DEMO_EMAIL = 'drdemo@gmail.com'
 
 export default function LoginPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const isDemo = searchParams.get('demo') === 'true' || (typeof window !== 'undefined' && window.location.hostname.startsWith('drdemo.'))
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const [showPwd, setShowPwd] = useState(false)
+  const [email, setEmail] = useState(isDemo ? DEMO_EMAIL : '')
+
+  // Demo request form
+  const [showDemoForm, setShowDemoForm] = useState(false)
+  const [demoName, setDemoName] = useState('')
+  const [demoEmail, setDemoEmail] = useState('')
+  const [demoMessage, setDemoMessage] = useState('')
+  const [demoSending, setDemoSending] = useState(false)
+  const [demoSent, setDemoSent] = useState(false)
+  const [demoError, setDemoError] = useState('')
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -16,7 +31,6 @@ export default function LoginPage() {
     setLoading(true)
 
     const form = new FormData(e.currentTarget)
-    const email = form.get('email') as string
     const password = form.get('password') as string
 
     const res = await fetch('/api/auth/login', {
@@ -32,6 +46,28 @@ export default function LoginPage() {
     }
 
     router.push('/dashboard')
+  }
+
+  const handleDemoRequest = async (e: FormEvent) => {
+    e.preventDefault()
+    setDemoError('')
+    setDemoSending(true)
+    try {
+      const res = await fetch('/api/demo/request', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: demoName.trim(), email: demoEmail.trim(), message: demoMessage.trim() }),
+      })
+      if (res.ok) {
+        setDemoSent(true)
+      } else {
+        const data = await res.json().catch(() => ({}))
+        setDemoError(data?.error || 'Erreur lors de l\'envoi. Réessayez.')
+      }
+    } catch {
+      setDemoError('Impossible de contacter le serveur.')
+    }
+    setDemoSending(false)
   }
 
   return (
@@ -93,7 +129,8 @@ export default function LoginPage() {
               <div className="input-wrap">
                 <input
                   id="email" name="email" type="email" required autoComplete="email"
-                  placeholder="votre@email.com"
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
                   className="w-full rounded-[11px] border border-stone-200 bg-white px-[14px] py-3 text-[.94rem] text-stone-800 placeholder:text-stone-400 focus:border-primary-500 focus:shadow-[0_0_0_3.5px_rgba(13,148,136,.14)] focus:outline-none transition-colors"
                 />
               </div>
@@ -126,6 +163,67 @@ export default function LoginPage() {
               {!loading && <ArrowRight className="size-[17px]" />}
             </button>
           </form>
+
+          {/* Demo access request */}
+          <div className="mt-6 border-t border-stone-200 pt-5">
+            {!demoSent ? (
+              <>
+                <button
+                  onClick={() => setShowDemoForm(!showDemoForm)}
+                  className="inline-flex items-center gap-1.5 text-[.85rem] font-semibold text-stone-600 hover:text-primary-700 transition-colors"
+                >
+                  <ChevronDown className={`size-3.5 transition-transform duration-200 ${showDemoForm ? 'rotate-180' : ''}`} />
+                  {isDemo ? "Vous n'avez pas le mot de passe ?" : "Demander un accès démo"}
+                </button>
+
+                {showDemoForm && (
+                  <form onSubmit={handleDemoRequest} className="mt-4 space-y-3">
+                    <input
+                      type="text"
+                      placeholder="Votre nom"
+                      value={demoName}
+                      onChange={e => setDemoName(e.target.value)}
+                      required
+                      className="w-full rounded-[11px] border border-stone-200 bg-white px-[14px] py-2.5 text-[.88rem] text-stone-800 placeholder:text-stone-400 focus:border-primary-500 focus:shadow-[0_0_0_3.5px_rgba(13,148,136,.14)] focus:outline-none transition-colors"
+                    />
+                    <input
+                      type="email"
+                      placeholder="Votre email professionnel"
+                      value={demoEmail}
+                      onChange={e => setDemoEmail(e.target.value)}
+                      required
+                      className="w-full rounded-[11px] border border-stone-200 bg-white px-[14px] py-2.5 text-[.88rem] text-stone-800 placeholder:text-stone-400 focus:border-primary-500 focus:shadow-[0_0_0_3.5px_rgba(13,148,136,.14)] focus:outline-none transition-colors"
+                    />
+                    <textarea
+                      placeholder="Message (optionnel)"
+                      value={demoMessage}
+                      onChange={e => setDemoMessage(e.target.value)}
+                      rows={2}
+                      className="w-full rounded-[11px] border border-stone-200 bg-white px-[14px] py-2.5 text-[.88rem] text-stone-800 placeholder:text-stone-400 focus:border-primary-500 focus:shadow-[0_0_0_3.5px_rgba(13,148,136,.14)] focus:outline-none transition-colors resize-none"
+                    />
+                    {demoError && (
+                      <p className="text-[.82rem] text-red-600 font-medium">{demoError}</p>
+                    )}
+                    <button
+                      type="submit"
+                      disabled={demoSending}
+                      className="w-full rounded-[11px] border border-primary-300 bg-white py-[11px] text-[.88rem] font-semibold text-primary-700 transition-colors hover:bg-primary-50 disabled:opacity-50"
+                    >
+                      {demoSending ? 'Envoi…' : 'Demander l\'accès'}
+                    </button>
+                  </form>
+                )}
+              </>
+            ) : (
+              <div className="rounded-xl bg-primary-50 border border-primary-200 p-4 text-center">
+                <Check className="size-8 text-primary-500 mx-auto mb-2" />
+                <p className="text-sm font-semibold text-primary-800">Demande envoyée</p>
+                <p className="text-xs text-primary-600 mt-1">
+                  Vous recevrez les identifiants par email après validation.
+                </p>
+              </div>
+            )}
+          </div>
 
           <p className="mt-[36px] text-center text-[.78rem] text-stone-500">&copy; {new Date().getFullYear()} Dr Guinane Aicha</p>
         </div>

@@ -4,8 +4,8 @@ import { useState, useEffect, useRef } from 'react'
 import { useTranslations } from 'next-intl'
 import { Link } from '@/i18n/navigation'
 import {
-  Activity, Check, ArrowRight, Copy, ChevronDown, Lock, Globe, Calendar, Shield,
-  FileText, Users, BarChart3, Play, Menu, X
+  Activity, Check, ArrowRight, ChevronDown, Lock, Globe, Calendar, Shield,
+  FileText, Users, BarChart3, Menu, X
 } from 'lucide-react'
 import { useScrollDirection } from '@/hooks/use-scroll-direction'
 import LanguageSwitcher from '@/components/layout/LanguageSwitcher'
@@ -44,17 +44,6 @@ const steps = [
 const faqs = ['faq_1', 'faq_2', 'faq_3', 'faq_4', 'faq_5', 'faq_6'] as const
 
 const DEMO_URL = `https://drdemo.${SITE_DOMAIN}/login`
-
-function CopyButton({ text }: { text: string }) {
-  const [copied, setCopied] = useState(false)
-  return (
-    <button onClick={() => { navigator.clipboard.writeText(text); setCopied(true); setTimeout(() => setCopied(false), 1600) }}
-      className="flex items-center gap-1.5 rounded-lg border border-stone-200 bg-white px-3 py-2 text-[.82rem] font-bold text-primary-700 transition-colors hover:bg-primary-50 hover:border-primary-500 shrink-0">
-      {copied ? <Check className="size-3.5 text-green-600" /> : <Copy className="size-3.5" />}
-      {copied ? 'Copié' : 'Copier'}
-    </button>
-  )
-}
 
 export default function LandingPage() {
   const t = useTranslations('landing')
@@ -304,38 +293,14 @@ export default function LandingPage() {
         {/* ========== DEMO ========== */}
         <section id="demo" className="border-y border-stone-200/50 bg-white py-[104px] max-md:py-[68px]">
           <div className="container mx-auto max-w-[1160px] px-6">
-            <div className="grid items-center gap-[50px]" style={{ gridTemplateColumns: '1.1fr 0.9fr' }}>
-              <div className="reveal">
-                <span className="inline-flex items-center gap-2 rounded-full bg-primary-50 px-4 py-2 text-[.82rem] font-bold text-primary-700 tracking-wide mb-4">{t('demo_eyebrow')}</span>
-                <h2 className="text-[clamp(1.6rem,3vw,2.1rem)] font-heading font-extrabold text-[#2A241C] mb-3.5">{t('demo_title')}</h2>
-                <p className="text-[1.02rem] text-[#8A8175] max-w-[480px] mb-[26px]">{t('demo_sub')}</p>
-                <div className="rounded-[20px] border border-stone-200/50 bg-cream-100 p-[22px_24px]">
-                  <div className="flex items-center justify-between py-[11px]">
-                    <div>
-                      <p className="text-[.78rem] font-bold text-[#B9B2A4] uppercase tracking-wider mb-0.5">{t('demo_email_label')}</p>
-                      <p className="font-mono font-semibold text-[.98rem] text-[#2A241C]">drdemo@gmail.com</p>
-                    </div>
-                    <CopyButton text="drdemo@gmail.com" />
-                  </div>
-                  <div className="flex items-center justify-between py-[11px] border-t border-stone-200/50">
-                    <div>
-                      <p className="text-[.78rem] font-bold text-[#B9B2A4] uppercase tracking-wider mb-0.5">{t('demo_pwd_label')}</p>
-                      <p className="font-mono font-semibold text-[.98rem] text-[#2A241C]">demo1234</p>
-                    </div>
-                    <CopyButton text="demo1234" />
-                  </div>
-                </div>
-              </div>
-              <div className="reveal rounded-[28px] border border-stone-200/50 bg-[#FBF3DF] p-[44px_30px] text-center">
-                <Play className="size-[74px] text-primary-500 mx-auto mb-[18px]" />
-                <h4 className="text-[1.05rem] font-heading font-bold text-[#2A241C] mb-2">{t('demo_card_title')}</h4>
-                <p className="text-[.88rem] text-[#8A8175] mb-[22px]">{t('demo_card_sub')}</p>
-                <a href={DEMO_URL} target="_blank" rel="noopener"
-                  className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-cta-600 px-7 py-3.5 text-[.97rem] font-bold text-white shadow-sm transition-all hover:bg-cta-700">
-                  {t('demo_card_cta')} <ArrowRight className="size-[18px]" />
-                </a>
-                <p className="text-[.82rem] text-[#B9B2A4] mt-4">{`drdemo.${SITE_DOMAIN}/login`}</p>
-              </div>
+            <div className="reveal max-w-[640px] mx-auto text-center">
+              <span className="inline-flex items-center gap-2 rounded-full bg-primary-50 px-4 py-2 text-[.82rem] font-bold text-primary-700 tracking-wide mb-4">{t('demo_eyebrow')}</span>
+              <h2 className="text-[clamp(1.6rem,3vw,2.1rem)] font-heading font-extrabold text-[#2A241C] mb-3.5">{t('demo_title')}</h2>
+              <p className="text-[1.02rem] text-[#8A8175] max-w-[480px] mx-auto mb-[26px]">{t('demo_sub')}</p>
+              <a href={DEMO_URL} target="_blank" rel="noopener"
+                className="inline-flex items-center gap-2 rounded-full bg-cta-600 px-7 py-3.5 text-[.97rem] font-bold text-white shadow-sm transition-all hover:bg-cta-700 hover:-translate-y-0.5 hover:shadow-md">
+                {t('demo_card_cta')} <ArrowRight className="size-[18px]" />
+              </a>
             </div>
           </div>
         </section>
