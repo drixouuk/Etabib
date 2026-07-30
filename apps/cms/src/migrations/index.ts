@@ -20,6 +20,7 @@ import * as migration_20260723_fix_patients_rels from './20260723_fix_patients_r
 import * as migration_20260727_103522 from './20260727_103522';
 import * as migration_20260728_123232 from './20260728_123232';
 import * as migration_20260729_add_calbookings_unique_slot from './20260729_add_calbookings_unique_slot';
+import * as migration_20260730_211714 from './20260730_211714';
 
 export const migrations = [
   {
@@ -125,11 +126,16 @@ export const migrations = [
   {
     up: migration_20260728_123232.up,
     down: migration_20260728_123232.down,
-    name: '20260728_123232'
+    name: '20260728_123232',
   },
   {
     up: migration_20260729_add_calbookings_unique_slot.up,
     down: migration_20260729_add_calbookings_unique_slot.down,
-    name: '20260729_add_calbookings_unique_slot'
+    name: '20260729_add_calbookings_unique_slot',
+  },
+  {
+    up: migration_20260730_211714.up,
+    down: migration_20260730_211714.down,
+    name: '20260730_211714'
   },
 ];
