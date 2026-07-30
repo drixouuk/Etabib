@@ -8,11 +8,13 @@ type Consultation = {
   id: string
   date: string
   motif?: string | null
+  examenClinique?: string | null
   practitioner: { email?: string; name?: string }
   poids?: number | null
   taille?: number | null
   perimetreCranien?: number | null
   diagnostic?: string | null
+  codeActe?: string | null
 }
 
 type Props = {
@@ -21,19 +23,20 @@ type Props = {
   isPediatrie?: boolean
   doctorInfo?: DoctorInfo
   patientInfo?: PatientInfo
+  editingConsultation?: Consultation | null
+  onClose: () => void
 }
 
-export default function ConsultationForm({ patientId, consultations, isPediatrie, doctorInfo, patientInfo }: Props) {
+export default function ConsultationForm({ patientId, consultations, isPediatrie, doctorInfo, patientInfo, editingConsultation, onClose }: Props) {
   const router = useRouter()
-  const [showForm, setShowForm] = useState(false)
   const [saving, setSaving] = useState(false)
-  const [motif, setMotif] = useState('')
-  const [examenClinique, setExamenClinique] = useState('')
-  const [poids, setPoids] = useState('')
-  const [taille, setTaille] = useState('')
-  const [perimetreCranien, setPerimetreCranien] = useState('')
-  const [diagnostic, setDiagnostic] = useState('')
-  const [codeActe, setCodeActe] = useState('')
+  const [motif, setMotif] = useState(editingConsultation?.motif ?? '')
+  const [examenClinique, setExamenClinique] = useState(editingConsultation?.examenClinique ?? '')
+  const [poids, setPoids] = useState(editingConsultation?.poids ? String(editingConsultation.poids) : '')
+  const [taille, setTaille] = useState(editingConsultation?.taille ? String(editingConsultation.taille) : '')
+  const [perimetreCranien, setPerimetreCranien] = useState(editingConsultation?.perimetreCranien ? String(editingConsultation.perimetreCranien) : '')
+  const [diagnostic, setDiagnostic] = useState(editingConsultation?.diagnostic ?? '')
+  const [codeActe, setCodeActe] = useState(editingConsultation?.codeActe ?? '')
   const [error, setError] = useState('')
   const [savingTemplate, setSavingTemplate] = useState(false)
   const [showTemplateSave, setShowTemplateSave] = useState(false)
@@ -88,21 +91,19 @@ export default function ConsultationForm({ patientId, consultations, isPediatrie
       codeActe: codeActe || undefined,
     }
 
-    const res = await fetch('/api/cms-proxy/consultations', {
-      method: 'POST',
+    const url = editingConsultation
+      ? `/api/cms-proxy/consultations/${editingConsultation.id}`
+      : '/api/cms-proxy/consultations'
+    const method = editingConsultation ? 'PATCH' : 'POST'
+
+    const res = await fetch(url, {
+      method,
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
     })
 
     if (res.ok) {
-      setShowForm(false)
-      setMotif('')
-      setExamenClinique('')
-      setPoids('')
-      setTaille('')
-      setPerimetreCranien('')
-      setDiagnostic('')
-      setCodeActe('')
+      onClose()
       router.refresh()
     } else {
       setError("Erreur lors de l'enregistrement. Veuillez réessayer.")
@@ -113,26 +114,11 @@ export default function ConsultationForm({ patientId, consultations, isPediatrie
   const inputClass = 'w-full rounded-lg border border-stone-300 bg-white px-4 py-2.5 text-sm text-stone-800 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none'
 
   return (
-    <div className="rounded-xl border border-warm bg-white shadow-sm">
-      <div className="flex items-center justify-between border-b border-stone-100 px-4 py-3">
-        <div className="flex items-center gap-2">
-          <h2 className="font-heading text-lg font-semibold text-stone-800">Consultations</h2>
-          {consultations.length > 0 && (
-            <span className="text-xs text-stone-600">({consultations.length})</span>
-          )}
-        </div>
-        {!showForm && (
-          <button
-            onClick={() => setShowForm(true)}
-            className="rounded-lg bg-cta-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-cta-700"
-          >
-            Nouvelle consultation
-          </button>
-        )}
-      </div>
-
-      {showForm && (
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4 p-4">
+    <div className="flex flex-col gap-4 p-4">
+      <h3 className="font-heading text-base font-semibold text-stone-800">
+        {editingConsultation ? 'Modifier la consultation' : 'Nouvelle consultation'}
+      </h3>
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           {templates.length > 0 && (
             <div className="flex items-center gap-2">
               <select
@@ -189,7 +175,7 @@ export default function ConsultationForm({ patientId, consultations, isPediatrie
           </div>
           <div className="flex flex-wrap items-center gap-3">
             <button type="submit" disabled={saving} className="rounded-lg bg-cta-600 px-4 py-2 text-sm font-medium text-white hover:bg-cta-700 disabled:opacity-50">
-              {saving ? 'Enregistrement…' : 'Enregistrer la consultation'}
+              {saving ? 'Enregistrement…' : editingConsultation ? 'Modifier la consultation' : 'Enregistrer la consultation'}
             </button>
             {!showTemplateSave ? (
               <button type="button" onClick={() => setShowTemplateSave(true)}
@@ -211,14 +197,12 @@ export default function ConsultationForm({ patientId, consultations, isPediatrie
                 </button>
               </div>
             )}
-            <button type="button" onClick={() => setShowForm(false)} className="text-sm text-stone-600 hover:text-stone-800">
+            <button type="button" onClick={onClose} className="text-sm text-stone-600 hover:text-stone-800">
               Annuler
             </button>
           </div>
           {error && <p className="text-sm text-red-600">{error}</p>}
         </form>
-      )}
-
     </div>
   )
 }

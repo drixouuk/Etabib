@@ -18,9 +18,10 @@ type Props = {
   consultations: Consultation[]
   doctorInfo?: DoctorInfo
   patientInfo?: PatientInfo
+  onEdit?: (consultation: Consultation) => void
 }
 
-export default function ConsultationHistory({ consultations, doctorInfo, patientInfo }: Props) {
+export default function ConsultationHistory({ consultations, doctorInfo, patientInfo, onEdit }: Props) {
   const [filterQuery, setFilterQuery] = useState('')
   const [filterDateFrom, setFilterDateFrom] = useState('')
   const [filterDateTo, setFilterDateTo] = useState('')
@@ -82,7 +83,10 @@ export default function ConsultationHistory({ consultations, doctorInfo, patient
           {filtered.map(c => (
             <div key={c.id} className="px-4 py-3">
               <div className="flex items-baseline justify-between">
-                <span className="text-sm font-medium text-stone-800">
+                <span
+                  className={`text-sm font-medium ${onEdit ? 'cursor-pointer text-primary-700 hover:text-primary-600' : 'text-stone-800'}`}
+                  onClick={() => onEdit?.(c)}
+                >
                   {new Date(c.date).toLocaleDateString('fr-FR')}
                 </span>
                 <span className="flex items-center gap-2">

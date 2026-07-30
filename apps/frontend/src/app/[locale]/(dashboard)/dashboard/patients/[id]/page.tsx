@@ -7,10 +7,7 @@ import { Link } from '@/i18n/navigation'
 import { ArrowLeft, AlertCircle } from 'lucide-react'
 import PatientClinicalFields from './PatientClinicalFields'
 import AddToQueueButton from './AddToQueueButton'
-import ConsultationForm from './ConsultationForm'
-import ConsultationHistory from './ConsultationHistory'
-import PrescriptionForm from './PrescriptionForm'
-import PrescriptionHistory from './PrescriptionHistory'
+import ConsultationsTabContent from './ConsultationsTabContent'
 import DocumentUpload from './DocumentUpload'
 import GrowthChart from './GrowthChart'
 import VaccinationRecord from '@/components/dashboard/VaccinationRecord'
@@ -18,7 +15,7 @@ import ReferringPractitionersWidget from './ReferringPractitionersWidget'
 import SharePatientWidget from './SharePatientWidget'
 import PatientAvatar from '@/components/dashboard/PatientAvatar'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
+
 
 import { computeAge } from '@/lib/age'
 import type { DoctorInfo, PatientInfo } from '@/lib/generate-pdf'
@@ -307,47 +304,15 @@ export default async function PatientDetailPage({ params }: Props) {
 
         <TabsContent value="consultations">
           {canViewClinical && (
-            <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-              <div className="rounded-xl border border-warm bg-white shadow-sm">
-                <div className="flex items-center justify-between border-b border-stone-100 px-4 py-3">
-                  <div className="flex items-center gap-2">
-                    <h2 className="font-heading text-lg font-semibold text-stone-800">Consultations</h2>
-                    {consultations.length > 0 && (
-                      <span className="text-xs text-stone-600">({consultations.length})</span>
-                    )}
-                  </div>
-                  <Sheet>
-                    <SheetTrigger className="rounded-lg bg-cta-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-cta-700">
-                      + Nouvelle consultation
-                    </SheetTrigger>
-                    <SheetContent side="right" className="w-full sm:max-w-[640px] sm:min-w-[420px] overflow-y-auto">
-                      <ConsultationForm patientId={patient.id} consultations={consultations} isPediatrie={isPediatrie} doctorInfo={doctorInfo} patientInfo={patientInfo} />
-                    </SheetContent>
-                  </Sheet>
-                </div>
-                <ConsultationHistory consultations={consultations} doctorInfo={doctorInfo} patientInfo={patientInfo} />
-              </div>
-
-              <div className="rounded-xl border border-warm bg-white shadow-sm">
-                <div className="flex items-center justify-between border-b border-stone-100 px-4 py-3">
-                  <div className="flex items-center gap-2">
-                    <h2 className="font-heading text-lg font-semibold text-stone-800">Ordonnances</h2>
-                    {prescriptions.length > 0 && (
-                      <span className="text-xs text-stone-600">({prescriptions.length})</span>
-                    )}
-                  </div>
-                  <Sheet>
-                    <SheetTrigger className="rounded-lg bg-cta-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-cta-700">
-                      + Nouvelle ordonnance
-                    </SheetTrigger>
-                    <SheetContent side="right" className="w-full sm:max-w-[640px] sm:min-w-[420px] overflow-y-auto">
-                      <PrescriptionForm patientId={patient.id} prescriptions={prescriptions} consultations={consultations} tenantId={tenantId} doctorInfo={doctorInfo} patientInfo={patientInfo} />
-                    </SheetContent>
-                  </Sheet>
-                </div>
-                <PrescriptionHistory prescriptions={prescriptions} doctorInfo={doctorInfo} patientInfo={patientInfo} />
-              </div>
-            </div>
+            <ConsultationsTabContent
+              patientId={patient.id}
+              consultations={consultations}
+              prescriptions={prescriptions}
+              isPediatrie={isPediatrie}
+              tenantId={tenantId}
+              doctorInfo={doctorInfo}
+              patientInfo={patientInfo}
+            />
           )}
         </TabsContent>
 

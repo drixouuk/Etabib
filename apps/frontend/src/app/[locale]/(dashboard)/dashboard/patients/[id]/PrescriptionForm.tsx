@@ -45,16 +45,19 @@ type Props = {
   tenantId?: string
   doctorInfo?: DoctorInfo
   patientInfo?: PatientInfo
+  editingPrescription?: Prescription | null
+  onClose: () => void
 }
 
-export default function PrescriptionForm({ patientId, prescriptions, consultations, tenantId, doctorInfo, patientInfo }: Props) {
+export default function PrescriptionForm({ patientId, prescriptions, consultations, tenantId, doctorInfo, patientInfo, editingPrescription, onClose }: Props) {
   const router = useRouter()
-  const [showForm, setShowForm] = useState(false)
   const [saving, setSaving] = useState(false)
-  const [medications, setMedications] = useState<Medication[]>([
-    { nom: '', dci: '', posologie: '', duree: '' },
-  ])
-  const [notes, setNotes] = useState('')
+  const [medications, setMedications] = useState<Medication[]>(
+    editingPrescription?.medications?.length
+      ? editingPrescription.medications
+      : [{ nom: '', dci: '', posologie: '', duree: '' }],
+  )
+  const [notes, setNotes] = useState(editingPrescription?.notes ?? '')
   const [consultationId, setConsultationId] = useState(
     consultations.length > 0 ? consultations[0].id : '',
   )
@@ -141,16 +144,19 @@ export default function PrescriptionForm({ patientId, prescriptions, consultatio
       body.consultation = consultationId
     }
 
-    const res = await fetch('/api/cms-proxy/prescriptions', {
-      method: 'POST',
+    const url = editingPrescription
+      ? `/api/cms-proxy/prescriptions/${editingPrescription.id}`
+      : '/api/cms-proxy/prescriptions'
+    const method = editingPrescription ? 'PATCH' : 'POST'
+
+    const res = await fetch(url, {
+      method,
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
     })
 
     if (res.ok) {
-      setShowForm(false)
-      setMedications([{ nom: '', dci: '', posologie: '', duree: '' }])
-      setNotes('')
+      onClose()
       router.refresh()
     } else {
       setError("Erreur lors de l'enregistrement. Veuillez réessayer.")
@@ -161,26 +167,11 @@ export default function PrescriptionForm({ patientId, prescriptions, consultatio
   const inputClass = 'w-full rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm text-stone-800 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none'
 
   return (
-    <div className="rounded-xl border border-warm bg-white shadow-sm">
-      <div className="flex items-center justify-between border-b border-stone-100 px-4 py-3">
-        <div className="flex items-center gap-2">
-          <h2 className="font-heading text-lg font-semibold text-stone-800">Ordonnances</h2>
-          {prescriptions.length > 0 && (
-            <span className="text-xs text-stone-600">({prescriptions.length})</span>
-          )}
-        </div>
-        {!showForm && (
-          <button
-            onClick={() => setShowForm(true)}
-            className="rounded-lg bg-cta-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-cta-700"
-          >
-            Nouvelle ordonnance
-          </button>
-        )}
-      </div>
-
-      {showForm && (
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4 p-4">
+    <div className="flex flex-col gap-4 p-4">
+      <h3 className="font-heading text-base font-semibold text-stone-800">
+        {editingPrescription ? "Modifier l'ordonnance" : 'Nouvelle ordonnance'}
+      </h3>
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           {templates.length > 0 && (
             <div className="flex items-center gap-2">
               <select
@@ -290,7 +281,7 @@ export default function PrescriptionForm({ patientId, prescriptions, consultatio
 
           <div className="flex flex-wrap items-center gap-3">
             <button type="submit" disabled={saving} className="rounded-lg bg-cta-600 px-4 py-2 text-sm font-medium text-white hover:bg-cta-700 disabled:opacity-50">
-              {saving ? 'Enregistrement…' : 'Enregistrer l\'ordonnance'}
+              {saving ? 'Enregistrement…' : editingPrescription ? "Modifier l'ordonnance" : "Enregistrer l'ordonnance"}
             </button>
             {!showTemplateSave ? (
               <button type="button" onClick={() => setShowTemplateSave(true)}
@@ -312,12 +303,10 @@ export default function PrescriptionForm({ patientId, prescriptions, consultatio
                 </button>
               </div>
             )}
-            <button type="button" onClick={() => setShowForm(false)} className="text-sm text-stone-600 hover:text-stone-800">Annuler</button>
+            <button type="button" onClick={onClose} className="text-sm text-stone-600 hover:text-stone-800">Annuler</button>
           </div>
           {error && <p className="text-sm text-red-600">{error}</p>}
         </form>
-      )}
-
     </div>
   )
 }
