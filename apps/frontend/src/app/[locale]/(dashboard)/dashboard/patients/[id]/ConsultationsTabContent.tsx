@@ -102,7 +102,7 @@ export default function ConsultationsTabContent({
             <SheetTrigger onClick={openNewConsultation} className="rounded-lg bg-cta-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-cta-700">
               + Nouvelle consultation
             </SheetTrigger>
-            <SheetContent side="right" className="w-full sm:max-w-[85vw] overflow-y-auto">
+            <SheetContent side="right" className="w-full sm:!max-w-[50vw] overflow-y-auto">
               <ConsultationForm
                 patientId={patientId}
                 consultations={consultations}
@@ -135,7 +135,7 @@ export default function ConsultationsTabContent({
             <SheetTrigger onClick={openNewPrescription} className="rounded-lg bg-cta-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-cta-700">
               + Nouvelle ordonnance
             </SheetTrigger>
-            <SheetContent side="right" className="w-full sm:max-w-[85vw] overflow-y-auto">
+            <SheetContent side="right" className="w-full sm:!max-w-[50vw] overflow-y-auto">
               <PrescriptionForm
                 patientId={patientId}
                 prescriptions={prescriptions}
