@@ -5,7 +5,6 @@ import { useSearchParams, useRouter } from 'next/navigation'
 import { useTranslations } from 'next-intl'
 import { Link } from '@/i18n/navigation'
 import { ArrowRight, CheckCircle, Minus, Plus, ArrowLeft } from 'lucide-react'
-import TierCard from './TierCard'
 import SignupForm from './SignupForm'
 
 import { calculateCabinetPrice } from '@/lib/pricing'
@@ -47,17 +46,10 @@ export default function OnboardingFlow() {
   const cabinetPrice = selectedTier === 'cabinet' ? calculateCabinetPrice(doctorCount) : 0
   const selected = tiers.find((t) => t.slug === selectedTier)
 
-  const handleTierClick = (slug: string) => {
-    setSelectedTier(slug)
-    setDoctorCount(1)
-    setSuccess(null)
-    router.push(`/onboarding?plan=${slug}`)
-  }
-
   const handleChangePlan = () => {
     setSelectedTier(null)
     setSuccess(null)
-    router.push('/onboarding')
+    router.push('/landing')
   }
 
   const handleSignupSuccess = (data: SuccessData) => {
@@ -91,25 +83,7 @@ export default function OnboardingFlow() {
   }
 
   if (!selectedTier) {
-    return (
-      <div>
-        <div className="mb-8 text-center">
-          <h1 className="font-heading text-3xl font-bold text-stone-800">{t('title')}</h1>
-          <p className="mt-2 text-stone-500">{t('subtitle')}</p>
-        </div>
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
-          {tiers.map((tier) => (
-            <TierCard
-              key={tier.slug} slug={tier.slug} name={tier.name} price={tier.price}
-              features={tier.features} badge={tier.badge}
-              ctaLabel={tier.slug === 'cabinet' ? t('ctaCabinet') : t('ctaVitrine')}
-              ctaVariant={tier.slug === 'cabinet' ? 'outline' : 'primary'}
-              isActive={false} onClick={() => handleTierClick(tier.slug)}
-            />
-          ))}
-        </div>
-      </div>
-    )
+    return null
   }
 
   return (
