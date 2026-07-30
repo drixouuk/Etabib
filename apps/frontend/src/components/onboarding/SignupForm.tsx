@@ -36,6 +36,17 @@ export default function SignupForm({ tier, specialty, doctorCount, onSuccess, on
   const [errors, setErrors] = useState<FieldErrors>({})
   const [apiError, setApiError] = useState('')
   const [saving, setSaving] = useState(false)
+  const [subdomainStatus, setSubdomainStatus] = useState<'idle' | 'checking' | 'available' | 'unavailable'>('idle')
+
+  const checkSubdomain = async (value: string) => {
+    if (value.length < 3) { setSubdomainStatus('idle'); return }
+    setSubdomainStatus('checking')
+    try {
+      const res = await fetch(`/api/onboarding/check-subdomain?domain=${encodeURIComponent(value)}`)
+      const { available } = await res.json()
+      setSubdomainStatus(available ? 'available' : 'unavailable')
+    } catch { setSubdomainStatus('idle') }
+  }
 
   const validate = (): boolean => {
     const e: FieldErrors = {}
@@ -133,10 +144,13 @@ export default function SignupForm({ tier, specialty, doctorCount, onSuccess, on
           Sous-domaine * <span className="text-stone-400 font-normal">{BASE_DOMAIN}</span>
         </label>
         <div className="flex items-center gap-2">
-          <input id="onb-subdomain" value={form.subdomain} onChange={(e) => setForm({ ...form, subdomain: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '') })} className={inputClass} placeholder="mon-cabinet" />
+          <input id="onb-subdomain" value={form.subdomain} onChange={(e) => { setForm({ ...form, subdomain: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '') }); setSubdomainStatus('idle') }} onBlur={() => checkSubdomain(form.subdomain)} className={inputClass} placeholder="mon-cabinet" />
           <span className="whitespace-nowrap text-sm text-stone-500">{BASE_DOMAIN}</span>
         </div>
         {errors.subdomain && <p className="mt-0.5 text-xs text-red-500">{errors.subdomain}</p>}
+        {subdomainStatus === 'checking' && <p className="mt-0.5 text-xs text-stone-500">Vérification…</p>}
+        {subdomainStatus === 'available' && <p className="mt-0.5 text-xs text-green-600">Disponible ✓</p>}
+        {subdomainStatus === 'unavailable' && <p className="mt-0.5 text-xs text-red-500">Indisponible</p>}
       </div>
 
       <div>
