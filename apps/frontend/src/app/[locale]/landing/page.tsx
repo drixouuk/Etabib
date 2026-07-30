@@ -7,6 +7,7 @@ import {
   FileText, Users, BarChart3, Play, Menu, X
 } from 'lucide-react'
 import { useScrollDirection } from '@/hooks/use-scroll-direction'
+import LanguageSwitcher from '@/components/layout/LanguageSwitcher'
 import { BRAND, SITE_DOMAIN, SUPPORT_EMAIL } from '@/lib/brand'
 
 const trustItems = [
@@ -111,6 +112,7 @@ export default function LandingPage() {
               className="hidden md:inline-flex items-center gap-2 rounded-full bg-cta-500 px-5 py-2.5 text-[.88rem] font-bold text-white shadow-sm transition-all hover:bg-cta-600 hover:-translate-y-0.5 hover:shadow-md">
               {t('header_cta')}
             </a>
+            <LanguageSwitcher />
             <button onClick={() => setMobileOpen(!mobileOpen)} className="flex size-9 items-center justify-center md:hidden" aria-label="Menu">
               {mobileOpen ? <X className="size-[22px]" /> : <Menu className="size-[22px]" />}
             </button>
