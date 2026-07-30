@@ -96,6 +96,24 @@ export const Tenants: CollectionConfig = {
           label: 'Nombre max de secrétaires (optionnel)',
           admin: { description: 'Vide = illimité. Limite future sans re-développement.' },
         },
+        {
+          name: 'calendarToken',
+          type: 'text',
+          admin: { readOnly: true, hidden: true },
+          label: 'Token calendrier iCal',
+        },
+        {
+          name: 'verificationToken',
+          type: 'text',
+          admin: { readOnly: true, hidden: true },
+          label: 'Token de vérification email',
+        },
+        {
+          name: 'emailVerified',
+          type: 'checkbox',
+          defaultValue: false,
+          admin: { readOnly: true, hidden: true },
+        },
       ],
     },
     {
