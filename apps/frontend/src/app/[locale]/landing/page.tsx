@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { useTranslations } from 'next-intl'
+import { Link } from '@/i18n/navigation'
 import {
   Activity, Check, ArrowRight, Copy, ChevronDown, Lock, Globe, Calendar, Shield,
   FileText, Users, BarChart3, Play, Menu, X
@@ -362,7 +363,7 @@ export default function LandingPage() {
                     </li>
                   ))}
                 </ul>
-                <a href="/fr/inscription" className="inline-flex w-full items-center justify-center rounded-full border border-stone-200/50 bg-transparent px-6 py-3 text-[.97rem] font-bold text-[#2A241C] transition-all hover:border-primary-500 hover:text-primary-700 hover:bg-white">{t('price_cta_vitrine')}</a>
+                <Link href="/onboarding?plan=vitrine" className="inline-flex w-full items-center justify-center rounded-full border border-stone-200/50 bg-transparent px-6 py-3 text-[.97rem] font-bold text-[#2A241C] transition-all hover:border-primary-500 hover:text-primary-700 hover:bg-white">{t('price_cta_vitrine')}</Link>
               </div>
               {/* RDV */}
               <div className="rounded-[28px] border border-stone-200/50 bg-white p-[34px_28px] flex flex-col">
@@ -379,7 +380,7 @@ export default function LandingPage() {
                     </li>
                   ))}
                 </ul>
-                <a href="/fr/inscription" className="inline-flex w-full items-center justify-center rounded-full border border-stone-200/50 bg-transparent px-6 py-3 text-[.97rem] font-bold text-[#2A241C] transition-all hover:border-primary-500 hover:text-primary-700 hover:bg-white">{t('price_cta_rdv')}</a>
+                <Link href="/onboarding?plan=rdv" className="inline-flex w-full items-center justify-center rounded-full border border-stone-200/50 bg-transparent px-6 py-3 text-[.97rem] font-bold text-[#2A241C] transition-all hover:border-primary-500 hover:text-primary-700 hover:bg-white">{t('price_cta_rdv')}</Link>
               </div>
               {/* Cabinet — featured */}
               <div className="rounded-[28px] border-2 border-primary-500 bg-white p-[34px_28px] flex flex-col shadow-lg relative scale-[1.03] max-md:scale-100">
@@ -397,7 +398,16 @@ export default function LandingPage() {
                     </li>
                   ))}
                 </ul>
-                <a href={DEMO_URL} target="_blank" rel="noopener" className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-cta-600 px-6 py-3 text-[.97rem] font-bold text-white shadow-sm transition-all hover:bg-cta-700">{t('price_cta_cabinet')} <ArrowRight className="size-[18px]" /></a>
+                <div className="flex flex-col gap-2.5">
+                  <Link href="/onboarding?plan=cabinet"
+                    className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-cta-600 px-6 py-3 text-[.97rem] font-bold text-white shadow-sm transition-all hover:bg-cta-700">
+                    {t('price_cta_cabinet')} <ArrowRight className="size-[18px]" />
+                  </Link>
+                  <a href={DEMO_URL} target="_blank" rel="noopener"
+                    className="inline-flex w-full items-center justify-center rounded-full border border-stone-200/50 bg-transparent px-6 py-3 text-[.97rem] font-bold text-[#2A241C] transition-all hover:border-primary-500 hover:text-primary-700 hover:bg-white">
+                    {t('price_cta_demo')}
+                  </a>
+                </div>
               </div>
             </div>
             <p className="text-center text-[.85rem] text-[#B9B2A4] mt-[30px]">{t('price_fineprint')}</p>
