@@ -18,9 +18,17 @@ type Props = {
   initialBookings: CalBooking[]
 }
 
+const SCHEDULE_X_LOCALE: Record<string, string> = {
+  fr: 'fr-FR',
+  en: 'en-US',
+  ar: 'ar-SA',
+  tzm: 'fr-FR',
+}
+
 export default function RendezVousCalendarClient({ initialBookings }: Props) {
-  const locale = useLocale()
-  const isRTL = locale === 'ar'
+  const rawLocale = useLocale()
+  const isRTL = rawLocale === 'ar'
+  const locale = SCHEDULE_X_LOCALE[rawLocale] || 'fr-FR'
   const [events, setEvents] = useState(
     initialBookings.map(b => ({
       id: b.id,
