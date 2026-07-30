@@ -39,5 +39,16 @@ export async function POST(req: NextRequest) {
   })
   if (!patchRes.ok) return NextResponse.json({ error: 'Erreur mise à jour' }, { status: 500 })
 
+  if (targetTier !== 'vitrine' && (currentTier === 'vitrine' || currentTier === undefined)) {
+    const days = ['1', '2', '3', '4', '5', '6']
+    for (const dayOfWeek of days) {
+      await fetch(`${CMS_URL}/api/availability-slots`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ tenant: tid, dayOfWeek, startTime: '09:00', endTime: '17:00', durationMinutes: 30, bufferMinutes: 15, isActive: true }),
+      })
+    }
+  }
+
   return NextResponse.json({ success: true, tier: targetTier })
 }

@@ -44,10 +44,10 @@ export default function SidebarNav({ items, adminItems, onNavigate }: Props) {
             onClick={onNavigate}
             className={`relative z-10 flex items-center gap-[11px] rounded-[10px] px-3 py-[10px] text-[13.5px] font-medium transition-colors duration-200 ${
               item.disabled
-                ? 'pointer-events-none text-[#2A241C]-softer'
+                ? 'pointer-events-none text-stone-400'
                 : active
                   ? 'text-primary-700 font-semibold'
-                  : 'text-[#2A241C]-soft hover:text-[#2A241C]'
+                  : 'text-stone-600 hover:text-stone-800'
             }`}
             aria-disabled={item.disabled}
             tabIndex={item.disabled ? -1 : undefined}
@@ -59,7 +59,7 @@ export default function SidebarNav({ items, adminItems, onNavigate }: Props) {
       })}
       {adminItems.length > 0 && (
         <>
-          <div className="my-2 border-t border-teal/15" />
+          <div className="my-2 border-t border-primary-600/15" />
           {adminItems.map((item) => {
             const active = isActive(item.href, pathname)
             return (
@@ -68,7 +68,7 @@ export default function SidebarNav({ items, adminItems, onNavigate }: Props) {
                 href={item.href}
                 onClick={onNavigate}
                 className={`relative z-10 flex items-center gap-[11px] rounded-[10px] px-3 py-[10px] text-[13.5px] font-medium transition-colors duration-200 ${
-                  active ? 'text-primary-700 font-semibold' : 'text-[#2A241C]-soft hover:text-[#2A241C]'
+                  active ? 'text-primary-700 font-semibold' : 'text-stone-600 hover:text-stone-800'
                 }`}
               >
                 {item.icon}

@@ -57,11 +57,11 @@ export default function Sidebar({ user, tenant, onNavigate }: Props) {
 
   const adminItems: NavItem[] = []
 
-  if (user.roles?.includes('tenant_admin') || user.roles?.includes('superadmin')) {
-    adminItems.push({ label: 'Registre d\'audit', href: '/dashboard/audit-logs', icon: <FileText className="size-4" /> })
-  }
-  if (user.roles?.includes('superadmin')) {
-    adminItems.push({ label: 'Alertes système', href: '/dashboard/system-alerts', icon: <ShieldAlert className="size-4" /> })
+  if (tier === 'cabinet') {
+    adminItems.push({ label: "Registre d'audit", href: '/dashboard/audit-logs', icon: <FileText className="size-4" /> })
+    if (user.roles?.includes('superadmin')) {
+      adminItems.push({ label: 'Alertes système', href: '/dashboard/system-alerts', icon: <ShieldAlert className="size-4" /> })
+    }
   }
 
   return (
@@ -73,21 +73,21 @@ export default function Sidebar({ user, tenant, onNavigate }: Props) {
           </svg>
         </div>
         <div>
-          <p className="text-sm font-bold leading-tight text-[#2A241C]">{tenant?.name || 'Cabinet'}</p>
-          <p className="text-[11.5px] text-[#8A8175]">{tierLabels[tenant?.settings?.activeTier || ''] || ''}</p>
+          <p className="text-sm font-bold leading-tight text-stone-800">{tenant?.name || 'Cabinet'}</p>
+          <p className="text-[11.5px] text-stone-600">{tierLabels[tenant?.settings?.activeTier || ''] || ''}</p>
         </div>
       </div>
 
       <SidebarNav items={navItems} adminItems={adminItems} onNavigate={onNavigate} />
 
-      <div className="border-t border-teal/15 px-[10px] pt-4 mt-auto">
+      <div className="border-t border-primary-600/15 px-[10px] pt-4 mt-auto">
         <div className="flex items-center gap-[10px]">
           <div className="flex size-[38px] shrink-0 items-center justify-center rounded-full bg-primary-600 text-[13.5px] font-bold text-white">
             {initials}
           </div>
           <div className="min-w-0 flex-1">
-            <p className="text-[13px] font-semibold text-[#2A241C]">{user.name || user.email}</p>
-            <p className="text-[11px] text-[#8A8175]">{roleLabel}</p>
+            <p className="text-[13px] font-semibold text-stone-800">{user.name || user.email}</p>
+            <p className="text-[11px] text-stone-600">{roleLabel}</p>
             {user.roles?.includes('substitute') && user.accessExpiresAt && (
               <p className="mt-0.5 text-[11px] font-medium text-warning">
                 Expire le {new Date(user.accessExpiresAt).toLocaleDateString('fr-FR')}
@@ -96,7 +96,7 @@ export default function Sidebar({ user, tenant, onNavigate }: Props) {
           </div>
         </div>
         <form action="/api/auth/logout" method="POST" className="mt-3">
-          <button type="submit" className="flex w-full items-center gap-2 rounded-[10px] px-3 py-2 text-[13px] font-medium text-[#8A8175] transition-colors duration-200 hover:text-red-600">
+          <button type="submit" className="flex w-full items-center gap-2 rounded-[10px] px-3 py-2 text-[13px] font-medium text-stone-600 transition-colors duration-200 hover:text-red-600">
             <LogOut className="size-4" />Déconnexion
           </button>
         </form>

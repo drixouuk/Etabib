@@ -39,7 +39,7 @@ UID:${uid}
 DTSTART:${start}
 DTEND:${end}
 SUMMARY:${escapeICS(summary)}
-DESCRIPTION:${description}
+DESCRIPTION:${escapeICS(description)}
 END:VEVENT`
   }).join('\r\n')
 

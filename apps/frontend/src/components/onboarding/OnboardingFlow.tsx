@@ -2,8 +2,9 @@
 
 import { useState } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 import { Link } from '@/i18n/navigation'
-import { ArrowRight, CheckCircle, ClipboardList, Loader2, Minus, Plus, ArrowLeft } from 'lucide-react'
+import { ArrowRight, CheckCircle, ClipboardList, Minus, Plus, ArrowLeft } from 'lucide-react'
 import TierCard from './TierCard'
 import SignupForm from './SignupForm'
 
@@ -61,6 +62,7 @@ const inputClass = 'w-full rounded-lg border border-stone-300 bg-white px-4 py-2
 const labelClass = 'mb-1 block text-sm font-medium text-stone-700'
 
 export default function OnboardingFlow() {
+  const t = useTranslations('onboarding')
   const searchParams = useSearchParams()
   const router = useRouter()
   const plan = searchParams.get('plan')
@@ -71,7 +73,6 @@ export default function OnboardingFlow() {
   const [doctorCount, setDoctorCount] = useState(1)
   const [success, setSuccess] = useState<SuccessData | null>(null)
 
-  // Contact form (cabinet)
   const [contactName, setContactName] = useState('')
   const [contactPhone, setContactPhone] = useState('')
   const [contactEmail, setContactEmail] = useState('')
@@ -112,10 +113,10 @@ export default function OnboardingFlow() {
       <div className="mx-auto max-w-lg text-center">
         <CheckCircle className="mx-auto size-16 text-success-500" />
         <h2 className="mt-4 font-heading text-2xl font-bold text-stone-800">
-          Votre cabinet est prêt !
+          {t('successTitle')}
         </h2>
         <p className="mt-2 text-stone-500">
-          Votre site est accessible à l'adresse :
+          {t('successSiteAddress')}
         </p>
         <a href={`https://${success.domain}`} target="_blank" rel="noopener noreferrer"
           className="mt-2 inline-block text-lg font-medium text-primary-600 hover:text-primary-700 underline">
@@ -124,15 +125,15 @@ export default function OnboardingFlow() {
         <div className="mt-8 space-y-3">
           <Link href="/login"
             className="inline-flex items-center gap-2 rounded-lg bg-primary-700 px-6 py-2.5 text-sm font-medium text-white hover:bg-primary-800 transition-colors duration-200">
-            Accéder à mon espace <ArrowRight className="size-4" />
+            {t('successAccessSpace')} <ArrowRight className="size-4" />
           </Link>
         </div>
         <div className="mt-8 rounded-lg bg-stone-50 p-6 text-left">
-          <h3 className="font-heading text-sm font-semibold text-stone-700">Prochaines étapes :</h3>
+          <h3 className="font-heading text-sm font-semibold text-stone-700">{t('successNextSteps')}</h3>
           <ol className="mt-3 list-inside list-decimal space-y-1.5 text-sm text-stone-600">
-            <li>Personnalisez votre site vitrine depuis votre espace</li>
-            <li>Ajoutez vos informations de contact, horaires, services</li>
-            {selectedTier === 'rdv' && <li>Configurez vos disponibilités en ligne</li>}
+            <li>{t('successStep1')}</li>
+            <li>{t('successStep2')}</li>
+            {selectedTier === 'rdv' && <li>{t('successStep3')}</li>}
           </ol>
         </div>
       </div>
@@ -144,20 +145,20 @@ export default function OnboardingFlow() {
     return (
       <div className="mx-auto max-w-lg text-center">
         <ClipboardList className="mx-auto size-16 text-primary-500" />
-        <h2 className="mt-4 font-heading text-2xl font-bold text-stone-800">Demande envoyée</h2>
+        <h2 className="mt-4 font-heading text-2xl font-bold text-stone-800">{t('contactSentTitle')}</h2>
         <p className="mt-2 text-stone-500">
-          Merci pour votre intérêt pour la formule <strong>{selected?.name}</strong> !
+          {t('contactSentText', { plan: selected?.name ?? '' })}
         </p>
         <p className="mt-4 text-stone-500">
-          Nous vous contacterons dans les 48h pour organiser une démo et configurer votre espace.
+          {t('contactSentDetail')}
         </p>
         <p className="mt-4 text-sm text-stone-400">
-          En attendant, vous pouvez nous écrire à :{' '}
+          {t('contactSentWhileWaiting')}{' '}
           <a href={`mailto:${SUPPORT_EMAIL}`} className="text-primary-600 hover:text-primary-700 underline">{SUPPORT_EMAIL}</a>
         </p>
         <button onClick={handleChangePlan}
           className="mt-8 text-sm font-medium text-primary-600 hover:text-primary-700 transition-colors duration-200">
-          Choisir une autre formule
+          {t('changePlan')}
         </button>
       </div>
     )
@@ -169,26 +170,26 @@ export default function OnboardingFlow() {
       <div>
         <div className="mb-8 text-center">
           <h1 className="font-heading text-3xl font-bold text-stone-800">
-            Créer votre espace professionnel
+            {t('title')}
           </h1>
           <p className="mt-2 text-stone-500">
-            Choisissez la formule adaptée à votre activité
+            {t('subtitle')}
           </p>
         </div>
 
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
-          {tiers.map((t) => (
+          {tiers.map((tier) => (
             <TierCard
-              key={t.slug}
-              slug={t.slug}
-              name={t.name}
-              price={t.price}
-              features={t.features}
-              badge={t.badge}
-              ctaLabel={t.slug === 'cabinet' ? 'Sélectionner' : 'Commencer'}
-              ctaVariant={t.slug === 'cabinet' ? 'outline' : 'primary'}
+              key={tier.slug}
+              slug={tier.slug}
+              name={tier.name}
+              price={tier.price}
+              features={tier.features}
+              badge={tier.badge}
+              ctaLabel={tier.slug === 'cabinet' ? t('ctaCabinet') : t('ctaVitrine')}
+              ctaVariant={tier.slug === 'cabinet' ? 'outline' : 'primary'}
               isActive={false}
-              onClick={() => handleTierClick(t.slug)}
+              onClick={() => handleTierClick(tier.slug)}
             />
           ))}
         </div>
@@ -201,22 +202,23 @@ export default function OnboardingFlow() {
     <div>
       <button onClick={handleChangePlan}
         className="mb-6 inline-flex items-center gap-1.5 text-sm text-stone-500 hover:text-stone-700 transition-colors duration-200">
-        <ArrowLeft className="size-4" /> Choisir une autre formule
+        <ArrowLeft className="size-4" /> {t('changePlan')}
       </button>
 
       <div className="mb-6 rounded-xl border border-primary-200 bg-primary-50 p-4 text-center">
         <p className="text-sm font-medium text-primary-700">
-          Formule {selected?.name}
-          {selected && (selected.price === 0 ? ' — Gratuite' : ` — ${selected.price} MAD/mois`)}
+          {selected && selected.price === 0
+            ? t('selectedPlanGratuite', { plan: selected.name })
+            : t('selectedPlanMois', { plan: selected?.name ?? '', price: selected?.price ?? 0 })}
         </p>
       </div>
 
       {selectedTier === 'vitrine' && (
         <div className="mb-6 rounded-xl border border-amber-200 bg-amber-50 p-4 text-center">
           <p className="text-sm text-amber-800">
-            Ajoutez la prise de RDV en ligne pour 199 MAD/mois —{' '}
+            {t('upsellVitrine')}{' — '}
             <Link href="/onboarding?plan=rdv" className="font-semibold underline hover:text-amber-900">
-              Voir la formule RDV
+              {t('upsellVitrineCTA')}
             </Link>
           </p>
         </div>
@@ -226,7 +228,7 @@ export default function OnboardingFlow() {
         <div className="mx-auto max-w-lg space-y-6">
           <div className="space-y-4">
             <div>
-              <label className={labelClass}>Votre spécialité</label>
+              <label className={labelClass}>{t('selectSpecialtyLabel')}</label>
               <select value={selectedSpecialty} onChange={(e) => setSelectedSpecialty(e.target.value)} className={inputClass}>
                 <option value="pediatrie">Pédiatrie</option>
                 <option value="generaliste">Médecine générale</option>
@@ -250,9 +252,9 @@ export default function OnboardingFlow() {
       {/* Cabinet contact form */}
       {isContact && !success && !contactSent && (
         <div className="mx-auto max-w-md">
-          <h2 className="font-heading text-xl font-bold text-stone-800 text-center">Demander une démo</h2>
+          <h2 className="font-heading text-xl font-bold text-stone-800 text-center">{t('contactTitle')}</h2>
           <p className="mt-2 text-sm text-stone-500 text-center">
-            Laissez-nous vos coordonnées, nous vous recontactons sous 48h.
+            {t('contactSubtitle')}
           </p>
           <form onSubmit={async (e) => {
             e.preventDefault(); setContactSending(true)
@@ -286,20 +288,20 @@ export default function OnboardingFlow() {
       {contactSent && isContact && success && !success.domain && (
         <div className="mx-auto max-w-lg text-center">
           <ClipboardList className="mx-auto size-16 text-primary-500" />
-          <h2 className="mt-4 font-heading text-2xl font-bold text-stone-800">Demande envoyée</h2>
+          <h2 className="mt-4 font-heading text-2xl font-bold text-stone-800">{t('contactSentTitle')}</h2>
           <p className="mt-2 text-stone-500">
-            Merci pour votre intérêt pour la formule <strong>{selected?.name}</strong> !
+            {t('contactSentText', { plan: selected?.name ?? '' })}
           </p>
           <p className="mt-4 text-stone-500">
-            Nous vous contacterons dans les 48h pour organiser une démo et configurer votre espace.
+            {t('contactSentDetail')}
           </p>
           <p className="mt-4 text-sm text-stone-400">
-            En attendant, vous pouvez nous écrire à :{' '}
+            {t('contactSentWhileWaiting')}{' '}
             <a href={`mailto:${SUPPORT_EMAIL}`} className="text-primary-600 hover:text-primary-700 underline">{SUPPORT_EMAIL}</a>
           </p>
           <button onClick={handleChangePlan}
             className="mt-8 text-sm font-medium text-primary-600 hover:text-primary-700 transition-colors duration-200">
-            Choisir une autre formule
+            {t('changePlan')}
           </button>
         </div>
       )}
