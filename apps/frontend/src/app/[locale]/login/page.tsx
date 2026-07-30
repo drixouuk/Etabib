@@ -114,7 +114,7 @@ export default function LoginPage() {
             </div>
 
             <div className="flex justify-end mb-[22px]">
-              <a href="#" className="text-[.85rem] font-semibold text-primary-700 hover:underline">Mot de passe oublié ?</a>
+              <Link href="/mot-de-passe-oublie" className="text-[.85rem] font-semibold text-primary-700 hover:underline">Mot de passe oublié ?</Link>
             </div>
 
             <button type="submit" disabled={loading} className={`w-full rounded-[11px] bg-primary-700 py-[13px] font-bold text-[.95rem] text-white flex items-center justify-center gap-2 transition-colors hover:bg-primary-800 active:scale-[.99] ${loading ? 'pointer-events-none' : ''}`}>
