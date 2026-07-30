@@ -1,6 +1,8 @@
 # Self-service inscription — Plan d'exécution multi-phases
 
 > **Règle :** Chaque phase (P1→P7) doit être exécutée séquentiellement. Après chaque phase, faire `pnpm build` dans `apps/frontend`, résoudre toute erreur, puis attendre la confirmation avant de passer à la suivante. **Ne jamais casser l'existant.** Respecter le design system dans `design-system/MASTER.md`.
+>
+> **Corrections post-revue (30/07/2026) :** Voir les sections marquées 🔒 (sécurité), ⚠️ (rollback), ⚡ (perf), 🧹 (dette technique).
 
 ---
 
@@ -197,6 +199,12 @@ Tester : `/fr/onboarding?plan=vitrine` affiche formulaire avec plan Vitrine verr
 
 ## P3 — API onboarding : provisioning complet + email vérification
 
+> ⚠️ **Rollback :** Payload CMS n'a pas de transactions multi-collections. En cas d'échec à l'étape N, les ressources créées aux étapes 1→N-1 restent en base. Stratégie : **try/catch avec compensation** — dans le `catch`, supprimer explicitement ce qui a été créé (tenant → cascade Payload supprime user lié). Les ressources non-supprimables (Invoice Ninja client) sont tolérées. On loggue l'échec partiel.
+>
+> ⚡ **Emails :** Les 2 appels Resend sont faits en `Promise.allSettled` (hors flux principal, pas bloquants). Si l'un échoue, l'autre est quand même envoyé. L'utilisateur ne subit pas la latence Resend.
+>
+> ⚡ **Rate limiting :** Ajouter un rate-limit sur `POST /api/onboarding` (3 req/min par IP) et `GET /api/onboarding/check-subdomain` (30 req/min par IP). Utiliser une Map en mémoire avec TTL (pas de dépendance externe).
+
 ### Objectif
 Enrichir `POST /api/onboarding` pour créer toutes les ressources nécessaires, ajouter la validation sous-domaine, l'email de vérification, et une route de vérification.
 
@@ -219,6 +227,12 @@ Ajouter dans le groupe `settings` :
 Ajouter dans le groupe `settings` (ou à la racine si plus simple) :
 ```ts
 {
+  name: 'verificationToken',
+  type: 'text',
+  admin: { readOnly: true, hidden: true },
+  label: 'Token de vérification email',
+},
+{
   name: 'emailVerified',
   type: 'checkbox',
   defaultValue: false,
@@ -231,25 +245,33 @@ Ajouter dans le groupe `settings` (ou à la racine si plus simple) :
 **Réécriture complète.** Workflow :
 
 ```
+0. Rate-limit check (3 req/min/IP via in-memory Map)
 1. Valider les champs (domain, name, email, password, tier, specialty, fullName)
-2. Vérifier sous-domaine :
-   - Blacklist : ['admin','api','app','www','mail','smtp','pop','imap','ftp','cdn','dev','staging','test','demo','blog','shop','store','help','support','status','docs','dashboard','cms','static','assets','media','files','images','img','css','js','web','portal','site','www2','m','mobile']
-   - Vérifier unicité dans Payload : GET /api/tenants?where[domain][equals]=...
-   → 409 si déjà pris
-3. Générer calendarToken (crypto.randomUUID()) + verificationToken (crypto.randomUUID())
-4. Créer Tenant { name, domain, settings: { defaultLocale, activeTier, specialty, doctorCount, calendarToken, emailVerified: false } }
-5. Créer User { email, password, name: fullName, roles: [tenant_admin, doctor], tenant: tenantId, _verified: false }
+2. Vérifier sous-domaine (blacklist + unicité Payload) → 409 si pris
+3. Générer calendarToken + verificationToken (crypto.randomUUID())
+4. Créer Tenant { name, domain, settings: { ..., calendarToken, verificationToken, emailVerified: false } }
+5. Créer User { email, password, name: fullName, roles: [tenant_admin, doctor], tenant: tenantId }
 6. Créer Doctor { name: fullName, specialty, tenant: tenantId, slug: subdomain }
 7. Créer PracticeInfo { phone, tenant: tenantId }
-8. [si tier !== vitrine] Créer 6 AvailabilitySlots (Lun-Sam, 09:00-17:00, 30min, 15min buffer)
+8. [si tier !== vitrine] Créer 6 AvailabilitySlots (Lun-Sam, 09:00-17:00)
 9. [si tier !== vitrine] Invoice Ninja → createClient + createSubscriptionInvoice
-10. Envoyer email vérification (Resend) :
-    - Template : "verify-email"
-    - Lien : https://{domain}.etabibi.ma/api/onboarding/verify-email?token={verificationToken}
-11. Envoyer email bienvenue (Resend) :
-    - Template : "welcome"
-    - Variables : doctorName, siteUrl, loginUrl, icalUrl (si RDV/cabinet)
-12. Return { success, tenant: { id, domain }, user: { email } }
+10. Promise.allSettled([verificationEmail, welcomeEmail]) — non bloquant
+11. Return { success, tenant: { id, domain }, user: { email } }
+```
+
+⚠️ **Compensation en cas d'échec partiel :**
+```ts
+let tenantId: string | null = null
+try {
+  // étapes 4→11
+} catch (err) {
+  if (tenantId) {
+    await cmsDelete(`/tenants/${tenantId}`) // cascade : Payload supprime le user lié
+    // Doctor et PracticeInfo sont orphelins mais sans FK cascade → inoffensifs
+    // Invoice Ninja : on garde le client, rollback pas implémentable sans admin key
+  }
+  return NextResponse.json({ error: 'Erreur provisioning, rollback effectué' }, { status: 500 })
+}
 ```
 
 **Ajouter ces imports :**
@@ -258,7 +280,7 @@ import { randomUUID } from 'crypto'
 import { Resend } from 'resend'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
-const SUBDOMAIN_BLACKLIST = ['admin','api','app','www','mail','smtp','pop','imap','ftp','cdn','dev','staging','test','demo','blog','shop','store','help','support','status','docs','dashboard','cms','static','assets','media','files','images','img','css','js','web','portal','site','www2','m','mobile']
+const SUBDOMAIN_BLACKLIST = ['admin','api','app','www','mail','smtp','pop','imap','ftp','cdn','dev','staging','test','demo','blog','shop','store','help','support','status','docs','dashboard','cms','static','assets','media','files','images','img','css','js','web','portal','site','www2','m','mobile','etabib','etabibi','root','localhost','null','undefined']
 ```
 
 **Fonction helper pour créer les AvailabilitySlots :**
@@ -329,12 +351,14 @@ Tester : `POST /api/onboarding` avec body complet → vérifier que Doctor et Pr
 
 ---
 
-## P4 — Dashboard : filtrage menu par tier
+## P4 — Dashboard : filtrage menu par tier + gardes de sécurité
+
+> 🔒 **Sécurité critique :** Supprimer la redirection dans le layout ne suffit pas. Le filtrage de la sidebar est cosmétique — un utilisateur Vitrine peut taper `/dashboard/patients` dans la barre d'adresse et accéder à la page. Chaque page protégée doit avoir un **guard serveur** qui vérifie le tier avant de rendre.
 
 ### Objectif
-- Ouvrir le dashboard aux utilisateurs Vitrine et RDV (actuellement bloqué : redirige vers `/` si tier !== cabinet)
+- Ouvrir le dashboard aux utilisateurs Vitrine et RDV
 - Filtrer les items de la sidebar selon le tier
-- Supprimer la redirection dans `(dashboard)/layout.tsx`
+- 🔒 **Ajouter un guard par page** : `requireTier(['cabinet'])`, `requireTier(['rdv', 'cabinet'])`
 
 ### Changements
 
@@ -348,6 +372,37 @@ Tester : `POST /api/onboarding` avec body complet → vérifier que Doctor et Pr
 ```
 
 Laisser le reste inchangé. Tous les utilisateurs authentifiés accèdent au dashboard.
+
+#### 4.1b 🔒 Créer `lib/tier-guard.ts`
+
+```ts
+import { requireAuth } from '@/lib/auth'
+import { getTenantId } from '@/lib/tenant'
+import { getTenantById } from '@/lib/payload'
+import { redirect } from 'next/navigation'
+
+export async function requireTier(allowed: string[]) {
+  const user = await requireAuth()
+  const tenantId = getTenantId(user)
+  if (!tenantId) redirect('/')
+  const tenant = await getTenantById(tenantId)
+  const tier = tenant?.settings?.activeTier
+  if (!tier || !allowed.includes(tier)) redirect('/dashboard/settings')
+  return { user, tenant, tenantId, tier }
+}
+```
+
+**Usage dans chaque page protégée :**
+```ts
+// pages réservées au tier cabinet :
+//   dashboard/page.tsx, patients/*, queue/*, activity/*, audit-logs/*, system-alerts/*
+const { tenantId } = await requireTier(['cabinet'])
+
+// pages disponibles pour RDV + cabinet :
+//   rendez-vous/*
+const { tenantId } = await requireTier(['rdv', 'cabinet'])
+```
+Les pages non protégées (settings) n'ont pas besoin de guard.
 
 #### 4.2 `apps/frontend/src/components/dashboard/Sidebar.tsx`
 
@@ -410,10 +465,11 @@ Tester : connexion avec compte Vitrine → sidebar affiche uniquement "Paramètr
 
 ---
 
-## P5 — Paramètres : expansion pour tous les tiers
+## P5a — Paramètres : Practice, Schedule, Services
 
-### Objectif
-Ajouter de nouveaux onglets dans `SettingsTabsContent` pour que les médecins puissent éditer le contenu de leur page vitrine depuis l'espace praticien.
+> **Scindé de P5** pour réduire la surface de build et faciliter le diagnostic.
+>
+> 🔒 **Upgrade :** Le changement de tier est déplacé dans un endpoint dédié `POST /api/billing/upgrade` (voir P5b). Le client ne fait jamais de PATCH direct sur `activeTier`.
 
 ### Changements
 
@@ -426,62 +482,73 @@ Créer dans `apps/frontend/src/app/[locale]/(dashboard)/dashboard/settings/` :
 | `PracticeEditor.tsx` | Éditer adresse, ville, téléphone, email, tagline |
 | `ScheduleEditor.tsx` | Éditer horaires d'ouverture (Lun-Dim, créneaux) |
 | `ServicesEditor.tsx` | CRUD des services (titre, description, icône, ordre) |
-| `SiteEditor.tsx` | Voir/modifier le sous-domaine, afficher l'URL du site |
-| `CalendarSettings.tsx` | Afficher/copier/régénérer le lien iCal, instructions par plateforme |
-| `BillingSettings.tsx` | Plan actuel, historique factures, boutons upgrade/downgrade |
 
-Chaque composant est un Client Component qui utilise `fetchCMS` / `postCMS` / `patchCMS` pour les opérations CRUD via le proxy CMS.
+Chaque composant est un Client Component qui utilise le proxy CMS (`/api/cms-proxy/...`) pour les opérations CRUD.
 
-#### 5.2 `SettingsTabsContent.tsx`
+#### 5a.2 `SettingsTabsContent.tsx`
 
-**Ajouter les nouveaux onglets** (visibles par tous les tiers, admin ou pas) :
-
+**Ajouter les onglets P5a :**
 ```tsx
 <TabsTrigger value="practice">Cabinet</TabsTrigger>
 <TabsTrigger value="schedule">Horaires</TabsTrigger>
 <TabsTrigger value="services">Services</TabsTrigger>
-<TabsTrigger value="site">Site web</TabsTrigger>
-<TabsTrigger value="calendar">Calendrier</TabsTrigger>
-<TabsTrigger value="billing">Facturation</TabsTrigger>
-<SecurityTab /> {/* mot de passe, déjà existant via ChangePasswordForm */}
+```
+Les onglets `site`, `calendar`, `billing` sont réservés pour P5b. Garder `profile`, `accounts`, `availability` existants.
+
+### Vérification
+```bash
+cd apps/frontend && pnpm build
 ```
 
-Tous les onglets sont visibles par tous les utilisateurs (plus de condition `isAdmin`).
+---
 
-#### 5.3 `apps/frontend/src/app/[locale]/(dashboard)/dashboard/settings/page.tsx`
+## P5b — Paramètres : Site, Calendar, Billing + endpoint upgrade
 
-**Ajouter le fetch des données nécessaires :**
-- `tenant` (domain, settings) → via `getTenantById` ou `fetchCMS`
-- `practiceInfo` → GET `/api/cms-proxy/practice-info?where[tenant][equals]=...`
-- `services` → GET `/api/cms-proxy/services?where[tenant][equals]=...`
-- `availabilitySlots` → GET `/api/cms-proxy/availability-slots?where[tenant][equals]=...`
+### Objectif
+Ajouter les onglets restants et l'endpoint sécurisé de changement de plan.
 
-#### 5.4 Nouveau composant `CalendarSettings.tsx`
+#### 5b.1 Nouveaux composants
 
-```tsx
-'use client'
-// Affiche :
-// - URL iCal : https://etabibi.ma/api/calendar/{domain}.ics?token={token}
-// - Bouton "Copier le lien"
-// - Bouton "Régénérer le token" (PATCH tenant.settings.calendarToken)
-// - Instructions : Google Calendar, Apple Calendar, Outlook
-```
+| Fichier | Rôle |
+|---|---|
+| `SiteEditor.tsx` | Voir/modifier le sous-domaine, afficher l'URL du site |
+| `CalendarSettings.tsx` | Afficher/copier/régénérer le lien iCal, instructions par plateforme |
+| `BillingSettings.tsx` | Plan actuel, historique factures, boutons upgrade/downgrade |
 
-**Régénération du token :**
+#### 5b.2 🔒 `POST /api/billing/upgrade` (endpoint dédié)
+
 ```ts
+// apps/frontend/src/app/api/billing/upgrade/route.ts
+export async function POST(req: NextRequest) {
+  const token = req.cookies.get('payload-token')?.value
+  if (!token) return NextResponse.json({ error: 'Non authentifié' }, { status: 401 })
+  const { targetTier } = await req.json()
+  
+  // 1. Récupérer le tenant + user
+  // 2. Vérifier que le targetTier est supérieur au tier actuel (pas de downgrade auto)
+  // 3. PATCH tenant.settings.activeTier = targetTier
+  // 4. Si upgrade vitrine→rdv : créer AvailabilitySlots
+  // 5. Si upgrade → cabinet : créer AvailabilitySlots + envoyer facture Invoice Ninja
+  // 6. Return { success, tier: targetTier }
+}
+```
+
+Le `BillingSettings.tsx` appelle ce endpoint (pas de PATCH direct client-side).
+
+**Régénération du token iCal :**
+```ts
+// Dans CalendarSettings.tsx — appel via cms-proxy
 await fetch('/api/cms-proxy/tenants/{id}', {
   method: 'PATCH',
+  headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({ settings: { calendarToken: crypto.randomUUID() } }),
 })
 ```
 
-#### 5.5 Nouveau composant `BillingSettings.tsx`
-
-- Affiche le plan actuel (Vitrine/RDV/Cabinet) avec badge
-- Pour Vitrine → bouton "Passer à RDV" et "Passer à Cabinet"
-- Pour RDV → bouton "Passer à Cabinet"
-- Pour Cabinet → message "Formule la plus complète"
-- L'upgrade fait un `PATCH` du tenant `settings.activeTier` + crée les ressources manquantes (ex: AvailabilitySlots si upgrade vitrine→rdv)
+### Vérification
+```bash
+cd apps/frontend && pnpm build
+```
 
 ### Vérification
 ```bash
@@ -491,11 +558,13 @@ Tester : `/fr/dashboard/settings` → tous les onglets visibles, édition des ch
 
 ---
 
-## P6 — iCal feed + changement de mot de passe oublié
+## P6 — iCal feed + mot de passe oublié
+
+> 🧹 **Dette technique email :** L'onboarding (P3) utilise Resend, mais le forgot-password passe par Payload CMS (qui utilise son propre transport SMTP). Deux infrastructures email. À terme, tout migrer vers Resend. Pour cette phase, on garde le comportement existant de Payload.
 
 ### Objectif
 - Créer l'endpoint iCal public protégé par token
-- Pages forgot password + reset password (proxy Payload CMS)
+- Pages forgot password + reset password (proxy Payload CMS, pas Resend)
 
 ### Changements
 
@@ -592,11 +661,12 @@ Tester : `GET /api/calendar/drguinane.ics?token=xxx` → fichier iCal valide. `/
 
 ---
 
-## P7 — Finalisation : onboarding UX + Resend templates
+## P7 — Finalisation : UX onboarding + Resend templates + rate limiting
 
 ### Objectif
 - Validation sous-domaine en temps réel dans le SignupForm (onBlur)
 - Créer les templates Resend (verify-email, welcome)
+- ⚡ Rate limiting sur les routes onboarding et check-subdomain
 - Revue complète, lint, types
 
 ### Changements
@@ -661,11 +731,12 @@ Body: Votre cabinet {{practiceName}} est prêt.
 |---|---|---|
 | P1 | — | `landing/page.tsx`, `fr.json`, `en.json`, `ar.json`, `tzm.json` |
 | P2 | — | `OnboardingFlow.tsx`, `onboarding/page.tsx` |
-| P3 | `api/onboarding/check-subdomain/route.ts`, `api/onboarding/verify-email/route.ts` | `api/onboarding/route.ts`, `Tenants.ts` (CMS) |
-| P4 | — | `Sidebar.tsx`, `(dashboard)/layout.tsx` |
-| P5 | `settings/PracticeEditor.tsx`, `ScheduleEditor.tsx`, `ServicesEditor.tsx`, `SiteEditor.tsx`, `CalendarSettings.tsx`, `BillingSettings.tsx` | `SettingsTabsContent.tsx`, `settings/page.tsx` |
+| P3 | `api/onboarding/check-subdomain/route.ts`, `api/onboarding/verify-email/route.ts`, `lib/rate-limit.ts` | `api/onboarding/route.ts`, `Tenants.ts` (CMS : +calendarToken, +verificationToken, +emailVerified) |
+| P4 | `lib/tier-guard.ts` | `Sidebar.tsx`, `(dashboard)/layout.tsx`, 🔒 chaque page protégée |
+| P5a | `settings/PracticeEditor.tsx`, `ScheduleEditor.tsx`, `ServicesEditor.tsx` | `SettingsTabsContent.tsx`, `settings/page.tsx` |
+| P5b | `settings/SiteEditor.tsx`, `CalendarSettings.tsx`, `BillingSettings.tsx`, 🔒 `api/billing/upgrade/route.ts` | `SettingsTabsContent.tsx` |
 | P6 | `api/calendar/[slug]/route.ts`, `mot-de-passe-oublie/page.tsx`, `reinitialiser-mot-de-passe/page.tsx` | `login/page.tsx` |
-| P7 | — | `SignupForm.tsx`, templates Resend (API) |
+| P7 | — | `SignupForm.tsx`, templates Resend (API)
 
 ## Règles strictes
 
@@ -674,3 +745,6 @@ Body: Votre cabinet {{practiceName}} est prêt.
 3. **Dashboard en français uniquement :** Seuls le site vitrine et la landing page sont multilingues.
 4. **RTL :** Utiliser les propriétés logiques (`ms-*`, `me-*`, `ps-*`, `pe-*`, `text-start`, `text-end`) dans tous les nouveaux composants.
 5. **Build gate :** Après chaque phase, `pnpm build` dans `apps/frontend` doit passer. Résoudre toute erreur avant de passer à la phase suivante.
+6. 🔒 **Sécurité :** Toute page du dashboard hors Vitrine doit avoir un `requireTier()` guard (P4). Le changement de tier est un endpoint dédié serveur, pas un PATCH client (P5b).
+7. ⚠️ **Rollback P3 :** En cas d'échec du provisioning, supprimer le tenant créé (cascade). Logger les ressources orphelines.
+8. ⚡ **Rate limiting :** `POST /api/onboarding` = 3/min/IP. `GET /api/onboarding/check-subdomain` = 30/min/IP. Utiliser une Map en mémoire avec TTL.
