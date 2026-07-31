@@ -61,7 +61,10 @@ Le composant devient **ScheduleAndSlots.tsx** (renommer le fichier). Il contient
 - Au chargement, fetch `practice-info.schedules` + `availability-slots` + `tenant.settings.customSlots`.
 - Si `customSlots === false` : les créneaux sont dérivés des horaires en lecture seule (pas de boutons Ajouter/Éditer/Supprimer).
   - Règle de dérivation : pour chaque entrée horaire `{ day: 'Lundi', open: '08:00', close: '12:00' }` → créer un slot `{ dayOfWeek: '1', startTime: '08:00', endTime: '12:00', durationMinutes: 30, bufferMinutes: 15, isActive: true }`.
-  - Quand l'utilisateur modifie les horaires et clique Enregistrer → sauvegarder les horaires + régénérer les créneaux (DELETE tous les anciens, POST les nouveaux).
+  - Quand l'utilisateur modifie les horaires et clique Enregistrer → **POST les nouveaux créneaux d'abord, puis DELETE les anciens** (pas l'inverse). Les doublons temporaires sont inoffensifs, mais des créneaux supprimés avant d'être recréés laissent un trou si le POST échoue.
+  - **Warning si des RDV futurs existent** : avant de régénérer, vérifier `GET /api/cms-proxy/calbookings?where[status][equals]=accepted&where[startTime][greater_than]=now`. Si des bookings existent sur des créneaux qui vont disparaître, afficher : `"⚠️ 3 rendez-vous sont planifiés en dehors de vos nouveaux horaires. Continuer ?"`.
+  - **Durée et pause par défaut configurables** : ajouter `defaultSlotDuration` (number, défaut 30) et `defaultSlotBuffer` (number, défaut 15) dans `tenant.settings`. Ces valeurs sont utilisées dans la dérivation des créneaux (plutôt que des `30`/`15` hardcodés).
+  - **Mapping des jours** : migrer `practice-info.schedules` pour stocker `dayOfWeek` en numérique ISO (1=Lundi…7=Dimanche) au lieu de texte français. Créer une migration qui convertit les valeurs texte existantes. Le composant `ScheduleAndSlots` utilise ce format numérique.
 - Si `customSlots === true` : basculer le composant `AvailabilityManager` en mode éditable. Les créneaux sont gérés indépendamment.
 
 **Supprimer `AvailabilityManager` en tant que composant séparé** (ses fonctions sont absorbées dans `ScheduleAndSlots`). Le fichier `AvailabilityManager.tsx` peut être supprimé.
@@ -96,7 +99,34 @@ Dans `ScheduleAndSlots.tsx`, ajouter une sous-section après les horaires :
 }
 ```
 
-Créer la migration. Ces fermetures s'affichent sur la page vitrine publique (dans `InfosSection.tsx` ou similaire) sous les horaires normaux.
+Créer la migration.
+
+#### 1.4 Bandeau d'alerte sur la page vitrine
+
+Plutôt qu'une simple liste dans `InfosSection`, afficher un **bandeau d'alerte** en haut de la page vitrine quand une fermeture exceptionnelle est en cours aujourd'hui. Le patient est interpellé immédiatement, avant même de chercher à prendre RDV.
+
+**Fichier à créer :** `apps/frontend/src/components/sections/ClosureBanner.tsx`
+
+```tsx
+// Rendu si exceptionalClosures contient une entrée couvrant aujourd'hui
+<div className="bg-amber-50 border-b border-amber-200 px-4 py-3 text-center">
+  <p className="text-sm font-semibold text-amber-800">
+    ⚠️ {closure.label} — {formatDateRange(closure.startDate, closure.endDate)}
+  </p>
+</div>
+```
+
+**Comportement :**
+- Vérifie `practice-info.exceptionalClosures` côté serveur (dans `page.tsx`)
+- Affiche le bandeau si `startDate <= today <= endDate`
+- Le bandeau est **dismissible** (cookie de session `closure-dismissed` valable jusqu'à minuit)
+- Si la fermeture couvre plusieurs jours, le bandeau s'affiche chaque jour de la période
+- Le cookie est réinitialisé à minuit → le lendemain d'une fermeture, le bandeau disparaît
+- Si pas de fermeture aujourd'hui → pas de bandeau
+
+**Affichage sur la vitrine :** dans `apps/frontend/src/app/[locale]/page.tsx`, avant le `<main>`, insérer `<ClosureBanner practiceInfo={practiceInfo} />`.
+
+Les fermetures à venir (pas encore aujourd'hui) restent listées dans `InfosSection` sous les horaires normaux, en-dessous du bandeau.
 
 ---
 
@@ -106,10 +136,11 @@ Créer la migration. Ces fermetures s'affichent sur la page vitrine publique (da
 `ManageAccounts.tsx` liste les utilisateurs et permet de réinitialiser leur mot de passe. Pas de création ni suppression.
 
 ### Cible
-- **Ajouter un compte** secrétaire ou remplaçant
-- **Supprimer** un compte (sauf le sien)
+- **Ajouter un compte** secrétaire ou remplaçant (réservé au `tenant_admin`)
+- **Supprimer** un compte (sauf le sien, réservé au `tenant_admin`)
 - **Réinitialiser le mot de passe** (déjà existant)
-- Pour les remplaçants : définir la **date d'expiration**
+- Pour les remplaçants : définir la **date d'expiration** (enforcement : déjà géré par `requireAuth()` et `/api/auth/login` → bloque les comptes `substitute` expirés)
+- Les boutons Ajouter/Supprimer ne sont visibles que si `user.roles.includes('tenant_admin')`. Une secrétaire voit la liste en lecture seule.
 
 ### Implémentation
 
@@ -155,10 +186,15 @@ const tenantId = ... // depuis le fetch /api/cms-proxy/tenants
 
 ## Phase 3 — Simulateur de tier/rôle dans la démo (drdemo uniquement)
 
+> ⚠️ **Prérequis :** Le tenant `drdemo` doit être un tenant **cabinet** en base (accès réel à toutes les pages). Le simulateur ne contourne jamais les guards serveur — il ne fait que **masquer** des items de sidebar pour simuler visuellement ce qu'un tier inférieur ou une secrétaire verrait. Si le user clique sur un item masqué, rien ne se passe car l'item n'est pas rendu. Le guard serveur `requireTier` reste la source de vérité.
+>
+> Le toggle de rôle est **cosmétique uniquement** — il change les items visibles dans la sidebar mais ne donne pas un vrai accès secrétaire. Pour une vraie simulation secrétaire, il faudrait un session override serveur, disproportionné pour une démo.
+
 ### Cible
 Dans la sidebar, UNIQUEMENT pour le compte `drdemo@gmail.com` (domaine `drdemo.etabibi.ma`) :
-- Un toggle pour switcher entre les 3 tiers (Vitrine, RDV, Cabinet) et voir le menu sidebar changer en temps réel
-- Un toggle pour switcher la vue (Médecin / Secrétaire) et voir ce que la secrétaire verrait
+- Un toggle pour **réduire** les items de la sidebar (simuler Vitrine, RDV) — le compte réel étant cabinet, tout est accessible
+- Un toggle pour switcher la vue (Médecin / Secrétaire) — purement visuel
+- Le choix de tier/role persiste via `sessionStorage` (survit aux navigations)
 
 ### Implémentation
 
@@ -182,7 +218,7 @@ type Props = {
 
 export default function DemoSimulator({ currentTier, currentRoles, onTierChange, onRoleToggle, simulatedRole }: Props) {
   const tiers = ['vitrine', 'rdv', 'cabinet']
-  const tierLabels: Record<string, string> = { vitrine: 'Vitrine', rdv: 'RDV', cabinet: 'Cabinet' }
+  const tierLabels: Record<string, string> = { vitrine: 'Vitrine (simulé)', rdv: 'RDV (simulé)', cabinet: 'Cabinet (réel)' }
 
   return (
     <div className="border-t border-primary-600/15 px-[10px] pt-3 mt-3">
@@ -219,18 +255,34 @@ export default function DemoSimulator({ currentTier, currentRoles, onTierChange,
 
 **Fichier :** `apps/frontend/src/components/dashboard/Sidebar.tsx`
 
-Ajouter un état local pour le simulateur :
+Ajouter un état local pour le simulateur avec **persistance `sessionStorage`** (survit aux navigations pendant la session) :
 
 ```tsx
 const isDemo = tenant?.domain?.startsWith('drdemo.')
 
-const [simulatedTier, setSimulatedTier] = useState<string | null>(null)
-const [simulatedRole, setSimulatedRole] = useState<'doctor' | 'secretary'>('doctor')
+const [simulatedTier, setSimulatedTierState] = useState<string | null>(() => {
+  if (typeof window === 'undefined') return null
+  return sessionStorage.getItem('demo-tier') || null
+})
+const [simulatedRole, setSimulatedRoleState] = useState<'doctor' | 'secretary'>(() => {
+  if (typeof window === 'undefined') return 'doctor'
+  return (sessionStorage.getItem('demo-role') as 'doctor' | 'secretary') || 'doctor'
+})
 
-const effectiveTier = simulatedTier || tier
-const effectiveRoles = simulatedRole === 'secretary'
-  ? ['secretary']
-  : user.roles
+const setSimulatedTier = (t: string | null) => {
+  setSimulatedTierState(t)
+  if (t) sessionStorage.setItem('demo-tier', t)
+  else sessionStorage.removeItem('demo-tier')
+}
+const setSimulatedRole = (r: 'doctor' | 'secretary') => {
+  setSimulatedRoleState(r)
+  sessionStorage.setItem('demo-role', r)
+}
+
+// Le tier réel est toujours 'cabinet' (le guard serveur s'en occupe)
+// Le simulateur ne fait que FILTRER les items de sidebar
+const effectiveTier = simulatedTier && simulatedTier !== 'cabinet' ? simulatedTier : tier
+const effectiveRoles = simulatedRole === 'secretary' ? ['secretary'] : user.roles
 ```
 
 Utiliser `effectiveTier` pour la navigation (`tierNav`) — remplacer toutes les occurrences de `tier` par `effectiveTier`.
@@ -268,7 +320,7 @@ cd apps/cms && pnpm build
 
 | Phase | Créés | Modifiés | Supprimés |
 |---|---|---|---|
-| 1 | migration CMS (customSlots + exceptionalClosures) | `Tenants.ts`, `PracticeInfo.ts`, `ScheduleEditor.tsx` → `ScheduleAndSlots.tsx`, `SettingsTabsContent.tsx` | `AvailabilityManager.tsx` |
+| 1 | migration CMS (customSlots + exceptionalClosures), `ClosureBanner.tsx` | `Tenants.ts`, `PracticeInfo.ts`, `ScheduleEditor.tsx` → `ScheduleAndSlots.tsx`, `SettingsTabsContent.tsx`, `page.tsx` (vitrine) | `AvailabilityManager.tsx` |
 | 2 | — | `ManageAccounts.tsx` | — |
 | 3 | `DemoSimulator.tsx` | `Sidebar.tsx` | — |
 
