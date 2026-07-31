@@ -1,14 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { randomUUID } from 'crypto'
-import { Resend } from 'resend'
 import { storeDemoToken } from '@/lib/demo-tokens'
-import { SUPPORT_EMAIL, ADMIN_EMAIL } from '@/lib/brand'
+import { ADMIN_EMAIL } from '@/lib/brand'
+import { sendEmail } from '@/lib/resend-send'
 
-function getResend() {
-  const key = process.env.RESEND_API_KEY
-  if (!key) throw new Error('RESEND_API_KEY manquant')
-  return new Resend(key)
-}
 const DEMO_APPROVE_BASE = process.env.DEMO_APPROVE_URL || process.env.NEXT_PUBLIC_SITE_URL || 'https://etabibi.ma'
 
 export async function POST(req: NextRequest) {
@@ -21,11 +16,10 @@ export async function POST(req: NextRequest) {
     const token = randomUUID()
     storeDemoToken(token, email, name)
 
-    const { data, error } = await getResend().emails.send({
-      from: `Etabib <${SUPPORT_EMAIL}>`,
-      to: ADMIN_EMAIL,
-      subject: `Demande démo — ${name}`,
-      html: `
+    await sendEmail(
+      ADMIN_EMAIL,
+      `Demande démo — ${name}`,
+      `
         <p><strong>${name}</strong> (${email}) demande un accès à la démo.</p>
         ${message ? `<p>Message : ${message}</p>` : ''}
         <p>
@@ -38,16 +32,12 @@ export async function POST(req: NextRequest) {
           Ce lien est valable 48h. Le mot de passe sera envoyé automatiquement au demandeur.
         </p>
       `,
-    })
-    if (error) {
-      console.error('[resend]', error)
-      throw new Error('Échec envoi email : ' + error.message)
-    }
-    console.log('[resend] envoyé, id:', data?.id)
+    )
 
     return NextResponse.json({ success: true })
   } catch (err) {
     console.error('[demo/request]', err)
-    return NextResponse.json({ error: 'Erreur envoi' }, { status: 500 })
+    const msg = err instanceof Error ? err.message : 'Erreur inconnue'
+    return NextResponse.json({ error: 'Erreur envoi : ' + msg }, { status: 500 })
   }
 }

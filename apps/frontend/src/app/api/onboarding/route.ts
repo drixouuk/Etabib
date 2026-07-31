@@ -2,12 +2,10 @@ import { NextRequest, NextResponse } from 'next/server'
 import { randomUUID } from 'crypto'
 import { createClient, createSubscriptionInvoice } from '@/lib/invoiceninja'
 import { rateLimit } from '@/lib/rate-limit'
-import { Resend } from 'resend'
-import { SUPPORT_EMAIL } from '@/lib/brand'
+import { sendEmail } from '@/lib/resend-send'
 
 const CMS_URL = process.env.NEXT_PUBLIC_CMS_URL || 'https://cms.etabibi.ma'
 const SITE_DOMAIN = process.env.NEXT_PUBLIC_SITE_DOMAIN || 'etabibi.ma'
-const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null
 
 const SUBDOMAIN_BLACKLIST = [
   'admin','api','app','www','mail','smtp','pop','imap','ftp','cdn','dev','staging',
@@ -150,25 +148,21 @@ export async function POST(request: NextRequest) {
         }
       }
 
-      if (resend) {
-        const loginUrl = `https://${domain}/fr/login`
-        const verificationUrl = `${process.env.NEXT_PUBLIC_APP_URL || `https://${SITE_DOMAIN}`}/api/onboarding/verify-email?token=${verificationToken}`
+      const loginUrl = `https://${domain}/fr/login`
+      const verificationUrl = `${process.env.NEXT_PUBLIC_APP_URL || `https://${SITE_DOMAIN}`}/api/onboarding/verify-email?token=${verificationToken}`
 
-        await Promise.allSettled([
-          resend.emails.send({
-            from: `Etabib <${SUPPORT_EMAIL}>`,
-            to: email,
-            subject: 'Vérifiez votre adresse email — Etabib',
-            html: `<p>Bonjour ${fullName},</p><p>Merci d'avoir créé votre espace Etabib.</p><p><a href="${verificationUrl}">Cliquez ici pour vérifier votre adresse email</a></p><p>Ce lien expire dans 48h.</p>`,
-          }),
-          resend.emails.send({
-            from: `Etabib <${SUPPORT_EMAIL}>`,
-            to: email,
-            subject: `Bienvenue sur Etabib, ${fullName} !`,
-            html: `<p>Bonjour ${fullName},</p><p>Votre cabinet <strong>${name}</strong> est prêt.</p><p>Votre site : <a href="https://${domain}">https://${domain}</a></p><p>Connexion : <a href="${loginUrl}">${loginUrl}</a></p><p>L'équipe Etabib</p>`,
-          }),
-        ])
-      }
+      await Promise.allSettled([
+        sendEmail(
+          email,
+          'Vérifiez votre adresse email — Etabib',
+          `<p>Bonjour ${fullName},</p><p>Merci d'avoir créé votre espace Etabib.</p><p><a href="${verificationUrl}">Cliquez ici pour vérifier votre adresse email</a></p><p>Ce lien expire dans 48h.</p>`,
+        ),
+        sendEmail(
+          email,
+          `Bienvenue sur Etabib, ${fullName} !`,
+          `<p>Bonjour ${fullName},</p><p>Votre cabinet <strong>${name}</strong> est prêt.</p><p>Votre site : <a href="https://${domain}">https://${domain}</a></p><p>Connexion : <a href="${loginUrl}">${loginUrl}</a></p><p>L'équipe Etabib</p>`,
+        ),
+      ])
 
       return NextResponse.json({
         success: true,

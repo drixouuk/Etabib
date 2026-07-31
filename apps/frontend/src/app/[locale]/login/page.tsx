@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, FormEvent } from 'react'
+import { useState, FormEvent, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Link } from '@/i18n/navigation'
 import { Activity, Check, ArrowLeft, ArrowRight, Eye, EyeOff, AlertCircle, ChevronDown } from 'lucide-react'
@@ -10,11 +10,30 @@ const DEMO_EMAIL = 'drdemo@gmail.com'
 export default function LoginPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const isDemo = searchParams.get('demo') === 'true' || (typeof window !== 'undefined' && window.location.hostname.startsWith('drdemo.'))
+  const isDemoHost = searchParams.get('demo') === 'true' || (typeof window !== 'undefined' && window.location.hostname.startsWith('drdemo.'))
+  const [isDemo, setIsDemo] = useState(isDemoHost)
+  const [doctorName, setDoctorName] = useState('')
+  const [specialty, setSpecialty] = useState('')
+  const [city, setCity] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const [showPwd, setShowPwd] = useState(false)
-  const [email, setEmail] = useState(isDemo ? DEMO_EMAIL : '')
+  const [email, setEmail] = useState(isDemoHost ? DEMO_EMAIL : '')
+
+  useEffect(() => {
+    fetch('/api/practice/me')
+      .then(r => r.json())
+      .then(d => {
+        if (d?.doctorName) setDoctorName(d.doctorName)
+        if (d?.specialty) setSpecialty(d.specialty)
+        if (d?.city) setCity(d.city)
+        if (d?.isDemo) setIsDemo(true)
+      })
+      .catch(() => {})
+  }, [])
+
+  const brandName = doctorName || (isDemo ? 'Dr Demo' : 'Etabib')
+  const brandSubtitle = [specialty, city].filter(Boolean).join(' · ')
 
   // Demo request form
   const [showDemoForm, setShowDemoForm] = useState(false)
@@ -81,7 +100,7 @@ export default function LoginPage() {
           <span className="flex size-[34px] items-center justify-center rounded-[9px] bg-white/15">
             <Activity className="size-[18px]" />
           </span>
-          Dr Guinane Aicha
+          {brandName}
         </Link>
 
         <div className="relative z-1 max-w-[400px] max-md:hidden">
@@ -104,7 +123,7 @@ export default function LoginPage() {
           </ul>
         </div>
 
-        <p className="relative z-1 text-[.86rem] text-white/70 max-md:hidden">Pédiatre · Inezgane, Souss-Massa</p>
+        {brandSubtitle && <p className="relative z-1 text-[.86rem] text-white/70 max-md:hidden">{brandSubtitle}</p>}
       </div>
 
       {/* Form panel */}
@@ -164,7 +183,8 @@ export default function LoginPage() {
             </button>
           </form>
 
-          {/* Demo access request */}
+          {/* Demo access request — visible uniquement sur la démo */}
+          {isDemo && (
           <div className="mt-6 border-t border-stone-200 pt-5">
             {!demoSent ? (
               <>
@@ -224,8 +244,9 @@ export default function LoginPage() {
               </div>
             )}
           </div>
+          )}
 
-          <p className="mt-[36px] text-center text-[.78rem] text-stone-500">&copy; {new Date().getFullYear()} Dr Guinane Aicha</p>
+          <p className="mt-[36px] text-center text-[.78rem] text-stone-500">&copy; {new Date().getFullYear()} {brandName}</p>
         </div>
         </div>
       </main>

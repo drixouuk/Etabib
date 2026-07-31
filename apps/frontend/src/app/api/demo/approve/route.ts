@@ -1,16 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { Resend } from 'resend'
 import { verifyDemoToken, consumeDemoToken } from '@/lib/demo-tokens'
-import { SUPPORT_EMAIL } from '@/lib/brand'
+import { sendEmail } from '@/lib/resend-send'
 
 const CMS_URL = process.env.NEXT_PUBLIC_CMS_URL || 'https://cms.etabibi.ma'
 const CMS_API_KEY = process.env.PAYLOAD_API_KEY || ''
 
-function getResend() {
-  const key = process.env.RESEND_API_KEY
-  if (!key) throw new Error('RESEND_API_KEY manquant')
-  return new Resend(key)
-}
 const DEMO_EMAIL = 'drdemo@gmail.com'
 
 function generatePassword(): string {
@@ -64,11 +58,10 @@ export async function GET(req: NextRequest) {
 
     consumeDemoToken(token)
 
-    const { data, error } = await getResend().emails.send({
-      from: `Etabib <${SUPPORT_EMAIL}>`,
-      to: email,
-      subject: 'Accès démo Etabib',
-      html: `
+    await sendEmail(
+      email,
+      'Accès démo Etabib',
+      `
         <p>Bonjour ${name},</p>
         <p>Votre accès à la démo Etabib a été approuvé.</p>
         <p><strong>Lien :</strong> <a href="https://drdemo.etabibi.ma/login">drdemo.etabibi.ma/login</a></p>
@@ -76,12 +69,7 @@ export async function GET(req: NextRequest) {
         <p><strong>Mot de passe :</strong> <span style="font-family:monospace;font-size:18px;background:#f0fdfa;padding:4px_10px;border-radius:6px">${newPassword}</span></p>
         <p style="color:#888;font-size:12px;margin-top:24px">Ce mot de passe est personnel. Il sera renouvelé lors de la prochaine demande.</p>
       `,
-    })
-    if (error) {
-      console.error('[resend]', error)
-      throw new Error('Échec envoi email : ' + error.message)
-    }
-    console.log('[resend] envoyé, id:', data?.id)
+    )
 
     const html = `<!DOCTYPE html><html lang="fr"><head><meta charset="utf-8"><title>Accès approuvé</title></head><body style="font-family:system-ui,sans-serif;text-align:center;padding:60px_20px"><h1 style="color:#0D9488">Accès approuvé</h1><p>Les identifiants ont été envoyés à <strong>${email}</strong>.</p></body></html>`
     return new Response(html, { headers: { 'Content-Type': 'text/html; charset=utf-8' } })

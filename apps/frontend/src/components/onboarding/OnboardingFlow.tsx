@@ -1,9 +1,9 @@
 'use client'
 
 import { useState } from 'react'
-import { useSearchParams, useRouter } from 'next/navigation'
+import { useSearchParams } from 'next/navigation'
 import { useTranslations } from 'next-intl'
-import { Link } from '@/i18n/navigation'
+import { Link, useRouter } from '@/i18n/navigation'
 import { ArrowRight, CheckCircle, Minus, Plus, ArrowLeft } from 'lucide-react'
 import SignupForm from './SignupForm'
 
@@ -49,7 +49,7 @@ export default function OnboardingFlow() {
   const handleChangePlan = () => {
     setSelectedTier(null)
     setSuccess(null)
-    router.push('/landing')
+    router.push('/landing#tarifs')
   }
 
   const handleSignupSuccess = (data: SuccessData) => {
@@ -88,10 +88,10 @@ export default function OnboardingFlow() {
 
   return (
     <div>
-      <button onClick={handleChangePlan}
+      <Link href="/landing#tarifs"
         className="mb-6 inline-flex items-center gap-1.5 text-sm text-stone-500 hover:text-stone-700 transition-colors duration-200">
         <ArrowLeft className="size-4" /> {t('changePlan')}
-      </button>
+      </Link>
 
       <div className="mb-6 rounded-xl border border-primary-200 bg-primary-50 p-4 text-center">
         <p className="text-sm font-medium text-primary-700">
