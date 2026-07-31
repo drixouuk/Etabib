@@ -115,11 +115,12 @@ export const PracticeInfo: CollectionConfig = {
       label: 'Horaires',
       fields: [
         {
-          name: 'day',
-          type: 'text',
+          name: 'dayOfWeek',
+          type: 'number',
           required: true,
-          localized: true,
-          label: 'Jour',
+          min: 1,
+          max: 7,
+          label: 'Jour (1=Lundi … 7=Dimanche)',
         },
         {
           name: 'open',
@@ -132,6 +133,32 @@ export const PracticeInfo: CollectionConfig = {
           type: 'text',
           label: 'Fermeture',
           admin: { placeholder: '16:30' },
+        },
+      ],
+    },
+    {
+      name: 'exceptionalClosures',
+      type: 'array',
+      label: 'Fermetures exceptionnelles',
+      fields: [
+        {
+          name: 'startDate',
+          type: 'date',
+          required: true,
+          label: 'Du',
+          admin: { date: { pickerAppearance: 'dayOnly' } },
+        },
+        {
+          name: 'endDate',
+          type: 'date',
+          label: 'Au',
+          admin: { date: { pickerAppearance: 'dayOnly' } },
+        },
+        {
+          name: 'label',
+          type: 'text',
+          required: true,
+          label: 'Motif (ex: Congés annuels)',
         },
       ],
     },

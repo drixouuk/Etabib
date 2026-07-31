@@ -4,14 +4,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import ProfileEditor from './ProfileEditor'
 import ChangePasswordForm from './ChangePasswordForm'
 import PracticeEditor from './PracticeEditor'
-import ScheduleEditor from './ScheduleEditor'
+import ScheduleAndSlots from './ScheduleAndSlots'
 import ServicesEditor from './ServicesEditor'
 import SiteEditor from './SiteEditor'
 import CalendarSettings from './CalendarSettings'
 import BillingSettings from './BillingSettings'
 import ManageAccounts from './ManageAccounts'
 import ReferringPractitionersManager from './ReferringPractitionersManager'
-import AvailabilityManager from './AvailabilityManager'
 
 type Props = {
   userId: string
@@ -58,8 +57,7 @@ export default function SettingsTabsContent({
         <TabsContent value="practice">
           <div className="space-y-8">
             <PracticeEditor />
-            <ScheduleEditor />
-            <AvailabilityManager />
+            <ScheduleAndSlots />
           </div>
         </TabsContent>
       )}

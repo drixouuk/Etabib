@@ -41,7 +41,8 @@ export type PracticeInfo = {
   phone: string
   email: string
   coordinates: { lat: number; lng: number }
-  schedules: { day: string; open: string; close: string }[]
+  schedules: { dayOfWeek: number; open: string; close: string }[]
+  exceptionalClosures?: { startDate: string; endDate?: string; label: string }[]
   pricing: unknown
 }
 

@@ -6,6 +6,7 @@ import ServicesSection from "@/components/sections/ServicesSection";
 import ReviewsSection from "@/components/sections/ReviewsSection";
 import PublicBookingWidget from "@/components/booking/PublicBookingWidget";
 import InfosSection from "@/components/sections/InfosSection";
+import ClosureBanner from "@/components/sections/ClosureBanner";
 import { getServices, getPracticeInfo, getReviews, getTenantById, getDoctorProfile } from "@/lib/payload";
 import type { Service, PracticeInfo, Review, Doctor } from "@/lib/payload";
 
@@ -51,7 +52,9 @@ export default async function HomePage({ params }: Props) {
   const specialty = doctor?.specialty || 'Pédiatre'
 
   return (
-    <main className="flex-1">
+    <>
+      <ClosureBanner closures={(practiceInfo?.exceptionalClosures ?? []) as any} />
+      <main className="flex-1">
       {/* ============ HERO ============ */}
       <section className="relative overflow-hidden px-4 pb-[70px] pt-[132px] md:pt-[110px]">
         <span className="absolute left-[60%] -top-[100px] z-0 size-[340px] rounded-full bg-amber-100/70 blur-[60px]" />
@@ -120,6 +123,7 @@ export default async function HomePage({ params }: Props) {
       <PublicBookingWidget tenantId={tenantId} />
 
       <InfosSection locale={locale} practiceInfo={practiceInfo} />
-    </main>
+      </main>
+    </>
   );
 }

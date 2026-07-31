@@ -185,6 +185,18 @@ export interface Tenant {
      * Vide = illimité. Limite future sans re-développement.
      */
     maxSecretaryAccounts?: number | null;
+    /**
+     * Si coché, le médecin peut éditer les créneaux indépendamment des horaires.
+     */
+    customSlots?: boolean | null;
+    /**
+     * Utilisée lors de la génération automatique des créneaux depuis les horaires.
+     */
+    defaultSlotDuration?: number | null;
+    /**
+     * Utilisée lors de la génération automatique des créneaux depuis les horaires.
+     */
+    defaultSlotBuffer?: number | null;
     calendarToken?: string | null;
     verificationToken?: string | null;
     emailVerified?: boolean | null;
@@ -462,9 +474,17 @@ export interface PracticeInfo {
   };
   schedules?:
     | {
-        day: string;
+        dayOfWeek: number;
         open?: string | null;
         close?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  exceptionalClosures?:
+    | {
+        startDate: string;
+        endDate?: string | null;
+        label: string;
         id?: string | null;
       }[]
     | null;
@@ -864,6 +884,9 @@ export interface TenantsSelect<T extends boolean = true> {
         specialty?: T;
         doctorCount?: T;
         maxSecretaryAccounts?: T;
+        customSlots?: T;
+        defaultSlotDuration?: T;
+        defaultSlotBuffer?: T;
         calendarToken?: T;
         verificationToken?: T;
         emailVerified?: T;
@@ -1052,9 +1075,17 @@ export interface PracticeInfoSelect<T extends boolean = true> {
   schedules?:
     | T
     | {
-        day?: T;
+        dayOfWeek?: T;
         open?: T;
         close?: T;
+        id?: T;
+      };
+  exceptionalClosures?:
+    | T
+    | {
+        startDate?: T;
+        endDate?: T;
+        label?: T;
         id?: T;
       };
   pricing?: T;

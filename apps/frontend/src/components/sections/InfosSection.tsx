@@ -11,30 +11,10 @@ import type { PracticeInfo } from "@/lib/payload";
 
 const DAY_ORDER = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"];
 
-const FR_TO_EN: Record<string, string> = {
-  lun: "mon", lundi: "mon", mar: "tue", mardi: "tue",
-  mer: "wed", mercredi: "wed", jeu: "thu", jeudi: "thu",
-  ven: "fri", vendredi: "fri", sam: "sat", samedi: "sat",
-  dim: "sun", dimanche: "sun",
+// dayOfWeek ISO : 1=Lundi … 7=Dimanche → index DAY_ORDER
+const ISO_TO_DAY_ORDER: Record<number, string> = {
+  1: "mon", 2: "tue", 3: "wed", 4: "thu", 5: "fri", 6: "sat", 7: "sun",
 };
-
-function expandDays(raw: string): string[] {
-  const clean = raw.trim().toLowerCase();
-  const sep = clean.includes("–") ? "–" : clean.includes("-") ? "-" : null;
-  if (sep) {
-    const parts = clean.split(sep).map((s) => s.trim());
-    const start = FR_TO_EN[parts[0]];
-    const end = FR_TO_EN[parts[1]];
-    if (start && end) {
-      const si = DAY_ORDER.indexOf(start);
-      const ei = DAY_ORDER.indexOf(end);
-      if (si !== -1 && ei !== -1 && si <= ei) return DAY_ORDER.slice(si, ei + 1);
-    }
-    return parts.filter((p) => FR_TO_EN[p]).map((p) => FR_TO_EN[p]);
-  }
-  const mapped = FR_TO_EN[clean];
-  return mapped ? [mapped] : [raw];
-}
 
 type Props = { locale: string; practiceInfo: PracticeInfo | null };
 
@@ -48,14 +28,25 @@ export default async function InfosSection({ locale, practiceInfo }: Props) {
     for (const s of practiceInfo.schedules) {
       const timeParts = [s.open, s.close].filter(Boolean);
       const timeStr = timeParts.length === 2 ? `${timeParts[0]}–${timeParts[1]}` : timeParts[0] || "";
-      const days = expandDays(s.day);
-      for (const day of days) hoursMap.set(day, timeStr);
+      const day = ISO_TO_DAY_ORDER[Number(s.dayOfWeek)];
+      if (day) hoursMap.set(day, timeStr);
     }
   }
 
   const hoursStr = practiceInfo?.schedules
-    ? practiceInfo.schedules.map(s => `${s.day} ${[s.open, s.close].filter(Boolean).join('–')}`).join('<br/>')
+    ? practiceInfo.schedules
+        .map(s => `${ISO_TO_DAY_ORDER[Number(s.dayOfWeek)] || ''} ${[s.open, s.close].filter(Boolean).join('–')}`)
+        .join('<br/>')
     : ''
+
+  // Fermetures à venir (pas encore commencées aujourd'hui)
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+  const upcomingClosures = (practiceInfo?.exceptionalClosures ?? []).filter((c: any) => {
+    const start = new Date(c.startDate)
+    start.setHours(0, 0, 0, 0)
+    return start >= today
+  })
 
   const infoCards = [
     { icon: MapPin, title: t("address_title"), text: practiceInfo?.address || '' },
@@ -94,6 +85,23 @@ export default async function InfosSection({ locale, practiceInfo }: Props) {
             )
           })}
         </div>
+
+        {upcomingClosures.length > 0 && (
+          <div className="mx-auto mt-6 max-w-[620px] rounded-2xl border border-amber-200 bg-amber-50 px-5 py-4">
+            <p className="text-sm font-bold text-amber-800">Fermetures à venir</p>
+            <ul className="mt-1.5 space-y-1">
+              {upcomingClosures.map((c: any, i: number) => {
+                const start = new Date(c.startDate).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })
+                const end = c.endDate ? new Date(c.endDate).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }) : null
+                return (
+                  <li key={i} className="text-sm text-amber-800">
+                    {c.label} — {start}{end ? ` au ${end}` : ''}
+                  </li>
+                )
+              })}
+            </ul>
+          </div>
+        )}
 
         <div className="mt-8 grid gap-6 lg:grid-cols-2">
           <div className="overflow-hidden rounded-2xl border border-stone-200 bg-white">
