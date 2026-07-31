@@ -65,6 +65,7 @@ export default function QueueBar() {
   const avgPct = (stats.dailyAverage / todayMax) * 100
   const recPct = (stats.dailyRecord / todayMax) * 100
   const isTense = stats.waiting > stats.dailyAverage * 0.3
+  const isAboveAverage = stats.dailyAverage > 0 && stats.todayTotal > stats.dailyAverage
 
   return (
     <div className="mx-[10px] mt-3 rounded-lg border border-stone-100 bg-white px-3 py-2.5 shadow-sm">
@@ -81,7 +82,7 @@ export default function QueueBar() {
         <div className="text-end">
           <span className={`inline-block text-lg font-bold tabular-nums transition-all duration-300 ${
             popToday ? 'scale-110' : 'scale-100'
-          } ${justBrokeRecord ? 'ring-1 ring-cta-200 rounded' : ''}`}>
+          } ${isAboveAverage ? 'text-success-500' : 'text-stone-800'} ${justBrokeRecord ? 'ring-1 ring-cta-200 rounded' : ''}`}>
             {stats.todayTotal}
           </span>
           <p className="text-[9px] text-stone-400 leading-none mt-0.5">aujourd&apos;hui</p>
@@ -91,7 +92,9 @@ export default function QueueBar() {
       {/* Ligne de progression */}
       <div className="relative mt-2.5 h-[3px] rounded-full bg-stone-200">
         <div
-          className="absolute inset-y-0 left-0 rounded-full bg-primary-500 transition-all duration-700 ease-out"
+          className={`absolute inset-y-0 left-0 rounded-full transition-all duration-700 ease-out ${
+            isAboveAverage ? 'bg-success-500' : 'bg-primary-500'
+          }`}
           style={{ width: `${todayPct}%` }}
         />
         <div
