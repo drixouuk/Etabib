@@ -79,13 +79,18 @@ export default function Sidebar({ user, tenant, onNavigate }: Props) {
     ],
   }
 
-  const navItems = tierNav[effectiveTier || 'vitrine'] || tierNav.vitrine
+  const navItems = (tierNav[effectiveTier || 'vitrine'] || tierNav.vitrine).filter((item) => {
+    if (!effectiveRoles.includes('secretary')) return true
+    return !['/dashboard', '/dashboard/activity', '/dashboard/settings'].includes(item.href)
+  })
 
   const adminItems: NavItem[] = []
 
+  const isAdmin = effectiveRoles.includes('superadmin') || effectiveRoles.includes('tenant_admin')
+
   if (effectiveTier === 'cabinet') {
-    adminItems.push({ label: "Registre d'audit", href: '/dashboard/audit-logs', icon: <FileText className="size-4" /> })
-    if (user.roles?.includes('superadmin')) {
+    if (isAdmin) adminItems.push({ label: "Registre d'audit", href: '/dashboard/audit-logs', icon: <FileText className="size-4" /> })
+    if (effectiveRoles.includes('superadmin')) {
       adminItems.push({ label: 'Alertes système', href: '/dashboard/system-alerts', icon: <ShieldAlert className="size-4" /> })
     }
   }
