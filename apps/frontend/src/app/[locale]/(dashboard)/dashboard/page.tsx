@@ -1,5 +1,6 @@
 import { getTenantId } from '@/lib/tenant'
-import { requireTier } from '@/lib/tier-guard'
+import { requireTier, isSecretaryOnly } from '@/lib/tier-guard'
+import { redirect } from 'next/navigation'
 import { getTenantById } from '@/lib/payload'
 import LiveStatsWidget from '@/components/dashboard/LiveStatsWidget'
 import PatientSearchBar from '@/components/dashboard/PatientSearchBar'
@@ -8,6 +9,7 @@ import VaccinationAlerts from '@/components/dashboard/VaccinationAlerts'
 
 export default async function DashboardPage() {
   const { user } = await requireTier(['cabinet'])
+  if (isSecretaryOnly(user)) redirect('/dashboard/rendez-vous')
   const isSuperadmin = user.roles?.includes('superadmin')
 
   const tenantId = getTenantId(user)

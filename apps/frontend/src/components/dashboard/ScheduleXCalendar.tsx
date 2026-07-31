@@ -19,21 +19,25 @@ type Props = {
   isRTL?: boolean
 }
 
+// Fuseau métier du cabinet (aligné sur formatDateMorocco / morocco-time)
+const MOROCCO_TZ = 'Africa/Casablanca'
+
 // Schedule-X v4 exige des instances Temporal.ZonedDateTime pour start/end, et
 // valide via `instanceof` contre le Temporal GLOBAL (navigateur natif ou polyfill
-// installé par 'temporal-polyfill/global'). La conversion ci-dessous utilise la
-// même implémentation que le global : les classes sont donc identiques.
+// installé par 'temporal-polyfill/global'). ZonedDateTime.from() refuse les ISO
+// sans annotation "[...]" : on passe par Instant (accepte "...Z") puis on projette
+// dans le fuseau du cabinet. Events invalides ignorés.
 function toTemporalEvents(events: CalendarEvent[]) {
   const out: { id: string | number; title: string; start: Temporal.ZonedDateTime; end: Temporal.ZonedDateTime }[] = []
   for (const e of events) {
     try {
-      const startISO = new Date(e.start).toISOString()
-      const endISO = new Date(e.end || e.start).toISOString()
+      const startInstant = Temporal.Instant.from(e.start)
+      const endInstant = Temporal.Instant.from(e.end || e.start)
       out.push({
         id: e.id,
         title: e.title,
-        start: Temporal.ZonedDateTime.from(startISO),
-        end: Temporal.ZonedDateTime.from(endISO),
+        start: startInstant.toZonedDateTimeISO(MOROCCO_TZ),
+        end: endInstant.toZonedDateTimeISO(MOROCCO_TZ),
       })
     } catch {
       // event invalide — ignoré
@@ -62,6 +66,7 @@ export default function ScheduleXCalendar({ events, onDateClick, onEventClick, o
     const calendar = createCalendar({
       views: [viewMonthGrid, viewWeek],
       defaultView: 'month-grid',
+      timezone: MOROCCO_TZ,
       dayBoundaries: { start: '07:00', end: '19:00' },
       plugins: [eventsService],
       locale,

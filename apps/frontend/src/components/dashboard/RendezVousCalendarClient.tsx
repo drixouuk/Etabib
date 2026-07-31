@@ -66,7 +66,7 @@ export default function RendezVousCalendarClient({ initialBookings, tenantId }: 
       const data = await res.json()
       const docs: CalBooking[] = data.docs ?? []
       setEvents(docs.map(toEvent))
-      setBookingsById(prev => ({ ...prev, ...Object.fromEntries(docs.map(b => [b.id, b])) }))
+      setBookingsById(Object.fromEntries(docs.map(b => [b.id, b])))
     } catch {
       // silence refetch errors
     }

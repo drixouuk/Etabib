@@ -1,5 +1,6 @@
 import { getTenantId } from '@/lib/tenant'
-import { requireTier } from '@/lib/tier-guard'
+import { requireTier, isSecretaryOnly } from '@/lib/tier-guard'
+import { redirect } from 'next/navigation'
 import { fetchCMS } from '@/lib/cms-fetch'
 import ActivityView from '@/components/dashboard/ActivityView'
 
@@ -92,6 +93,7 @@ export default async function ActivityPage({ searchParams }: Props) {
   const { period: periodParam } = await searchParams
   const period: Period = (['day', 'week', 'month', 'year'] as const).includes(periodParam as any) ? (periodParam as Period) : 'week'
   const { user } = await requireTier(['cabinet'])
+  if (isSecretaryOnly(user)) redirect('/dashboard/rendez-vous')
   const tenantId = getTenantId(user)
   const startDate = getStartDate(period)
   const isoStart = formatISO(startDate)

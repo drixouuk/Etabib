@@ -12,3 +12,12 @@ export async function requireTier(allowed: string[]) {
   if (!tier || !allowed.includes(tier)) redirect('/dashboard/settings')
   return { user, tenant, tenantId, tier }
 }
+
+const STAFF_ROLES = ['doctor', 'tenant_admin', 'superadmin', 'substitute']
+
+// Secrétaire stricte (sans rôle médecin/admin) : périmètre réduit à la file
+// d'attente et aux rendez-vous. Les pages hors périmètre la redirigent.
+export function isSecretaryOnly(user: { roles?: string[] }): boolean {
+  const roles = user.roles ?? []
+  return roles.includes('secretary') && !roles.some((r) => STAFF_ROLES.includes(r))
+}

@@ -1,10 +1,13 @@
 import { requireAuth } from '@/lib/auth'
+import { isSecretaryOnly } from '@/lib/tier-guard'
+import { redirect } from 'next/navigation'
 import { getTenantId } from '@/lib/tenant'
 import { fetchCMS } from '@/lib/cms-fetch'
 import SettingsTabsContent from './SettingsTabsContent'
 
 export default async function SettingsPage() {
   const user = await requireAuth()
+  if (isSecretaryOnly(user)) redirect('/dashboard/rendez-vous')
   const isAdmin = user.roles?.includes('tenant_admin') || user.roles?.includes('superadmin')
   const tenantId = getTenantId(user)
 
