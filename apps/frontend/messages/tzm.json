@@ -72,7 +72,18 @@
   "dashboard": {
     "overview": "ⵜⴰⵙⵖⵏⵉⵢⵜ ⵜⴰⵎⴰⵜⵓⵢⵜ",
     "queue": "ⴰⴷⴷⴰⵔ ⵏ ⵓⵙⵓⵏⵓⵊ",
-    "activity": "ⴰⵏⴰⵎⵎⵓⵙ",
+    "activity": {
+      "title": "ⴰⵏⴰⵎⵎⵓⵙ",
+      "periodDay": "ⴰⵙⵙ",
+      "periodWeek": "ⵉⵎⴰⵍⴰⵙⵙⵏ",
+      "periodMonth": "ⴰⵢⵢⵓⵔ",
+      "periodYear": "ⴰⵙⴳⴳⵯⴰⵙ",
+      "newPatients": "ⵉⵎⵓⴷⴰⵏ ⵉⵎⴰⵢⵏⵓⵜⵏ",
+      "consultationsDone": "ⵜⵉⵎⵙⴰⵍ ⵢⴻⵜⵜⵡⴰⵢⵏ",
+      "consultationsChart": "ⵜⵉⵎⵙⴰⵍ ⵙ ⵡⴰⵙⵙ",
+      "patientsChart": "ⵉⵎⵓⴷⴰⵏ ⵉⵎⴰⵢⵏⵓⵜⵏ ⵙ ⵡⴰⵙⵙ",
+      "noData": "ⵓⵔ ⵍⵍⴰⵏ ⵉⴼⵙⴽⴰ ⵉ ⵓⴽⵓⴷ ⴰⴷ"
+    },
     "welcome": "ⴰⵣⵓⵍ, {name}",
     "searchPatient": "ⵔⵣⵓ ⵖⴼ ⵓⵎⵓⴷⴰⵏ (ⵉⵙⵎ ⵏⵉⵖ CIN)...",
     "quickLinks": "ⵉⵙⵖⵏ ⵉⵏⴳⴳⵓⵔⴰ",
@@ -97,18 +108,6 @@
       "overdue": "ⵉⵣⵔⵉ ⵓⴽⵓⴷ",
       "upcoming": "ⵉⴷⵖⴰⵔⵏ",
       "vaccines": "ⵜⵉⵏⴼⵍⵉⵜⵉⵏ"
-    },
-    "activity": {
-      "title": "ⴰⵏⴰⵎⵎⵓⵙ",
-      "periodDay": "ⴰⵙⵙ",
-      "periodWeek": "ⵉⵎⴰⵍⴰⵙⵙⵏ",
-      "periodMonth": "ⴰⵢⵢⵓⵔ",
-      "periodYear": "ⴰⵙⴳⴳⵯⴰⵙ",
-      "newPatients": "ⵉⵎⵓⴷⴰⵏ ⵉⵎⴰⵢⵏⵓⵜⵏ",
-      "consultationsDone": "ⵜⵉⵎⵙⴰⵍ ⵢⴻⵜⵜⵡⴰⵢⵏ",
-      "consultationsChart": "ⵜⵉⵎⵙⴰⵍ ⵙ ⵡⴰⵙⵙ",
-      "patientsChart": "ⵉⵎⵓⴷⴰⵏ ⵉⵎⴰⵢⵏⵓⵜⵏ ⵙ ⵡⴰⵙⵙ",
-      "noData": "ⵓⵔ ⵍⵍⴰⵏ ⵉⴼⵙⴽⴰ ⵉ ⵓⴽⵓⴷ ⴰⴷ"
     }
   },
   "landing": {
@@ -260,5 +259,37 @@
     "footer_legal_2": "ⵜⵉⵏⵎⵎⵏⵜ",
     "footer_rights": "ⵎⴰⵕⵕⴰ ⵉⵣⵔⴼⴰⵏ ⵢⵓⵎⵥⵏ.",
     "footer_made": "ⵉⵜⵜⵡⴰⵙⴽⴰⵔ ⴷⴻⴳ ⵎⵓⵔⴰⴽⵓⵛ 🇲🇦"
+  },
+  "onboarding": {
+    "title": "ⵙⵏⴼⵍ ⴰⴷⵖⴰⵔ ⵏⵏⴽ ⴰⵎⴰⵣⵣⴰⵍ",
+    "subtitle": "ⵙⵜⵉ ⵜⴰⵙⵡⵓⵔⵉ ⵉⵖⴰⵏ ⵉ ⵜⵡⵓⵔⵉ ⵏⵏⴽ",
+    "selectedPlan": "ⵜⴰⵙⵡⵓⵔⵉ {plan}",
+    "selectedPlanGratuite": "ⵜⴰⵙⵡⵓⵔⵉ {plan} — ⴱⴰⵟⴰⵍ",
+    "selectedPlanMois": "ⵜⴰⵙⵡⵓⵔⵉ {plan} — {price} MAD/ⴰⵢⵢⵓⵔ",
+    "changePlan": "ⵙⵜⵉ ⵜⴰⵙⵡⵓⵔⵉ ⵢⴰⴹⵏ",
+    "upsellVitrine": "ⵔⵏⵓ ⴰⵙⵏⵓⴱⴳ ⵏ ⵜⵎⵉⵔⵉⵜ ⵖⴼ ⵍⵉⵏⵜⵉⵔⵏⵉⵜ ⵙ 199 MAD/ⴰⵢⵢⵓⵔ",
+    "upsellVitrineCTA": "ⵥⵕ ⵜⴰⵙⵡⵓⵔⵉ ⵏ ⵜⵎⵉⵔⵉⵜ",
+    "successTitle": "ⵜⴰⴱⴰⵕⴰⵏⵜ ⵏⵏⴽ ⵜⵃⴹⴰ!",
+    "successSiteAddress": "ⴰⵙⵉⵜ ⵏⵏⴽ ⵉⵍⵍⴰ ⴳ:",
+    "successAccessSpace": "ⴽⵛⵎ ⵖⵔ ⵓⴷⵖⴰⵔ ⵉⵏⵓ",
+    "successNextSteps": "ⵜⵉⵙⵓⵖⴰⵍ ⵜⵉⵏⴰⵡⵏ:",
+    "successStep1": "ⵙⵓⴷⵙ ⴰⵙⵉⵜ ⵏⵏⴽ ⵣⴳ ⵓⴷⵖⴰⵔ ⵏⵏⴽ",
+    "successStep2": "ⵔⵏⵓ ⵉⵏⵖⵎⵉⵙⵏ ⵏ ⵓⵎⵢⴰⵡⴰⴹ, ⵉⵎⴰⵍⴰⵙⵙⵏ, ⵜⵉⵡⵓⵔⵉⵡⵉⵏ",
+    "successStep3": "ⵙⵏⴼⵍ ⵉⵎⴰⵍⴰⵙⵙⵏ ⵏⵏⴽ ⵖⴼ ⵍⵉⵏⵜⵉⵔⵏⵉⵜ",
+    "contactTitle": "ⵙⵙⵓⵜⵔ ⵜⴰⵎⴰⵡⵜ",
+    "contactSubtitle": "ⵙⵉⴷ ⴷⵉⵖ ⵉⵏⵖⵎⵉⵙⵏ ⵏⵏⴽ, ⴰ ⴷ ⵏⵏⴰⴹⵏ ⴷⵉⴽ 48 ⵏ ⵜⵙⵔⴰⴳⵉⵏ.",
+    "contactSentTitle": "ⵉⵜⵜⵓⵣⴰⵏ ⵓⵙⵇⵙⵉ",
+    "contactSentText": "ⵜⴰⵏⵎⵎⵉⵔⵜ ⵙ ⵓⵏⴰⵎⵎⴰⵙ ⵏⵏⴽ ⵉ ⵜⴰⵙⵡⵓⵔⵉ {plan}!",
+    "contactSentDetail": "ⴰ ⴷ ⵏⵏⴰⴹⵏ ⴷⵉⴽ ⴳ 48 ⵏ ⵜⵙⵔⴰⴳⵉⵏ ⴰⴹ ⵏⵙⵙⵍⴽⵎ ⵜⴰⵎⴰⵡⵜ ⴷ ⵓⵙⵡⵉⵔⴳ ⵏ ⵓⴷⵖⴰⵔ ⵏⵏⴽ.",
+    "contactSentWhileWaiting": "ⴰⵔ ⵢⴰⴷⵏ, ⵜⵣⵎⵔⵜ ⴰⴹ ⴰⵏⵖ ⵜⴰⵔⴰⵜ ⵖⵔ:",
+    "selectSpecialtyLabel": "ⵜⴰⵣⵣⴰⵍⵜ ⵏⵏⴽ",
+    "paymentPlaceholder": "ⴰⴷⴼⵓ — ⴰⴹ ⵉⵍⵉⵏ ⵖⴼ ⵜⵖⵣⵉ",
+    "creating": "ⴰⵙⵏⴼⵍ ⵏ ⵓⴷⵖⴰⵔ ⵏⵏⴽ…",
+    "ctaVitrine": "ⴱⴷⵓ",
+    "ctaRdv": "ⴱⴷⵓ",
+    "ctaCabinet": "ⵙⵜⵉ",
+    "doctorCountLabel": "ⵓⵟⵟⵓⵏ ⵏ ⵉⵙⵏⵉⵊⵉⵢⵏ",
+    "doctorCountHint": "ⴽⵓ ⴰⵙⵏⵉⵊ ⵓⵔⵏⵉ ⵉⵔⵏⵓ 199 MAD/ⴰⵢⵢⵓⵔ",
+    "totalPrice": "ⴰⵎⵎⵓ: {price} MAD/ⴰⵢⵢⵓⵔ"
   }
 }

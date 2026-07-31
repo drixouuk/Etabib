@@ -3,6 +3,7 @@ import { randomUUID } from 'crypto'
 import { createClient, createSubscriptionInvoice } from '@/lib/invoiceninja'
 import { rateLimit } from '@/lib/rate-limit'
 import { Resend } from 'resend'
+import { SUPPORT_EMAIL } from '@/lib/brand'
 
 const CMS_URL = process.env.NEXT_PUBLIC_CMS_URL || 'https://cms.etabibi.ma'
 const SITE_DOMAIN = process.env.NEXT_PUBLIC_SITE_DOMAIN || 'etabibi.ma'
@@ -155,13 +156,13 @@ export async function POST(request: NextRequest) {
 
         await Promise.allSettled([
           resend.emails.send({
-            from: 'Etabib <noreply@etabibi.ma>',
+            from: `Etabib <${SUPPORT_EMAIL}>`,
             to: email,
             subject: 'Vérifiez votre adresse email — Etabib',
             html: `<p>Bonjour ${fullName},</p><p>Merci d'avoir créé votre espace Etabib.</p><p><a href="${verificationUrl}">Cliquez ici pour vérifier votre adresse email</a></p><p>Ce lien expire dans 48h.</p>`,
           }),
           resend.emails.send({
-            from: 'Etabib <noreply@etabibi.ma>',
+            from: `Etabib <${SUPPORT_EMAIL}>`,
             to: email,
             subject: `Bienvenue sur Etabib, ${fullName} !`,
             html: `<p>Bonjour ${fullName},</p><p>Votre cabinet <strong>${name}</strong> est prêt.</p><p>Votre site : <a href="https://${domain}">https://${domain}</a></p><p>Connexion : <a href="${loginUrl}">${loginUrl}</a></p><p>L'équipe Etabib</p>`,

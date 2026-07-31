@@ -73,7 +73,18 @@
   "dashboard": {
     "overview": "Vue d'ensemble",
     "queue": "File d'attente",
-    "activity": "Activité",
+    "activity": {
+      "title": "Activité",
+      "periodDay": "Jour",
+      "periodWeek": "Semaine",
+      "periodMonth": "Mois",
+      "periodYear": "Année",
+      "newPatients": "Nouveaux patients",
+      "consultationsDone": "Consultations réalisées",
+      "consultationsChart": "Consultations par jour",
+      "patientsChart": "Nouveaux patients par jour",
+      "noData": "Aucune donnée pour cette période"
+    },
     "welcome": "Bonjour, {name}",
     "searchPatient": "Rechercher un patient (nom ou CIN)...",
     "quickLinks": "Accès rapides",
@@ -98,18 +109,6 @@
       "overdue": "En retard",
       "upcoming": "À venir",
       "vaccines": "vaccins"
-    },
-    "activity": {
-      "title": "Activité",
-      "periodDay": "Jour",
-      "periodWeek": "Semaine",
-      "periodMonth": "Mois",
-      "periodYear": "Année",
-      "newPatients": "Nouveaux patients",
-      "consultationsDone": "Consultations réalisées",
-      "consultationsChart": "Consultations par jour",
-      "patientsChart": "Nouveaux patients par jour",
-      "noData": "Aucune donnée pour cette période"
     }
   },
   "landing": {
@@ -289,6 +288,9 @@
     "creating": "Création de votre espace en cours…",
     "ctaVitrine": "Commencer",
     "ctaRdv": "Commencer",
-    "ctaCabinet": "Sélectionner"
+    "ctaCabinet": "Sélectionner",
+    "doctorCountLabel": "Nombre de médecins",
+    "doctorCountHint": "Chaque médecin supplémentaire ajoute 199 MAD/mois",
+    "totalPrice": "Total : {price} MAD/mois"
   }
 }

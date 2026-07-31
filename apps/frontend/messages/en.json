@@ -72,7 +72,18 @@
   "dashboard": {
     "overview": "Overview",
     "queue": "Waiting room",
-    "activity": "Activity",
+    "activity": {
+      "title": "Activity",
+      "periodDay": "Day",
+      "periodWeek": "Week",
+      "periodMonth": "Month",
+      "periodYear": "Year",
+      "newPatients": "New patients",
+      "consultationsDone": "Consultations done",
+      "consultationsChart": "Consultations per day",
+      "patientsChart": "New patients per day",
+      "noData": "No data for this period"
+    },
     "welcome": "Hello, {name}",
     "searchPatient": "Search patient (name or ID)...",
     "quickLinks": "Quick links",
@@ -97,18 +108,6 @@
       "overdue": "Overdue",
       "upcoming": "Upcoming",
       "vaccines": "vaccines"
-    },
-    "activity": {
-      "title": "Activity",
-      "periodDay": "Day",
-      "periodWeek": "Week",
-      "periodMonth": "Month",
-      "periodYear": "Year",
-      "newPatients": "New patients",
-      "consultationsDone": "Consultations done",
-      "consultationsChart": "Consultations per day",
-      "patientsChart": "New patients per day",
-      "noData": "No data for this period"
     }
   },
   "landing": {
@@ -288,6 +287,9 @@
     "creating": "Creating your space…",
     "ctaVitrine": "Get started",
     "ctaRdv": "Get started",
-    "ctaCabinet": "Select"
+    "ctaCabinet": "Select",
+    "doctorCountLabel": "Number of doctors",
+    "doctorCountHint": "Each additional doctor adds 199 MAD/month",
+    "totalPrice": "Total: {price} MAD/month"
   }
 }

@@ -72,7 +72,18 @@
   "dashboard": {
     "overview": "نظرة عامة",
     "queue": "قائمة الانتظار",
-    "activity": "النشاط",
+    "activity": {
+      "title": "النشاط",
+      "periodDay": "يوم",
+      "periodWeek": "أسبوع",
+      "periodMonth": "شهر",
+      "periodYear": "سنة",
+      "newPatients": "مرضى جدد",
+      "consultationsDone": "استشارات منجزة",
+      "consultationsChart": "الاستشارات يومياً",
+      "patientsChart": "مرضى جدد يومياً",
+      "noData": "لا توجد بيانات لهذه الفترة"
+    },
     "welcome": "مرحباً، {name}",
     "searchPatient": "بحث عن مريض (الاسم أو رقم التعريف)...",
     "quickLinks": "روابط سريعة",
@@ -97,18 +108,6 @@
       "overdue": "متأخر",
       "upcoming": "قادم",
       "vaccines": "تطعيمات"
-    },
-    "activity": {
-      "title": "النشاط",
-      "periodDay": "يوم",
-      "periodWeek": "أسبوع",
-      "periodMonth": "شهر",
-      "periodYear": "سنة",
-      "newPatients": "مرضى جدد",
-      "consultationsDone": "استشارات منجزة",
-      "consultationsChart": "الاستشارات يومياً",
-      "patientsChart": "مرضى جدد يومياً",
-      "noData": "لا توجد بيانات لهذه الفترة"
     }
   },
   "landing": {
@@ -260,5 +259,37 @@
     "footer_legal_2": "الخصوصية",
     "footer_rights": "جميع الحقوق محفوظة.",
     "footer_made": "صُنع في المغرب 🇲🇦"
+  },
+  "onboarding": {
+    "title": "أنشئ مساحتك المهنية",
+    "subtitle": "اختر الصيغة المناسبة لنشاطك",
+    "selectedPlan": "الصيغة {plan}",
+    "selectedPlanGratuite": "الصيغة {plan} — مجانية",
+    "selectedPlanMois": "الصيغة {plan} — {price} درهم/شهر",
+    "changePlan": "اختر صيغة أخرى",
+    "upsellVitrine": "أضف حجز المواعيد عبر الإنترنت مقابل 199 درهم/شهر",
+    "upsellVitrineCTA": "شاهد صيغة المواعيد",
+    "successTitle": "عيادتك جاهزة!",
+    "successSiteAddress": "موقعك متاح على العنوان:",
+    "successAccessSpace": "الوصول إلى مساحتي",
+    "successNextSteps": "الخطوات التالية:",
+    "successStep1": "خصص موقعك من مساحتك",
+    "successStep2": "أضف معلومات الاتصال والمواعيد والخدمات",
+    "successStep3": "اضبط مواعيدك المتاحة عبر الإنترنت",
+    "contactTitle": "اطلب نسخة تجريبية",
+    "contactSubtitle": "اترك لنا بياناتك، سنتواصل معك خلال 48 ساعة.",
+    "contactSentTitle": "تم إرسال الطلب",
+    "contactSentText": "شكرًا لاهتمامك بالصيغة {plan}!",
+    "contactSentDetail": "سنتواصل معك خلال 48 ساعة لتنظيم عرض وتجهيز مساحتك.",
+    "contactSentWhileWaiting": "في الأثناء، يمكنك مراسلتنا على:",
+    "selectSpecialtyLabel": "تخصصك",
+    "paymentPlaceholder": "الدفع — متاح قريبًا",
+    "creating": "إنشاء مساحتك…",
+    "ctaVitrine": "ابدأ",
+    "ctaRdv": "ابدأ",
+    "ctaCabinet": "اختر",
+    "doctorCountLabel": "عدد الأطباء",
+    "doctorCountHint": "كل طبيب إضافي يضيف 199 درهم/شهر",
+    "totalPrice": "الإجمالي: {price} درهم/شهر"
   }
 }
