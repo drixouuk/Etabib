@@ -6,55 +6,62 @@
 
 ## Objectif
 
-Deux barres verticales dans la sidebar, **uniquement pour tier `cabinet` + rôle `doctor`** :
+Deux **thermomètres verticaux** côte à côte dans la sidebar, **uniquement pour tier `cabinet` + rôle `doctor`** :
 
-1. **Barre du haut — « En attente »** : nombre de patients actuellement en salle d'attente. Simple, sans marqueurs, sans animation record. Barre proportionnelle à une capacité max raisonnable.
-2. **Barre du bas — « Aujourd'hui »** : total cumulé de patients vus dans la journée. Se remplit au fil de la journée. Marqueurs moyenne quotidienne (○) et record absolu (◆). Animation quand on dépasse le record.
+1. **Gauche — « En attente »** : nombre de patients actuellement en salle d'attente. Simple, sans marqueurs, sans animation record. Le barreau se remplit du bas vers le haut.
+2. **Droite — « Aujourd'hui »** : total cumulé de patients vus dans la journée. Le barreau se remplit du bas vers le haut au fil de la journée. Marqueurs moyenne quotidienne (○) et record absolu (◆) positionnés le long du bord droit. Animation quand on dépasse le record.
 
-Les deux barres sont fines, côte à côte verticalement, sans texte superflu.
+Format vertical adapté à la sidebar de 252px — les barres horizontales seraient trop fines pour être lisibles.
 
 ---
 
 ## Design cible
 
 ```
-┌─ Sidebar ─────────────────────────────────┐
-│                                            │
-│  Vue d'ensemble                            │
-│  Patients                                  │
-│  ...                                       │
-│                                            │
-│  ┌─ En attente ─────────────────────────┐ │
-│  │ ████████░░░░░░░░░░░░░░░░░░░░░░░░░░░ │ │  ← primary-500, proportionnel à max 15
-│  │  4 en attente                         │ │
-│  └───────────────────────────────────────┘ │
-│                                            │
-│  ┌─ Aujourd'hui ────────────────────────┐ │
-│  │ ██████████████░░░░░░░░░░○░░░░░░░░◆ │ │  ← gradient primary→cta, marqueurs moyenne/record
-│  │  14 / moy. 22  ·  record 38          │ │
-│  └───────────────────────────────────────┘ │
-│                                            │
-│  👤 Dr X · Médecin                         │
-└────────────────────────────────────────────┘
+┌─ Sidebar (252px) ──────────────────────────┐
+│                                             │
+│  Vue d'ensemble                             │
+│  Patients                                   │
+│  ...                                        │
+│                                             │
+│  En attente          Aujourd'hui            │
+│  ┌────┐              ┌────┐ ◆ 38            │
+│  │    │              │ ██ │                 │
+│  │ ██ │              │ ██ │                 │
+│  │ ██ │              │ ██ │ ○ 22            │
+│  │ ██ │              │ ██ │                 │
+│  │ ██ │              │ ██ │                 │
+│  └────┘              └────┘                 │
+│    4               14 / moy.22              │
+│                                             │
+│  👤 Dr X · Médecin                          │
+└─────────────────────────────────────────────┘
 ```
 
-### Barre « En attente »
-- Remplissage : `primary-500` (solide, pas de gradient)
-- Max de la barre : `Math.max(10, dailyRecord * 0.3)` — au moins 10, ou 30% du record pour avoir une échelle qui respire
+- Deux colonnes en `flex gap-4`, chaque colonne ~100px de large
+- Barre verticale de ~80px de haut, 16px de large, `rounded-full`
+- Fond `bg-stone-200`, remplissage du bas vers le haut (élément interne positionné en `bottom: 0` avec la hauteur proportionnelle)
+- Labels en dessous de chaque barre
+
+### Thermomètre « En attente »
+- Remplissage : `bg-primary-500` (solide, pas de gradient)
+- Hauteur : `(waiting / waitingMax) * 100%`, avec `waitingMax = Math.max(10, Math.round(dailyRecord * 0.3))`
 - Pas de marqueurs, pas d'animation record
 - Simple et lisible
 
-### Barre « Aujourd'hui »
-- Remplissage : `gradient from-primary-600 to-cta-500`
-- Max de la barre : `dailyRecord` (ou `Math.max(dailyRecord, todayTotal)` si aujourd'hui bat le record)
-- Marqueur ○ : moyenne quotidienne (`dailyAverage`), en `secondary-400`
-- Marqueur ◆ : record absolu (`dailyRecord`), en `secondary-500`
-- Animation record : quand `todayTotal > dailyRecord` → le ◆ pulse 3 fois + la barre entière passe en `cta-500` pendant 2s
+### Thermomètre « Aujourd'hui »
+- Remplissage : `bg-gradient-to-t from-primary-600 to-cta-500`
+- Hauteur : `(todayTotal / todayMax) * 100%`, avec `todayMax = Math.max(dailyRecord, todayTotal, 1)`
+- Marqueur ○ : ligne horizontale pointillée à `(dailyAverage / todayMax) * 100%` de hauteur, en `secondary-400`
+- Marqueur ◆ : ligne horizontale pointillée à `(dailyRecord / todayMax) * 100%` de hauteur, en `secondary-500`
+- Animation record : quand `todayTotal > initialRecord` → le ◆ pulse 3 fois + remplissage passe en `bg-cta-500` pendant 2s
 
-### Comportement des marqueurs
-- Les marqueurs ○ et ◆ sont positionnés à `(valeur / maxBarre) * 100%` le long de la barre
-- Ils sont rendus **au-dessus** de la barre (z-index), pas clippés par `overflow-hidden`
-- Le conteneur de barre n'a PAS `overflow-hidden` ; seul le div de remplissage intérieur l'a
+### Comportement des marqueurs (thermomètre « Aujourd'hui »)
+- Les marqueurs sont des lignes horizontales absolues **en overlay** sur la barre verticale
+- Ils sont rendus dans un conteneur parent `relative`, en `absolute` avec `left: 0; right: 0`
+- `○` = `border-t border-dashed secondary-400` (ligne pointillée fine)
+- `◆` = `border-t border-dashed secondary-500` + petit losange à droite
+- Pas d'`overflow-hidden` sur le thermomètre — les lignes dépassent sur la droite pour porter le label chiffré
 
 ---
 
@@ -65,6 +72,10 @@ Les deux barres sont fines, côte à côte verticalement, sans texte superflu.
 **Fichier :** `apps/frontend/src/app/api/queue-stats/route.ts`
 
 ```ts
+import { NextRequest, NextResponse } from 'next/server'
+
+const CMS_URL = process.env.NEXT_PUBLIC_CMS_URL || 'https://cms.etabibi.ma'
+
 export async function GET(req: NextRequest) {
   const token = req.cookies.get('payload-token')?.value
   if (!token) return NextResponse.json({ error: 'Non authentifié' }, { status: 401 })
@@ -76,7 +87,6 @@ export async function GET(req: NextRequest) {
 
   const today = new Date(); today.setHours(0, 0, 0, 0)
 
-  // Patients en attente maintenant
   const waitingRes = await fetch(
     `${CMS_URL}/api/queue-items?where[tenant][equals]=${tenantId}&where[status][equals]=waiting&depth=0&limit=200`,
     { headers: { Authorization: `Bearer ${token}` } }
@@ -84,7 +94,6 @@ export async function GET(req: NextRequest) {
   const waitingData = await waitingRes.json()
   const waiting = waitingData?.docs?.length ?? 0
 
-  // Total du jour
   const todayRes = await fetch(
     `${CMS_URL}/api/queue-items?where[tenant][equals]=${tenantId}&where[createdAt][greater_than]=${today.toISOString()}&depth=0&limit=500`,
     { headers: { Authorization: `Bearer ${token}` } }
@@ -92,7 +101,6 @@ export async function GET(req: NextRequest) {
   const todayData = await todayRes.json()
   const todayTotal = todayData?.docs?.length ?? 0
 
-  // Moyenne et record (30 derniers jours, hors aujourd'hui)
   const thirtyDaysAgo = new Date(today); thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
   const historyRes = await fetch(
     `${CMS_URL}/api/queue-items?where[tenant][equals]=${tenantId}&where[createdAt][greater_than]=${thirtyDaysAgo.toISOString()}&where[createdAt][less_than]=${today.toISOString()}&depth=0&limit=2000`,
@@ -113,8 +121,6 @@ export async function GET(req: NextRequest) {
   return NextResponse.json({ waiting, todayTotal, dailyAverage, dailyRecord })
 }
 ```
-
-Agrégation côté serveur, pas de transfert de 1000+ docs au client toutes les 30s. Renvoie exactement 4 nombres.
 
 ### 2. Composant `QueueBar.tsx`
 
@@ -144,16 +150,12 @@ export default function QueueBar() {
         const res = await fetch('/api/queue-stats')
         if (!res.ok) return
         const data: QueueStats = await res.json()
-
         if (!stats) setInitialRecord(data.dailyRecord)
-
-        // Détection de record : comparer au record historique (hors aujourd'hui)
         if (initialRecord > 0 && data.todayTotal > initialRecord) {
           setJustBrokeRecord(true)
           if (recordTimer.current) clearTimeout(recordTimer.current)
           recordTimer.current = setTimeout(() => setJustBrokeRecord(false), 3000)
         }
-
         setStats(data)
       } catch { /* silencieux */ }
     }
@@ -165,67 +167,59 @@ export default function QueueBar() {
 
   if (!stats) return null
 
-  // Barre 1 — En attente
   const waitingMax = Math.max(10, Math.round((stats.dailyRecord || 10) * 0.3))
   const waitingPct = Math.min((stats.waiting / waitingMax) * 100, 100)
 
-  // Barre 2 — Aujourd'hui
   const todayMax = Math.max(stats.dailyRecord, stats.todayTotal, 1)
   const todayPct = Math.min((stats.todayTotal / todayMax) * 100, 100)
-  const avgPos = (stats.dailyAverage / todayMax) * 100
-  const recPos = (stats.dailyRecord / todayMax) * 100
+  const avgPct = (stats.dailyAverage / todayMax) * 100
+  const recPct = (stats.dailyRecord / todayMax) * 100
+
+  const barH = 80 // hauteur du thermomètre en px
 
   return (
-    <div className="px-[10px] pt-3 space-y-4">
-      {/* Barre 1 : En attente */}
-      <div>
-        <div className="relative h-2 rounded-full bg-stone-200">
-          <div
-            className="absolute inset-y-0 left-0 rounded-full overflow-hidden transition-all duration-700 ease-out"
-            style={{ width: `${waitingPct}%` }}
-          >
-            <div className="h-full w-full bg-primary-500" />
+    <div className="px-[10px] pt-3">
+      <div className="flex gap-4">
+        {/* Thermomètre gauche : En attente */}
+        <div className="flex-1 flex flex-col items-center">
+          <p className="text-[9px] font-medium text-stone-400 mb-1.5 uppercase tracking-wider">En attente</p>
+          <div className="relative rounded-full bg-stone-200" style={{ width: 16, height: barH }}>
+            <div
+              className="absolute inset-x-0 bottom-0 rounded-full bg-primary-500 transition-all duration-700 ease-out"
+              style={{ height: `${waitingPct}%` }}
+            />
           </div>
+          <p className="mt-1 text-[11px] font-semibold text-stone-700">{stats.waiting}</p>
         </div>
-        <p className="mt-1 text-[10px] text-stone-500 font-medium">
-          {stats.waiting} en attente
-        </p>
-      </div>
 
-      {/* Barre 2 : Aujourd'hui */}
-      <div>
-        <div className="relative h-2 rounded-full bg-stone-200">
-          {/* Fond rempli */}
-          <div
-            className={`absolute inset-y-0 left-0 rounded-full overflow-hidden transition-all duration-700 ease-out ${
-              justBrokeRecord ? 'bg-cta-500' : ''
-            }`}
-            style={{ width: `${todayPct}%` }}
-          >
-            <div className={`h-full w-full ${justBrokeRecord ? 'bg-cta-500' : 'bg-gradient-to-r from-primary-600 to-cta-500'}`} />
+        {/* Thermomètre droit : Aujourd'hui */}
+        <div className="flex-1 flex flex-col items-center">
+          <p className="text-[9px] font-medium text-stone-400 mb-1.5 uppercase tracking-wider">Aujourd'hui</p>
+          <div className="relative rounded-full bg-stone-200" style={{ width: 16, height: barH }}>
+            {/* Marqueur record (ligne pointillée + losange) */}
+            {stats.dailyRecord > 0 && (
+              <div className="absolute inset-x-0" style={{ bottom: `${recPct}%` }}>
+                <div className={`absolute -right-3 top-0 -translate-y-1/2 size-2 rounded-sm rotate-45 transition-all duration-500 ${
+                  justBrokeRecord ? 'bg-cta-500 scale-150' : 'bg-secondary-500'
+                }`} />
+                <span className="absolute -right-7 top-0 -translate-y-1/2 text-[8px] text-secondary-600 font-bold">{stats.dailyRecord}</span>
+              </div>
+            )}
+            {/* Marqueur moyenne (ligne pointillée) */}
+            {stats.dailyAverage > 0 && (
+              <div className="absolute inset-x-0 border-t border-dashed border-secondary-400" style={{ bottom: `${avgPct}%` }}>
+                <span className="absolute -right-7 top-0 -translate-y-1/2 text-[8px] text-stone-400">{stats.dailyAverage}</span>
+              </div>
+            )}
+            {/* Remplissage */}
+            <div
+              className={`absolute inset-x-0 bottom-0 rounded-full transition-all duration-700 ease-out ${
+                justBrokeRecord ? 'bg-cta-500' : 'bg-gradient-to-t from-primary-600 to-cta-500'
+              }`}
+              style={{ height: `${todayPct}%` }}
+            />
           </div>
-
-          {/* Marqueur moyenne ○ */}
-          <div
-            className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 size-2 rounded-full border-2 border-white bg-secondary-400 z-10"
-            style={{ left: `${avgPos}%` }}
-          />
-
-          {/* Marqueur record ◆ */}
-          <div
-            className={`absolute top-1/2 -translate-y-1/2 -translate-x-1/2 size-2.5 rounded-sm rotate-45 border border-white z-10 transition-all duration-500 ${
-              justBrokeRecord ? 'bg-cta-500 scale-150' : 'bg-secondary-500'
-            }`}
-            style={{ left: `${recPos}%` }}
-          />
-        </div>
-        <div className="flex justify-between mt-1">
-          <span className="text-[10px] text-stone-500 font-medium">
-            {stats.todayTotal} aujourd'hui
-          </span>
-          <span className="text-[10px] text-stone-400">
-            moy. {stats.dailyAverage} · max. {stats.dailyRecord}
-          </span>
+          <p className="mt-1 text-[11px] font-semibold text-stone-700">{stats.todayTotal}</p>
         </div>
       </div>
     </div>
@@ -233,19 +227,12 @@ export default function QueueBar() {
 }
 ```
 
-**Corrections par rapport à la v1 :**
-- Record comparé à `initialRecord` (capturé au premier fetch), pas au poll précédent
-- `dailyRecord` exclut aujourd'hui dans le calcul serveur (évite l'auto-dépassement)
-- Deux barres séparées avec sémantiques distinctes (attente vs cumul)
-- Marqueurs en `z-10` au-dessus de la barre, pas clippés
-- Couleurs design system : `primary-*`, `secondary-*`, `cta-*`, pas d'`amber-500` brut
-- Fetch via endpoint serveur `/api/queue-stats` (4 nombres au lieu de 1000+ docs)
-
 ### 3. Intégration dans `Sidebar.tsx`
 
-Identique à la v1 — entre `<SidebarNav>` et le footer :
-
 ```tsx
+import QueueBar from './QueueBar'
+
+// Entre SidebarNav et le footer :
 <SidebarNav items={navItems} adminItems={adminItems} onNavigate={onNavigate} />
 
 {tier === 'cabinet' && user.roles?.includes('doctor') && (
@@ -263,11 +250,11 @@ Identique à la v1 — entre `<SidebarNav>` et le footer :
 cd apps/frontend && pnpm build
 ```
 
-- Connecté en médecin cabinet → deux barres visibles
-- Connecté en secrétaire/vitrine/RDV → aucune barre
-- Ajouter des patients à la file → barre "En attente" se met à jour
-- Traiter des patients → barre "Aujourd'hui" progresse
-- Dépasser le record → ◆ pulse, barre passe en orange
+- Connecté en médecin cabinet → deux thermomètres visibles
+- Connecté en secrétaire/vitrine/RDV → aucun thermomètre
+- Ajouter des patients à la file → thermomètre gauche se remplit
+- Traiter des patients → thermomètre droit progresse
+- Dépasser le record → ◆ pulse + barre passe en orange
 
 ### Fichiers créés/modifiés
 
