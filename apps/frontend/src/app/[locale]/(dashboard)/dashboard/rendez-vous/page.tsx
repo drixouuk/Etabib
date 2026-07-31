@@ -41,11 +41,13 @@ export default async function RendezVousPage() {
   try {
     const today = new Date()
     today.setHours(0, 0, 0, 0)
-    const tomorrow = new Date(today)
-    tomorrow.setDate(tomorrow.getDate() + 1)
+    const pastStart = new Date(today)
+    pastStart.setDate(pastStart.getDate() - 7)
+    const futureEnd = new Date(today)
+    futureEnd.setDate(futureEnd.getDate() + 7)
 
     const data = await fetchCMS<{ docs: CalBooking[] }>(
-      `/api/calbookings?where[tenant][equals]=${tenantId}&where[startTime][greater_than_equal]=${today.toISOString()}&where[startTime][less_than]=${tomorrow.toISOString()}&sort=startTime&depth=0&limit=100`,
+      `/api/calbookings?where[tenant][equals]=${tenantId}&where[startTime][greater_than_equal]=${pastStart.toISOString()}&where[startTime][less_than]=${futureEnd.toISOString()}&sort=startTime&depth=0&limit=200`,
       { revalidate: 0 },
     )
     bookings = data?.docs ?? []
