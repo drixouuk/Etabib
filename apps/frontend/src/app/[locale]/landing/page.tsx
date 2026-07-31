@@ -129,7 +129,7 @@ export default function LandingPage() {
         <section className="relative overflow-hidden pt-[130px] pb-[60px] max-md:pt-[112px]">
           <span className="absolute size-[420px] rounded-full bg-primary-500/35 blur-[70px] -top-[140px] -left-[160px] z-0" />
           <span className="absolute size-[340px] rounded-full bg-amber-500/28 blur-[70px] -bottom-[120px] -right-[100px] z-0" />
-          <div className="container relative z-10 mx-auto max-w-[1160px] px-6 grid items-center gap-14" style={{ gridTemplateColumns: '1.05fr 0.95fr' }}>
+          <div className="container relative z-10 mx-auto max-w-[1160px] px-6 grid grid-cols-1 md:grid-cols-[1.05fr_0.95fr] items-center gap-14">
             <div>
               <span className="mb-5 inline-flex items-center gap-2 rounded-full bg-primary-50 px-4 py-2 text-[.82rem] font-bold text-primary-700 tracking-wide">
                 {t('hero_badge')}
@@ -444,9 +444,9 @@ export default function LandingPage() {
       </main>
 
       {/* ========== FOOTER ========== */}
-      <footer className="py-[70px_0_30px]">
+      <footer className="pt-[70px] pb-[30px]">
         <div className="container mx-auto max-w-[1160px] px-6">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-9 pb-11" style={{ gridTemplateColumns: '1.4fr 1fr 1fr 1fr' }}>
+          <div className="grid grid-cols-2 md:grid-cols-[1.4fr_1fr_1fr_1fr] gap-9 pb-11">
             <div>
               <a href="#" className="flex items-center gap-2.5 font-heading font-extrabold text-[1.1rem] text-[#2A241C]">
                 <span className="flex size-8 items-center justify-center rounded-[9px] bg-primary-600">
