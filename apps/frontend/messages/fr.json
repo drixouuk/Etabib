@@ -259,7 +259,8 @@
     "footer_legal_1": "Mentions légales",
     "footer_legal_2": "Confidentialité",
     "footer_rights": "Tous droits réservés.",
-    "footer_made": "Fait au Maroc 🇲🇦"
+    "footer_made": "Fait au Maroc 🇲🇦",
+    "footer_legal_3": "CGV"
   },
   "onboarding": {
     "title": "Créer votre espace professionnel",

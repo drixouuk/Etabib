@@ -1,0 +1,22 @@
+# Etabib
+
+Etabib est une plateforme SaaS de gestion de cabinet médical pensée pour les cabinets médicaux indépendants au Maroc.
+
+## À propos
+
+Etabib permet aux médecins et cabinets médicaux marocains de créer leur site vitrine multilingue (français, arabe, tamazight, anglais), de gérer la prise de rendez-vous en ligne et d'administrer leurs dossiers patients, consultations et ordonnances en toute conformité avec la loi marocaine 09-08 sur la protection des données personnelles.
+
+## Offres
+
+- Vitrine — gratuite : site vitrine public multilingue pour le cabinet médical
+- RDV — 199 MAD/mois : site vitrine + prise de rendez-vous en ligne
+- Cabinet — 499 MAD/mois (+199 MAD/mois par médecin supplémentaire) : gestion complète du cabinet (dossiers patients, consultations, ordonnances, file d'attente)
+
+## Liens
+
+- Landing page : https://etabibi.ma/fr/landing
+- Démo : https://drdemo.etabibi.ma
+
+## Hébergement des données
+
+Les données de santé sont hébergées exclusivement sur le territoire marocain, conformément à la loi 09-08.
