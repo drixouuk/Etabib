@@ -53,7 +53,7 @@ export default function ScheduleEditor() {
   return (
     <div className="rounded-xl border border-warm bg-white shadow-sm">
       <div className="flex items-center justify-between border-b border-stone-100 px-4 py-3">
-        <h2 className="font-heading text-lg font-semibold text-stone-800">Horaires</h2>
+        <h2 className="font-heading text-lg font-semibold text-stone-800">Horaires d'ouverture · page vitrine</h2>
         <button onClick={addRow} className="rounded-lg bg-cta-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-cta-700">Ajouter</button>
       </div>
       <div className="flex flex-col gap-3 p-4">

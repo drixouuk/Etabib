@@ -100,7 +100,7 @@ export default function AvailabilityManager() {
   return (
     <div className="rounded-xl border border-warm bg-white shadow-sm">
       <div className="flex items-center justify-between border-b border-stone-100 px-4 py-3">
-        <h2 className="font-heading text-lg font-semibold text-stone-800">Disponibilités</h2>
+        <h2 className="font-heading text-lg font-semibold text-stone-800">Créneaux de réservation</h2>
         <button onClick={openNew} className="rounded-lg bg-cta-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-cta-700"><Plus className="mr-1 inline size-3.5" />Ajouter</button>
       </div>
       {showForm && (
