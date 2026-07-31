@@ -1,21 +1,24 @@
+/* Thème de l'agenda aligné sur la vitrine (design-system/MASTER.md) :
+   primary = teal (#0D9488), fonds cream, texte warm stone, bordures chaudes. */
 .schedule-x-calendar {
   --sx-color-primary: #0D9488;
   --sx-color-on-primary: #FFFFFF;
   --sx-color-primary-container: #F0FDFA;
   --sx-color-on-primary-container: #115E59;
   --sx-color-secondary: #FFF7E0;
-  --sx-color-on-secondary: #292524;
+  --sx-color-on-secondary: #2A241C;
   --sx-color-surface: #FFFFFF;
-  --sx-color-on-surface: #292524;
+  --sx-color-on-surface: #2A241C;
   --sx-color-background: #FFFBF0;
-  --sx-color-on-background: #78716C;
-  --sx-color-outline: #E7E5E4;
-  --sx-color-outline-variant: #D6D3D1;
+  --sx-color-on-background: #8A8175;
+  --sx-color-outline: #FDE8A7;
+  --sx-color-outline-variant: #FEF0C7;
   --sx-color-neutral-variant: #D6D3D1;
   --sx-color-surface-container: #FFFBF0;
   --sx-color-surface-container-low: #FFFDF7;
   --sx-color-surface-container-high: #FFF7E0;
-  --sx-color-surface-dim: #EFEDE3;
+  --sx-color-surface-dim: #FEF0C7;
+  --sx-color-hovered: rgba(13, 148, 136, 0.08);
 }
 
 .schedule-x-calendar .sx__event {
@@ -25,6 +28,11 @@
   border-radius: 6px;
   padding: 2px 6px;
   font-size: .78rem;
+  cursor: pointer;
+}
+
+.schedule-x-calendar .sx__event:hover {
+  background-color: #0F766E;
 }
 
 .schedule-x-calendar .sx__today .sx__date-number {
@@ -39,9 +47,18 @@
   font-family: Figtree, sans-serif;
 }
 
+.schedule-x-calendar .sx__view-switch button.sx__view-switch--selected {
+  background-color: #0D9488;
+  color: #FFFFFF;
+}
+
 .schedule-x-calendar .sx__month-view-heading {
   font-size: .7rem;
   font-weight: 700;
   text-transform: uppercase;
   color: #A8A29E;
+}
+
+.schedule-x-calendar .sx__month-grid-day:hover {
+  background-color: #FFFDF7;
 }

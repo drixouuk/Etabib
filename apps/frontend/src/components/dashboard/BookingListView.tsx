@@ -2,29 +2,14 @@
 
 import { useState, useMemo } from 'react'
 import { Clock, Mail, Phone, Video, Calendar, MapPin } from 'lucide-react'
-
-type CalBooking = {
-  id: string
-  bookingUid: string
-  title: string
-  status: 'accepted' | 'pending' | 'cancelled' | 'rejected'
-  startTime: string
-  endTime: string
-  duration: number
-  attendeeName: string
-  attendeeEmail: string
-  attendeePhone: string
-  location: string | null
-  cancellationReason?: string | null
-  responses?: Record<string, unknown>
-  createdAt: string
-}
+import type { CalBooking } from '@/lib/booking'
 
 type Props = {
   bookings: CalBooking[]
+  onEdit?: (booking: CalBooking) => void
 }
 
-export default function BookingListView({ bookings }: Props) {
+export default function BookingListView({ bookings, onEdit }: Props) {
   const [viewMode, setViewMode] = useState<'upcoming' | 'past'>('upcoming')
   const [page, setPage] = useState(1)
   const PER_PAGE = 10
@@ -128,8 +113,21 @@ export default function BookingListView({ bookings }: Props) {
             </div>
 
             <div className="mt-3 space-y-1">
-              <p className="font-heading text-base font-semibold text-stone-800">{booking.attendeeName || 'Patient'}</p>
-              {booking.title && <p className="text-sm text-stone-600">{booking.title}</p>}
+              {onEdit ? (
+                <button
+                  onClick={() => onEdit(booking)}
+                  className="block text-left font-heading text-base font-semibold text-stone-800 transition-colors hover:text-primary-700"
+                  title="Ouvrir le rendez-vous"
+                >
+                  {booking.attendeeName || 'Patient'}
+                  {booking.title && <span className="ml-2 text-sm font-normal text-stone-600 hover:text-primary-700">{booking.title}</span>}
+                </button>
+              ) : (
+                <>
+                  <p className="font-heading text-base font-semibold text-stone-800">{booking.attendeeName || 'Patient'}</p>
+                  {booking.title && <p className="text-sm text-stone-600">{booking.title}</p>}
+                </>
+              )}
               <div className="flex flex-wrap gap-3 text-xs text-stone-600">
                 {booking.attendeeEmail && (
                   <span className="inline-flex items-center gap-1"><Mail className="size-3" />{booking.attendeeEmail}</span>

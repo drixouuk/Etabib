@@ -4,23 +4,11 @@ import { useState, useCallback, useRef } from 'react'
 import { useLocale } from 'next-intl'
 import { useRouter } from 'next/navigation'
 import dynamic from 'next/dynamic'
-import BookingModal, { type BookingDraft } from './BookingModal'
+import BookingSheet, { type BookingDraft } from './BookingSheet'
+import BookingListView from './BookingListView'
+import type { CalBooking } from '@/lib/booking'
 
 const ScheduleXCalendar = dynamic(() => import('./ScheduleXCalendar'), { ssr: false })
-
-type CalBooking = {
-  id: string
-  bookingUid: string
-  title: string
-  status: 'accepted' | 'pending' | 'cancelled' | 'rejected'
-  startTime: string
-  endTime: string
-  duration: number
-  attendeeName: string
-  attendeeEmail: string
-  attendeePhone: string
-  location: string | null
-}
 
 type Props = {
   initialBookings: CalBooking[]
@@ -72,10 +60,14 @@ export default function RendezVousCalendarClient({ initialBookings, tenantId }: 
     }
   }, [])
 
-  const handleDateClick = useCallback((date: string) => setCreatingStart(date), [])
+  const handleDateClick = useCallback((date: string) => {
+    setEditing(null)
+    setCreatingStart(date)
+  }, [])
 
   const handleEventClick = useCallback((event: { id: string | number; title: string; start: string; end: string }) => {
     const known = bookingsById[String(event.id)]
+    setCreatingStart(null)
     if (known) { setEditing(known); return }
     setEditing({
       id: String(event.id),
@@ -89,8 +81,19 @@ export default function RendezVousCalendarClient({ initialBookings, tenantId }: 
       attendeeEmail: '',
       attendeePhone: '',
       location: null,
+      createdAt: '',
     })
   }, [bookingsById])
+
+  const handleListEdit = useCallback((b: CalBooking) => {
+    setCreatingStart(null)
+    setEditing(b)
+  }, [])
+
+  const closeSheet = useCallback(() => {
+    setCreatingStart(null)
+    setEditing(null)
+  }, [])
 
   const refresh = useCallback(async () => {
     if (rangeRef.current) {
@@ -118,23 +121,24 @@ export default function RendezVousCalendarClient({ initialBookings, tenantId }: 
 
   return (
     <>
-      <ScheduleXCalendar
-        events={events}
-        onDateClick={handleDateClick}
-        onEventClick={handleEventClick}
-        onRangeChange={handleRangeChange}
-        locale={locale}
-        isRTL={isRTL}
-      />
-      {(creatingStart || editingDraft) && (
-        <BookingModal
-          tenantId={tenantId}
-          booking={editingDraft}
-          initialStart={creatingStart}
-          onClose={() => { setCreatingStart(null); setEditing(null) }}
-          onSaved={refresh}
+      <div className="mb-8 rounded-2xl border border-stone-200 bg-white p-4 shadow-sm">
+        <ScheduleXCalendar
+          events={events}
+          onDateClick={handleDateClick}
+          onEventClick={handleEventClick}
+          onRangeChange={handleRangeChange}
+          locale={locale}
+          isRTL={isRTL}
         />
-      )}
+      </div>
+      <BookingListView bookings={initialBookings} onEdit={handleListEdit} />
+      <BookingSheet
+        tenantId={tenantId}
+        booking={editingDraft}
+        initialStart={creatingStart}
+        onClose={closeSheet}
+        onSaved={refresh}
+      />
     </>
   )
 }

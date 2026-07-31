@@ -1,26 +1,9 @@
 import { requireTier } from '@/lib/tier-guard'
 import { fetchCMS } from '@/lib/cms-fetch'
+import type { CalBooking } from '@/lib/booking'
 import RendezVousCalendarClient from '@/components/dashboard/RendezVousCalendarClient'
-import BookingListView from '@/components/dashboard/BookingListView'
 import { formatDateMorocco } from '@/lib/datetime'
 import { Calendar } from 'lucide-react'
-
-type CalBooking = {
-  id: string
-  bookingUid: string
-  title: string
-  status: 'accepted' | 'pending' | 'cancelled' | 'rejected'
-  startTime: string
-  endTime: string
-  duration: number
-  attendeeName: string
-  attendeeEmail: string
-  attendeePhone: string
-  location: string | null
-  cancellationReason?: string | null
-  responses?: Record<string, unknown>
-  createdAt: string
-}
 
 function ErrorState({ message }: { message: string }) {
   const today = new Date()
@@ -84,10 +67,7 @@ export default async function RendezVousPage() {
       <h1 className="font-heading text-2xl font-bold text-stone-800">Rendez-vous</h1>
       <p className="mt-1 text-sm text-stone-600 capitalize">{dateLabel}</p>
       <div className="mt-6">
-        <div className="mb-8 rounded-2xl border border-stone-200 bg-white p-4 shadow-sm">
-          <RendezVousCalendarClient tenantId={tenantId} initialBookings={bookings} />
-        </div>
-        <BookingListView bookings={bookings} />
+        <RendezVousCalendarClient tenantId={tenantId} initialBookings={bookings} />
       </div>
     </div>
   )
