@@ -1,4 +1,5 @@
 import type { CollectionConfig } from 'payload'
+import { APIError } from 'payload'
 
 export const CalBookings: CollectionConfig = {
   slug: 'calbookings',
@@ -34,6 +35,33 @@ export const CalBookings: CollectionConfig = {
       if (!tid) return false
       return { tenant: { equals: tid } }
     },
+  },
+  hooks: {
+    beforeChange: [
+      async ({ req, data, operation, id }: any) => {
+        if (req.user?.tenant) {
+          data.tenant = typeof req.user.tenant === 'object' ? req.user.tenant.id : req.user.tenant
+        }
+        if (data.tenant && data.startTime && data.status !== 'cancelled') {
+          const where: Record<string, unknown> = {
+            tenant: { equals: typeof data.tenant === 'object' ? data.tenant.id : data.tenant },
+            startTime: { equals: data.startTime },
+            status: { not_equals: 'cancelled' },
+          }
+          if (operation === 'update' && id) where.id = { not_equals: id }
+          const existing = await req.payload.find({
+            collection: 'calbookings',
+            where,
+            depth: 0,
+            limit: 1,
+          })
+          if (existing.docs.length > 0) {
+            throw new APIError('Ce créneau est déjà réservé.', 409, null, true)
+          }
+        }
+        return data
+      },
+    ],
   },
   fields: [
     { name: 'bookingUid', type: 'text', unique: true, required: true, label: 'UID Cal.com' },
