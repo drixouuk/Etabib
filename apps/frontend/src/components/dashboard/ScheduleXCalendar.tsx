@@ -3,6 +3,7 @@
 import { useEffect, useRef } from 'react'
 import { createCalendar, viewWeek, viewMonthGrid } from '@schedule-x/calendar'
 import { createEventsServicePlugin } from '@schedule-x/events-service'
+import 'temporal-polyfill/global'
 import { Temporal } from 'temporal-polyfill'
 import '@schedule-x/theme-default/dist/index.css'
 
@@ -17,8 +18,10 @@ type Props = {
   isRTL?: boolean
 }
 
-// Schedule-X v4 exige des instances Temporal.ZonedDateTime/PlainDate pour start/end.
-// Normalise via Date puis convertit en ZonedDateTime UTC ; ignore les valeurs invalides.
+// Schedule-X v4 exige des instances Temporal.ZonedDateTime pour start/end, et
+// valide via `instanceof` contre le Temporal GLOBAL (navigateur natif ou polyfill
+// installé par 'temporal-polyfill/global'). La conversion ci-dessous utilise la
+// même implémentation que le global : les classes sont donc identiques.
 function toTemporalEvents(events: CalendarEvent[]) {
   const out: { id: string | number; title: string; start: Temporal.ZonedDateTime; end: Temporal.ZonedDateTime }[] = []
   for (const e of events) {
@@ -36,6 +39,14 @@ function toTemporalEvents(events: CalendarEvent[]) {
     }
   }
   return out
+}
+
+type HasInstant = { toInstant?: () => { toString(): string } }
+
+// Renvoie un ISO UTC "2026-07-31T10:00:00Z" quel que soit le type Temporal reçu
+function toUTCIso(value: HasInstant | null | undefined): string {
+  if (!value) return ''
+  return value.toInstant ? value.toInstant().toString() : String(value)
 }
 
 export default function ScheduleXCalendar({ events, onDateClick, onEventClick, onRangeChange, locale, isRTL }: Props) {
@@ -56,13 +67,13 @@ export default function ScheduleXCalendar({ events, onDateClick, onEventClick, o
       events: toTemporalEvents(events),
       callbacks: {
         onClickDateTime(dateTime) {
-          onDateClick?.(dateTime.toString())
+          onDateClick?.(toUTCIso(dateTime))
         },
         onEventClick(event) {
-          onEventClick?.({ id: event.id, title: event.title as string, start: event.start.toString(), end: event.end.toString() })
+          onEventClick?.({ id: event.id, title: event.title as string, start: toUTCIso(event.start), end: toUTCIso(event.end) })
         },
         onRangeUpdate(range) {
-          onRangeChange?.(range.start.toString(), range.end.toString())
+          onRangeChange?.(toUTCIso(range.start), toUTCIso(range.end))
         },
       },
     })

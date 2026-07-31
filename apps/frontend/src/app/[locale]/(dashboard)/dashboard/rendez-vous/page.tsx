@@ -85,15 +85,7 @@ export default async function RendezVousPage() {
       <p className="mt-1 text-sm text-stone-600 capitalize">{dateLabel}</p>
       <div className="mt-6">
         <div className="mb-8 rounded-2xl border border-stone-200 bg-white p-4 shadow-sm">
-          <RendezVousCalendarClient
-            initialBookings={bookings.map(b => ({
-              id: b.id,
-              title: b.title,
-              startTime: b.startTime,
-              endTime: b.endTime,
-              attendeeName: b.attendeeName,
-            }))}
-          />
+          <RendezVousCalendarClient tenantId={tenantId} initialBookings={bookings} />
         </div>
         <BookingListView bookings={bookings} />
       </div>
