@@ -65,7 +65,7 @@ export default function ScheduleXCalendar({ events, onDateClick, onEventClick, o
     eventsServiceRef.current = eventsService
     const calendar = createCalendar({
       views: [viewMonthGrid, viewWeek],
-      defaultView: 'month-grid',
+      defaultView: 'week',
       timezone: MOROCCO_TZ,
       dayBoundaries: { start: '07:00', end: '19:00' },
       plugins: [eventsService],

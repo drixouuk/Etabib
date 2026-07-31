@@ -52,6 +52,23 @@
   color: #FFFFFF;
 }
 
+/* Numéros de jour en carrés arrondis — style vitrine (rounded-[10px] ~32px) */
+.schedule-x-calendar .sx__month-grid-day__header-date,
+.schedule-x-calendar .sx__week-grid__date-number {
+  border-radius: 10px;
+  height: 32px;
+  width: 32px;
+  font-weight: 700;
+}
+
+/* Aujourd'hui pop en vert (comme le jour sélectionné de la vitrine) */
+.schedule-x-calendar .sx__month-grid-day__header-date.sx__is-today,
+.schedule-x-calendar .sx__week-grid__date--is-today .sx__week-grid__date-number {
+  background-color: #0D9488;
+  color: #FFFFFF;
+  box-shadow: 0 2px 8px rgba(13, 148, 136, 0.35);
+}
+
 .schedule-x-calendar .sx__month-view-heading {
   font-size: .7rem;
   font-weight: 700;
