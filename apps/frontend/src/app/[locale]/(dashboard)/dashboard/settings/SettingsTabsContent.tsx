@@ -49,7 +49,7 @@ export default function SettingsTabsContent({
 
       {isAdmin && (
         <TabsContent value="team">
-          <ManageAccounts users={tenantUsers} currentUserId={currentUserId} />
+          <ManageAccounts users={tenantUsers} currentUserId={currentUserId} isAdmin={isAdmin} />
         </TabsContent>
       )}
 
