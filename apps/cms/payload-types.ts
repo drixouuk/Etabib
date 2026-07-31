@@ -84,6 +84,7 @@ export interface Config {
     'vaccine-schedule': VaccineSchedule;
     vaccinations: Vaccination;
     calbookings: Calbooking;
+    subscriptions: Subscription;
     templates: Template;
     'contact-messages': ContactMessage;
     'referring-practitioners': ReferringPractitioner;
@@ -112,6 +113,7 @@ export interface Config {
     'vaccine-schedule': VaccineScheduleSelect<false> | VaccineScheduleSelect<true>;
     vaccinations: VaccinationsSelect<false> | VaccinationsSelect<true>;
     calbookings: CalbookingsSelect<false> | CalbookingsSelect<true>;
+    subscriptions: SubscriptionsSelect<false> | SubscriptionsSelect<true>;
     templates: TemplatesSelect<false> | TemplatesSelect<true>;
     'contact-messages': ContactMessagesSelect<false> | ContactMessagesSelect<true>;
     'referring-practitioners': ReferringPractitionersSelect<false> | ReferringPractitionersSelect<true>;
@@ -663,6 +665,27 @@ export interface Calbooking {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "subscriptions".
+ */
+export interface Subscription {
+  id: number;
+  tenant: number | Tenant;
+  plan: 'vitrine' | 'rdv' | 'cabinet';
+  status: 'trialing' | 'active' | 'past_due' | 'grace' | 'suspended' | 'expired' | 'canceled';
+  currentPeriodStart?: string | null;
+  currentPeriodEnd?: string | null;
+  seats?: number | null;
+  amount?: number | null;
+  billingEmail?: string | null;
+  lastPaymentAt?: string | null;
+  providerId?: string | null;
+  lastReminderAt?: string | null;
+  notes?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "templates".
  */
 export interface Template {
@@ -810,6 +833,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'calbookings';
         value: number | Calbooking;
+      } | null)
+    | ({
+        relationTo: 'subscriptions';
+        value: number | Subscription;
       } | null)
     | ({
         relationTo: 'templates';
@@ -1221,6 +1248,26 @@ export interface CalbookingsSelect<T extends boolean = true> {
   rescheduledToUid?: T;
   cancellationReason?: T;
   responses?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "subscriptions_select".
+ */
+export interface SubscriptionsSelect<T extends boolean = true> {
+  tenant?: T;
+  plan?: T;
+  status?: T;
+  currentPeriodStart?: T;
+  currentPeriodEnd?: T;
+  seats?: T;
+  amount?: T;
+  billingEmail?: T;
+  lastPaymentAt?: T;
+  providerId?: T;
+  lastReminderAt?: T;
+  notes?: T;
   updatedAt?: T;
   createdAt?: T;
 }

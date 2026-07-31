@@ -22,6 +22,7 @@ import * as migration_20260728_123232 from './20260728_123232';
 import * as migration_20260729_add_calbookings_unique_slot from './20260729_add_calbookings_unique_slot';
 import * as migration_20260730_211714 from './20260730_211714';
 import * as migration_20260731_add_schedule_slots_closures from './20260731_add_schedule_slots_closures';
+import * as migration_20260731_add_subscriptions from './20260731_add_subscriptions';
 
 export const migrations = [
   {
@@ -143,5 +144,10 @@ export const migrations = [
     up: migration_20260731_add_schedule_slots_closures.up,
     down: migration_20260731_add_schedule_slots_closures.down,
     name: '20260731_add_schedule_slots_closures'
+  },
+  {
+    up: migration_20260731_add_subscriptions.up,
+    down: migration_20260731_add_subscriptions.down,
+    name: '20260731_add_subscriptions'
   },
 ];

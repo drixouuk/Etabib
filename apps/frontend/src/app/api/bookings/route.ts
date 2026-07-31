@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { moroccoWallTimeToUTC } from '@/lib/morocco-time'
 import { NOTIFICATIONS_EMAIL, BRAND } from '@/lib/brand'
+import { isWritable } from '@/lib/subscription'
 
 function getCMSURL(): string {
   const url = process.env.NEXT_PUBLIC_CMS_URL
@@ -49,6 +50,21 @@ export async function POST(request: NextRequest) {
   const tenantId = parseInt(tenantIdRaw, 10)
   if (!tenantId) {
     return NextResponse.json({ error: 'Tenant invalide' }, { status: 400 })
+  }
+
+  // Un cabinet en retard de paiement (grace/suspended/expired) ne prend plus de réservations.
+  const internalHeaders: Record<string, string> = { 'Content-Type': 'application/json' }
+  if (API_KEY) internalHeaders['x-internal-api-key'] = API_KEY
+  const subRes = await fetch(
+    `${getCMSURL()}/api/subscriptions?where[tenant][equals]=${encodeURIComponent(tenantId)}&depth=0&limit=1`,
+    { headers: internalHeaders },
+  )
+  if (subRes.ok) {
+    const subData = await subRes.json()
+    const sub = subData?.docs?.[0]
+    if (sub && !isWritable(sub.status)) {
+      return NextResponse.json({ error: 'Réservation temporairement indisponible' }, { status: 403 })
+    }
   }
 
   // Vérifier que le créneau est dans une plage de disponibilité active

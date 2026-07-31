@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { randomUUID } from 'crypto'
 import { createClient, createSubscriptionInvoice } from '@/lib/invoiceninja'
+import { calculateCabinetPrice } from '@/lib/pricing'
 import { rateLimit } from '@/lib/rate-limit'
 import { sendEmail } from '@/lib/resend-send'
 
@@ -15,9 +16,11 @@ const SUBDOMAIN_BLACKLIST = [
 ]
 
 async function cmsPost(path: string, data: unknown) {
+  const headers: Record<string, string> = { 'Content-Type': 'application/json' }
+  if (process.env.INTERNAL_BOOKING_API_KEY) headers['x-internal-api-key'] = process.env.INTERNAL_BOOKING_API_KEY
   const res = await fetch(`${CMS_URL}/api${path}`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers,
     body: JSON.stringify(data),
   })
   const json = await res.json().catch(() => null)
@@ -25,9 +28,11 @@ async function cmsPost(path: string, data: unknown) {
 }
 
 async function cmsPatch(path: string, data: unknown) {
+  const headers: Record<string, string> = { 'Content-Type': 'application/json' }
+  if (process.env.INTERNAL_BOOKING_API_KEY) headers['x-internal-api-key'] = process.env.INTERNAL_BOOKING_API_KEY
   const res = await fetch(`${CMS_URL}/api${path}`, {
     method: 'PATCH',
-    headers: { 'Content-Type': 'application/json' },
+    headers,
     body: JSON.stringify(data),
   })
   const json = await res.json().catch(() => null)
@@ -135,6 +140,24 @@ export async function POST(request: NextRequest) {
 
       if (tier !== 'vitrine' && tenantId) {
         await createDefaultSlots(tenantId)
+      }
+
+      // Abonnement : cabinet → essai 14 jours, rdv → cycle actif direct
+      try {
+        const now = new Date()
+        const periodDays = tier === 'cabinet' ? 14 : 30
+        await cmsPost('/subscriptions', {
+          tenant: tenantId,
+          plan: tier,
+          status: tier === 'cabinet' ? 'trialing' : 'active',
+          currentPeriodStart: now.toISOString(),
+          currentPeriodEnd: new Date(now.getTime() + periodDays * 86400000).toISOString(),
+          seats: tier === 'cabinet' ? (doctorCount || 1) : 1,
+          amount: tier === 'cabinet' ? calculateCabinetPrice(doctorCount || 1) : tier === 'rdv' ? 199 : 0,
+          billingEmail: email,
+        })
+      } catch (err) {
+        console.error('[onboarding] création subscription échouée', err)
       }
 
       if (tier !== 'vitrine') {

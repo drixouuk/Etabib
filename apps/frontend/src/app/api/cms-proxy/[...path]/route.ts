@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { requireWritable } from '@/lib/subscription'
 
 function getCMSURL(): string {
   const url = process.env.NEXT_PUBLIC_CMS_URL
@@ -13,17 +14,32 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 
 export async function POST(request: NextRequest, { params }: { params: Promise<{ path: string[] }> }) {
   const { path } = await params
+  const writable = await requireWritable()
+  if (!writable.ok) return billingBlocked(writable.status)
   return proxyRequest(request, 'POST', path)
 }
 
 export async function PATCH(request: NextRequest, { params }: { params: Promise<{ path: string[] }> }) {
   const { path } = await params
+  const writable = await requireWritable()
+  if (!writable.ok) return billingBlocked(writable.status)
   return proxyRequest(request, 'PATCH', path)
 }
 
 export async function DELETE(request: NextRequest, { params }: { params: Promise<{ path: string[] }> }) {
   const { path } = await params
+  const writable = await requireWritable()
+  if (!writable.ok) return billingBlocked(writable.status)
   return proxyRequest(request, 'DELETE', path)
+}
+
+// Blocage d'écriture pour paiement en retard (grace/suspended/expired).
+// Toutes les mutations CMS passent par ce proxy : le check couvre les routes futures.
+function billingBlocked(status: string | null | undefined) {
+  return NextResponse.json(
+    { error: 'Paiement en retard', detail: { subscriptionStatus: status } },
+    { status: 403 },
+  )
 }
 
 async function proxyRequest(request: NextRequest, method: string, path: string[]) {

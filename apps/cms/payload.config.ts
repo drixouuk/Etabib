@@ -22,6 +22,7 @@ import { SystemAlerts } from "./src/collections/SystemAlerts";
 import { VaccineSchedule } from "./src/collections/VaccineSchedule";
 import { Vaccinations } from "./src/collections/Vaccinations";
 import { CalBookings } from "./src/collections/CalBookings";
+import { Subscriptions } from "./src/collections/Subscriptions";
 import { Templates } from "./src/collections/Templates";
 import { ContactMessages } from "./src/collections/ContactMessages";
 import { ReferringPractitioners } from "./src/collections/ReferringPractitioners";
@@ -58,6 +59,7 @@ export default buildConfig({
     VaccineSchedule,
     Vaccinations,
     CalBookings,
+    Subscriptions,
     Templates,
     ContactMessages,
     ReferringPractitioners,

@@ -3,16 +3,17 @@
 import { useState, useEffect } from 'react'
 import { Menu, X } from 'lucide-react'
 import Sidebar from './Sidebar'
+import { Link } from '@/i18n/navigation'
 import type { PayloadUser } from '@/lib/auth'
 import type { Tenant } from '@/lib/payload'
-
 type Props = {
   user: PayloadUser
   tenant: Tenant | null
+  billingStatus?: string | null
   children: React.ReactNode
 }
 
-export default function DashboardShell({ user, tenant, children }: Props) {
+export default function DashboardShell({ user, tenant, billingStatus, children }: Props) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
   useEffect(() => {
@@ -48,6 +49,19 @@ export default function DashboardShell({ user, tenant, children }: Props) {
       )}
 
       <div className="flex flex-1 flex-col min-w-0">
+        {billingStatus === 'past_due' && (
+          <div className="border-b border-warning/25 bg-warning/10 px-4 py-2 text-center text-xs font-medium text-stone-800">
+            Paiement en retard —{' '}
+            <Link href="/dashboard/billing" className="font-semibold underline underline-offset-2">régularisez votre abonnement</Link>{' '}
+            avant la fin du délai de 14 jours.
+          </div>
+        )}
+        {billingStatus === 'grace' && (
+          <div className="border-b border-error/25 bg-error/10 px-4 py-2 text-center text-xs font-medium text-stone-800">
+            Paiement en retard : espace en <strong>lecture seule</strong> —{' '}
+            <Link href="/dashboard/billing" className="font-semibold underline underline-offset-2">régularisez pour retrouver toutes les fonctionnalités</Link>.
+          </div>
+        )}
         <div className="sticky top-0 z-30 flex items-center gap-3 border-b border-warm bg-white px-4 py-3 md:hidden">
           <button onClick={() => setSidebarOpen(true)} className="rounded-lg p-1.5 text-stone-600 hover:bg-stone-100" aria-label="Ouvrir le menu">
             <Menu className="size-5" />

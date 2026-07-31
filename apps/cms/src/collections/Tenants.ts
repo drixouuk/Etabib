@@ -27,7 +27,10 @@ export const Tenants: CollectionConfig = {
     // Les tenants n'ont PAS de champ "tenant" — on filtre par "id" à la place.
     // Le frontend (proxy.ts) utilise désormais /api/resolve-tenant?domain=...
     // qui est un endpoint public dédié, sans exposer la collection complète.
-    read: ({ req: { user } }: any) => {
+    read: ({ req }: any) => {
+      const apiKey = req?.headers?.get?.('x-internal-api-key') || req?.headers?.['x-internal-api-key']
+      if (apiKey && apiKey === process.env.INTERNAL_BOOKING_API_KEY) return true
+      const user = req?.user
       const roles: string[] = user?.roles ?? []
       if (roles.includes('superadmin')) return true
       if (!user?.tenant) return false
@@ -35,7 +38,10 @@ export const Tenants: CollectionConfig = {
       if (!tid) return false
       return { id: { equals: tid } }
     },
-    update: ({ req: { user }, id }: any): boolean => {
+    update: ({ req, id }: any): boolean => {
+      const apiKey = req?.headers?.get?.('x-internal-api-key') || req?.headers?.['x-internal-api-key']
+      if (apiKey && apiKey === process.env.INTERNAL_BOOKING_API_KEY) return true
+      const user = req?.user
       if ((user?.roles as string[])?.includes('superadmin')) return true
       return (
         user?.tenant === id &&
