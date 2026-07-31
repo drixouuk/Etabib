@@ -6,62 +6,48 @@
 
 ## Objectif
 
-Deux **thermomètres verticaux** côte à côte dans la sidebar, **uniquement pour tier `cabinet` + rôle `doctor`** :
+Une **carte compacte** dans la sidebar avec **deux gros chiffres + une ligne de progression fine**, uniquement pour tier `cabinet` + rôle `doctor`.
 
-1. **Gauche — « En attente »** : nombre de patients actuellement en salle d'attente. Simple, sans marqueurs, sans animation record. Le barreau se remplit du bas vers le haut.
-2. **Droite — « Aujourd'hui »** : total cumulé de patients vus dans la journée. Le barreau se remplit du bas vers le haut au fil de la journée. Marqueurs moyenne quotidienne (○) et record absolu (◆) positionnés le long du bord droit. Animation quand on dépasse le record.
-
-Format vertical adapté à la sidebar de 252px — les barres horizontales seraient trop fines pour être lisibles.
+Le chiffre est l'information primaire (lecture en vision périphérique), la ligne est le contexte secondaire (progression dans la journée). Pas de jauges à décoder, pas d'animations excessives — on est dans un contexte médical, pas un jeu mobile.
 
 ---
 
 ## Design cible
 
 ```
-┌─ Sidebar (252px) ──────────────────────────┐
-│                                             │
-│  Vue d'ensemble                             │
-│  Patients                                   │
-│  ...                                        │
-│                                             │
-│  En attente          Aujourd'hui            │
-│  ┌────┐              ┌────┐ ◆ 38            │
-│  │    │              │ ██ │                 │
-│  │ ██ │              │ ██ │                 │
-│  │ ██ │              │ ██ │ ○ 22            │
-│  │ ██ │              │ ██ │                 │
-│  │ ██ │              │ ██ │                 │
-│  └────┘              └────┘                 │
-│    4               14 / moy.22              │
-│                                             │
-│  👤 Dr X · Médecin                          │
-└─────────────────────────────────────────────┘
+┌─ Sidebar ─────────────────────────┐
+│                                    │
+│  Vue d'ensemble                    │
+│  Patients                          │
+│  File d'attente                    │
+│  ...                               │
+│                                    │
+│  ┌──────────────────────────────┐ │
+│  │  4            14             │ │  ← text-lg font-bold tabular-nums
+│  │  en attente   aujourd'hui    │ │  ← text-[9px] text-stone-400
+│  │                              │ │
+│  │  ━━━━━━━━━━━○━━━━━━━━◆━━━━  │ │  ← h-[3px] rounded-full
+│  │             22        38     │ │  ← text-[8px] text-stone-400
+│  └──────────────────────────────┘ │
+│                                    │
+│  👤 Dr X · Médecin                 │
+└────────────────────────────────────┘
 ```
 
-- Deux colonnes en `flex gap-4`, chaque colonne ~100px de large
-- Barre verticale de ~80px de haut, 16px de large, `rounded-full`
-- Fond `bg-stone-200`, remplissage du bas vers le haut (élément interne positionné en `bottom: 0` avec la hauteur proportionnelle)
-- Labels en dessous de chaque barre
+- Carte : `rounded-lg border border-stone-100 bg-white shadow-sm mx-[10px] mt-3 px-3 py-2.5`
+- Chiffres : `text-lg font-bold tabular-nums` (chasse fixe, pas de saut de largeur quand le chiffre change)
+- Ligne : `h-[3px] rounded-full bg-stone-200`, remplissage `bg-primary-500`
+- Marqueur ○ : `size-[5px] rounded-full bg-stone-400` (moyenne)
+- Marqueur ◆ : `size-[6px] rounded-[1px] rotate-45 bg-stone-500` (record)
+- Labels sous marqueurs : `text-[8px] text-stone-400 absolute -translate-x-1/2`
 
-### Thermomètre « En attente »
-- Remplissage : `bg-primary-500` (solide, pas de gradient)
-- Hauteur : `(waiting / waitingMax) * 100%`, avec `waitingMax = Math.max(10, Math.round(dailyRecord * 0.3))`
-- Pas de marqueurs, pas d'animation record
-- Simple et lisible
+### Comportement
 
-### Thermomètre « Aujourd'hui »
-- Remplissage : `bg-gradient-to-t from-primary-600 to-cta-500`
-- Hauteur : `(todayTotal / todayMax) * 100%`, avec `todayMax = Math.max(dailyRecord, todayTotal, 1)`
-- Marqueur ○ : ligne horizontale pointillée à `(dailyAverage / todayMax) * 100%` de hauteur, en `secondary-400`
-- Marqueur ◆ : ligne horizontale pointillée à `(dailyRecord / todayMax) * 100%` de hauteur, en `secondary-500`
-- Animation record : quand `todayTotal > initialRecord` → le ◆ pulse 3 fois + remplissage passe en `bg-cta-500` pendant 2s
+1. **Changement de chiffre** : brève animation CSS `scale(1.08)` pendant 300ms via une classe `animate-number-pop` (transition CSS, pas de keyframe complexe). La classe est appliquée/retirée via un `useEffect` qui détecte le changement de valeur.
 
-### Comportement des marqueurs (thermomètre « Aujourd'hui »)
-- Les marqueurs sont des lignes horizontales absolues **en overlay** sur la barre verticale
-- Ils sont rendus dans un conteneur parent `relative`, en `absolute` avec `left: 0; right: 0`
-- `○` = `border-t border-dashed secondary-400` (ligne pointillée fine)
-- `◆` = `border-t border-dashed secondary-500` + petit losange à droite
-- Pas d'`overflow-hidden` sur le thermomètre — les lignes dépassent sur la droite pour porter le label chiffré
+2. **Seuil de tension** : `waiting > dailyAverage * 0.3` → le chiffre "en attente" passe de `text-stone-800` à `text-cta-600`. Changement de couleur calme, pas de pulse.
+
+3. **Nouveau record** : `todayTotal > initialRecord` → le ◆ passe de `bg-stone-500` à `bg-cta-500` + le chiffre "aujourd'hui" prend un `ring-1 ring-cta-200` pendant 3s (via setTimeout). Discret mais visible.
 
 ---
 
@@ -142,6 +128,10 @@ export default function QueueBar() {
   const [stats, setStats] = useState<QueueStats | null>(null)
   const [initialRecord, setInitialRecord] = useState(0)
   const [justBrokeRecord, setJustBrokeRecord] = useState(false)
+  const [prevWaiting, setPrevWaiting] = useState(0)
+  const [prevToday, setPrevToday] = useState(0)
+  const [popWaiting, setPopWaiting] = useState(false)
+  const [popToday, setPopToday] = useState(false)
   const recordTimer = useRef<ReturnType<typeof setTimeout>>()
 
   useEffect(() => {
@@ -150,12 +140,20 @@ export default function QueueBar() {
         const res = await fetch('/api/queue-stats')
         if (!res.ok) return
         const data: QueueStats = await res.json()
+
         if (!stats) setInitialRecord(data.dailyRecord)
+
         if (initialRecord > 0 && data.todayTotal > initialRecord) {
           setJustBrokeRecord(true)
           if (recordTimer.current) clearTimeout(recordTimer.current)
           recordTimer.current = setTimeout(() => setJustBrokeRecord(false), 3000)
         }
+
+        if (data.waiting !== prevWaiting) setPopWaiting(true)
+        if (data.todayTotal !== prevToday) setPopToday(true)
+
+        setPrevWaiting(data.waiting)
+        setPrevToday(data.todayTotal)
         setStats(data)
       } catch { /* silencieux */ }
     }
@@ -165,62 +163,72 @@ export default function QueueBar() {
     return () => clearInterval(interval)
   }, [])
 
-  if (!stats) return null
+  // Reset pop animation after 300ms
+  useEffect(() => { if (popWaiting) { const t = setTimeout(() => setPopWaiting(false), 300); return () => clearTimeout(t) } }, [popWaiting])
+  useEffect(() => { if (popToday) { const t = setTimeout(() => setPopToday(false), 300); return () => clearTimeout(t) } }, [popToday])
 
-  const waitingMax = Math.max(10, Math.round((stats.dailyRecord || 10) * 0.3))
-  const waitingPct = Math.min((stats.waiting / waitingMax) * 100, 100)
+  if (!stats || stats.dailyRecord === 0) return null
 
   const todayMax = Math.max(stats.dailyRecord, stats.todayTotal, 1)
   const todayPct = Math.min((stats.todayTotal / todayMax) * 100, 100)
   const avgPct = (stats.dailyAverage / todayMax) * 100
   const recPct = (stats.dailyRecord / todayMax) * 100
-
-  const barH = 80 // hauteur du thermomètre en px
+  const isTense = stats.waiting > stats.dailyAverage * 0.3
 
   return (
-    <div className="px-[10px] pt-3">
-      <div className="flex gap-4">
-        {/* Thermomètre gauche : En attente */}
-        <div className="flex-1 flex flex-col items-center">
-          <p className="text-[9px] font-medium text-stone-400 mb-1.5 uppercase tracking-wider">En attente</p>
-          <div className="relative rounded-full bg-stone-200" style={{ width: 16, height: barH }}>
-            <div
-              className="absolute inset-x-0 bottom-0 rounded-full bg-primary-500 transition-all duration-700 ease-out"
-              style={{ height: `${waitingPct}%` }}
-            />
-          </div>
-          <p className="mt-1 text-[11px] font-semibold text-stone-700">{stats.waiting}</p>
+    <div className="mx-[10px] mt-3 rounded-lg border border-stone-100 bg-white px-3 py-2.5 shadow-sm">
+      {/* Chiffres */}
+      <div className="flex items-baseline justify-between">
+        <div>
+          <span className={`text-lg font-bold tabular-nums transition-all duration-300 ${
+            popWaiting ? 'scale-110' : 'scale-100'
+          } ${isTense ? 'text-cta-600' : 'text-stone-800'}`}>
+            {stats.waiting}
+          </span>
+          <p className="text-[9px] text-stone-400 leading-none mt-0.5">en attente</p>
         </div>
+        <div className="text-end">
+          <span className={`text-lg font-bold tabular-nums transition-all duration-300 ${
+            popToday ? 'scale-110' : 'scale-100'
+          } ${justBrokeRecord ? 'ring-1 ring-cta-200 rounded px-0.5' : ''}`}>
+            {stats.todayTotal}
+          </span>
+          <p className="text-[9px] text-stone-400 leading-none mt-0.5">aujourd&apos;hui</p>
+        </div>
+      </div>
 
-        {/* Thermomètre droit : Aujourd'hui */}
-        <div className="flex-1 flex flex-col items-center">
-          <p className="text-[9px] font-medium text-stone-400 mb-1.5 uppercase tracking-wider">Aujourd'hui</p>
-          <div className="relative rounded-full bg-stone-200" style={{ width: 16, height: barH }}>
-            {/* Marqueur record (ligne pointillée + losange) */}
-            {stats.dailyRecord > 0 && (
-              <div className="absolute inset-x-0" style={{ bottom: `${recPct}%` }}>
-                <div className={`absolute -right-3 top-0 -translate-y-1/2 size-2 rounded-sm rotate-45 transition-all duration-500 ${
-                  justBrokeRecord ? 'bg-cta-500 scale-150' : 'bg-secondary-500'
-                }`} />
-                <span className="absolute -right-7 top-0 -translate-y-1/2 text-[8px] text-secondary-600 font-bold">{stats.dailyRecord}</span>
-              </div>
-            )}
-            {/* Marqueur moyenne (ligne pointillée) */}
-            {stats.dailyAverage > 0 && (
-              <div className="absolute inset-x-0 border-t border-dashed border-secondary-400" style={{ bottom: `${avgPct}%` }}>
-                <span className="absolute -right-7 top-0 -translate-y-1/2 text-[8px] text-stone-400">{stats.dailyAverage}</span>
-              </div>
-            )}
-            {/* Remplissage */}
-            <div
-              className={`absolute inset-x-0 bottom-0 rounded-full transition-all duration-700 ease-out ${
-                justBrokeRecord ? 'bg-cta-500' : 'bg-gradient-to-t from-primary-600 to-cta-500'
-              }`}
-              style={{ height: `${todayPct}%` }}
-            />
-          </div>
-          <p className="mt-1 text-[11px] font-semibold text-stone-700">{stats.todayTotal}</p>
-        </div>
+      {/* Ligne de progression */}
+      <div className="relative mt-2.5 h-[3px] rounded-full bg-stone-200">
+        <div
+          className="absolute inset-y-0 left-0 rounded-full bg-primary-500 transition-all duration-700 ease-out"
+          style={{ width: `${todayPct}%` }}
+        />
+        <div
+          className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 size-[5px] rounded-full bg-stone-400"
+          style={{ left: `${avgPct}%` }}
+        />
+        <div
+          className={`absolute top-1/2 -translate-y-1/2 -translate-x-1/2 size-[6px] rounded-[1px] rotate-45 transition-colors duration-500 ${
+            justBrokeRecord ? 'bg-cta-500' : 'bg-stone-500'
+          }`}
+          style={{ left: `${recPct}%` }}
+        />
+      </div>
+
+      {/* Labels sous les marqueurs */}
+      <div className="relative h-3 mt-0.5">
+        <span
+          className="absolute -translate-x-1/2 text-[8px] text-stone-400"
+          style={{ left: `${avgPct}%` }}
+        >
+          {stats.dailyAverage}
+        </span>
+        <span
+          className="absolute -translate-x-1/2 text-[8px] text-stone-400"
+          style={{ left: `${recPct}%` }}
+        >
+          {stats.dailyRecord}
+        </span>
       </div>
     </div>
   )
@@ -250,11 +258,11 @@ import QueueBar from './QueueBar'
 cd apps/frontend && pnpm build
 ```
 
-- Connecté en médecin cabinet → deux thermomètres visibles
-- Connecté en secrétaire/vitrine/RDV → aucun thermomètre
-- Ajouter des patients à la file → thermomètre gauche se remplit
-- Traiter des patients → thermomètre droit progresse
-- Dépasser le record → ◆ pulse + barre passe en orange
+- Connecté en médecin cabinet → carte visible avec deux chiffres + ligne
+- Connecté en secrétaire/vitrine/RDV → rien
+- Ajouter des patients à la file → chiffre gauche change avec pop
+- Traiter des patients → chiffre droit change, ligne progresse
+- Dépasser le record → ◆ change de couleur, chiffre droit prend un ring
 
 ### Fichiers créés/modifiés
 
@@ -262,3 +270,7 @@ cd apps/frontend && pnpm build
 |---|---|
 | `api/queue-stats/route.ts` | `Sidebar.tsx` |
 | `components/dashboard/QueueBar.tsx` | — |
+
+### Empreinte verticale
+
+~60px (chiffres + ligne + labels) — vs ~120px pour les deux thermomètres. Dans une sidebar avec 6-8 items de nav + footer utilisateur, l'économie est significative.
