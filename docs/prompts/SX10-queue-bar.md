@@ -126,12 +126,15 @@ type QueueStats = {
 
 export default function QueueBar() {
   const [stats, setStats] = useState<QueueStats | null>(null)
-  const [initialRecord, setInitialRecord] = useState(0)
   const [justBrokeRecord, setJustBrokeRecord] = useState(false)
-  const [prevWaiting, setPrevWaiting] = useState(0)
-  const [prevToday, setPrevToday] = useState(0)
   const [popWaiting, setPopWaiting] = useState(false)
   const [popToday, setPopToday] = useState(false)
+
+  // Refs pour éviter le bug de closure stale dans le useEffect([])
+  const initialRecordRef = useRef(0)
+  const hasLoadedRef = useRef(false)
+  const prevWaitingRef = useRef(0)
+  const prevTodayRef = useRef(0)
   const recordTimer = useRef<ReturnType<typeof setTimeout>>()
 
   useEffect(() => {
@@ -141,19 +144,22 @@ export default function QueueBar() {
         if (!res.ok) return
         const data: QueueStats = await res.json()
 
-        if (!stats) setInitialRecord(data.dailyRecord)
+        if (!hasLoadedRef.current) {
+          initialRecordRef.current = data.dailyRecord
+          hasLoadedRef.current = true
+        }
 
-        if (initialRecord > 0 && data.todayTotal > initialRecord) {
+        if (initialRecordRef.current > 0 && data.todayTotal > initialRecordRef.current) {
           setJustBrokeRecord(true)
           if (recordTimer.current) clearTimeout(recordTimer.current)
           recordTimer.current = setTimeout(() => setJustBrokeRecord(false), 3000)
         }
 
-        if (data.waiting !== prevWaiting) setPopWaiting(true)
-        if (data.todayTotal !== prevToday) setPopToday(true)
+        if (data.waiting !== prevWaitingRef.current) setPopWaiting(true)
+        if (data.todayTotal !== prevTodayRef.current) setPopToday(true)
 
-        setPrevWaiting(data.waiting)
-        setPrevToday(data.todayTotal)
+        prevWaitingRef.current = data.waiting
+        prevTodayRef.current = data.todayTotal
         setStats(data)
       } catch { /* silencieux */ }
     }
@@ -180,7 +186,7 @@ export default function QueueBar() {
       {/* Chiffres */}
       <div className="flex items-baseline justify-between">
         <div>
-          <span className={`text-lg font-bold tabular-nums transition-all duration-300 ${
+          <span className={`inline-block text-lg font-bold tabular-nums transition-all duration-300 ${
             popWaiting ? 'scale-110' : 'scale-100'
           } ${isTense ? 'text-cta-600' : 'text-stone-800'}`}>
             {stats.waiting}
@@ -188,9 +194,9 @@ export default function QueueBar() {
           <p className="text-[9px] text-stone-400 leading-none mt-0.5">en attente</p>
         </div>
         <div className="text-end">
-          <span className={`text-lg font-bold tabular-nums transition-all duration-300 ${
+          <span className={`inline-block text-lg font-bold tabular-nums transition-all duration-300 ${
             popToday ? 'scale-110' : 'scale-100'
-          } ${justBrokeRecord ? 'ring-1 ring-cta-200 rounded px-0.5' : ''}`}>
+          } ${justBrokeRecord ? 'ring-1 ring-cta-200 rounded' : ''}`}>
             {stats.todayTotal}
           </span>
           <p className="text-[9px] text-stone-400 leading-none mt-0.5">aujourd&apos;hui</p>
