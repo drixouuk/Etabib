@@ -1,5 +1,6 @@
 import { LayoutDashboard, Users, ListOrdered, BarChart3, Calendar, Settings, FileText, ShieldAlert, LogOut } from 'lucide-react'
 import SidebarNav from './SidebarNav'
+import QueueBar from './QueueBar'
 import type { PayloadUser } from '@/lib/auth'
 import type { Tenant } from '@/lib/payload'
 
@@ -79,6 +80,10 @@ export default function Sidebar({ user, tenant, onNavigate }: Props) {
       </div>
 
       <SidebarNav items={navItems} adminItems={adminItems} onNavigate={onNavigate} />
+
+      {tier === 'cabinet' && user.roles?.includes('doctor') && (
+        <QueueBar />
+      )}
 
       <div className="border-t border-primary-600/15 px-[10px] pt-4 mt-auto">
         <div className="flex items-center gap-[10px]">
