@@ -1,6 +1,8 @@
 import { LayoutDashboard, Users, ListOrdered, BarChart3, Calendar, Settings, FileText, ShieldAlert, LogOut } from 'lucide-react'
+import { useState } from 'react'
 import SidebarNav from './SidebarNav'
 import QueueBar from './QueueBar'
+import DemoSimulator from './DemoSimulator'
 import type { PayloadUser } from '@/lib/auth'
 import type { Tenant } from '@/lib/payload'
 
@@ -33,8 +35,31 @@ export default function Sidebar({ user, tenant, onNavigate }: Props) {
     rdv: 'RDV en ligne',
     cabinet: 'Cabinet',
   }
-  const roleLabel = user.roles?.map((r) => roleLabels[r] || r).join(', ')
   const tier = tenant?.settings?.activeTier
+  const isDemo = tenant?.domain?.startsWith('drdemo.')
+
+  const [simulatedTier, setSimulatedTierState] = useState<string | null>(() => {
+    if (typeof window === 'undefined') return null
+    return sessionStorage.getItem('demo-tier') || null
+  })
+  const [simulatedRole, setSimulatedRoleState] = useState<'doctor' | 'secretary'>(() => {
+    if (typeof window === 'undefined') return 'doctor'
+    return (sessionStorage.getItem('demo-role') as 'doctor' | 'secretary') || 'doctor'
+  })
+
+  const setSimulatedTier = (t: string | null) => {
+    setSimulatedTierState(t)
+    if (t) sessionStorage.setItem('demo-tier', t)
+    else sessionStorage.removeItem('demo-tier')
+  }
+  const setSimulatedRole = (r: 'doctor' | 'secretary') => {
+    setSimulatedRoleState(r)
+    sessionStorage.setItem('demo-role', r)
+  }
+
+  // Le simulateur ne fait que FILTRER les items de sidebar — les guards serveur restent la source de vérité
+  const effectiveTier = simulatedTier && simulatedTier !== 'cabinet' ? simulatedTier : tier
+  const effectiveRoles = simulatedRole === 'secretary' ? ['secretary'] : user.roles
 
   const tierNav: Record<string, NavItem[]> = {
     vitrine: [
@@ -54,11 +79,11 @@ export default function Sidebar({ user, tenant, onNavigate }: Props) {
     ],
   }
 
-  const navItems = tierNav[tier || 'vitrine'] || tierNav.vitrine
+  const navItems = tierNav[effectiveTier || 'vitrine'] || tierNav.vitrine
 
   const adminItems: NavItem[] = []
 
-  if (tier === 'cabinet') {
+  if (effectiveTier === 'cabinet') {
     adminItems.push({ label: "Registre d'audit", href: '/dashboard/audit-logs', icon: <FileText className="size-4" /> })
     if (user.roles?.includes('superadmin')) {
       adminItems.push({ label: 'Alertes système', href: '/dashboard/system-alerts', icon: <ShieldAlert className="size-4" /> })
@@ -81,8 +106,17 @@ export default function Sidebar({ user, tenant, onNavigate }: Props) {
 
       <SidebarNav items={navItems} adminItems={adminItems} onNavigate={onNavigate} />
 
-      {tier === 'cabinet' && user.roles?.includes('doctor') && (
+      {effectiveTier === 'cabinet' && effectiveRoles.includes('doctor') && (
         <QueueBar />
+      )}
+
+      {isDemo && (
+        <DemoSimulator
+          currentTier={simulatedTier || tier || 'vitrine'}
+          onTierChange={setSimulatedTier}
+          onRoleToggle={() => setSimulatedRole(simulatedRole === 'doctor' ? 'secretary' : 'doctor')}
+          simulatedRole={simulatedRole}
+        />
       )}
 
       <div className="border-t border-primary-600/15 px-[10px] pt-4 mt-auto">
@@ -92,7 +126,7 @@ export default function Sidebar({ user, tenant, onNavigate }: Props) {
           </div>
           <div className="min-w-0 flex-1">
             <p className="text-[13px] font-semibold text-stone-800">{user.name || user.email}</p>
-            <p className="text-[11px] text-stone-600">{roleLabel}</p>
+            <p className="text-[11px] text-stone-600">{effectiveRoles?.map((r) => roleLabels[r] || r).join(', ')}</p>
             {user.roles?.includes('substitute') && user.accessExpiresAt && (
               <p className="mt-0.5 text-[11px] font-medium text-warning">
                 Expire le {new Date(user.accessExpiresAt).toLocaleDateString('fr-FR')}
