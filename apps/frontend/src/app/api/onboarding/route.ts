@@ -77,9 +77,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Ce nom de domaine est réservé' }, { status: 409 })
     }
 
-    const checkRes = await fetch(`${CMS_URL}/api/tenants?where[domain][equals]=${encodeURIComponent(domain)}&limit=1`)
-    const checkData = await checkRes.json()
-    if (checkData?.docs?.length > 0) {
+    const checkRes = await fetch(`${CMS_URL}/api/resolve-tenant?domain=${encodeURIComponent(domain)}`)
+    const checkData = await checkRes.json().catch(() => null)
+    if (checkData?.tenant) {
       return NextResponse.json({ error: 'Ce nom de domaine est déjà pris' }, { status: 409 })
     }
 

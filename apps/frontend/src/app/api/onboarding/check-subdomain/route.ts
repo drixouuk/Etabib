@@ -27,9 +27,9 @@ export async function GET(req: NextRequest) {
   }
 
   const fullDomain = `${subdomain}.${SITE_DOMAIN}`
-  const res = await fetch(`${CMS_URL}/api/tenants?where[domain][equals]=${encodeURIComponent(fullDomain)}&limit=1`)
-  const data = await res.json()
-  const available = !data?.docs?.length
+  const res = await fetch(`${CMS_URL}/api/resolve-tenant?domain=${encodeURIComponent(fullDomain)}`)
+  const data = await res.json().catch(() => null)
+  const available = !data?.tenant
 
   return NextResponse.json({ available })
 }
