@@ -6,6 +6,7 @@ import { createEventsServicePlugin } from '@schedule-x/events-service'
 import 'temporal-polyfill/global'
 import { Temporal } from 'temporal-polyfill'
 import '@schedule-x/theme-default/dist/index.css'
+import './ScheduleXCalendar.css'
 
 type CalendarEvent = { id: string | number; title: string; start: string; end: string }
 
@@ -87,53 +88,6 @@ export default function ScheduleXCalendar({ events, onDateClick, onEventClick, o
   }, [events])
 
   return (
-    <>
-      <div ref={containerRef} dir={isRTL ? 'rtl' : 'ltr'} className="schedule-x-calendar" />
-      <style>{`
-        .schedule-x-calendar {
-          --sx-color-primary: #0D9488;
-          --sx-color-on-primary: #FFFFFF;
-          --sx-color-primary-container: #F0FDFA;
-          --sx-color-on-primary-container: #115E59;
-          --sx-color-secondary: #FFF7E0;
-          --sx-color-on-secondary: #292524;
-          --sx-color-surface: #FFFFFF;
-          --sx-color-on-surface: #292524;
-          --sx-color-background: #FFFBF0;
-          --sx-color-on-background: #78716C;
-          --sx-color-outline: #E7E5E4;
-          --sx-color-outline-variant: #D6D3D1;
-          --sx-color-neutral-variant: #D6D3D1;
-          --sx-color-surface-container: #FFFBF0;
-          --sx-color-surface-container-low: #FFFDF7;
-          --sx-color-surface-container-high: #FFF7E0;
-          --sx-color-surface-dim: #EFEDE3;
-        }
-        .schedule-x-calendar .sx__event {
-          background-color: #0D9488;
-          border-color: #0D9488;
-          color: #FFFFFF;
-          border-radius: 6px;
-          padding: 2px 6px;
-          font-size: .78rem;
-        }
-        .schedule-x-calendar .sx__today .sx__date-number {
-          background-color: #0D9488;
-          color: #FFFFFF;
-          border-radius: 9999px;
-        }
-        .schedule-x-calendar .sx__date-picker-wrapper,
-        .schedule-x-calendar .sx__date-picker-button,
-        .schedule-x-calendar .sx__header {
-          font-family: Figtree, sans-serif;
-        }
-        .schedule-x-calendar .sx__month-view-heading {
-          font-size: .7rem;
-          font-weight: 700;
-          text-transform: uppercase;
-          color: #A8A29E;
-        }
-      `}</style>
-    </>
+    <div ref={containerRef} dir={isRTL ? 'rtl' : 'ltr'} className="schedule-x-calendar" />
   )
 }
