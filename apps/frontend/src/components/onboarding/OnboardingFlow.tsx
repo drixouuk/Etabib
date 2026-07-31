@@ -88,10 +88,10 @@ export default function OnboardingFlow() {
 
   return (
     <div>
-      <Link href="/landing#tarifs"
+      <button onClick={handleChangePlan}
         className="mb-6 inline-flex items-center gap-1.5 text-sm text-stone-500 hover:text-stone-700 transition-colors duration-200">
         <ArrowLeft className="size-4" /> {t('changePlan')}
-      </Link>
+      </button>
 
       <div className="mb-6 rounded-xl border border-primary-200 bg-primary-50 p-4 text-center">
         <p className="text-sm font-medium text-primary-700">
