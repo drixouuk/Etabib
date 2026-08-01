@@ -7,12 +7,13 @@ function getCMSURL(): string {
   return url
 }
 
-// Appels CMS internes (clé API) — le cron n'a pas de session utilisateur
+// Appels CMS internes (clé API) — le cron n'a pas de session utilisateur.
+// Les paths passés commencent déjà par /api (contrat de lib/billing-cycle).
 const cms: CmsApi = async (method, path, body) => {
   const headers: Record<string, string> = { 'Content-Type': 'application/json' }
   const apiKey = process.env.INTERNAL_BOOKING_API_KEY
   if (apiKey) headers['x-internal-api-key'] = apiKey
-  const res = await fetch(`${getCMSURL()}/api${path}`, {
+  const res = await fetch(`${getCMSURL()}${path}`, {
     method,
     headers,
     body: body ? JSON.stringify(body) : undefined,

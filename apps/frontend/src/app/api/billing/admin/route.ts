@@ -9,10 +9,11 @@ function getCMSURL(): string {
   return url
 }
 
-// Appels CMS avec le token de session du superadmin
+// Appels CMS avec le token de session du superadmin.
+// Les paths passés commencent déjà par /api (contrat de lib/billing-cycle).
 function cmsWithToken(token: string): CmsApi {
   return async (method, path, body) => {
-    const res = await fetch(`${getCMSURL()}/api${path}`, {
+    const res = await fetch(`${getCMSURL()}${path}`, {
       method,
       headers: {
         'Content-Type': 'application/json',
