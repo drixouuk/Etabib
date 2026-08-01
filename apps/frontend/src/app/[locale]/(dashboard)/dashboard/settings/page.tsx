@@ -3,6 +3,8 @@ import { isSecretaryOnly } from '@/lib/tier-guard'
 import { redirect } from 'next/navigation'
 import { getTenantId } from '@/lib/tenant'
 import { fetchCMS } from '@/lib/cms-fetch'
+import { getTenantById } from '@/lib/payload'
+import { getSubscriptionByTenant } from '@/lib/subscription'
 import SettingsTabsContent from './SettingsTabsContent'
 
 export default async function SettingsPage() {
@@ -12,9 +14,14 @@ export default async function SettingsPage() {
   const tenantId = getTenantId(user)
 
   let practicePhone = ''
+  let tenantName = ''
+  let subscription = null
   if (tenantId) {
     const practiceRes = await fetchCMS<{ phone?: string }>('/api/globals/practice-info?depth=0', { revalidate: 0 })
     practicePhone = practiceRes?.phone || ''
+    const tenant = await getTenantById(tenantId)
+    tenantName = tenant?.name || ''
+    subscription = await getSubscriptionByTenant(tenantId)
   }
 
   let tenantUsers: { id: string; email: string; name: string; roles: string[] }[] = []
@@ -37,6 +44,8 @@ export default async function SettingsPage() {
         isAdmin={isAdmin}
         tenantUsers={tenantUsers}
         currentUserId={user.id}
+        tenantName={tenantName}
+        subscription={subscription}
       />
     </div>
   )

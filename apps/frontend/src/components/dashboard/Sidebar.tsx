@@ -67,7 +67,6 @@ export default function Sidebar({ user, tenant, onNavigate }: Props) {
     ],
     rdv: [
       { label: 'Rendez-vous', href: '/dashboard/rendez-vous', icon: <Calendar className="size-4" /> },
-      { label: 'Abonnement', href: '/dashboard/billing', icon: <CreditCard className="size-4" /> },
       { label: 'Paramètres', href: '/dashboard/settings', icon: <Settings className="size-4" /> },
     ],
     cabinet: [
@@ -76,14 +75,13 @@ export default function Sidebar({ user, tenant, onNavigate }: Props) {
       { label: 'File d\'attente', href: '/dashboard/queue', icon: <ListOrdered className="size-4" /> },
       { label: 'Activité', href: '/dashboard/activity', icon: <BarChart3 className="size-4" /> },
       { label: 'Rendez-vous', href: '/dashboard/rendez-vous', icon: <Calendar className="size-4" /> },
-      { label: 'Abonnement', href: '/dashboard/billing', icon: <CreditCard className="size-4" /> },
       { label: 'Paramètres', href: '/dashboard/settings', icon: <Settings className="size-4" /> },
     ],
   }
 
   const navItems = (tierNav[effectiveTier || 'vitrine'] || tierNav.vitrine).filter((item) => {
     if (!effectiveRoles.includes('secretary')) return true
-    return !['/dashboard', '/dashboard/activity', '/dashboard/settings', '/dashboard/billing'].includes(item.href)
+    return !['/dashboard', '/dashboard/activity', '/dashboard/settings'].includes(item.href)
   })
 
   const adminItems: NavItem[] = []

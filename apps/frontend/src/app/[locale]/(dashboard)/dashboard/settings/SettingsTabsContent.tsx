@@ -8,9 +8,10 @@ import ScheduleAndSlots from './ScheduleAndSlots'
 import ServicesEditor from './ServicesEditor'
 import SiteEditor from './SiteEditor'
 import CalendarSettings from './CalendarSettings'
-import BillingSettings from './BillingSettings'
+import SubscriptionSettings from './SubscriptionSettings'
 import ManageAccounts from './ManageAccounts'
 import ReferringPractitionersManager from './ReferringPractitionersManager'
+import type { Subscription } from '@/lib/subscription'
 
 type Props = {
   userId: string
@@ -20,13 +21,15 @@ type Props = {
   isAdmin: boolean
   tenantUsers: { id: string; email: string; name: string; roles: string[] }[]
   currentUserId: string
+  tenantName?: string
+  subscription?: Subscription | null
 }
 
 const triggerClass = 'data-[state=active]:text-primary-700 data-[state=active]:font-semibold after:bg-primary-500'
 
 export default function SettingsTabsContent({
   userId, userEmail, userName, practicePhone,
-  isAdmin, tenantUsers, currentUserId,
+  isAdmin, tenantUsers, currentUserId, tenantName, subscription,
 }: Props) {
   return (
     <Tabs defaultValue="account" className="mt-8">
@@ -36,7 +39,7 @@ export default function SettingsTabsContent({
         {isAdmin && <TabsTrigger value="practice" className={triggerClass}>Cabinet</TabsTrigger>}
         {isAdmin && <TabsTrigger value="site" className={triggerClass}>Site</TabsTrigger>}
         {isAdmin && <TabsTrigger value="calendar" className={triggerClass}>Calendrier</TabsTrigger>}
-        {isAdmin && <TabsTrigger value="billing" className={triggerClass}>Facturation</TabsTrigger>}
+        {isAdmin && <TabsTrigger value="subscription" className={triggerClass}>Abonnement</TabsTrigger>}
         <TabsTrigger value="referents" className={triggerClass}>Référents</TabsTrigger>
       </TabsList>
 
@@ -78,8 +81,8 @@ export default function SettingsTabsContent({
       )}
 
       {isAdmin && (
-        <TabsContent value="billing">
-          <BillingSettings />
+        <TabsContent value="subscription">
+          <SubscriptionSettings subscription={subscription ?? null} tenantName={tenantName || ''} />
         </TabsContent>
       )}
 
