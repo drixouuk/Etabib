@@ -1,4 +1,4 @@
-import { requireTier } from '@/lib/tier-guard'
+import { requireAuth } from '@/lib/auth'
 import { fetchCMS } from '@/lib/cms-fetch'
 
 type SystemAlert = {
@@ -10,7 +10,7 @@ type SystemAlert = {
 }
 
 export default async function SystemAlertsPage() {
-  const { user } = await requireTier(['cabinet'])
+  const user = await requireAuth()
 
   if (!user.roles?.includes('superadmin')) {
     return (

@@ -19,6 +19,7 @@ type Props = {
   userName: string
   practicePhone: string
   isAdmin: boolean
+  hasTenant: boolean
   tenantUsers: { id: string; email: string; name: string; roles: string[] }[]
   currentUserId: string
   tenantName?: string
@@ -29,18 +30,18 @@ const triggerClass = 'data-[state=active]:text-primary-700 data-[state=active]:f
 
 export default function SettingsTabsContent({
   userId, userEmail, userName, practicePhone,
-  isAdmin, tenantUsers, currentUserId, tenantName, subscription,
+  isAdmin, hasTenant, tenantUsers, currentUserId, tenantName, subscription,
 }: Props) {
   return (
     <Tabs defaultValue="account" className="mt-8">
       <TabsList variant="line" className="mb-8 w-full justify-center gap-6 border-b border-warm">
         <TabsTrigger value="account" className={triggerClass}>Mon compte</TabsTrigger>
-        {isAdmin && <TabsTrigger value="team" className={triggerClass}>Équipe</TabsTrigger>}
-        {isAdmin && <TabsTrigger value="practice" className={triggerClass}>Cabinet</TabsTrigger>}
-        {isAdmin && <TabsTrigger value="site" className={triggerClass}>Site</TabsTrigger>}
-        {isAdmin && <TabsTrigger value="calendar" className={triggerClass}>Calendrier</TabsTrigger>}
-        {isAdmin && <TabsTrigger value="subscription" className={triggerClass}>Abonnement</TabsTrigger>}
-        <TabsTrigger value="referents" className={triggerClass}>Référents</TabsTrigger>
+        {isAdmin && hasTenant && <TabsTrigger value="team" className={triggerClass}>Équipe</TabsTrigger>}
+        {isAdmin && hasTenant && <TabsTrigger value="practice" className={triggerClass}>Cabinet</TabsTrigger>}
+        {isAdmin && hasTenant && <TabsTrigger value="site" className={triggerClass}>Site</TabsTrigger>}
+        {isAdmin && hasTenant && <TabsTrigger value="calendar" className={triggerClass}>Calendrier</TabsTrigger>}
+        {isAdmin && hasTenant && <TabsTrigger value="subscription" className={triggerClass}>Abonnement</TabsTrigger>}
+        {hasTenant && <TabsTrigger value="referents" className={triggerClass}>Référents</TabsTrigger>}
       </TabsList>
 
       <TabsContent value="account">
@@ -50,13 +51,13 @@ export default function SettingsTabsContent({
         </div>
       </TabsContent>
 
-      {isAdmin && (
+      {isAdmin && hasTenant && (
         <TabsContent value="team">
           <ManageAccounts users={tenantUsers} currentUserId={currentUserId} isAdmin={isAdmin} />
         </TabsContent>
       )}
 
-      {isAdmin && (
+      {isAdmin && hasTenant && (
         <TabsContent value="practice">
           <div className="space-y-8">
             <PracticeEditor />
@@ -65,7 +66,7 @@ export default function SettingsTabsContent({
         </TabsContent>
       )}
 
-      {isAdmin && (
+      {isAdmin && hasTenant && (
         <TabsContent value="site">
           <div className="space-y-8">
             <SiteEditor />
@@ -74,21 +75,23 @@ export default function SettingsTabsContent({
         </TabsContent>
       )}
 
-      {isAdmin && (
+      {isAdmin && hasTenant && (
         <TabsContent value="calendar">
           <CalendarSettings />
         </TabsContent>
       )}
 
-      {isAdmin && (
+      {isAdmin && hasTenant && (
         <TabsContent value="subscription">
           <SubscriptionSettings subscription={subscription ?? null} tenantName={tenantName || ''} />
         </TabsContent>
       )}
 
-      <TabsContent value="referents">
-        <ReferringPractitionersManager />
-      </TabsContent>
+      {hasTenant && (
+        <TabsContent value="referents">
+          <ReferringPractitionersManager />
+        </TabsContent>
+      )}
     </Tabs>
   )
 }

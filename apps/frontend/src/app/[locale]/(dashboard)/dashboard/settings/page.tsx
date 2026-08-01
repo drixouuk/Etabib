@@ -46,7 +46,7 @@ export default async function SettingsPage() {
         currentUserId={user.id}
         tenantName={tenantName}
         subscription={subscription}
-      />
-    </div>
+        hasTenant={!!tenantId}
+      />    </div>
   )
 }

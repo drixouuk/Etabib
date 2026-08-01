@@ -64,7 +64,11 @@ export default function LoginPage() {
       return
     }
 
-    router.push('/dashboard')
+    // Superadmin plateforme (sans tenant) → console admin, pas l'espace cabinet
+    const data = await res.json().catch(() => null)
+    const isPlatformAdmin =
+      !!data?.user && !data.user.tenant && data.user.roles?.includes('superadmin')
+    router.push(isPlatformAdmin ? '/dashboard/billing-admin' : '/dashboard')
   }
 
   const handleDemoRequest = async (e: FormEvent) => {

@@ -88,10 +88,13 @@ export default function Sidebar({ user, tenant, onNavigate }: Props) {
 
   const isAdmin = effectiveRoles.includes('superadmin') || effectiveRoles.includes('tenant_admin')
 
+  // Superadmin plateforme (sans tenant) : accès admin globaux hors contexte cabinet
+  if (effectiveRoles.includes('superadmin')) {
+    adminItems.push({ label: 'Facturation', href: '/dashboard/billing-admin', icon: <CreditCard className="size-4" /> })
+  }
   if (effectiveTier === 'cabinet') {
     if (isAdmin) adminItems.push({ label: "Registre d'audit", href: '/dashboard/audit-logs', icon: <FileText className="size-4" /> })
     if (effectiveRoles.includes('superadmin')) {
-      adminItems.push({ label: 'Facturation', href: '/dashboard/billing-admin', icon: <CreditCard className="size-4" /> })
       adminItems.push({ label: 'Alertes système', href: '/dashboard/system-alerts', icon: <ShieldAlert className="size-4" /> })
     }
   }
