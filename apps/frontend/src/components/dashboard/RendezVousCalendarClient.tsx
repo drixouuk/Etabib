@@ -273,10 +273,10 @@ export default function RendezVousCalendarClient({ initialBookings, tenantId }: 
         <p className="text-[13.5px] text-stone-600 capitalize">{fmtDayLong(today.toISOString())}</p>
       </div>
 
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-6 lg:h-[calc(100vh-190px)] lg:grid-cols-3">
         {/* Calendrier — 2/3 */}
-        <div className="lg:col-span-2">
-          <div className="mb-4 flex flex-wrap items-center justify-between gap-4">
+        <div className="lg:col-span-2 lg:flex lg:min-h-0 lg:flex-col">
+          <div className="mb-4 flex shrink-0 flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-2">
               <button
                 onClick={goToday}
@@ -323,7 +323,8 @@ export default function RendezVousCalendarClient({ initialBookings, tenantId }: 
             </div>
           </div>
 
-          <div dir={isRTL ? 'rtl' : 'ltr'} className="overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm">
+          <div dir={isRTL ? 'rtl' : 'ltr'} className="min-h-0 flex-1 overflow-y-auto pr-0.5">
+            <div className="overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm">
             <div className="grid grid-cols-7">
               {WEEKDAY_HEADS.map((h) => (
                 <div key={h} className="border-b border-stone-100 px-2.5 pb-2 pt-3 text-[10.5px] font-bold uppercase tracking-wide text-stone-500">
@@ -377,11 +378,12 @@ export default function RendezVousCalendarClient({ initialBookings, tenantId }: 
               </div>
             )}
           </div>
+          </div>
         </div>
 
         {/* Liste — 1/3 */}
-        <div>
-          <div className="mb-4 inline-flex rounded-[10px] bg-primary-50 p-0.5">
+        <div className="lg:flex lg:min-h-0 lg:flex-col">
+          <div className="mb-4 inline-flex shrink-0 rounded-[10px] bg-primary-50 p-0.5">
             <button
               onClick={() => setListMode('avenir')}
               className={`rounded-lg px-4 py-1.5 text-[13px] font-medium transition-all ${
@@ -400,7 +402,7 @@ export default function RendezVousCalendarClient({ initialBookings, tenantId }: 
             </button>
           </div>
 
-          <div className="max-h-[calc(100vh-300px)] overflow-y-auto rounded-2xl border border-stone-200 bg-white shadow-sm">
+          <div className="min-h-0 flex-1 overflow-y-auto rounded-2xl border border-stone-200 bg-white shadow-sm lg:pr-0.5">
             {activeList.length === 0 && (
               <div className="px-9 py-9 text-center text-[13px] text-stone-500">
                 Aucun rendez-vous {listMode === 'avenir' ? 'à venir' : 'passé'} sur cette période.
