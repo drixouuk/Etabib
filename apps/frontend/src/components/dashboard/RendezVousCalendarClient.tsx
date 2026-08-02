@@ -82,7 +82,7 @@ export default function RendezVousCalendarClient({ initialBookings, tenantId }: 
 
   const today = useMemo(() => new Date(), [])
   const [events, setEvents] = useState<CalBooking[]>(initialBookings)
-  const [view, setView] = useState<View>('mois')
+  const [view, setView] = useState<View>('semaine')
   const [cursor, setCursor] = useState(() => new Date(today.getFullYear(), today.getMonth(), 1))
   const [listMode, setListMode] = useState<'avenir' | 'passes'>('avenir')
   const [editing, setEditing] = useState<CalBooking | null>(null)
@@ -324,7 +324,6 @@ export default function RendezVousCalendarClient({ initialBookings, tenantId }: 
               >
                 <option value="mois">Mois</option>
                 <option value="semaine">Semaine</option>
-                <option value="jour" disabled>Jour</option>
               </select>
               <input
                 type="date"
