@@ -10,8 +10,14 @@ import type { CalBooking } from '@/lib/booking'
 const TZ = 'Africa/Casablanca'
 const MONTHS_FR = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre']
 const WEEKDAY_HEADS = ['LUN.', 'MAR.', 'MER.', 'JEU.', 'VEN.', 'SAM.', 'DIM.']
+const DAY_NAMES_SHORT = ['DIM.', 'LUN.', 'MAR.', 'MER.', 'JEU.', 'VEN.', 'SAM.']
 const MAX_CHIPS_PER_DAY = 3
-const MAX_CHIPS_WEEK = 4
+
+// Échelle de temps de la vue semaine
+const DAY_START = 7
+const DAY_END = 20
+const DAY_HOURS = DAY_END - DAY_START
+const MIN_BLOCK_PX = 24 // hauteur mini d'un RDV (lisibilité, ex. 5 min)
 
 type View = 'mois' | 'semaine'
 
@@ -33,6 +39,7 @@ const STATUS_CLASSES: Record<string, string> = {
 // Formatters Intl créés une seule fois (module scope) — pas d'instanciation par render
 const dayKeyFmt = new Intl.DateTimeFormat('en-CA', { timeZone: TZ, year: 'numeric', month: '2-digit', day: '2-digit' })
 const timeFmt = new Intl.DateTimeFormat('fr-FR', { timeZone: TZ, hour: '2-digit', minute: '2-digit' })
+const clockFmt = new Intl.DateTimeFormat('en-GB', { timeZone: TZ, hour: '2-digit', minute: '2-digit', hourCycle: 'h23' })
 const dayLongFmt = new Intl.DateTimeFormat('fr-FR', { timeZone: TZ, weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
 const whenFmt = new Intl.DateTimeFormat('fr-FR', { timeZone: TZ, weekday: 'long', day: 'numeric', month: 'long' })
 const shortFmt = new Intl.DateTimeFormat('fr-FR', { timeZone: TZ, day: 'numeric', month: 'short' })
@@ -44,6 +51,10 @@ function fmtTime(iso: string): string { return timeFmt.format(new Date(iso)) }
 function fmtDayLong(iso: string): string { return dayLongFmt.format(new Date(iso)) }
 function fmtWhen(startISO: string, endISO: string): string {
   return `${whenFmt.format(new Date(startISO))} · ${fmtTime(startISO)} – ${fmtTime(endISO)}`
+}
+function minutesOf(iso: string): number {
+  const [h, m] = clockFmt.format(new Date(iso)).split(':').map(Number)
+  return h * 60 + m
 }
 function mondayOf(d: Date): Date {
   const date = new Date(d.getFullYear(), d.getMonth(), d.getDate())
@@ -327,6 +338,8 @@ export default function RendezVousCalendarClient({ initialBookings, tenantId }: 
 
           <div dir={isRTL ? 'rtl' : 'ltr'} className="flex min-h-0 flex-1 flex-col">
             <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm">
+            {view === 'mois' ? (
+              <>
             <div className="grid shrink-0 grid-cols-7">
               {WEEKDAY_HEADS.map((h) => (
                 <div key={h} className="border-b border-stone-100 px-2.5 pb-2 pt-3 text-[10.5px] font-bold uppercase tracking-wide text-stone-500">
@@ -334,7 +347,6 @@ export default function RendezVousCalendarClient({ initialBookings, tenantId }: 
                 </div>
               ))}
             </div>
-            {view === 'mois' ? (
               <div className="flex min-h-0 flex-1 flex-col">
                 {monthRows.map((row, ri) => (
                   <div key={ri} className="grid min-h-0 flex-1 grid-cols-7">
@@ -363,25 +375,82 @@ export default function RendezVousCalendarClient({ initialBookings, tenantId }: 
                   </div>
                 ))}
               </div>
+              </>
             ) : (
-              <div className="grid min-h-0 flex-1 grid-cols-7">
-                {weekCells.map((cell) => (
-                  <div
-                    key={cell.key}
-                    onClick={() => openCreate(cell.date)}
-                    className={`flex min-h-[240px] cursor-pointer flex-col gap-1 border-r p-2 transition-colors hover:bg-cream-50 lg:min-h-0 ${cell.key === todayKey ? 'bg-cream-50' : ''}`}
+              <>
+            <div className="grid shrink-0 grid-cols-[44px_repeat(7,minmax(0,1fr))] border-b border-stone-100">
+              <div />
+              {weekCells.map((cell) => (
+                <div key={cell.key} className="flex flex-col items-center gap-0.5 py-1.5">
+                  <span className="text-[9.5px] font-bold uppercase tracking-wide text-stone-500">
+                    {DAY_NAMES_SHORT[cell.date.getDay()]}
+                  </span>
+                  <span
+                    className={`flex size-[22px] items-center justify-center rounded-full text-[12.5px] font-semibold ${
+                      cell.key === todayKey ? 'bg-primary-600 text-white' : 'text-stone-600'
+                    }`}
                   >
-                    <div className="flex flex-col items-center gap-1 pb-1.5">
-                      <div className={`flex size-[22px] items-center justify-center rounded-full text-[12.5px] font-semibold ${
-                        cell.key === todayKey ? 'bg-primary-600 text-white' : 'text-stone-600'
-                      }`}>
-                        {cell.date.getDate()}
-                      </div>
-                    </div>
-                    {renderChips(cell.appts, MAX_CHIPS_WEEK)}
-                  </div>
+                    {cell.date.getDate()}
+                  </span>
+                </div>
+              ))}
+            </div>
+            <div className="grid min-h-0 flex-1 grid-cols-[44px_repeat(7,minmax(0,1fr))]">
+              <div className="relative border-r border-stone-100">
+                {Array.from({ length: DAY_HOURS + 1 }, (_, i) => DAY_START + i).map((h) => (
+                  <span
+                    key={h}
+                    className="absolute right-1.5 text-[9.5px] font-medium text-stone-400"
+                    style={{
+                      top: `calc(${((h - DAY_START) / DAY_HOURS) * 100}% + 3px)`,
+                      transform: h === DAY_END ? 'translateY(-100%)' : undefined,
+                    }}
+                  >
+                    {h}h
+                  </span>
                 ))}
               </div>
+              {weekCells.map((cell) => (
+                <div
+                  key={cell.key}
+                  onClick={() => openCreate(cell.date)}
+                  className={`relative min-h-0 cursor-pointer border-r border-stone-100 ${
+                    cell.key === todayKey ? 'bg-cream-50' : ''
+                  }`}
+                >
+                  {Array.from({ length: DAY_HOURS + 1 }, (_, i) => DAY_START + i).map((h) => (
+                    <div
+                      key={h}
+                      className="pointer-events-none absolute inset-x-0 border-t border-stone-100/80"
+                      style={{ top: `${((h - DAY_START) / DAY_HOURS) * 100}%` }}
+                    />
+                  ))}
+                  {cell.appts.map((b) => {
+                    const startMin = minutesOf(b.startTime)
+                    const endMin = startMin + (b.duration || 30)
+                    const scaleMin = DAY_HOURS * 60
+                    const relStart = Math.min(Math.max((startMin - DAY_START * 60) / scaleMin, 0), 1)
+                    const relEnd = Math.min(Math.max((endMin - DAY_START * 60) / scaleMin, 0), 1)
+                    const topPct = relStart * 100
+                    const heightPct = Math.max((relEnd - relStart) * 100, 0.001)
+                    return (
+                      <button
+                        key={b.id}
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          openEdit(b)
+                        }}
+                        className="absolute inset-x-1 z-10 truncate rounded-md border-l-2 border-primary-600 bg-primary-50 px-1.5 text-left text-[10.5px] leading-snug text-primary-700 transition-colors hover:bg-primary-100"
+                        style={{ top: `${topPct}%`, height: `max(${MIN_BLOCK_PX}px, ${heightPct}%)` }}
+                      >
+                        <b className="font-bold">{fmtTime(b.startTime)}</b> {b.attendeeName || 'Patient'}
+                      </button>
+                    )
+                  })}
+                </div>
+              ))}
+            </div>
+              </>
             )}
           </div>
           </div>
