@@ -155,7 +155,7 @@ export default function RendezVousCalendarClient({ initialBookings, tenantId }: 
     setCursor(view === 'mois' ? new Date(today.getFullYear(), today.getMonth(), 1) : mondayOf(today))
   }, [view, today])
 
-  // Grille du mois (lundi en tête)
+  // Grille du mois (lundi en tête), rangées flex qui remplissent la hauteur fixe
   const y = cursor.getFullYear()
   const m = cursor.getMonth()
   const offset = (new Date(y, m, 1).getDay() + 6) % 7
@@ -167,6 +167,8 @@ export default function RendezVousCalendarClient({ initialBookings, tenantId }: 
     const key = dayKeyOf(date)
     monthCells.push({ date, out: date.getMonth() !== m, key, appts: eventsByDay.get(key) ?? [] })
   }
+  const monthRows: typeof monthCells[] = []
+  for (let i = 0; i < monthCells.length; i += 7) monthRows.push(monthCells.slice(i, i + 7))
 
   // Semaine courante
   const weekStart = mondayOf(cursor)
@@ -323,9 +325,9 @@ export default function RendezVousCalendarClient({ initialBookings, tenantId }: 
             </div>
           </div>
 
-          <div dir={isRTL ? 'rtl' : 'ltr'} className="min-h-0 flex-1 overflow-y-auto pr-0.5">
-            <div className="overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm">
-            <div className="grid grid-cols-7">
+          <div dir={isRTL ? 'rtl' : 'ltr'} className="flex min-h-0 flex-1 flex-col">
+            <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm">
+            <div className="grid shrink-0 grid-cols-7">
               {WEEKDAY_HEADS.map((h) => (
                 <div key={h} className="border-b border-stone-100 px-2.5 pb-2 pt-3 text-[10.5px] font-bold uppercase tracking-wide text-stone-500">
                   {h}
@@ -333,37 +335,41 @@ export default function RendezVousCalendarClient({ initialBookings, tenantId }: 
               ))}
             </div>
             {view === 'mois' ? (
-              <div className="grid grid-cols-7">
-                {monthCells.map((cell) => (
-                  <div
-                    key={cell.key}
-                    onClick={() => openCreate(cell.date)}
-                    className={`flex min-h-[96px] cursor-pointer flex-col gap-1 border-b border-r border-stone-100 p-2 transition-colors hover:bg-cream-50 ${
-                      cell.out ? 'bg-stone-50/60' : ''
-                    }`}
-                  >
-                    <div
-                      className={`flex size-[22px] items-center justify-center rounded-full text-[12.5px] font-semibold ${
-                        cell.key === todayKey
-                          ? 'bg-primary-600 text-white'
-                          : cell.out
-                            ? 'text-stone-400'
-                            : 'text-stone-600'
-                      }`}
-                    >
-                      {cell.date.getDate()}
-                    </div>
-                    {renderChips(cell.appts, MAX_CHIPS_PER_DAY)}
+              <div className="flex min-h-0 flex-1 flex-col">
+                {monthRows.map((row, ri) => (
+                  <div key={ri} className="grid min-h-0 flex-1 grid-cols-7">
+                    {row.map((cell) => (
+                      <div
+                        key={cell.key}
+                        onClick={() => openCreate(cell.date)}
+                        className={`flex min-h-[96px] cursor-pointer flex-col gap-1 border-r p-2 transition-colors hover:bg-cream-50 lg:min-h-0 ${
+                          ri < monthRows.length - 1 ? 'border-b' : ''
+                        } ${cell.out ? 'bg-stone-50/60' : ''}`}
+                      >
+                        <div
+                          className={`flex size-[22px] items-center justify-center rounded-full text-[12.5px] font-semibold ${
+                            cell.key === todayKey
+                              ? 'bg-primary-600 text-white'
+                              : cell.out
+                                ? 'text-stone-400'
+                                : 'text-stone-600'
+                          }`}
+                        >
+                          {cell.date.getDate()}
+                        </div>
+                        {renderChips(cell.appts, MAX_CHIPS_PER_DAY)}
+                      </div>
+                    ))}
                   </div>
                 ))}
               </div>
             ) : (
-              <div className="grid grid-cols-7">
+              <div className="grid min-h-0 flex-1 grid-cols-7">
                 {weekCells.map((cell) => (
                   <div
                     key={cell.key}
                     onClick={() => openCreate(cell.date)}
-                    className={`flex min-h-[240px] cursor-pointer flex-col gap-1 border-b border-r border-stone-100 p-2 transition-colors hover:bg-cream-50 ${cell.key === todayKey ? 'bg-cream-50' : ''}`}
+                    className={`flex min-h-[240px] cursor-pointer flex-col gap-1 border-r p-2 transition-colors hover:bg-cream-50 lg:min-h-0 ${cell.key === todayKey ? 'bg-cream-50' : ''}`}
                   >
                     <div className="flex flex-col items-center gap-1 pb-1.5">
                       <div className={`flex size-[22px] items-center justify-center rounded-full text-[12.5px] font-semibold ${
