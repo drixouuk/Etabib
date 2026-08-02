@@ -68,7 +68,7 @@ export default function PatientSearchAutocomplete({ initialQ = '' }: { initialQ?
         method="GET"
         action="/dashboard/patients"
         onSubmit={() => setOpen(false)}
-        className="flex items-center gap-2 rounded-xl border border-primary/15 bg-white py-2.5 px-[14px] transition-all duration-200 hover:border-primary-500 hover:shadow-[0_0_0_3px_rgba(13,148,136,0.08)]"
+        className="flex min-w-0 items-center gap-2 rounded-xl border border-primary/15 bg-white py-2.5 px-[14px] transition-all duration-200 hover:border-primary-500 hover:shadow-[0_0_0_3px_rgba(13,148,136,0.08)]"
       >
         {loading ? (
           <Loader2 className="size-3.5 shrink-0 animate-spin text-stone-600" />
@@ -84,7 +84,7 @@ export default function PatientSearchAutocomplete({ initialQ = '' }: { initialQ?
           onBlur={closeSoon}
           placeholder="Rechercher par nom ou CIN…"
           autoComplete="off"
-          className="flex-1 border-none bg-transparent text-sm text-stone-800 placeholder:text-stone-600 focus:outline-none"
+          className="min-w-0 flex-1 border-none bg-transparent text-sm text-stone-800 placeholder:text-stone-600 focus:outline-none"
         />
         {query && (
           <button

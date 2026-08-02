@@ -33,7 +33,7 @@ export default function SettingsTabsContent({
 }: Props) {
   return (
     <Tabs defaultValue="account" className="mt-8">
-      <TabsList variant="line" className="mb-8 w-full justify-center gap-6 border-b border-warm">
+      <TabsList variant="line" className="mb-8 w-full justify-start gap-5 border-b border-warm lg:justify-center">
         <TabsTrigger value="account" className={triggerClass}>Mon compte</TabsTrigger>
         {isAdmin && hasTenant && <TabsTrigger value="team" className={triggerClass}>Équipe</TabsTrigger>}
         {isAdmin && hasTenant && <TabsTrigger value="practice" className={triggerClass}>Cabinet</TabsTrigger>}

@@ -394,7 +394,7 @@ export default function RendezVousCalendarClient({ initialBookings, tenantId }: 
                 </div>
               ))}
             </div>
-            <div className="grid min-h-0 flex-1 grid-cols-[44px_repeat(7,minmax(0,1fr))]">
+            <div className="grid min-h-[380px] flex-1 grid-cols-[44px_repeat(7,minmax(0,1fr))]">
               <div className="relative border-r border-stone-100">
                 {Array.from({ length: DAY_HOURS + 1 }, (_, i) => DAY_START + i).map((h) => (
                   <span

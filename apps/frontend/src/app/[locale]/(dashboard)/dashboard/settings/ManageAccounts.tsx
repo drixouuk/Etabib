@@ -189,12 +189,12 @@ export default function ManageAccounts({ users, currentUserId, isAdmin = true }:
           {users.map((u) => {
             const badge = roleBadge(u.roles)
             return (
-              <div key={u.id} className="flex items-center gap-3 px-4 py-3">
+              <div key={u.id} className="flex flex-wrap items-center gap-x-3 gap-y-1.5 px-4 py-3">
                 <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-primary-600 text-[11px] font-bold text-white">
                   {initialsOf(u.name || u.email)}
                 </div>
                 <div className="min-w-0 flex-1">
-                  <p className="text-[13.5px] font-semibold text-stone-800">
+                  <p className="truncate text-[13.5px] font-semibold text-stone-800">
                     {u.name || u.email}
                     {u.id === currentUserId && <span className="ml-2 text-xs font-normal text-stone-600">(vous)</span>}
                   </p>

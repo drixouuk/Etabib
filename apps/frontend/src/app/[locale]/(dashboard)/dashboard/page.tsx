@@ -34,7 +34,7 @@ export default async function DashboardPage() {
         <LiveStatsWidget clickable />
       </div>
 
-      <div className="grid gap-4" style={{ gridTemplateColumns: '1.1fr 1fr' }}>
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1.1fr_1fr]">
         <div className="rounded-2xl border border-warm bg-white p-5 shadow-sm">
           <h3 className="mb-3 font-heading text-[14.5px] font-semibold text-[#2A241C]">File d&apos;attente</h3>
           <QueuePreview />
