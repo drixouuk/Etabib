@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { Plus, Trash2, X } from 'lucide-react'
+import { Plus, Trash2 } from 'lucide-react'
 
 type User = { id: string; email: string; name: string; roles: string[] }
 
@@ -10,6 +10,20 @@ type Props = { users: User[]; currentUserId: string; isAdmin?: boolean }
 
 const roleLabels: Record<string, string> = {
   superadmin: 'Super admin', tenant_admin: 'Admin', doctor: 'Médecin', secretary: 'Secrétaire', substitute: 'Remplaçant',
+}
+
+function roleBadge(roles: string[]): { label: string; className: string } {
+  if (roles.includes('superadmin') || roles.includes('tenant_admin')) {
+    return { label: 'Médecin · Admin', className: 'bg-primary-50 text-primary-700' }
+  }
+  if (roles.includes('doctor')) return { label: 'Médecin', className: 'bg-primary-50 text-primary-700' }
+  if (roles.includes('secretary')) return { label: 'Secrétaire', className: 'bg-warning/10 text-warning' }
+  return { label: roles.map((r) => roleLabels[r] || r).join(', '), className: 'bg-stone-100 text-stone-600' }
+}
+
+function initialsOf(name: string): string {
+  const p = name.trim().split(/\s+/)
+  return ((p[0]?.[0] || '') + (p[1]?.[0] || '')).toUpperCase()
 }
 
 function ResetPasswordButton({ userId }: { userId: string }) {
@@ -172,26 +186,33 @@ export default function ManageAccounts({ users, currentUserId, isAdmin = true }:
         <p className="px-4 py-6 text-center text-sm text-stone-500">Aucun utilisateur trouvé.</p>
       ) : (
         <div className="divide-y divide-stone-100">
-          {users.map((u) => (
-            <div key={u.id} className="flex items-center justify-between gap-2 px-4 py-3">
-              <div className="min-w-0 flex-1">
-                <p className="text-sm font-medium text-stone-800">
-                  {u.name || u.email}
-                  {u.id === currentUserId && <span className="ml-2 text-xs text-stone-600">(vous)</span>}
-                </p>
-                <p className="text-xs text-stone-600">{u.email} — {u.roles.map(r => roleLabels[r] || r).join(', ')}</p>
+          {users.map((u) => {
+            const badge = roleBadge(u.roles)
+            return (
+              <div key={u.id} className="flex items-center gap-3 px-4 py-3">
+                <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-primary-600 text-[11px] font-bold text-white">
+                  {initialsOf(u.name || u.email)}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="text-[13.5px] font-semibold text-stone-800">
+                    {u.name || u.email}
+                    {u.id === currentUserId && <span className="ml-2 text-xs font-normal text-stone-600">(vous)</span>}
+                  </p>
+                  <p className="truncate text-xs text-stone-500">{u.email}</p>
+                </div>
+                <span className={`shrink-0 rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${badge.className}`}>{badge.label}</span>
+                <div className="flex shrink-0 items-center gap-3">
+                  <ResetPasswordButton userId={u.id} />
+                  {isAdmin && u.id !== currentUserId && (
+                    <button onClick={() => handleDelete(u)} disabled={deleting}
+                      className="rounded p-1 text-stone-500 hover:text-red-600 transition-colors" title="Supprimer ce compte">
+                      <Trash2 className="size-3.5" />
+                    </button>
+                  )}
+                </div>
               </div>
-              <div className="flex shrink-0 items-center gap-3">
-                <ResetPasswordButton userId={u.id} />
-                {isAdmin && u.id !== currentUserId && (
-                  <button onClick={() => handleDelete(u)} disabled={deleting}
-                    className="rounded p-1 text-stone-500 hover:text-red-600 transition-colors" title="Supprimer ce compte">
-                    <Trash2 className="size-3.5" />
-                  </button>
-                )}
-              </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
       )}
     </div>

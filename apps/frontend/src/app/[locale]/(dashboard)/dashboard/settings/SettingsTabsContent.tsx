@@ -22,7 +22,6 @@ type Props = {
   hasTenant: boolean
   tenantUsers: { id: string; email: string; name: string; roles: string[] }[]
   currentUserId: string
-  tenantName?: string
   subscription?: Subscription | null
 }
 
@@ -30,7 +29,7 @@ const triggerClass = 'data-[state=active]:text-primary-700 data-[state=active]:f
 
 export default function SettingsTabsContent({
   userId, userEmail, userName, practicePhone,
-  isAdmin, hasTenant, tenantUsers, currentUserId, tenantName, subscription,
+  isAdmin, hasTenant, tenantUsers, currentUserId, subscription,
 }: Props) {
   return (
     <Tabs defaultValue="account" className="mt-8">
@@ -83,7 +82,7 @@ export default function SettingsTabsContent({
 
       {isAdmin && hasTenant && (
         <TabsContent value="subscription">
-          <SubscriptionSettings subscription={subscription ?? null} tenantName={tenantName || ''} />
+          <SubscriptionSettings subscription={subscription ?? null} />
         </TabsContent>
       )}
 

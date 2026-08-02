@@ -21,8 +21,10 @@ type Props = {
   tenantId: string
   booking?: BookingDraft | null
   initialStart?: string | null
+  whenLabel?: string | null
   onClose: () => void
   onSaved: () => void
+  onToast?: (message: string) => void
 }
 
 const STATUS_LABELS: Record<BookingDraft['status'], string> = {
@@ -47,7 +49,7 @@ function formatRange(start: string, end: string): string {
   return `${s.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })} · ${time(s)} – ${time(e)}`
 }
 
-export default function BookingSheet({ tenantId, booking, initialStart, onClose, onSaved }: Props) {
+export default function BookingSheet({ tenantId, booking, initialStart, whenLabel, onClose, onSaved, onToast }: Props) {
   const isEdit = !!booking?.id
   const open = !!booking || !!initialStart
 
@@ -108,6 +110,7 @@ export default function BookingSheet({ tenantId, booking, initialStart, onClose,
     setSaving(false)
 
     if (res.ok) {
+      onToast?.(isEdit ? 'Rendez-vous enregistré' : 'Rendez-vous créé')
       onSaved()
       onClose()
       return
@@ -127,6 +130,7 @@ export default function BookingSheet({ tenantId, booking, initialStart, onClose,
     })
     setSaving(false)
     if (res.ok) {
+      onToast?.('Rendez-vous annulé')
       onSaved()
       onClose()
     } else {
@@ -148,7 +152,7 @@ export default function BookingSheet({ tenantId, booking, initialStart, onClose,
             {isEdit && (
               <p className="mt-0.5 flex items-center gap-1.5 text-xs text-stone-600 capitalize">
                 <Clock className="size-3" />
-                {formatRange(booking!.startTime, booking!.endTime)}
+                {whenLabel || formatRange(booking!.startTime, booking!.endTime)}
               </p>
             )}
           </div>

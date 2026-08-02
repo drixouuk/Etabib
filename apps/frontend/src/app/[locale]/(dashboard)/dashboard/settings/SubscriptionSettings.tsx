@@ -17,10 +17,9 @@ const tierLabels: Record<string, string> = { vitrine: 'Site vitrine', rdv: 'RDV 
 
 type Props = {
   subscription: Subscription | null
-  tenantName: string
 }
 
-export default function SubscriptionSettings({ subscription, tenantName }: Props) {
+export default function SubscriptionSettings({ subscription }: Props) {
   const status = subscription?.status || 'active'
   const info = STATUS_INFO[status] || STATUS_INFO.active
   const blocked = ['suspended', 'expired'].includes(status)
@@ -74,6 +73,13 @@ export default function SubscriptionSettings({ subscription, tenantName }: Props
           Dernier paiement : {new Date(subscription.lastPaymentAt).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}
         </p>
       )}
+
+      <a
+        href="mailto:contact@etabibi.ma?subject=Gestion de ma facturation"
+        className="inline-block rounded-[10px] border border-primary-600/20 bg-white px-4 py-2.5 text-[13.5px] text-stone-800 transition-colors hover:bg-primary-50"
+      >
+        Gérer la facturation
+      </a>
 
       {(blocked || readOnly) && (
         <div className="rounded-xl border border-error/20 bg-error/5 p-4">
