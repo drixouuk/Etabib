@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Plus, X } from 'lucide-react'
+import { TimeInput } from '@/components/ui/time-input'
 
 const DAY_LABELS: Record<number, string> = {
   1: 'Lundi', 2: 'Mardi', 3: 'Mercredi', 4: 'Jeudi', 5: 'Vendredi', 6: 'Samedi', 7: 'Dimanche',
@@ -258,11 +259,11 @@ export default function ScheduleAndSlots() {
               </div>
               <div>
                 <label className="mb-0.5 block text-xs text-stone-600">Ouverture</label>
-                <input type="time" value={s.open} onChange={e => setSchedules(schedules.map((r, j) => j === i ? { ...r, open: e.target.value } : r))} className={inputClass} />
+                <TimeInput value={s.open} onChange={v => setSchedules(schedules.map((r, j) => j === i ? { ...r, open: v } : r))} className={inputClass} />
               </div>
               <div>
                 <label className="mb-0.5 block text-xs text-stone-600">Fermeture</label>
-                <input type="time" value={s.close} onChange={e => setSchedules(schedules.map((r, j) => j === i ? { ...r, close: e.target.value } : r))} className={inputClass} />
+                <TimeInput value={s.close} onChange={v => setSchedules(schedules.map((r, j) => j === i ? { ...r, close: v } : r))} className={inputClass} />
               </div>
               <button onClick={() => setSchedules(schedules.filter((_, j) => j !== i))} className="pb-1 text-xs text-red-500 hover:text-red-700">Retirer</button>
             </div>
@@ -307,11 +308,11 @@ export default function ScheduleAndSlots() {
               </div>
               <div>
                 <label className="mb-0.5 block text-xs text-stone-600">Début</label>
-                <input type="time" value={s.startTime} disabled={!customSlots} onChange={e => updateSlot(i, { startTime: e.target.value })} className={inputClass} />
+                <TimeInput value={s.startTime} disabled={!customSlots} onChange={v => updateSlot(i, { startTime: v })} className={inputClass} />
               </div>
               <div>
                 <label className="mb-0.5 block text-xs text-stone-600">Fin</label>
-                <input type="time" value={s.endTime} disabled={!customSlots} onChange={e => updateSlot(i, { endTime: e.target.value })} className={inputClass} />
+                <TimeInput value={s.endTime} disabled={!customSlots} onChange={v => updateSlot(i, { endTime: v })} className={inputClass} />
               </div>
               <div>
                 <label className="mb-0.5 block text-xs text-stone-600">Durée (min)</label>

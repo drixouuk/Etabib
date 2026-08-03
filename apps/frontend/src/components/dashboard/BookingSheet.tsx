@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { X, Calendar, Clock, MapPin, Video } from 'lucide-react'
 import { Sheet, SheetContent } from '@/components/ui/sheet'
+import { TimeInput } from '@/components/ui/time-input'
 
 export type BookingDraft = {
   id?: string
@@ -180,11 +181,17 @@ export default function BookingSheet({ tenantId, booking, initialStart, whenLabe
           </div>
           <div>
             <label className={labelClass}>Début *</label>
-            <input type="datetime-local" value={form.start} onChange={(e) => setForm({ ...form, start: e.target.value })} className={inputClass} />
+            <div className="grid grid-cols-2 gap-2">
+              <input type="date" value={form.start.slice(0, 10)} onChange={(e) => setForm({ ...form, start: `${e.target.value}T${form.start.slice(11) || '09:00'}` })} className={inputClass} aria-label="Date de début" />
+              <TimeInput value={form.start.length > 10 ? form.start.slice(11) : ''} onChange={(t) => setForm({ ...form, start: `${form.start.slice(0, 10)}T${t}` })} className={inputClass} aria-label="Heure de début" />
+            </div>
           </div>
           <div>
             <label className={labelClass}>Fin</label>
-            <input type="datetime-local" value={form.end} onChange={(e) => setForm({ ...form, end: e.target.value })} className={inputClass} />
+            <div className="grid grid-cols-2 gap-2">
+              <input type="date" value={form.end ? form.end.slice(0, 10) : ''} onChange={(e) => setForm({ ...form, end: `${e.target.value}T${form.end?.slice(11) || '12:00'}` })} className={inputClass} aria-label="Date de fin" />
+              <TimeInput value={form.end && form.end.length > 10 ? form.end.slice(11) : ''} onChange={(t) => setForm({ ...form, end: `${(form.end && form.end.slice(0, 10)) || form.start.slice(0, 10)}T${t}` })} className={inputClass} aria-label="Heure de fin" />
+            </div>
           </div>
           <div>
             <label className={labelClass}>Durée (minutes)</label>
