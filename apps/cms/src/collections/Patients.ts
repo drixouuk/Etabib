@@ -1,9 +1,47 @@
 import type { CollectionConfig } from 'payload'
+import { sql } from '@payloadcms/db-postgres'
 import { auditReadHook, auditWriteHook } from '../hooks/logPatientAccess'
 
 function tenantId(user: any): string | undefined {
   if (!user?.tenant) return undefined
   return typeof user.tenant === 'object' ? user.tenant.id : user.tenant
+}
+
+/**
+ * B5 — recherche patients diacritic-insensitive (unaccent + pg_trgm).
+ * Endpoint GET /api/patients/search?q=… :
+ *   - folding des accents : « elodie » trouve « Élodie » (harakat arabes inclus)
+ *   - index trigramme + ORDER BY similarity → tolérance aux fautes
+ *   - garde-fous : q ≤ 60 caractères, wildcards LIKE (% _ \) neutralisés,
+ *     LIMIT 10, scoping tenant identique aux accès de la collection
+ *     (les médecins ne voient que leurs dossiers suivis/partagés/orphelins).
+ */
+const PATIENT_SEARCH_SQL = (q: string, tid: string | undefined, uid: string, isDoctor: boolean) => {
+  const like = `%${q}%`
+  const doctorScope = isDoctor
+    ? sql`
+        AND (
+          EXISTS (SELECT 1 FROM "patients_rels" r  WHERE r."_parent_id" = p."id" AND r."path" = 'followedBy' AND r."users_id" = ${uid})
+          OR EXISTS (SELECT 1 FROM "patients_rels" r2 WHERE r2."_parent_id" = p."id" AND r2."path" = 'sharedWith' AND r2."users_id" = ${uid})
+          OR (NOT EXISTS (SELECT 1 FROM "patients_rels" r3 WHERE r3."_parent_id" = p."id" AND r3."path" = 'followedBy')
+              AND NOT EXISTS (SELECT 1 FROM "patients_rels" r4 WHERE r4."_parent_id" = p."id" AND r4."path" = 'sharedWith'))
+        )`
+    : sql``
+  return sql`
+    SELECT p."id",
+           p."full_name" AS "fullName",
+           p."gender",
+           p."birth_date" AS "birthDate",
+           p."national_id" AS "nationalId",
+           p."tenant_id" AS "tenantId"
+    FROM "patients" p
+    WHERE (unaccent(p."full_name") ILIKE unaccent(${like})
+           OR (p."national_id" IS NOT NULL AND unaccent(p."national_id") ILIKE unaccent(${like})))
+      AND (${tid ? sql`p."tenant_id" = ${Number(tid)}` : sql`TRUE`})
+      ${doctorScope}
+    ORDER BY similarity(unaccent(p."full_name"), unaccent(${q})) DESC, p."full_name" ASC
+    LIMIT 10
+  `
 }
 
 export const Patients: CollectionConfig = {
@@ -261,6 +299,36 @@ export const Patients: CollectionConfig = {
       hasMany: true,
       label: 'Partagé avec',
       admin: { description: 'Médecins ayant reçu un accès ponctuel à ce dossier' },
+    },
+  ],
+  endpoints: [
+    {
+      path: '/search',
+      method: 'get',
+      handler: async (req: any) => {
+        const { user } = req
+        if (!user) return Response.json({ docs: [] }, { status: 401 })
+
+        const raw = String(req.query?.q ?? '').trim()
+        const q = raw.slice(0, 60)
+        if (!q) return Response.json({ docs: [] })
+
+        const roles: string[] = user.roles ?? []
+        const tid = tenantId(user)
+        // Garde-fou serveur : les wildcards LIKE passés par l'utilisateur ne
+        // doivent pas devenir des jokers dans ILIKE.
+        const safe = q.replace(/[%_\\]/g, ' ')
+        if (!safe.trim()) return Response.json({ docs: [] })
+
+        const isDoctor = roles.includes('doctor') && !roles.includes('superadmin') && !roles.includes('tenant_admin')
+        try {
+          const result = await req.payload.db.execute(PATIENT_SEARCH_SQL(safe, tid, String(user.id), isDoctor))
+          return Response.json({ docs: result.rows ?? [] })
+        } catch (err) {
+          req.payload.logger?.error?.('[patients/search]', err)
+          return Response.json({ docs: [] }, { status: 500 })
+        }
+      },
     },
   ],
 }

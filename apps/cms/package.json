@@ -10,7 +10,8 @@
     "seed": "tsx --env-file=.env src/seed-cli.ts",
     "seed-demo": "tsx --env-file=.env src/seed-demo-runner.ts",
     "generate:types": "payload generate:types",
-    "test:recurrence": "tsx --test src/lib/recurrence.test.ts"
+    "test:recurrence": "tsx --test src/lib/recurrence.test.ts",
+    "verify:unaccent": "node scripts/verify-unaccent.mjs"
   },
   "dependencies": {
     "@payloadcms/db-postgres": "^3.85.1",

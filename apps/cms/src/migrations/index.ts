@@ -24,6 +24,7 @@ import * as migration_20260730_211714 from './20260730_211714';
 import * as migration_20260731_add_schedule_slots_closures from './20260731_add_schedule_slots_closures';
 import * as migration_20260731_add_subscriptions from './20260731_add_subscriptions';
 import * as migration_20260803_add_recurrence_to_availability_slots from './20260803_add_recurrence_to_availability_slots';
+import * as migration_20260803_add_unaccent_search from './20260803_add_unaccent_search';
 
 export const migrations = [
   {
@@ -155,5 +156,10 @@ export const migrations = [
     up: migration_20260803_add_recurrence_to_availability_slots.up,
     down: migration_20260803_add_recurrence_to_availability_slots.down,
     name: '20260803_add_recurrence_to_availability_slots'
+  },
+  {
+    up: migration_20260803_add_unaccent_search.up,
+    down: migration_20260803_add_unaccent_search.down,
+    name: '20260803_add_unaccent_search'
   },
 ];

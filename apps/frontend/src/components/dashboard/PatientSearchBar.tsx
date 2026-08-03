@@ -30,7 +30,7 @@ export default function PatientSearchBar() {
       setLoading(true)
       try {
         const res = await fetch(
-          `/api/cms-proxy/patients?depth=0&limit=8&sort=fullName&where[or][0][fullName][contains]=${encodeURIComponent(query.trim())}&where[or][1][nationalId][contains]=${encodeURIComponent(query.trim())}`,
+          `/api/cms-proxy/patients/search?q=${encodeURIComponent(query.trim())}`,
         )
         if (res.ok) {
           const data = await res.json()

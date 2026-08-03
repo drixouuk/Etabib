@@ -29,7 +29,7 @@ export default function PatientSearchAutocomplete({ initialQ = '' }: { initialQ?
     setLoading(true)
     try {
       const res = await fetch(
-        `/api/cms-proxy/patients?where[or][0][fullName][contains]=${encodeURIComponent(q)}&where[or][1][nationalId][contains]=${encodeURIComponent(q)}&limit=8&sort=-updatedAt&depth=0`,
+        `/api/cms-proxy/patients/search?q=${encodeURIComponent(q)}`,
       )
       const data = await res.json()
       setSuggestions(data.docs ?? [])

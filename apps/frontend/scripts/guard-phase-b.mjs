@@ -26,6 +26,10 @@
  *       montage (localStorage) avec défaut par device explicite (pointer:
  *       coarse → semaine, sinon mois) ; choix manuel persisté ; début de
  *       semaine configurable ('rdv-week-start', défaut lundi).
+ *   B5. Recherche patients diacritic-insensitive : l'endpoint CMS
+ *       (Patients.ts) utilise unaccent + pg_trgm avec garde-fous ; les
+ *       composants de recherche appellent /patients/search et ne requêtent
+ *       plus en contains direct.
  *
  * Usage : pnpm --filter frontend guard:phase-b
  */
@@ -142,6 +146,29 @@ if (!calendar.includes('const [mounted, setMounted] = useState(false)')) {
   violations.push(
     'RendezVousCalendarClient.tsx — flag mounted manquant : localStorage/matchMedia lus dans l\'initialiseur paresseux causeraient un mismatch d\'hydratation (B4)',
   );
+}
+
+// B5 — recherche diacritic-insensitive
+const patientsCollection = readRepo('apps/cms/src/collections/Patients.ts');
+if (!patientsCollection.includes('unaccent') || !patientsCollection.includes("path: '/search'")) {
+  violations.push('apps/cms/src/collections/Patients.ts — endpoint /search avec unaccent manquant (B5)');
+}
+const migrationB5 = readRepo('apps/cms/src/migrations/20260803_add_unaccent_search.ts');
+if (!migrationB5.includes('CREATE EXTENSION IF NOT EXISTS unaccent') || !migrationB5.includes('CREATE EXTENSION IF NOT EXISTS pg_trgm')) {
+  violations.push('migration 20260803_add_unaccent_search.ts — extensions unaccent/pg_trgm manquantes (B5)');
+}
+const searchComponents = [
+  'src/components/dashboard/PatientSearchBar.tsx',
+  'src/app/[locale]/(dashboard)/dashboard/patients/PatientSearchAutocomplete.tsx',
+];
+for (const file of searchComponents) {
+  const src = read(file);
+  if (src.includes('[fullName][contains]') || src.includes('[nationalId][contains]')) {
+    violations.push(`${file} — requête contains directe encore présente (B5)`);
+  }
+  if (!src.includes('patients/search')) {
+    violations.push(`${file} — endpoint /patients/search non utilisé (B5)`);
+  }
 }
 
 if (violations.length > 0) {
