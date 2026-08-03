@@ -37,6 +37,10 @@ if git diff --cached --name-only | grep -q "apps/frontend/src/"; then
     echo "⚠️  Guard Phase B a échoué — invariants agenda patient non respectés."
     exit 1
   }
+  node apps/frontend/scripts/guard-architecture.mjs || {
+    echo "⚠️  Guard Architecture (D2) a échoué — layer-boundary / parité i18n / breakpoints canoniques."
+    exit 1
+  }
 fi
 
 
