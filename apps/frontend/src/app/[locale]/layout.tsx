@@ -148,6 +148,9 @@ export default async function LocaleLayout({ children, params }: Props) {
   // Pages légales plateforme : chrome landing (header/footer Etabib), pas celui du tenant
   const isLegal = /\/cgv$|\/confidentialite$|\/mentions-legales$/.test(pathname)
   const isLandingChrome = isLanding || isLegal
+  // Tracker Umami : uniquement sur le domaine plateforme (etabibi.ma), pas les sous-domaines tenants
+  const rawHost = (h.get('x-forwarded-host') || h.get('host') || '').split(',')[0].trim().split(':')[0]
+  const isPlatformHost = rawHost === SITE_DOMAIN || rawHost === `www.${SITE_DOMAIN}`
   const dataLocale = DATA_LOCALE[locale] || 'fr'
   const siteUrl = await getSiteUrl()
   const doctor = await getDoctorProfile(tenantId, dataLocale)
@@ -216,6 +219,9 @@ export default async function LocaleLayout({ children, params }: Props) {
         <meta name="apple-mobile-web-app-title" content={BRAND.shortName} />
         <link rel="apple-touch-icon" href="/icons/icon-192.png" />
         <link rel="manifest" href="/manifest.webmanifest" />
+        {isPlatformHost && (
+          <script defer src="https://umami.drixou.uk/script.js" data-website-id="8ba102f9-5cb3-419d-9084-b08c5939e23a" />
+        )}
       </head>
       <body className={`${bodyFont} flex min-h-full flex-col bg-cream-100 text-stone-800 antialiased`}>
         <NextIntlClientProvider>
