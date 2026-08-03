@@ -85,6 +85,35 @@
   --focus-ring-color:        var(--active-module-accent, var(--color-accent-brand));
   --focus-ring-offset:       2px;
   --focus-ring-offset-inset: -2px;
+
+  /* --------------------------------------------------------
+   * 6. Sévérité — hue-séparées des accents de module (A6) : un module ne
+   *    partage jamais un hue avec un statut (guard A6 vérifie l'égalité).
+   *    Ratios mesurés contre la surface (blanc) et le fond crème #EFEDE3.
+   * -------------------------------------------------------- */
+  --_color-danger:  #B91C1C;  /* rouge 0°  · 6.47:1 sur blanc · 5.51:1 sur crème — AA */
+  --color-danger:   var(--_color-danger);
+  --_color-success: #15803D;  /* vert 145° · 5.02:1 sur blanc · 4.27:1 sur crème — AA */
+  --color-success:  var(--_color-success);
+  --_color-warning: #A15C0A;  /* ambre 38° · 5.18:1 sur blanc · 4.42:1 sur crème — AA */
+  --color-warning:  var(--_color-warning);
+  --_color-info:    #0B66C3;  /* bleu 210° · 5.67:1 sur blanc · 4.83:1 sur crème — AA */
+  --color-info:     var(--_color-info);
+
+  /* --------------------------------------------------------
+   * 7. Accents de module (A6) — un accent par section de niveau 1, MAX 3-4.
+   *    Hue-séparés entre eux (≥28°) et des sévérités ci-dessus (≥60°).
+   *    Ratios mesurés contre la surface de travail (blanc) ET le fond crème.
+   * -------------------------------------------------------- */
+  --module-appointments: #4F46E5;  /* indigo 242° · 6.29:1 sur blanc · 5.36:1 sur crème — AA */
+  --module-patients:     #9E1E88;  /* fuchsia 311° · 7.01:1 sur blanc · 5.97:1 sur crème — AA */
+  --module-documents:    #6C3AED;  /* violet 270° · 6.06:1 sur blanc · 5.16:1 sur crème — AA */
+
+  /* Accent du module actif — fallback marque tant qu'aucun data-module n'est
+     posé (login, onboarding) ; les règles [data-module="x"] plus bas
+     surchargent ces deux valeurs à la racine de leur section. */
+  --module-accent:          var(--color-accent-brand);
+  --active-module-accent:   var(--color-accent-brand);
 }
 
 /* --------------------------------------------------------
@@ -138,4 +167,23 @@
   --_color-border-subtle: #3A3A37;  /* 1.42:1 sur #232019 — séparateurs, cartes calmes */
   --border:                #484844; /* 1.77:1 sur #232019 — standard, champs */
   --_color-border-strong:  #6A6A66; /* 2.99:1 sur #232019 — hover, cadres accentués */
+}
+
+/* --------------------------------------------------------
+ * A6 — Mécanisme d'accent par section, SANS JS : les layouts de section
+ * posent data-module="x" sur leur racine ; ces règles activent l'accent du
+ * module pour toute la sous-arborescence (nav, toolbars, cartes, focus ring
+ * via --active-module-accent). Hors data-module, :root retombe sur la marque.
+ * -------------------------------------------------------- */
+[data-module="appointments"] {
+  --module-accent: var(--module-appointments);
+  --active-module-accent: var(--module-appointments);
+}
+[data-module="patients"] {
+  --module-accent: var(--module-patients);
+  --active-module-accent: var(--module-patients);
+}
+[data-module="documents"] {
+  --module-accent: var(--module-documents);
+  --active-module-accent: var(--module-documents);
 }

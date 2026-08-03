@@ -77,7 +77,7 @@ export default function LandingPage() {
   ]
 
   return (
-    <div className="min-h-screen bg-cream-100 text-[#2A241C] font-body overflow-x-hidden">
+    <div data-module="appointments" className="min-h-screen bg-cream-100 text-[#2A241C] font-body overflow-x-hidden">
       <LandingHeader />
 
       <main>

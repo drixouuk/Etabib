@@ -29,7 +29,7 @@ export default function DashboardShell({ user, tenant, billingStatus, children }
   }, [sidebarOpen])
 
   return (
-    <div className="flex min-h-screen bg-cream-100">
+    <div data-module="patients" className="flex min-h-screen bg-cream-100">
       <aside className="hidden md:flex w-[252px] shrink-0 flex-col border-r border-primary-600/15 bg-cream-50">
         <Sidebar user={user} tenant={tenant} />
       </aside>

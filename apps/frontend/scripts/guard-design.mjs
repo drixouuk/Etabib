@@ -6,13 +6,14 @@
  *
  *   G1. Tokens privés (--_x) assignés UNIQUEMENT dans :root ou un bloc dark
  *       (.dark, [data-theme=…], @media (prefers-color-scheme: dark)).
- *   G2. Tokens publics (--color-*, --module-*, --glass-*) jamais
- *       assignés à une valeur littérale — indirection var() uniquement.
- *       EXCEPTION documentée : les arêtes (--color-border[-subtle|-strong],
- *       --glass-border-subtle) peuvent recevoir un hex en contexte dark —
- *       décision « bordures indépendantes » (item A2, cf. yuvomi v1.57.0).
- *       (Les --focus-ring-* sont des tokens de DIMENSION — width/offset —
- *       hors du champ de l'indirection couleur.)
+ *   G2. Tokens publics --color-* jamais assignés à une valeur littérale —
+ *       indirection var() uniquement. EXCEPTION documentée : les arêtes
+ *       (--color-border[-subtle|-strong], --glass-border-subtle) peuvent
+ *       recevoir un hex en contexte dark — décision « bordures
+ *       indépendantes » (item A2, cf. yuvomi v1.57.0).
+ *       (Les --module-* sont des ACCENTS définis en hex direct — item A6 —
+ *       et les --focus-ring-* des tokens de DIMENSION : tous deux hors du
+ *       champ de l'indirection couleur.)
  *   A2. Arêtes dark — pour chaque palier (--_color-border-subtle, --border,
  *       --_color-border-strong et leurs alias publics) en contexte dark :
  *       (a) hex fixe à 6 chiffres, (b) hex ≠ hex des surfaces dark du fichier
@@ -25,6 +26,11 @@
  *       src/components/** (hors ui/) et src/app/** — la règle de base
  *       :focus-visible vit dans globals.css ; une exception documentée ne
  *       surcharge QUE --focus-ring-color.
+ *   A6. Accents de module : (a) toute déclaration --module-* à valeur HEX
+ *       directe exige un commentaire de ratio sur la même ligne ;
+ *       (b) aucun --module-* (hex) égal à un token de sévérité du fichier
+ *       (--color-danger/success/warning/info) ; (c) .accent-text-tint
+ *       présente dans globals.css avec color-mix + --color-text-primary.
  *   G3. tokens.css est bien importé par globals.css (sinon les tokens
  *       n'existent qu'à moitié).
  *
@@ -165,7 +171,20 @@ function readStylesheets() {
 
 const violations = [];
 
-for (const { file, decls } of readStylesheets()) {
+const stylesheets = readStylesheets();
+
+// A6 — valeurs de sévérité, collectées sur TOUS les fichiers (les tokens de
+// sévérité vivent dans tokens.css ; un accent fautif dans un autre fichier
+// doit être attrapé aussi).
+const severityHexes = new Set(
+  stylesheets
+    .flatMap((s) => s.decls)
+    .filter((d) => /^--_?color-(danger|success|warning|info)$/.test(d.name))
+    .map((d) => d.value.toLowerCase())
+    .filter((v) => /^#[0-9a-f]{6}$/.test(v)),
+);
+
+for (const { file, decls } of stylesheets) {
   // Surfaces dark du fichier (collecte avant les vérifications A2).
   const darkSurfaces = new Set(
     decls
@@ -186,9 +205,9 @@ for (const { file, decls } of readStylesheets()) {
       continue;
     }
 
-    // G2 — publics en littéral (hors exception arêtes en dark)
+    // G2 — --color-* publics en littéral (hors exception arêtes en dark)
     if (
-      /^--(color|module|glass)-/.test(d.name) &&
+      /^--color-/.test(d.name) &&
       !d.value.includes('var(') &&
       !(EDGE_EXCEPTION.has(d.name) && dark)
     ) {
@@ -214,6 +233,20 @@ for (const { file, decls } of readStylesheets()) {
         );
       }
     }
+
+    // A6 — accents de module
+    if (/^--module-[a-z]+$/.test(d.name) && /^#[0-9a-fA-F]{6}$/.test(d.value)) {
+      if (!RATIO_COMMENT.test(d.lineRest)) {
+        violations.push(
+          `${file}:${d.line} — accent ${d.name} sans commentaire de ratio (/* N.NN:1 */) sur la même ligne`,
+        );
+      }
+      if (severityHexes.has(d.value.toLowerCase())) {
+        violations.push(
+          `${file}:${d.line} — accent ${d.name} égal à un token de sévérité (hue-séparation exigée)`,
+        );
+      }
+    }
   }
 }
 
@@ -221,6 +254,14 @@ for (const { file, decls } of readStylesheets()) {
 const globals = readFileSync(GLOBALS_CSS, 'utf8');
 if (!/@import\s+['"]\.\.\/styles\/tokens\.css['"]/.test(globals)) {
   violations.push('src/app/globals.css — @import ../styles/tokens.css manquant');
+}
+
+// A6 — la formule accent-sur-tint vit dans globals.css, PAS en token (elle
+// doit s'évaluer là où --module-accent est défini).
+if (!/\.accent-text-tint\s*\{[^}]*color-mix\([^}]*--color-text-primary/s.test(globals)) {
+  violations.push(
+    'src/app/globals.css — .accent-text-tint absente ou sans color-mix(... --color-text-primary)',
+  );
 }
 
 // A3 — scan du blur hors overlays (src/components/ui/)
@@ -273,4 +314,4 @@ if (violations.length > 0) {
   for (const v of violations) console.error(`  ${v}`);
   process.exit(1);
 }
-console.log('✓ guard-design — invariants A1 + A2 + A3 + A5 respectés');
+console.log('✓ guard-design — invariants A1 + A2 + A3 + A5 + A6 respectés');

@@ -218,3 +218,19 @@
   -webkit-backdrop-filter: none !important;
   filter: none !important;
 }
+
+/* --------------------------------------------------------
+ * A6 — Texte sur fond teinté de l'accent du module (chips actifs, badges,
+ * avatars initials). Délibérément PAS un token : une variable --accent-on-tint
+ * définie sur :root serait évaluée là où --module-accent n'est pas encore
+ * posé (les sections le posent sur leur racine data-module) — le fallback
+ * marque serait figé puis hérité par tout l'arbre, et chaque module aurait
+ * la couleur de la marque. La formule doit vivre ici, au scope où
+ * --module-accent s'applique (cf. yuvomi tokens.css §KONVENTION).
+ * Les 30 % d'encre textuelle écartent le texte du fond teinté dans la
+ * direction du thème (plus sombre en light) ; ICÔNES exceptées — elles
+ * gardent l'accent pur (3:1 suffit).
+ * -------------------------------------------------------- */
+.accent-text-tint {
+  color: color-mix(in srgb, var(--module-accent, var(--color-accent-brand)) 70%, var(--color-text-primary));
+}

@@ -88,30 +88,17 @@ A1 ──► A2 ──► A3 ──► A5 ──► A6 ──► A4
 - **Modifier** `globals.css` → `--ring: var(--focus-ring-color)` (les composants shadcn consomment déjà `--ring`, rien à changer dans `components/ui/`) + règle `:focus-visible` de base
 - **Guard** : scan des composants — pas de `outline: <couleur littérale>` ; toute règle passe par `--focus-ring-*` ou `--ring`
 
-## A6 — Accents par module + formule accent-sur-tint
+## A6 — Accents par module + formule accent-sur-tint (implémenté)
 
-- **Modifier** `apps/frontend/src/styles/tokens.css` → `--module-*` par section niveau 1, hue-séparés des couleurs de sévérité (danger/success), **chaque valeur porte son ratio AA mesuré en commentaire** ; `--active-module-accent` écrit par les layouts concernés (`src/app/(dashboard)/layout.tsx`, `src/app/[locale]/page.tsx`…)
-
-```css
-:root {
-  --module-booking:   #0F766E;  /* Teal-700 — 5.06:1 sur blanc, AA */
-  --module-dashboard: #6c3aed;  /* Violet — 6.06:1 sur blanc, AA */
-  /* … chaque --module-* : ratio + fond de référence dans le commentaire */
-}
-```
-
-- **Modifier** `globals.css` → classe utilitaire
+- **Modifier** `apps/frontend/src/styles/tokens.css` → 3 accents niveau 1 : `--module-appointments` (indigo #4F46E5, 242°), `--module-patients` (fuchsia #9E1E88, 311°), `--module-documents` (violet #6C3AED, 270° — choisi à la place du steel blue, trop proche d'`--color-info` 210°) ; hue-séparés entre eux (≥28°) et des sévérités (≥60°). Les 4 tokens de sévérité (`--color-danger/success/warning/info`, pattern privé/public) ont été ajoutés comme référence du guard. Chaque `--module-*:` porte son ratio mesuré contre la surface blanche ET le fond crème `#EFEDE3`. Fallback `--module-accent` / `--active-module-accent` = `--color-accent-brand` sur `:root`
+- **Mécanisme sans JS** : règles `[data-module="x"] { --module-accent: …; --active-module-accent: …; }` dans tokens.css ; attributs posés sur les racines de section : `(dashboard)/layout.tsx` → `data-module="patients"` (via DashboardShell), `[locale]/landing/page.tsx` → `data-module="appointments"`
 
 ```css
-/* Texte sur fond teinté : la formule n'est PAS un token — elle doit s'évaluer là
-   où --module-accent est défini (layout root de la section). Textes seulement ;
-   les icônes gardent l'accent pur (3:1 suffit).
-   Fallback : --color-accent-brand (--color-accent est pris par shadcn, hover cream). */
-.accent-text-tint { color: color-mix(in srgb, var(--module-accent, var(--color-accent-brand)) 70%, var(--color-text-primary)); }
+[data-module="patients"] { --module-accent: var(--module-patients); --active-module-accent: var(--module-patients); }
 ```
 
-- **Application** : badges actifs, avatars initials, chips de statut (remplacer les `text-teal-*`/`text-amber-*` durs concernés)
-- **Guard** : la formule `70%, var(--color-text-primary)` présente pour chaque usage de texte sur tint ; icônes exclues (accent pur, 3:1) ; chaque `--module-*:` suivi d'un commentaire contenant un ratio `N.NN:1`
+- **Modifier** `globals.css` → classe `.accent-text-tint` (color-mix 70 % + `--color-text-primary`), commentaire expliquant pourquoi ce n'est PAS un token (résolution au scope : un token :root gèlerait le fallback marque avant que `--module-accent` ne soit posé)
+- **Guard** (dans `guard-design.mjs`, implémenté, testé positif + négatif) : toute `--module-*:` à valeur hex exige un commentaire ratio ; aucun `--module-*` égal (casse-insensible) à un token de sévérité — collecte **globale** sur tous les fichiers ; `.accent-text-tint` présente dans globals.css (color-mix + `--color-text-primary`). G2 restreint aux `--color-*` (les accents sont des hex directs par conception)
 
 ---
 
