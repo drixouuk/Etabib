@@ -59,7 +59,7 @@ export default async function VaccinationAlerts() {
         <AlertTriangle className="size-5 text-warning" />
         <h3 className="font-heading text-base font-semibold text-stone-800">Rappels vaccinaux</h3>
       </div>
-      <div className="divide-y divide-stone-100 lg:max-h-[calc(100vh-300px)] lg:overflow-y-auto">
+      <div className="divide-y divide-stone-100">
         {alerts.map((a) => (
           <div key={a!.patientId} className="flex items-center justify-between px-4 py-2.5">
             <div className="min-w-0 flex-1">
