@@ -17,4 +17,11 @@ if git diff --cached --name-only | grep -q "\.env\.example$"; then
   fi
 fi
 
+if git diff --cached --name-only | grep -q "apps/frontend/src/"; then
+  pnpm --filter frontend guard:design || {
+    echo "⚠️  Guard design system (A1) a échoué — invariants tokens non respectés."
+    exit 1
+  }
+fi
+
 

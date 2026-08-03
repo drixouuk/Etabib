@@ -1,0 +1,114 @@
+/**
+ * Module: Design Tokens (Phase A — A1)
+ * But: tokens privé/public + rôles de surface work/raised/glass.
+ *
+ * Invariants (gardés par scripts/guard-design.mjs) :
+ *   1. Les tokens privés --_x ne sont écrits QUE dans :root et les blocs dark.
+ *   2. Les tokens publics ne sont JAMAIS assignés à une valeur littérale —
+ *      uniquement l'indirection var(--_x) — sauf allowlist bordures en contexte
+ *      dark (décision A2, cf. yuvomi v1.57.0 : bordures fixées indépendamment).
+ *   3. L'API Tailwind passe exclusivement par @theme inline (référence les
+ *      variables runtime, ne les gèle pas).
+ *
+ * Noms non disponibles (possédés par shadcn dans globals.css) :
+ *   --color-accent (hover cream), --color-border (via --border), --color-ring…
+ *   L'accent applicatif s'appelle donc --color-accent-brand.
+ *
+ * Ratios mesurés (WCAG, calculés le 2026-08-03) — ne jamais dériver le dark
+ * de la rampe neutre : la rampe dark est si proche de la surface qu'une
+ * dérivation donnerait ~1.00:1 (bordure invisible).
+ */
+
+:root {
+  /* --------------------------------------------------------
+   * 1. Fonds & rôles de surface
+   *    work = surfaces de travail lisibles (listes, tableaux, formulaires)
+   *    raised = élévation subtile (hover)
+   *    glass = décoratif uniquement (nav, overlays) — jamais de contenu dense
+   * -------------------------------------------------------- */
+  --_color-bg: #EFEDE3;                 /* toile chaude (= --color-page-bg) */
+  --color-bg: var(--_color-bg);
+  --_color-surface: #FFFFFF;
+  --color-surface: var(--_color-surface);
+  --_color-surface-work: #FFFFFF;
+  --color-surface-work: var(--_color-surface-work);
+  --_color-surface-raised: #FAF9F4;
+  --color-surface-raised: var(--_color-surface-raised);
+  --_color-surface-glass: rgba(255, 255, 255, 0.70);
+  --color-surface-glass: var(--_color-surface-glass);
+
+  /* --------------------------------------------------------
+   * 2. Texte
+   * -------------------------------------------------------- */
+  --_color-text-primary: #232018;       /* 16.26:1 sur surface · 13.86:1 sur bg */
+  --color-text-primary: var(--_color-text-primary);
+  --_color-text-secondary: #5C5A52;     /* 6.91:1 sur surface · 5.89:1 sur bg — AA */
+  --color-text-secondary: var(--_color-text-secondary);
+  --_color-text-tertiary: #6A6860;      /* 5.58:1 sur surface — AA (légendes) */
+  --color-text-tertiary: var(--_color-text-tertiary);
+
+  /* --------------------------------------------------------
+   * 3. Arêtes — rampe light. La base --color-border appartient à shadcn
+   *    (globals.css : --border) ; subtle/strong sont nôtres.
+   *    Valeurs décoratives documentées SOUS le 3:1 de WCAG 1.4.11 pour les
+   *    contrôles — décision délibérée (cf. yuvomi tokens.css §9) ; les
+   *    frontières de contrôles utilisent --color-input (shadcn).
+   * -------------------------------------------------------- */
+  --_color-border-subtle: #E9E5DB;      /* 1.26:1 — séparateurs, cartes calmes */
+  --color-border-subtle: var(--_color-border-subtle);
+  --_color-border-strong: #C9C3B4;      /* 1.76:1 — hover, cadres accentués */
+  --color-border-strong: var(--_color-border-strong);
+
+  /* --------------------------------------------------------
+   * 4. Accent applicatif (marque = teal, aligné sur --color-primary shadcn)
+   *    --color-accent est pris par shadcn (hover cream) → --color-accent-brand.
+   * -------------------------------------------------------- */
+  --_color-accent-brand: #0F766E;       /* teal-700 · 5.47:1 sur surface · 4.66:1 sur bg — AA */
+  --color-accent-brand: var(--_color-accent-brand);
+  --_color-accent-brand-hover: #115E59; /* teal-800 · 7.58:1 sur surface */
+  --color-accent-brand-hover: var(--_color-accent-brand-hover);
+  --_color-on-accent-brand: #FFFFFF;    /* 5.47:1 sur #0F766E — AA */
+  --color-on-accent-brand: var(--_color-on-accent-brand);
+}
+
+/* --------------------------------------------------------
+ * API Tailwind — exclusivement via @theme inline.
+ * (--color-bg reste un token CSS runtime, pas une utility : éviterait bg-bg.)
+ * -------------------------------------------------------- */
+@theme inline {
+  --color-surface: var(--_color-surface);
+  --color-surface-work: var(--_color-surface-work);
+  --color-surface-raised: var(--_color-surface-raised);
+  --color-surface-glass: var(--_color-surface-glass);
+  --color-border-subtle: var(--_color-border-subtle);
+  --color-border-strong: var(--_color-border-strong);
+  --color-text-primary: var(--_color-text-primary);
+  --color-text-secondary: var(--_color-text-secondary);
+  --color-text-tertiary: var(--_color-text-tertiary);
+  --color-accent-brand: var(--_color-accent-brand);
+  --color-accent-brand-hover: var(--_color-accent-brand-hover);
+  --color-on-accent-brand: var(--_color-on-accent-brand);
+}
+
+/* --------------------------------------------------------
+ * Dark — blocs privés SEULEMENT ; la rampe neutre reste la même, seules les
+ * surfaces/textes/accents basculent. Les 3 arêtes dark sont le sujet de l'item
+ * A2 (hex fixes mesurés + guard) et ne sont pas encore posées ici.
+ * Convention projet : classe .dark (shadcn) ; [data-theme="dark"] en alias.
+ * -------------------------------------------------------- */
+.dark,
+[data-theme="dark"] {
+  --_color-bg: #181612;
+  --_color-surface: #201D17;
+  --_color-surface-work: #232019;
+  --_color-surface-raised: #2A261E;
+  --_color-surface-glass: rgba(24, 22, 16, 0.78);
+
+  --_color-text-primary: #F2EFE7;       /* 14.63:1 sur surface */
+  --_color-text-secondary: #B0AA9C;     /* 7.26:1 sur surface — AA */
+  --_color-text-tertiary: #9A938A;      /* 5.53:1 sur surface — AA */
+
+  --_color-accent-brand: #2DD4BF;       /* teal-400 · 9.03:1 sur surface */
+  --_color-accent-brand-hover: #14B8A6; /* teal-500 · 6.75:1 sur surface */
+  --_color-on-accent-brand: #04211C;    /* 9.10:1 sur #2DD4BF */
+}
