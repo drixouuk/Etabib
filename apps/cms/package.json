@@ -9,7 +9,8 @@
     "start": "next start",
     "seed": "tsx --env-file=.env src/seed-cli.ts",
     "seed-demo": "tsx --env-file=.env src/seed-demo-runner.ts",
-    "generate:types": "payload generate:types"
+    "generate:types": "payload generate:types",
+    "test:recurrence": "tsx --test src/lib/recurrence.test.ts"
   },
   "dependencies": {
     "@payloadcms/db-postgres": "^3.85.1",

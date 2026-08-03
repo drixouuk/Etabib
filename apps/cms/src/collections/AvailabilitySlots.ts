@@ -69,5 +69,37 @@ export const AvailabilitySlots: CollectionConfig = {
     { name: 'durationMinutes', type: 'number', required: true, label: 'Durée consultation (min)', defaultValue: 30, min: 15, max: 120 },
     { name: 'bufferMinutes', type: 'number', label: 'Pause entre RDV (min)', defaultValue: 15, min: 0, max: 60 },
     { name: 'isActive', type: 'checkbox', label: 'Actif', defaultValue: true },
+    // Récurrence (Phase B — B3) : règle iCal optionnelle. Vide = hebdomadaire
+    // classique sur dayOfWeek (comportement historique). Avec règle, la série
+    // suit FREQ/INTERVAL/BYDAY + fin UNTIL (recurrenceEnd) ou COUNT (dans la
+    // règle), moins les dates d'exception (congés ponctuels).
+    {
+      name: 'recurrenceRule',
+      type: 'text',
+      label: 'Règle de récurrence (iCal)',
+      admin: {
+        description: 'Ex. FREQ=WEEKLY;BYDAY=MO,WE;INTERVAL=1 — vide = hebdomadaire simple',
+      },
+    },
+    {
+      name: 'recurrenceEnd',
+      type: 'date',
+      label: 'Fin de série',
+      admin: { date: { pickerAppearance: 'dayOnly' } },
+    },
+    {
+      name: 'exceptions',
+      type: 'array',
+      label: 'Jours exclus (exceptions)',
+      fields: [
+        {
+          name: 'date',
+          type: 'date',
+          required: true,
+          label: 'Date',
+          admin: { date: { pickerAppearance: 'dayOnly' } },
+        },
+      ],
+    },
   ],
 }

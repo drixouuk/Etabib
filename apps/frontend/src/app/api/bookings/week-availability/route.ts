@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { slotOccursOn } from '@/lib/rrule'
 
 const CMS_URL = process.env.NEXT_PUBLIC_CMS_URL
 const API_KEY = process.env.INTERNAL_BOOKING_API_KEY
@@ -34,11 +35,6 @@ export async function GET(request: NextRequest) {
 
   const [slotsData, bookingsData] = await Promise.all([slotsRes.json(), bookingsRes.json()])
 
-  const availabilityByDay: Record<string, any[]> = {}
-  for (const s of (slotsData.docs ?? [])) {
-    (availabilityByDay[s.dayOfWeek] ??= []).push(s)
-  }
-
   const bookedTimes: Record<string, Set<string>> = {}
   for (const b of (bookingsData.docs ?? [])) {
     const d = new Date(b.startTime)
@@ -53,9 +49,12 @@ export async function GET(request: NextRequest) {
   for (let i = 0; i < 7; i++) {
     const date = new Date(start)
     date.setDate(date.getDate() + i)
-    const dow = String(date.getDay())
-    const daySlots = availabilityByDay[dow] ?? []
     const iso = toLocalISODate(date)
+
+    // B3 — expansion des créneaux : un créneau récurrent (recurrenceRule)
+    // produit une occurrence ce jour si la règle le désigne, hors exceptions
+    // et fin de série ; un créneau classique matche son jour de semaine.
+    const daySlots = (slotsData.docs ?? []).filter((s: any) => slotOccursOn(s, date))
 
     const times = new Set<string>()
     for (const slot of daySlots) {

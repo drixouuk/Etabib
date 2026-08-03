@@ -1,0 +1,61 @@
+/**
+ * Matcher de récurrence pour la surface de réservation (Phase B — B3).
+ *
+ * L'engine complet (parse/expansion bornée, tests unitaires) vit côté CMS :
+ * `apps/cms/src/lib/recurrence.ts`. L'UI de réglage produit des règles
+ * FREQ=WEEKLY;BYDAY=...;INTERVAL=1 — ce module couvre ce sous-ensemble côté
+ * frontend (route week-availability + réglages), sans dépendance.
+ */
+
+const WEEKDAY_LETTERS = ['SU', 'MO', 'TU', 'WE', 'TH', 'FR', 'SA']
+
+/** Clé locale YYYY-MM-DD (pas de slicing toISOString : décalage UTC). */
+export function toDateKey(d: Date): string {
+  const y = d.getFullYear()
+  const m = String(d.getMonth() + 1).padStart(2, '0')
+  const day = String(d.getDate()).padStart(2, '0')
+  return `${y}-${m}-${day}`
+}
+
+/** Le jour local de `date` est-il dans le BYDAY de la règle ? (sans BYDAY → tous les jours) */
+export function ruleMatchesDate(rule: string, date: Date): boolean {
+  const m = rule.match(/BYDAY=([A-Z,]+)/)
+  if (!m) return true
+  return new Set(m[1].split(',')).has(WEEKDAY_LETTERS[date.getDay()])
+}
+
+export type OccursOnSlot = {
+  dayOfWeek: string
+  recurrenceRule?: string | null
+  recurrenceEnd?: string | null
+  exceptions?: Array<{ date?: string | null } | string> | null
+}
+
+/**
+ * Un créneau produit-il une occurrence à cette date ?
+ * - avec règle : correspondance BYDAY + fin de série + exceptions (EXDATE)
+ * - sans règle : comportement historique (jour de la semaine fixe)
+ */
+export function slotOccursOn(slot: OccursOnSlot, date: Date): boolean {
+  if (slot.recurrenceRule) {
+    const key = toDateKey(date)
+    if (slot.recurrenceEnd && key > String(slot.recurrenceEnd).slice(0, 10)) return false
+    const exceptions = slot.exceptions ?? []
+    const excepted = exceptions.some((e) =>
+      typeof e === 'string' ? e.slice(0, 10) === key : String(e?.date ?? '').slice(0, 10) === key,
+    )
+    if (excepted) return false
+    return ruleMatchesDate(slot.recurrenceRule, date)
+  }
+  return Number(slot.dayOfWeek) === date.getDay()
+}
+
+/** Prochaine occurrence à partir de `from` (fenêtre bornée de 28 jours), YYYY-MM-DD. */
+export function nextOccurrenceDate(slot: OccursOnSlot, from: Date): string {
+  for (let i = 0; i < 28; i++) {
+    const d = new Date(from)
+    d.setDate(d.getDate() + i)
+    if (slotOccursOn(slot, d)) return toDateKey(d)
+  }
+  return ''
+}

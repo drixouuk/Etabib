@@ -739,6 +739,17 @@ export interface AvailabilitySlot {
   durationMinutes: number;
   bufferMinutes?: number | null;
   isActive?: boolean | null;
+  /**
+   * Ex. FREQ=WEEKLY;BYDAY=MO,WE;INTERVAL=1 — vide = hebdomadaire simple
+   */
+  recurrenceRule?: string | null;
+  recurrenceEnd?: string | null;
+  exceptions?:
+    | {
+        date: string;
+        id?: string | null;
+      }[]
+    | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -1326,6 +1337,14 @@ export interface AvailabilitySlotsSelect<T extends boolean = true> {
   durationMinutes?: T;
   bufferMinutes?: T;
   isActive?: T;
+  recurrenceRule?: T;
+  recurrenceEnd?: T;
+  exceptions?:
+    | T
+    | {
+        date?: T;
+        id?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
 }

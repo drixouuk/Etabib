@@ -9,6 +9,14 @@
  *           ne contiennent plus d'input natif type="time"/type="datetime-local" ;
  *       (d) PublicBookingWidget = exception documentée : l'heure s'y choisit
  *           par chips de créneaux (pas de saisie libre).
+ *   B3. Récurrence des disponibilités :
+ *       (a) l'engine complet (parseRRule/expandSeries) vit dans
+ *           apps/cms/src/lib/recurrence.ts ;
+ *       (b) AvailabilitySlots.ts déclare recurrenceRule / recurrenceEnd /
+ *           exceptions ;
+ *       (c) la route week-availability expanse via lib/rrule.ts (slotOccursOn) ;
+ *       (d) ScheduleAndSlots.tsx offre le choix de portée avec défaut « seul »
+ *           (option la moins destructive), séries locales uniquement.
  *
  * Usage : pnpm --filter frontend guard:phase-b
  */
@@ -19,6 +27,8 @@ import { fileURLToPath } from 'node:url';
 
 const FRONTEND_DIR = fileURLToPath(new URL('..', import.meta.url));
 const read = (rel) => readFileSync(path.join(FRONTEND_DIR, ...rel.split('/')), 'utf8');
+const REPO_DIR = path.resolve(FRONTEND_DIR, '..', '..');
+const readRepo = (rel) => readFileSync(path.join(REPO_DIR, ...rel.split('/')), 'utf8');
 
 const violations = [];
 
@@ -54,9 +64,40 @@ if (/type="time"|type="datetime-local"/.test(publicWidget)) {
   );
 }
 
+// B3a — l'engine complet vit côté CMS et est testé
+const recurrence = readRepo('apps/cms/src/lib/recurrence.ts');
+for (const fn of ['parseRRule', 'expandSeries', 'nextOccurrence']) {
+  if (!new RegExp(`export function ${fn}\\b`).test(recurrence)) {
+    violations.push(`apps/cms/src/lib/recurrence.ts — ${fn} non exporté (B3)`);
+  }
+}
+
+// B3b — la collection porte les champs de récurrence
+const availabilityCollection = readRepo('apps/cms/src/collections/AvailabilitySlots.ts');
+for (const field of ['recurrenceRule', 'recurrenceEnd', 'exceptions']) {
+  if (!new RegExp(`name: '${field}'`).test(availabilityCollection)) {
+    violations.push(`apps/cms/src/collections/AvailabilitySlots.ts — champ ${field} manquant (B3)`);
+  }
+}
+
+// B3c — la route expanse via le matcher partagé
+const route = read('src/app/api/bookings/week-availability/route.ts');
+if (!route.includes('slotOccursOn') || !route.includes("@/lib/rrule")) {
+  violations.push('week-availability/route.ts — doit expanser via slotOccursOn (lib/rrule) (B3)');
+}
+
+// B3d — UI de portée avec défaut « seul » (moins destructif), séries locales
+const settings = read('src/app/[locale]/(dashboard)/dashboard/settings/ScheduleAndSlots.tsx');
+if (!/scope: 'seul'/.test(settings) || !/value="seul">Ce créneau seul \(défaut\)/.test(settings)) {
+  violations.push('ScheduleAndSlots.tsx — choix de portée absent ou défaut ≠ « Ce créneau seul » (B3)');
+}
+if (!/nextOccurrenceDate\(/.test(settings)) {
+  violations.push('ScheduleAndSlots.tsx — n’utilise pas nextOccurrenceDate pour la prochaine occurrence (B3)');
+}
+
 if (violations.length > 0) {
   console.error(`✗ guard-phase-b — ${violations.length} violation(s) :`);
   for (const v of violations) console.error(`  ${v}`);
   process.exit(1);
 }
-console.log('✓ guard-phase-b — invariants B2 respectés');
+console.log('✓ guard-phase-b — invariants B2 + B3 respectés');
