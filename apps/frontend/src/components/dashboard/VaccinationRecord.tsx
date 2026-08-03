@@ -14,6 +14,15 @@ type Vaccination = {
 
 type Props = { patientId: string; schedule: ScheduleEntry[]; vaccinations: Vaccination[]; patientGender?: string | null; patientBirthDate?: string | null }
 
+const ROUTE_OPTIONS = [
+  { value: 'IM', label: 'IM' },
+  { value: 'SC', label: 'SC' },
+  { value: 'oral', label: 'Orale' },
+  { value: 'intradermal', label: 'ID' },
+]
+
+const inputClass = 'rounded border border-stone-300 px-2 py-1 text-xs focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none'
+
 function computeAgeMonths(birthDate: string): number {
   const now = new Date(); const birth = new Date(birthDate)
   return (now.getFullYear() - birth.getFullYear()) * 12 + now.getMonth() - birth.getMonth()
@@ -27,6 +36,7 @@ export default function VaccinationRecord({ patientId, schedule, vaccinations, p
   const [dateValue, setDateValue] = useState(new Date().toISOString().slice(0, 10))
   const [routeValue, setRouteValue] = useState('')
   const [lotValue, setLotValue] = useState('')
+  const [editForm, setEditForm] = useState<{ key: string; vaccId: string; date: string; route: string; lot: string } | null>(null)
   const [saving, setSaving] = useState(false)
 
   if (!patientBirthDate) return (
@@ -73,6 +83,24 @@ export default function VaccinationRecord({ patientId, schedule, vaccinations, p
     setSaving(false)
   }
 
+  // Modification voie / lot / date d'une vaccination déjà administrée
+  const saveEdit = async () => {
+    if (!editForm) return
+    setSaving(true)
+    try {
+      const res = await fetch(`/api/cms-proxy/vaccinations/${editForm.vaccId}`, {
+        method: 'PATCH', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          dateAdministered: editForm.date,
+          administrationRoute: editForm.route || undefined,
+          lotNumber: editForm.lot || undefined,
+        }),
+      })
+      if (res.ok) { setEditForm(null); router.refresh() }
+    } catch { /* silent */ }
+    setSaving(false)
+  }
+
   if (sorted.length === 0) return (
     <div className="mb-8">
       <h3 className="mb-2 font-heading text-lg font-semibold text-stone-800">Carnet vaccinal</h3>
@@ -102,7 +130,6 @@ export default function VaccinationRecord({ patientId, schedule, vaccinations, p
               const done = vaccinationDone(entry)
               const excluded = vaccinationExcluded(entry)
               const isFuture = entry.ageMonths > ageMonths
-              const isOverdue = !done && !excluded && !isFuture
               const key = `${entry.vaccineName}-${entry.doseLabel}-${idx}`
               const showForm = activeForm === key
 
@@ -151,18 +178,45 @@ export default function VaccinationRecord({ patientId, schedule, vaccinations, p
                     )}
                     {showForm && (
                       <div className="flex items-center gap-1.5 flex-wrap">
-                        <input type="date" value={dateValue} onChange={(e) => setDateValue(e.target.value)}
-                          className="w-28 rounded border border-stone-300 px-2 py-1 text-xs focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none" />
-                        <select value={routeValue} onChange={e => setRouteValue(e.target.value)}
-                          className="w-20 rounded border border-stone-300 px-2 py-1 text-xs focus:border-primary-500 focus:outline-none">
-                          <option value="">Voie</option><option value="IM">IM</option><option value="SC">SC</option><option value="oral">Orale</option><option value="intradermal">ID</option>
+                        <input type="date" value={dateValue} onChange={(e) => setDateValue(e.target.value)} className={`w-28 ${inputClass}`} />
+                        <select value={routeValue} onChange={e => setRouteValue(e.target.value)} className={`w-20 ${inputClass}`}>
+                          <option value="">Voie</option>
+                          {ROUTE_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
                         </select>
-                        <input type="text" value={lotValue} onChange={e => setLotValue(e.target.value)} placeholder="Lot"
-                          className="w-20 rounded border border-stone-300 px-2 py-1 text-xs focus:border-primary-500 focus:outline-none" />
+                        <input type="text" value={lotValue} onChange={e => setLotValue(e.target.value)} placeholder="Lot" className={`w-20 ${inputClass}`} />
                         <button onClick={() => handleSubmit(entry)} disabled={saving}
                           className="rounded bg-cta-600 px-2.5 py-1 text-xs font-medium text-white hover:bg-cta-700 disabled:opacity-50">{saving ? '…' : 'OK'}</button>
                         <button onClick={() => setActiveForm(null)} className="text-xs text-stone-600 hover:text-stone-600">✕</button>
                       </div>
+                    )}
+                    {done && editForm?.key === key && (
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <input type="date" value={editForm.date}
+                          onChange={(e) => setEditForm({ ...editForm, date: e.target.value })} className={`w-28 ${inputClass}`} />
+                        <select value={editForm.route}
+                          onChange={(e) => setEditForm({ ...editForm, route: e.target.value })} className={`w-20 ${inputClass}`}>
+                          <option value="">Voie</option>
+                          {ROUTE_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
+                        </select>
+                        <input type="text" value={editForm.lot}
+                          onChange={(e) => setEditForm({ ...editForm, lot: e.target.value })} placeholder="Lot" className={`w-20 ${inputClass}`} />
+                        <button onClick={saveEdit} disabled={saving}
+                          className="rounded bg-cta-600 px-2.5 py-1 text-xs font-medium text-white hover:bg-cta-700 disabled:opacity-50">{saving ? '…' : 'OK'}</button>
+                        <button onClick={() => setEditForm(null)} className="text-xs text-stone-600 hover:text-stone-600">✕</button>
+                      </div>
+                    )}
+                    {done && editForm?.key !== key && (
+                      <button
+                        onClick={() => setEditForm({
+                          key, vaccId: done.id,
+                          date: (done.dateAdministered || new Date().toISOString()).slice(0, 10),
+                          route: done.administrationRoute || '',
+                          lot: done.lotNumber || '',
+                        })}
+                        className="rounded border border-warm bg-white px-2 py-1 text-xs font-medium text-stone-600 hover:text-stone-800"
+                      >
+                        ✎ Modifier
+                      </button>
                     )}
                   </td>
                 </tr>

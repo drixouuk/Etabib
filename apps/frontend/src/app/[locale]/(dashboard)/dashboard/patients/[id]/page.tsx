@@ -225,6 +225,7 @@ export default async function PatientDetailPage({ params }: Props) {
           <TabsTrigger value="resume" className="data-[state=active]:text-primary-700 data-[state=active]:font-semibold after:bg-primary-500">Résumé</TabsTrigger>
           <TabsTrigger value="dossier" className="data-[state=active]:text-primary-700 data-[state=active]:font-semibold after:bg-primary-500">Dossier clinique</TabsTrigger>
           <TabsTrigger value="croissance" className="data-[state=active]:text-primary-700 data-[state=active]:font-semibold after:bg-primary-500">Croissance</TabsTrigger>
+          <TabsTrigger value="vaccins" className="data-[state=active]:text-primary-700 data-[state=active]:font-semibold after:bg-primary-500">Carnet vaccinal</TabsTrigger>
           <TabsTrigger value="consultations" className="data-[state=active]:text-primary-700 data-[state=active]:font-semibold after:bg-primary-500">Consultations & ordonnances</TabsTrigger>
           <TabsTrigger value="documents" className="data-[state=active]:text-primary-700 data-[state=active]:font-semibold after:bg-primary-500">Documents</TabsTrigger>
         </TabsList>
@@ -299,6 +300,9 @@ export default async function PatientDetailPage({ params }: Props) {
 
         <TabsContent value="croissance">
           {canViewClinical && isPediatrie && <GrowthChart consultations={consultations} patientBirthDate={patient.birthDate} patientGender={patient.gender} />}
+        </TabsContent>
+
+        <TabsContent value="vaccins">
           {canViewClinical && isPediatrie && (
             <VaccinationRecord
               patientId={patient.id}
