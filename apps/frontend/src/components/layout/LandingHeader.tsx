@@ -9,7 +9,11 @@ import { BRAND, SITE_DOMAIN } from '@/lib/brand'
 
 const DEMO_URL = `https://drdemo.${SITE_DOMAIN}/login`
 
-export default function LandingHeader() {
+type Props = {
+  hideLanguageSwitcher?: boolean
+}
+
+export default function LandingHeader({ hideLanguageSwitcher = false }: Props) {
   const t = useTranslations('landing')
   const locale = useLocale()
   const { isHidden } = useScrollDirection()
@@ -40,7 +44,7 @@ export default function LandingHeader() {
           ))}
         </nav>
         <div className="flex items-center gap-3.5">
-          <LanguageSwitcher />
+          {!hideLanguageSwitcher && <LanguageSwitcher />}
           <a href={DEMO_URL} target="_blank" rel="noopener"
             className="hidden md:inline-flex items-center gap-2 rounded-full bg-cta-600 px-5 py-2.5 text-[.88rem] font-bold text-white shadow-sm transition-all hover:bg-cta-700 hover:-translate-y-0.5 hover:shadow-md">
             {t('header_cta')}

@@ -229,7 +229,7 @@ export default async function LocaleLayout({ children, params }: Props) {
             header={isLandingChrome ? undefined : <Header doctorName={doctorName} doctorNameShort={doctorNameShort} />}
             footer={isLandingChrome ? undefined : <Footer locale={locale} />}
           >
-            {isLegal && <LandingHeader />}
+            {isLegal && <LandingHeader hideLanguageSwitcher />}
             {children}
             {isLegal && <LandingFooter />}
           </LayoutShell>
