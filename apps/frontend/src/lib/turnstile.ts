@@ -6,7 +6,13 @@ const SITEVERIFY_URL = 'https://challenges.cloudflare.com/turnstile/v0/siteverif
 
 export async function verifyTurnstile(token: unknown, remoteip?: string | null): Promise<boolean> {
   const secret = process.env.TURNSTILE_SECRET
-  if (!secret || typeof token !== 'string' || !token) return false
+  if (!secret) {
+    // TURNSTILE_SECRET non configuré : mode dégradé (on laisse passer) pour ne pas
+    // bloquer le site. Dès que le secret est posé, la vérification redevient stricte.
+    console.warn('[turnstile] TURNSTILE_SECRET non configuré — vérification anti-bot désactivée')
+    return true
+  }
+  if (typeof token !== 'string' || !token) return false
 
   try {
     const params = new URLSearchParams({
