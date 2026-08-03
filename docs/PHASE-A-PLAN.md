@@ -65,17 +65,12 @@ A1 ──► A2 ──► A3 ──► A5 ──► A6 ──► A4
 
 - **Guard** (implémenté) : scan `src/components/**` (hors `ui/`) + `src/app/**` — `backdrop-blur-*` / `backdrop-filter` interdit, sauf allowlist nommée avec raison (Header, LandingHeader = nav fixes ; DashboardShell = scrim overlay mobile). Testé positif + négatif (fichier hors `ui/` échoue, fichier dans `ui/` passe)
 
-## A4 — Bootstrap lang/dir + split display/data language
+## A4 — Bootstrap lang/dir + split display/data language (implémenté)
 
-- **Modifier** `apps/frontend/src/app/[locale]/layout.tsx` → `<html lang={locale} dir={locale === 'ar' ? 'rtl' : 'ltr'}>` (vérifier si next-intl le fait déjà ; sinon l'expliciter)
-- **Utiliser** le mapping existant `DATA_LOCALE` (tzm → fr) pour tout contenu stocké (notifications, seeds) : la langue de données ne suit jamais la locale d'affichage
-
-```tsx
-// [locale]/layout.tsx
-<html lang={locale} dir={locale === 'ar' ? 'rtl' : 'ltr'}>
-```
-
-- **Guard** : `scripts/guard-i18n.mjs` — parité des clés/placeholders entre `apps/frontend/messages/{fr,en,ar,tzm}.json` (référence = fr)
+- **Vérifié** : `<html lang={locale} dir={dir}>` est déjà posé **côté serveur** par `[locale]/layout.tsx` via `dirByLocale` (`ar → rtl`, fr/en/tzm → `ltr`) — SSR = équivalent du bootstrap render-blocking yuvomi, aucun flash client. Aucune correction nécessaire
+- **Audit + migration** des composants partagés (layout/, ui/, nav) vers les propriétés logiques : `left-4 right-4 → start-4 end-4`, `text-left/right → text-start/end`, `pl/pr → ps/pe` (dont `has-data-[icon=inline-*]:pl/pr` de button/badge/tabs), `ml-auto → ms-auto`, `inset-x-0 → inset-inline-0`, `-right-1 → -end-1` — 13 fichiers (Header, LandingHeader, Footer, LanguageSwitcher, DashboardShell, SidebarNav, button, badge, tabs, sheet, avatar, dropdown-menu, navigation-menu). Le legacy des composants métier (dashboard/*, booking/*) est toléré et migré incrémentalement
+- **Guard A4 sur le staging** : `scripts/guard-a4.mjs` scanne `git diff --cached` (lignes AJOUTÉES uniquement — le legacy n'est jamais re-flagé) : toute nouvelle `ml-* mr-* pl-* pr-* left-* right-* text-left text-right` fait échouer le commit, sauf allowlist documentée (`page.tsx` = blobs décoratifs ancrés aux coins). Branché dans `.husky/pre-commit`. Testé : `ml-4` stagé → échoue ; `ps-4` → passe
+- **Documentation** : `docs/DATA-LANGUAGE.md` — la règle display vs data (contenu Payload stocké en français via `DATA_LOCALE`, emails/notifications assemblés à partir de données brutes, locale appliquée au rendu avec paramètre explicite)
 
 ## A5 — Focus ring tokenisé
 

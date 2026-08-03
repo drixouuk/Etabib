@@ -42,14 +42,14 @@ export default function LanguageSwitcher() {
       </button>
 
       {open && (
-        <div className="absolute right-0 top-full mt-2 min-w-[130px] rounded-xl border border-stone-200 bg-white p-1.5 shadow-md z-50">
+        <div className="absolute end-0 top-full mt-2 min-w-[130px] rounded-xl border border-stone-200 bg-white p-1.5 shadow-md z-50">
           {localeCodes.map((code) => {
             const isActive = code === locale
             return (
               <button
                 key={code}
                 onClick={() => { router.replace(pathname, { locale: code }); setOpen(false) }}
-                className={`w-full rounded-lg px-3 py-2 text-left text-[.87rem] font-body transition-colors hover:bg-cream-200 ${
+                className={`w-full rounded-lg px-3 py-2 text-start text-[.87rem] font-body transition-colors hover:bg-cream-200 ${
                   code === 'tzm' ? 'font-tifinagh' : ''
                 } ${isActive ? 'bg-cream-100 font-semibold text-primary-700' : 'text-stone-600'}`}
               >

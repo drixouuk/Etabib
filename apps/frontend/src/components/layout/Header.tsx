@@ -58,7 +58,7 @@ export default function Header({ doctorName, doctorNameShort }: Props) {
         </div>
 
         {mobileMenuOpen && (
-          <div className="absolute left-4 right-4 top-full mt-2 rounded-2xl border border-stone-200 bg-white p-2 shadow-lg md:hidden">
+          <div className="absolute start-4 end-4 top-full mt-2 rounded-2xl border border-stone-200 bg-white p-2 shadow-lg md:hidden">
             {navLinks.map(({ href, key }) => (
               <Link key={href} href={href} onClick={() => setMobileMenuOpen(false)}
                 className="block rounded-lg px-[14px] py-[11px] text-[.92rem] font-medium text-stone-600 hover:bg-cream-200">

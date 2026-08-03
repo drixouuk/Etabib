@@ -27,7 +27,7 @@ export default function LandingHeader({ hideLanguageSwitcher = false }: Props) {
   ]
 
   return (
-    <header className={`fixed top-4 left-4 right-4 z-50 transition-transform duration-300 ${isHidden ? '-translate-y-[calc(100%+1rem)]' : 'translate-y-0'}`}>
+    <header className={`fixed top-4 start-4 end-4 z-50 transition-transform duration-300 ${isHidden ? '-translate-y-[calc(100%+1rem)]' : 'translate-y-0'}`}>
       <div className="mx-auto flex max-w-[1160px] items-center justify-between rounded-[18px] bg-white/80 px-4 py-3 shadow-sm backdrop-blur-md">
         <a href={`/${locale}/landing`} className="flex items-center gap-2.5 font-heading font-extrabold text-[1.1rem] text-[#2A241C]">
           <span className="flex size-8 items-center justify-center rounded-[9px] bg-primary-600">
@@ -35,7 +35,7 @@ export default function LandingHeader({ hideLanguageSwitcher = false }: Props) {
           </span>
           <span className="text-primary-700">{BRAND.name}</span>
         </a>
-        <nav className={`hidden md:flex items-center gap-1 ${mobileOpen ? 'max-md:flex max-md:flex-col max-md:absolute max-md:top-full max-md:left-0 max-md:right-0 max-md:bg-white max-md:border max-md:border-stone-200 max-md:rounded-2xl max-md:p-2 max-md:shadow-md max-md:mt-2' : ''}`}>
+        <nav className={`hidden md:flex items-center gap-1 ${mobileOpen ? 'max-md:flex max-md:flex-col max-md:absolute max-md:top-full max-md:start-0 max-md:end-0 max-md:bg-white max-md:border max-md:border-stone-200 max-md:rounded-2xl max-md:p-2 max-md:shadow-md max-md:mt-2' : ''}`}>
           {navLinks.map(({ href, key }) => (
             <a key={href} href={href} onClick={() => setMobileOpen(false)}
               className="rounded-[10px] px-3 py-2 text-[.92rem] font-semibold text-[#8A8175] transition-colors hover:text-primary-700 hover:bg-primary-50">
@@ -54,7 +54,7 @@ export default function LandingHeader({ hideLanguageSwitcher = false }: Props) {
           </button>
         </div>
         {mobileOpen && (
-          <div className="absolute left-4 right-4 top-full mt-2 rounded-2xl border border-stone-200 bg-white p-2 shadow-md md:hidden">
+          <div className="absolute start-4 end-4 top-full mt-2 rounded-2xl border border-stone-200 bg-white p-2 shadow-md md:hidden">
             {navLinks.map(({ href, key }) => (
               <a key={href} href={href} onClick={() => setMobileOpen(false)}
                 className="block rounded-lg px-3.5 py-3 text-[.92rem] font-semibold text-[#8A8175] hover:bg-primary-50">
