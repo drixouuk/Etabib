@@ -17,6 +17,11 @@
  *       (c) la route week-availability expanse via lib/rrule.ts (slotOccursOn) ;
  *       (d) ScheduleAndSlots.tsx offre le choix de portée avec défaut « seul »
  *           (option la moins destructive), séries locales uniquement.
+ *   B1. « Look first, edit second » : RdvDetailView.tsx et
+ *       PatientDetailView.tsx sont des vues LECTURE SEULE — aucun
+ *       <input>/<textarea>/<select> (le clavier ne peut structurellement pas
+ *       s'ouvrir) ; RdvDetailView affiche la récurrence via describeRRule ;
+ *       les deux vues portent un jeton d'ancienneté (viewSeq).
  *
  * Usage : pnpm --filter frontend guard:phase-b
  */
@@ -93,6 +98,26 @@ if (!/scope: 'seul'/.test(settings) || !/value="seul">Ce créneau seul \(défaut
 }
 if (!/nextOccurrenceDate\(/.test(settings)) {
   violations.push('ScheduleAndSlots.tsx — n’utilise pas nextOccurrenceDate pour la prochaine occurrence (B3)');
+}
+
+// B1 — vues lecture seule : zéro champ de saisie, récurrence en clair, jeton
+const detailViews = ['src/components/agenda/RdvDetailView.tsx', 'src/components/patient/PatientDetailView.tsx'];
+for (const file of detailViews) {
+  const src = read(file);
+  if (/<input|<textarea|<select/.test(src)) {
+    violations.push(`${file} — vue lecture avec champ de saisie (<input>/<textarea>/<select>) : le clavier pourrait s'ouvrir (B1)`);
+  }
+  if (!/viewSeq/.test(src)) {
+    violations.push(`${file} — jeton d'ancienneté (viewSeq) manquant (B1)`);
+  }
+}
+const rdvDetail = read('src/components/agenda/RdvDetailView.tsx');
+if (!rdvDetail.includes('describeRRule')) {
+  violations.push('RdvDetailView.tsx — récurrence non affichée via describeRRule (B1)');
+}
+const patientDetail = read('src/components/patient/PatientDetailView.tsx');
+if (!patientDetail.includes('computeAge')) {
+  violations.push('PatientDetailView.tsx — âge non affiché (computeAge) (B1)');
 }
 
 if (violations.length > 0) {

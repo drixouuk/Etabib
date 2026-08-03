@@ -59,3 +59,34 @@ export function nextOccurrenceDate(slot: OccursOnSlot, from: Date): string {
   }
   return ''
 }
+
+// --------------------------------------------------------
+// describeRRule — la règle en langage clair (vue lecture, B1)
+// --------------------------------------------------------
+
+const DAY_LABELS_FR: Record<string, string> = {
+  MO: 'lundi', TU: 'mardi', WE: 'mercredi', TH: 'jeudi', FR: 'vendredi', SA: 'samedi', SU: 'dimanche',
+}
+
+/** « Toutes les semaines (lundi, mercredi) · jusqu'au 31/12/2026 » — '' si non parseable. */
+export function describeRRule(rule: string | null | undefined): string {
+  if (!rule) return ''
+  const freq = rule.match(/FREQ=(\w+)/)?.[1]
+  if (!freq) return ''
+
+  const interval = Number(rule.match(/INTERVAL=(\d+)/)?.[1] ?? '1') || 1
+  const byday = rule.match(/BYDAY=([A-Z,]+)/)?.[1]?.split(',') ?? []
+  const until = rule.match(/UNTIL=(\d{8})/)?.[1]
+  const count = Number(rule.match(/COUNT=(\d+)/)?.[1] ?? '0')
+
+  let base: string
+  if (freq === 'DAILY') base = interval > 1 ? `Tous les ${interval} jours` : 'Tous les jours'
+  else if (freq === 'WEEKLY') base = interval > 1 ? `Toutes les ${interval} semaines` : 'Toutes les semaines'
+  else if (freq === 'MONTHLY') base = interval > 1 ? `Tous les ${interval} mois` : 'Tous les mois'
+  else base = interval > 1 ? `Tous les ${interval} ans` : 'Tous les ans'
+
+  if (byday.length > 0) base += ` (${byday.map((d) => DAY_LABELS_FR[d] ?? d).join(', ')})`
+  if (until) base += ` · jusqu'au ${until.slice(6, 8)}/${until.slice(4, 6)}/${until.slice(0, 4)}`
+  else if (count > 0) base += ` · ${count} fois`
+  return base
+}

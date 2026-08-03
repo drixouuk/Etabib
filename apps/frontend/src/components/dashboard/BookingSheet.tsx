@@ -28,6 +28,17 @@ type Props = {
   onToast?: (message: string) => void
 }
 
+export type BookingFormProps = Props & {
+  /**
+   * Mode « look first, edit second » (B1) : le header dit « Retour » (retour
+   * à la vue lecture, le formulaire reste monté dans le DOM) au lieu de
+   * fermer. Les actions de footer (Enregistrer, Annuler) ferment en force :
+   * aucune confirmation « abandonner les modifications ? » pour des champs
+   * que l'action emporte de toute façon (règle #625 yuvomi).
+   */
+  onBack?: () => void
+}
+
 const STATUS_LABELS: Record<BookingDraft['status'], string> = {
   accepted: 'Confirmé',
   pending: 'En attente',
@@ -50,9 +61,8 @@ function formatRange(start: string, end: string): string {
   return `${s.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })} · ${time(s)} – ${time(e)}`
 }
 
-export default function BookingSheet({ tenantId, booking, initialStart, whenLabel, onClose, onSaved, onToast }: Props) {
+export function BookingForm({ tenantId, booking, initialStart, whenLabel, onClose, onSaved, onToast, onBack }: BookingFormProps) {
   const isEdit = !!booking?.id
-  const open = !!booking || !!initialStart
 
   const initialStartLocal = (isEdit ? booking!.startTime : initialStart) || ''
   const initialStartDT = toDatetimeLocal(initialStartLocal)
@@ -143,8 +153,7 @@ export default function BookingSheet({ tenantId, booking, initialStart, whenLabe
   const labelClass = 'mb-0.5 block text-xs text-stone-600'
 
   return (
-    <Sheet open={open} onOpenChange={(o) => { if (!o && !saving) onClose() }}>
-      <SheetContent side="right" className="w-full sm:!max-w-[50vw] overflow-y-auto">
+    <>
         <div className="flex items-start justify-between gap-3 border-b border-stone-100 px-5 py-4">
           <div>
             <h2 className="font-heading text-lg font-semibold text-stone-800">
@@ -157,9 +166,17 @@ export default function BookingSheet({ tenantId, booking, initialStart, whenLabe
               </p>
             )}
           </div>
-          <button onClick={onClose} className="rounded p-1 text-stone-500 hover:bg-stone-100 hover:text-stone-700" aria-label="Fermer">
-            <X className="size-4" />
-          </button>
+          {onBack ? (
+            // Mode détail (B1) : « Retour » ne sauvegarde rien, le formulaire
+            // reste monté — la vue lecture reprend la main.
+            <button onClick={onBack} className="rounded-lg border border-stone-300 px-3 py-1.5 text-xs font-medium text-stone-700 hover:bg-stone-50">
+              Retour
+            </button>
+          ) : (
+            <button onClick={onClose} className="rounded p-1 text-stone-500 hover:bg-stone-100 hover:text-stone-700" aria-label="Fermer">
+              <X className="size-4" />
+            </button>
+          )}
         </div>
 
         {isEdit && booking!.attendeeName && (
@@ -251,7 +268,9 @@ export default function BookingSheet({ tenantId, booking, initialStart, whenLabe
             >
               {saving ? '…' : isEdit ? 'Enregistrer' : 'Créer le rendez-vous'}
             </button>
-            <button onClick={onClose} className="text-sm text-stone-600 hover:text-stone-800">Fermer</button>
+            <button onClick={onBack ?? onClose} className="text-sm text-stone-600 hover:text-stone-800">
+              {onBack ? 'Retour' : 'Fermer'}
+            </button>
           </div>
           {isEdit && booking!.status !== 'cancelled' && (
             <button
@@ -263,6 +282,21 @@ export default function BookingSheet({ tenantId, booking, initialStart, whenLabe
             </button>
           )}
         </div>
+    </>
+  )
+}
+
+/**
+ * Feuille de création/édition (flux classique du calendrier). Le flux
+ * « look first » (B1) passe par RdvDetailView, qui réutilise BookingForm
+ * avec onBack.
+ */
+export default function BookingSheet({ tenantId, booking, initialStart, whenLabel, onClose, onSaved, onToast }: Props) {
+  const open = !!booking || !!initialStart
+  return (
+    <Sheet open={open} onOpenChange={(o) => { if (!o) onClose() }}>
+      <SheetContent side="right" className="w-full sm:!max-w-[50vw] overflow-y-auto">
+        <BookingForm tenantId={tenantId} booking={booking} initialStart={initialStart} whenLabel={whenLabel} onClose={onClose} onSaved={onSaved} onToast={onToast} />
       </SheetContent>
     </Sheet>
   )

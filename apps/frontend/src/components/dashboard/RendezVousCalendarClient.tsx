@@ -5,6 +5,7 @@ import { useLocale } from 'next-intl'
 import { useRouter } from 'next/navigation'
 import { ChevronLeft, ChevronRight, Check, Mail, Phone, Video } from 'lucide-react'
 import BookingSheet, { type BookingDraft } from './BookingSheet'
+import { RdvDetailView, type RdvDetail } from '@/components/agenda/RdvDetailView'
 import type { CalBooking } from '@/lib/booking'
 
 const TZ = 'Africa/Casablanca'
@@ -544,9 +545,21 @@ export default function RendezVousCalendarClient({ initialBookings, tenantId }: 
         </div>
       </div>
 
+      {/* B1 — « look first, edit second » : le tap ouvre la vue lecture ;
+          « Modifier » y monte le formulaire. La création reste en formulaire. */}
+      {editingDraft && (
+        <RdvDetailView
+          tenantId={tenantId}
+          booking={editingDraft as RdvDetail}
+          whenLabel={sheetWhen}
+          onClose={() => { setEditing(null); setCreating(null) }}
+          onSaved={refresh}
+          onToast={showToast}
+        />
+      )}
       <BookingSheet
         tenantId={tenantId}
-        booking={editingDraft}
+        booking={null}
         initialStart={creating}
         whenLabel={sheetWhen}
         onClose={() => { setEditing(null); setCreating(null) }}

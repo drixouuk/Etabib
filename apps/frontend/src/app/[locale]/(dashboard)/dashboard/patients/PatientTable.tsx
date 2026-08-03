@@ -1,10 +1,10 @@
 'use client'
 
 import { useState } from 'react'
-import { Link } from '@/i18n/navigation'
 import PatientActionsDropdown from '@/components/dashboard/PatientActionsDropdown'
 import PatientAvatar from '@/components/dashboard/PatientAvatar'
 import { Badge } from '@/components/ui/badge'
+import { PatientDetailView } from '@/components/patient/PatientDetailView'
 import { computeAge } from '@/lib/age'
 
 type Patient = {
@@ -35,6 +35,7 @@ export default function PatientTable({
   q?: string
 }) {
   const [page, setPage] = useState(1)
+  const [selected, setSelected] = useState<Patient | null>(null)
   const totalPages = Math.max(1, Math.ceil(patients.length / PER_PAGE))
   const paginated = patients.slice((page - 1) * PER_PAGE, page * PER_PAGE)
 
@@ -67,12 +68,12 @@ export default function PatientTable({
                       <div>
                         <div className="flex items-center gap-2">
                           <PatientActionsDropdown patientId={p.id} patientName={p.fullName} />
-                          <Link
-                            href={`/dashboard/patients/${p.id}`}
-                            className="font-medium text-stone-800 hover:text-primary-600 transition-colors duration-200"
+                          <button
+                            onClick={() => setSelected(p)}
+                            className="font-medium text-stone-800 transition-colors duration-200 hover:text-primary-600"
                           >
                             {p.fullName}
-                          </Link>
+                          </button>
                         </div>
                       </div>
                     </div>
@@ -129,6 +130,8 @@ export default function PatientTable({
           </button>
         </div>
       )}
+
+      {selected && <PatientDetailView patient={selected} onClose={() => setSelected(null)} />}
     </div>
   )
 }
