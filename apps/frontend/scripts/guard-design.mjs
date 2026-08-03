@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Guard Design System — invariants Phase A (A1).
+ * Guard Design System — invariants Phase A (A1 + A2).
  *
  * Scan de apps/frontend/src/styles/*.css :
  *
@@ -11,8 +11,16 @@
  *       EXCEPTION documentée : les arêtes (--color-border[-subtle|-strong],
  *       --glass-border-subtle) peuvent recevoir un hex en contexte dark —
  *       décision « bordures indépendantes » (item A2, cf. yuvomi v1.57.0).
+ *   A2. Arêtes dark — pour chaque palier (--_color-border-subtle, --border,
+ *       --_color-border-strong et leurs alias publics) en contexte dark :
+ *       (a) hex fixe à 6 chiffres, (b) hex ≠ hex des surfaces dark du fichier
+ *       (jamais 1.00:1), (c) commentaire de ratio « N.NN:1 » sur la même ligne.
  *   G3. tokens.css est bien importé par globals.css (sinon les tokens
  *       n'existent qu'à moitié).
+ *
+ * Le parseur est un scanner caractère par caractère (commentaires /* *\/ sautés)
+ * : il traite aussi les déclarations du DERNIER bloc d'un fichier — un parseur
+ * indexOf("brace suivante") les ignorait silencieusement (faux positif A2).
  *
  * Usage : pnpm --filter frontend guard:design
  */
@@ -33,6 +41,22 @@ const EDGE_EXCEPTION = new Set([
   '--glass-border-subtle',
 ]);
 
+// Les 3 paliers d'arêtes + alias publics (A2).
+const BORDER_STEPS = new Set([
+  '--_color-border-subtle',
+  '--_color-border',
+  '--_color-border-strong',
+  '--color-border-subtle',
+  '--color-border',
+  '--color-border-strong',
+  '--border',
+]);
+
+// Surfaces dark dont les arêtes doivent se distinguer.
+const DARK_SURFACE_TOKENS = new Set(['--_color-surface', '--_color-surface-work']);
+
+const RATIO_COMMENT = /\/\*[^*]*\d+\.\d{2}:1/;
+
 // Contexte dark : sélecteur .dark / [data-theme] ou media prefers-color-scheme: dark.
 function isDarkContext(prelude, mediaStack) {
   return (
@@ -46,59 +70,59 @@ function isRootContext(prelude) {
   return /^:root\b/.test(prelude.trim());
 }
 
-/** Parcourt un CSS : pour chaque déclaration, rend {name, value, line, prelude, mediaStack}. */
+/**
+ * Parcourt un CSS BRUT : pour chaque déclaration, rend
+ * { name, value, line, prelude, mediaStack, lineRest } où lineRest est le texte
+ * après le « ; » jusqu'à la fin de ligne (les commentaires de ratio y vivent).
+ */
 function walkDeclarations(css) {
   const out = [];
   const stack = []; // { prelude, media } — règles englobantes
-  let i = 0;
+  let ruleStart = 0; // début du préambule de la règle courante
+  let declStart = 0; // début de la déclaration courante
   let line = 1;
+  let i = 0;
   const n = css.length;
 
-  const countLines = (text) => (text.match(/\n/g) ?? []).length;
+  const cleanPrelude = (p) => p.replace(/\/\*[\s\S]*?\*\//g, '').trim();
 
   while (i < n) {
-    const nextBrace = css.indexOf('{', i);
-    const nextSemi = css.indexOf(';', i);
-    const nextClose = css.indexOf('}', i);
-    if (nextBrace === -1) break;
+    const ch = css[i];
 
-    if (nextClose !== -1 && (nextClose < nextBrace || (nextSemi !== -1 && nextSemi < nextBrace && nextSemi < nextClose))) {
-      // fin de règle
-      const closeEnd = css.indexOf('}', i);
-      if (nextSemi !== -1 && nextSemi < closeEnd) {
-        // déclaration orpheline dans la règle courante
-        const declText = css.slice(i, nextSemi);
-        const m = declText.match(/(--[\w-]+)\s*:\s*([^;]*)/);
-        if (m) {
-          const top = stack[stack.length - 1];
-          out.push({
-            name: m[1],
-            value: m[2].trim(),
-            line,
-            prelude: top?.prelude ?? '',
-            mediaStack: stack.filter((s) => s.media).map((s) => s.media),
-          });
-        }
-        line += countLines(declText);
-        i = nextSemi + 1;
-        continue;
-      }
-      line += countLines(css.slice(i, closeEnd + 1));
-      i = closeEnd + 1;
-      stack.pop();
+    if (ch === '/' && css[i + 1] === '*') {
+      const end = css.indexOf('*/', i + 2);
+      i = end === -1 ? n : end + 2; // commentaire sauté (contenu quelconque)
       continue;
     }
-
-    // début de règle
-    const prelude = css.slice(i, nextBrace);
-    const mediaMatch = prelude.match(/@media\s*([^{]+)/);
-    const isMedia = !!mediaMatch;
-    stack.push({
-      prelude: prelude.trim(),
-      media: isMedia ? mediaMatch[1].trim() : null,
-    });
-    line += countLines(css.slice(i, nextBrace + 1));
-    i = nextBrace + 1;
+    if (ch === '\n') {
+      line++;
+    } else if (ch === '{') {
+      const prelude = cleanPrelude(css.slice(ruleStart, i));
+      const mediaMatch = prelude.match(/@media\s*([^{]+)/);
+      stack.push({ prelude, media: mediaMatch ? mediaMatch[1].trim() : null });
+      ruleStart = i + 1;
+      declStart = i + 1;
+    } else if (ch === ';') {
+      const top = stack[stack.length - 1];
+      const m = css.slice(declStart, i).match(/(--[\w-]+)\s*:\s*([^;]*)/);
+      if (m && top) {
+        const newlineIdx = css.indexOf('\n', i + 1);
+        out.push({
+          name: m[1],
+          value: m[2].trim(),
+          line,
+          prelude: top.prelude,
+          mediaStack: stack.filter((s) => s.media).map((s) => s.media),
+          lineRest: newlineIdx === -1 ? '' : css.slice(i + 1, newlineIdx),
+        });
+      }
+      declStart = i + 1;
+    } else if (ch === '}') {
+      stack.pop();
+      ruleStart = i + 1;
+      declStart = i + 1;
+    }
+    i++;
   }
   return out;
 }
@@ -108,14 +132,22 @@ function readStylesheets() {
     .filter((f) => f.endsWith('.css'))
     .map((f) => {
       const full = path.join(STYLES_DIR, f);
-      const css = readFileSync(full, 'utf8').replace(/\/\*[\s\S]*?\*\//g, '');
-      return { file: path.relative(FRONTEND_DIR, full), css, decls: walkDeclarations(css) };
+      const css = readFileSync(full, 'utf8');
+      return { file: path.relative(FRONTEND_DIR, full), decls: walkDeclarations(css) };
     });
 }
 
 const violations = [];
 
-for (const { file, css, decls } of readStylesheets()) {
+for (const { file, decls } of readStylesheets()) {
+  // Surfaces dark du fichier (collecte avant les vérifications A2).
+  const darkSurfaces = new Set(
+    decls
+      .filter((d) => DARK_SURFACE_TOKENS.has(d.name) && isDarkContext(d.prelude, d.mediaStack))
+      .map((d) => d.value.toLowerCase())
+      .filter((v) => /^#[0-9a-f]{6}$/.test(v)),
+  );
+
   for (const d of decls) {
     const dark = isDarkContext(d.prelude, d.mediaStack);
     const root = isRootContext(d.prelude);
@@ -138,6 +170,24 @@ for (const { file, css, decls } of readStylesheets()) {
         `${file}:${d.line} — token public ${d.name} assigné à une valeur littérale (indirection var() requise)`,
       );
     }
+
+    // A2 — paliers d'arêtes en contexte dark
+    if (dark && BORDER_STEPS.has(d.name)) {
+      if (!/^#[0-9a-fA-F]{6}$/.test(d.value)) {
+        violations.push(
+          `${file}:${d.line} — arête dark ${d.name} doit être un hex fixe à 6 chiffres (${d.value})`,
+        );
+      } else if (darkSurfaces.has(d.value.toLowerCase())) {
+        violations.push(
+          `${file}:${d.line} — arête dark ${d.name} égale à la surface (ratio 1.00:1 interdit)`,
+        );
+      }
+      if (!RATIO_COMMENT.test(d.lineRest)) {
+        violations.push(
+          `${file}:${d.line} — arête dark ${d.name} sans commentaire de ratio (/* N.NN:1 */) sur la même ligne`,
+        );
+      }
+    }
   }
 }
 
@@ -152,4 +202,4 @@ if (violations.length > 0) {
   for (const v of violations) console.error(`  ${v}`);
   process.exit(1);
 }
-console.log('✓ guard-design — invariants A1 respectés');
+console.log('✓ guard-design — invariants A1 + A2 respectés');

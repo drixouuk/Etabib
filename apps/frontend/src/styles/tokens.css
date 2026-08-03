@@ -92,8 +92,7 @@
 
 /* --------------------------------------------------------
  * Dark — blocs privés SEULEMENT ; la rampe neutre reste la même, seules les
- * surfaces/textes/accents basculent. Les 3 arêtes dark sont le sujet de l'item
- * A2 (hex fixes mesurés + guard) et ne sont pas encore posées ici.
+ * surfaces/textes/accents basculent.
  * Convention projet : classe .dark (shadcn) ; [data-theme="dark"] en alias.
  * -------------------------------------------------------- */
 .dark,
@@ -111,4 +110,16 @@
   --_color-accent-brand: #2DD4BF;       /* teal-400 · 9.03:1 sur surface */
   --_color-accent-brand-hover: #14B8A6; /* teal-500 · 6.75:1 sur surface */
   --_color-on-accent-brand: #04211C;    /* 9.10:1 sur #2DD4BF */
+
+  /* --------------------------------------------------------
+   * Arêtes dark — 3 paliers, hex FIXES mesurés, jamais dérivés de la rampe
+   * neutre : la rampe dark est si proche de la surface qu'une dérivation
+   * donnerait ~1.00:1 (bordure dans la couleur de sa propre face).
+   * Ratios mesurés contre la surface de travail dark #232019 (2026-08-03).
+   * subtle/strong = tokens maison ; base = --border shadcn (--color-border
+   * y est mappé dans globals.css) — le seam vit ici, un seul bloc dark.
+   * -------------------------------------------------------- */
+  --_color-border-subtle: #3A3A37;  /* 1.42:1 sur #232019 — séparateurs, cartes calmes */
+  --border:                #484844; /* 1.77:1 sur #232019 — standard, champs */
+  --_color-border-strong:  #6A6A66; /* 2.99:1 sur #232019 — hover, cadres accentués */
 }
