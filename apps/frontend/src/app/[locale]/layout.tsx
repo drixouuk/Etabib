@@ -6,8 +6,8 @@ import { routing } from '@/i18n/routing'
 import {
   Figtree,
   Noto_Sans,
-  Noto_Sans_Arabic,
   Noto_Sans_Tifinagh,
+  Rubik,
 } from 'next/font/google'
 import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
@@ -30,16 +30,18 @@ const notoSans = Noto_Sans({
   variable: '--font-body',
 })
 
-const notoSansArabic = Noto_Sans_Arabic({
-  subsets: ['arabic', 'latin', 'latin-ext'],
-  weight: ['300', '400', '500', '700'],
-  variable: '--font-body',
-})
-
 const notoSansTifinagh = Noto_Sans_Tifinagh({
   subsets: ['tifinagh'],
   weight: ['400'],
   variable: '--font-tifinagh',
+})
+
+// Rubik unifié pour l'arabe : couvre le latin ET l'arabe (subset latin inclus),
+// utilisé pour les titres et le corps de la locale `ar`. fr/en et tzm inchangés.
+const rubik = Rubik({
+  subsets: ['latin', 'latin-ext', 'arabic'],
+  weight: ['400', '500', '600', '700', '800'],
+  variable: '--font-heading',
 })
 
 const DATA_LOCALE: Record<string, string> = {
@@ -121,16 +123,16 @@ const dirByLocale: Record<string, 'ltr' | 'rtl'> = {
 }
 
 const fontsByLocale: Record<string, string> = {
-  fr: `${notoSans.variable}`,
-  en: `${notoSans.variable}`,
-  ar: `${notoSansArabic.variable}`,
-  tzm: `${notoSansTifinagh.variable}`,
+  fr: `${figtree.variable} ${notoSans.variable}`,
+  en: `${figtree.variable} ${notoSans.variable}`,
+  ar: `${rubik.variable}`,
+  tzm: `${figtree.variable} ${notoSansTifinagh.variable}`,
 }
 
 const bodyFontByLocale: Record<string, string> = {
   fr: 'font-body',
   en: 'font-body',
-  ar: 'font-body',
+  ar: 'font-heading',
   tzm: 'font-tifinagh',
 }
 
@@ -195,7 +197,7 @@ export default async function LocaleLayout({ children, params }: Props) {
     <html
       lang={locale}
       dir={dir}
-      className={`${figtree.variable} ${fontVars} h-full`}
+      className={`${fontVars} h-full`}
     >
       <head>
         {routing.locales.map((l) => (
