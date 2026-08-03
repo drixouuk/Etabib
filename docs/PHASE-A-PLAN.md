@@ -54,16 +54,16 @@ A1 ──► A2 ──► A3 ──► A5 ──► A6 ──► A4
 ## A3 — No-backdrop-filter dans les zones de scroll
 
 - **Modifier** `apps/frontend/src/styles/tokens.css` ou `globals.css` (règle utilitaire)
-- **Modifier** `apps/frontend/src/components/layout/LayoutShell.tsx` → poser une classe `.app-scroll` sur le conteneur scrollable (main)
+- **Modifier** `apps/frontend/src/components/layout/LayoutShell.tsx` → poser une classe `.app-scroll` sur le wrapper de contenu (implémenté : le scroll de l'app se fait sur `<body>` — pas de conteneur `overflow-auto` — la classe marque la région de contenu dans le flux de scroll)
 
 ```css
 /* Seuls les éléments du scroll container perdent le blur ; les overlays shadcn
    (Dialog, Sheet, Toaster) sont portés sur <body> via portal → hors .app-scroll →
    ils GARDENT backdrop-blur. */
-.app-scroll *, .app-scroll *::before, .app-scroll *::after { backdrop-filter: none !important; filter: none !important; }
+.app-scroll *, .app-scroll *::before, .app-scroll *::after { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
 ```
 
-- **Guard** : scan des composants `src/components/**/*.tsx` — `backdrop-blur-*` autorisé uniquement dans `components/ui/` (overlays) ; interdiction ailleurs (les overlays vivent tous dans `ui/`)
+- **Guard** (implémenté) : scan `src/components/**` (hors `ui/`) + `src/app/**` — `backdrop-blur-*` / `backdrop-filter` interdit, sauf allowlist nommée avec raison (Header, LandingHeader = nav fixes ; DashboardShell = scrim overlay mobile). Testé positif + négatif (fichier hors `ui/` échoue, fichier dans `ui/` passe)
 
 ## A4 — Bootstrap lang/dir + split display/data language
 

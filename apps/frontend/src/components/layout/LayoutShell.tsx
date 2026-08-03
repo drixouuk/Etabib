@@ -15,7 +15,7 @@ export default function LayoutShell({ children, header, footer }: Props) {
   return (
     <>
       {!hideShell && header}
-      <div className={hideShell ? 'flex flex-1 flex-col' : 'flex flex-1 flex-col pt-16 md:pt-20'}>
+      <div className={`${hideShell ? 'flex flex-1 flex-col' : 'flex flex-1 flex-col pt-16 md:pt-20'} app-scroll`}>
         {children}
       </div>
       {!hideShell && footer}

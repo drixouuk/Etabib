@@ -176,3 +176,22 @@
     @apply font-sans;
   }
 }
+
+/* --------------------------------------------------------
+ * A3 — Discipline no-blur dans le conteneur scrollable (cf. yuvomi #166).
+ *
+ * Le scroll de l'app se fait sur <body> ; .app-scroll (posé par LayoutShell)
+ * marque la région de contenu dans le flux de scroll. Tout élément avec
+ * backdrop-filter y devient un layer GPU indépendant → compositor mobile
+ * saturé → écran blanc au scroll sur iOS WebKit / Android Blink.
+ *
+ * Les overlays shadcn (Sheet, Dialog, Toaster) sont portalisés sur <body>,
+ * HORS de .app-scroll : ils gardent leur blur. Idem pour les nav fixes
+ * (Header) et scrims d'overlay, qui ne scrollent pas.
+ * -------------------------------------------------------- */
+.app-scroll *,
+.app-scroll *::before,
+.app-scroll *::after {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Guard Design System — invariants Phase A (A1 + A2).
+ * Guard Design System — invariants Phase A (A1 + A2 + A3).
  *
  * Scan de apps/frontend/src/styles/*.css :
  *
@@ -15,6 +15,9 @@
  *       --_color-border-strong et leurs alias publics) en contexte dark :
  *       (a) hex fixe à 6 chiffres, (b) hex ≠ hex des surfaces dark du fichier
  *       (jamais 1.00:1), (c) commentaire de ratio « N.NN:1 » sur la même ligne.
+ *   A3. Discipline no-blur : aucun backdrop-blur (classe Tailwind) ni
+ *       backdrop-filter (CSS) hors de src/components/ui/ (overlays) — les
+ *       exceptions sont nommées avec leur raison, cf. pattern yuvomi.
  *   G3. tokens.css est bien importé par globals.css (sinon les tokens
  *       n'existent qu'à moitié).
  *
@@ -25,12 +28,14 @@
  * Usage : pnpm --filter frontend guard:design
  */
 
-import { readFileSync, readdirSync } from 'node:fs';
+import { readFileSync, readdirSync, statSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const FRONTEND_DIR = fileURLToPath(new URL('..', import.meta.url));
 const STYLES_DIR = path.join(FRONTEND_DIR, 'src', 'styles');
+const COMPONENTS_DIR = path.join(FRONTEND_DIR, 'src', 'components');
+const APP_DIR = path.join(FRONTEND_DIR, 'src', 'app');
 const GLOBALS_CSS = path.join(FRONTEND_DIR, 'src', 'app', 'globals.css');
 
 // Arêtes autorisées à être assignées en littéral, UNIQUEMENT en contexte dark.
@@ -56,6 +61,17 @@ const BORDER_STEPS = new Set([
 const DARK_SURFACE_TOKENS = new Set(['--_color-surface', '--_color-surface-work']);
 
 const RATIO_COMMENT = /\/\*[^*]*\d+\.\d{2}:1/;
+
+// A3 — blur : classes Tailwind backdrop-blur-* ou CSS backdrop-filter.
+const BLUR_RE = /backdrop-blur(?:-[a-z\d]+|\[[^\]]+\])?|backdrop-filter/;
+
+// Exceptions A3 nommées avec leur raison — toutes hors du flux de scroll
+// (.app-scroll) : elles gardent le blur, comme la nav yuvomi.
+const A3_EXCEPTIONS = new Map([
+  ['src/components/layout/Header.tsx', 'nav fixe (hors flux de scroll)'],
+  ['src/components/layout/LandingHeader.tsx', 'nav fixe (hors flux de scroll)'],
+  ['src/components/dashboard/DashboardShell.tsx', 'scrim overlay de la sidebar mobile'],
+]);
 
 // Contexte dark : sélecteur .dark / [data-theme] ou media prefers-color-scheme: dark.
 function isDarkContext(prelude, mediaStack) {
@@ -197,9 +213,38 @@ if (!/@import\s+['"]\.\.\/styles\/tokens\.css['"]/.test(globals)) {
   violations.push('src/app/globals.css — @import ../styles/tokens.css manquant');
 }
 
+// A3 — scan du blur hors overlays (src/components/ui/)
+function sourceFiles(dir, prefix) {
+  const out = [];
+  for (const name of readdirSync(dir)) {
+    const full = path.join(dir, name);
+    if (statSync(full).isDirectory()) out.push(...sourceFiles(full, prefix));
+    else if (/\.(ts|tsx)$/.test(name)) out.push({ full, rel: path.relative(FRONTEND_DIR, full).split(path.sep).join('/') });
+  }
+  return out;
+}
+
+const uiDir = path.join(COMPONENTS_DIR, 'ui');
+const scanned = [
+  ...sourceFiles(COMPONENTS_DIR).filter((f) => !f.rel.startsWith('src/components/ui/')),
+  ...sourceFiles(APP_DIR),
+];
+for (const { full, rel } of scanned) {
+  const src = readFileSync(full, 'utf8');
+  if (BLUR_RE.test(src)) {
+    const reason = A3_EXCEPTIONS.get(rel);
+    if (!reason) {
+      violations.push(
+        `${rel} — backdrop-blur / backdrop-filter hors de src/components/ui/ (overlays). `
+        + `Ajouter la classe app-scroll ou déplacer l'effet dans un overlay ui/.`,
+      );
+    }
+  }
+}
+
 if (violations.length > 0) {
   console.error(`✗ guard-design — ${violations.length} violation(s) :`);
   for (const v of violations) console.error(`  ${v}`);
   process.exit(1);
 }
-console.log('✓ guard-design — invariants A1 + A2 respectés');
+console.log('✓ guard-design — invariants A1 + A2 + A3 respectés');
