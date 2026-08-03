@@ -122,7 +122,7 @@ export default function VaccinationRecord({ patientId, schedule, vaccinations, p
               <th className="px-4 py-2.5 font-medium">Statut</th>
               <th className="px-4 py-2.5 font-medium hidden md:table-cell">Voie</th>
               <th className="px-4 py-2.5 font-medium hidden md:table-cell">Lot</th>
-              <th className="px-4 py-2.5 font-medium" />
+              <th className="w-[310px] px-4 py-2.5 font-medium" />
             </tr>
           </thead>
           <tbody className="divide-y divide-stone-100">
@@ -165,7 +165,7 @@ export default function VaccinationRecord({ patientId, schedule, vaccinations, p
                   <td className={`px-4 py-2.5 ${statusColor}`}><span className="flex items-center gap-1.5">{statusIcon}{statusText}</span></td>
                   <td className="px-4 py-2.5 text-stone-600 hidden md:table-cell">{done?.administrationRoute || '—'}</td>
                   <td className="px-4 py-2.5 text-stone-600 hidden md:table-cell text-xs font-mono">{done?.lotNumber || '—'}</td>
-                  <td className="px-4 py-2.5">
+                  <td className="w-[310px] px-4 py-2.5">
                     {!done && !excluded && !showForm && (
                       <div className="flex items-center gap-1">
                         <button onClick={() => { setActiveForm(key); setDateValue(new Date().toISOString().slice(0, 10)); setRouteValue(''); setLotValue('') }}
@@ -177,9 +177,9 @@ export default function VaccinationRecord({ patientId, schedule, vaccinations, p
                       </div>
                     )}
                     {showForm && (
-                      <div className="flex items-center gap-1.5 flex-wrap">
-                        <input type="date" value={dateValue} onChange={(e) => setDateValue(e.target.value)} className={`w-28 ${inputClass}`} />
-                        <select value={routeValue} onChange={e => setRouteValue(e.target.value)} className={`w-20 ${inputClass}`}>
+                      <div className="flex items-center gap-1.5 flex-nowrap">
+                        <input type="date" value={dateValue} onChange={(e) => setDateValue(e.target.value)} className={`w-24 ${inputClass}`} />
+                        <select value={routeValue} onChange={e => setRouteValue(e.target.value)} className={`w-16 ${inputClass}`}>
                           <option value="">Voie</option>
                           {ROUTE_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
                         </select>
@@ -190,11 +190,11 @@ export default function VaccinationRecord({ patientId, schedule, vaccinations, p
                       </div>
                     )}
                     {done && editForm?.key === key && (
-                      <div className="flex items-center gap-1.5 flex-wrap">
+                      <div className="flex items-center gap-1.5 flex-nowrap">
                         <input type="date" value={editForm.date}
-                          onChange={(e) => setEditForm({ ...editForm, date: e.target.value })} className={`w-28 ${inputClass}`} />
+                          onChange={(e) => setEditForm({ ...editForm, date: e.target.value })} className={`w-24 ${inputClass}`} />
                         <select value={editForm.route}
-                          onChange={(e) => setEditForm({ ...editForm, route: e.target.value })} className={`w-20 ${inputClass}`}>
+                          onChange={(e) => setEditForm({ ...editForm, route: e.target.value })} className={`w-16 ${inputClass}`}>
                           <option value="">Voie</option>
                           {ROUTE_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
                         </select>
