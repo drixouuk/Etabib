@@ -3,14 +3,19 @@ import { randomUUID } from 'crypto'
 import { storeDemoToken } from '@/lib/demo-tokens'
 import { ADMIN_EMAIL } from '@/lib/brand'
 import { sendEmail } from '@/lib/resend-send'
+import { verifyTurnstile, clientRemoteIp } from '@/lib/turnstile'
 
 const DEMO_APPROVE_BASE = process.env.DEMO_APPROVE_URL || process.env.NEXT_PUBLIC_SITE_URL || 'https://etabibi.ma'
 
 export async function POST(req: NextRequest) {
   try {
-    const { name, email, message } = await req.json()
+    const { name, email, message, 'cf-turnstile-response': turnstileToken } = await req.json()
     if (!name || !email) {
       return NextResponse.json({ error: 'Nom et email requis' }, { status: 400 })
+    }
+
+    if (!(await verifyTurnstile(turnstileToken, clientRemoteIp(req)))) {
+      return NextResponse.json({ error: 'Vérification anti-bot échouée' }, { status: 403 })
     }
 
     const token = randomUUID()

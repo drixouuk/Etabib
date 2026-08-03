@@ -1,10 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { verifyTurnstile, clientRemoteIp } from '@/lib/turnstile'
 
 const CMS_URL = process.env.NEXT_PUBLIC_CMS_URL || 'https://cms.etabibi.ma'
 
 export async function POST(request: NextRequest) {
   try {
-    const { email, password } = await request.json()
+    const body = await request.json()
+    const { email, password, 'cf-turnstile-response': turnstileToken } = body
+
+    if (!(await verifyTurnstile(turnstileToken, clientRemoteIp(request)))) {
+      return NextResponse.json({ error: 'Vérification anti-bot échouée' }, { status: 403 })
+    }
 
     const res = await fetch(`${CMS_URL}/api/users/login`, {
       method: 'POST',

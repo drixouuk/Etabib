@@ -1,9 +1,10 @@
 'use client'
 
-import { useState, FormEvent, useEffect } from 'react'
+import { useState, FormEvent, useEffect, useRef } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Link } from '@/i18n/navigation'
 import { Activity, Check, ArrowLeft, ArrowRight, Eye, EyeOff, AlertCircle, ChevronDown } from 'lucide-react'
+import Turnstile, { type TurnstileHandle } from '@/components/ui/Turnstile'
 
 const DEMO_EMAIL = 'drdemo@gmail.com'
 
@@ -43,6 +44,10 @@ export default function LoginPage() {
   const [demoSending, setDemoSending] = useState(false)
   const [demoSent, setDemoSent] = useState(false)
   const [demoError, setDemoError] = useState('')
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null)
+  const [demoTurnstileToken, setDemoTurnstileToken] = useState<string | null>(null)
+  const turnstileRef = useRef<TurnstileHandle>(null)
+  const demoTurnstileRef = useRef<TurnstileHandle>(null)
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -55,12 +60,13 @@ export default function LoginPage() {
     const res = await fetch('/api/auth/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify({ email, password, 'cf-turnstile-response': turnstileToken }),
     })
 
     if (!res.ok) {
-      setError('Email ou mot de passe incorrect')
+      setError(res.status === 403 ? 'Vérification anti-bot échouée. Réessayez.' : 'Email ou mot de passe incorrect')
       setLoading(false)
+      turnstileRef.current?.reset()
       return
     }
 
@@ -79,13 +85,19 @@ export default function LoginPage() {
       const res = await fetch('/api/demo/request', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: demoName.trim(), email: demoEmail.trim(), message: demoMessage.trim() }),
+        body: JSON.stringify({
+          name: demoName.trim(),
+          email: demoEmail.trim(),
+          message: demoMessage.trim(),
+          'cf-turnstile-response': demoTurnstileToken,
+        }),
       })
       if (res.ok) {
         setDemoSent(true)
       } else {
         const data = await res.json().catch(() => ({}))
         setDemoError(data?.error || 'Erreur lors de l\'envoi. Réessayez.')
+        demoTurnstileRef.current?.reset()
       }
     } catch {
       setDemoError('Impossible de contacter le serveur.')
@@ -177,6 +189,10 @@ export default function LoginPage() {
               <Link href="/mot-de-passe-oublie" className="text-[.85rem] font-semibold text-primary-700 hover:underline">Mot de passe oublié ?</Link>
             </div>
 
+            <div className="mb-[18px]">
+              <Turnstile ref={turnstileRef} onTokenChange={setTurnstileToken} />
+            </div>
+
             <button type="submit" disabled={loading} className={`w-full rounded-[11px] bg-primary-700 py-[13px] font-bold text-[.95rem] text-white flex items-center justify-center gap-2 transition-colors hover:bg-primary-800 active:scale-[.99] ${loading ? 'pointer-events-none' : ''}`}>
               {loading ? (
                 <span className="size-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
@@ -228,6 +244,7 @@ export default function LoginPage() {
                     {demoError && (
                       <p className="text-[.82rem] text-red-600 font-medium">{demoError}</p>
                     )}
+                    <Turnstile ref={demoTurnstileRef} onTokenChange={setDemoTurnstileToken} />
                     <button
                       type="submit"
                       disabled={demoSending}

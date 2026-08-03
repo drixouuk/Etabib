@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { moroccoWallTimeToUTC } from '@/lib/morocco-time'
 import { NOTIFICATIONS_EMAIL, BRAND } from '@/lib/brand'
 import { isWritable } from '@/lib/subscription'
+import { verifyTurnstile, clientRemoteIp } from '@/lib/turnstile'
 
 function getCMSURL(): string {
   const url = process.env.NEXT_PUBLIC_CMS_URL
@@ -50,6 +51,11 @@ export async function POST(request: NextRequest) {
   const tenantId = parseInt(tenantIdRaw, 10)
   if (!tenantId) {
     return NextResponse.json({ error: 'Tenant invalide' }, { status: 400 })
+  }
+
+  // Anti-bot Cloudflare Turnstile (token single-use, vérifié côté serveur)
+  if (!(await verifyTurnstile(body['cf-turnstile-response'], clientRemoteIp(request)))) {
+    return NextResponse.json({ error: 'Vérification anti-bot échouée' }, { status: 403 })
   }
 
   // Un cabinet en retard de paiement (grace/suspended/expired) ne prend plus de réservations.

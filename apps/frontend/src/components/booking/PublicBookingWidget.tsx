@@ -1,8 +1,9 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { useTranslations } from 'next-intl'
 import { ChevronLeft, ChevronRight, ArrowRight } from 'lucide-react'
+import Turnstile, { type TurnstileHandle } from '@/components/ui/Turnstile'
 
 const FR_DAYS = ['L', 'M', 'M', 'J', 'V', 'S', 'D']
 
@@ -42,6 +43,8 @@ export default function PublicBookingWidget({ tenantId }: Props) {
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
   const [done, setDone] = useState(false)
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null)
+  const turnstileRef = useRef<TurnstileHandle>(null)
 
   const fetchWeek = useCallback(() => {
     setLoading(true)
@@ -79,6 +82,7 @@ export default function PublicBookingWidget({ tenantId }: Props) {
           email: email.trim(),
           startTime: `${selectedDate}T${selectedTime}`,
           tenantId,
+          'cf-turnstile-response': turnstileToken,
         }),
       })
       if (res.ok) {
@@ -86,6 +90,7 @@ export default function PublicBookingWidget({ tenantId }: Props) {
       } else {
         const data = await res.json()
         setError(data.error || 'Erreur lors de la réservation')
+        turnstileRef.current?.reset()
       }
     } catch { setError('Impossible de contacter le serveur') }
     setSaving(false)
@@ -178,6 +183,7 @@ export default function PublicBookingWidget({ tenantId }: Props) {
                 <input value={email} onChange={e => setEmail(e.target.value)} placeholder="Email" type="email"
                   className="w-full rounded-xl border border-stone-200 bg-white px-4 py-2.5 text-sm focus:border-primary-500 focus:outline-none" />
                 {error && <p className="text-sm text-red-600">{error}</p>}
+                <Turnstile ref={turnstileRef} onTokenChange={setTurnstileToken} />
                 <button onClick={handleSubmit} disabled={saving}
                   className="flex w-full items-center justify-center gap-2 rounded-xl bg-cta-600 py-3.5 text-[.95rem] font-semibold text-white shadow-sm transition-all duration-200 hover:bg-cta-700">
                   {saving ? 'Réservation…' : `Confirmer le ${new Date(selectedDate).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })} à ${selectedTime}`}

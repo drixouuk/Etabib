@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useState, useRef, type FormEvent } from "react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
+import Turnstile, { type TurnstileHandle } from "@/components/ui/Turnstile";
 
 type Props = {
   locale: string;
@@ -16,6 +17,8 @@ export default function ContactForm({ locale }: Props) {
   const [message, setMessage] = useState("");
   const [sending, setSending] = useState(false);
   const [error, setError] = useState("");
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const turnstileRef = useRef<TurnstileHandle>(null);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -25,12 +28,18 @@ export default function ContactForm({ locale }: Props) {
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: name.trim(), phone: phone.trim(), message: message.trim() }),
+        body: JSON.stringify({
+          name: name.trim(),
+          phone: phone.trim(),
+          message: message.trim(),
+          "cf-turnstile-response": turnstileToken,
+        }),
       });
       if (!res.ok) throw new Error();
       setSent(true);
     } catch {
       setError("Erreur lors de l'envoi. Veuillez réessayer.");
+      turnstileRef.current?.reset();
     }
     setSending(false);
   };
@@ -60,6 +69,7 @@ export default function ContactForm({ locale }: Props) {
         <textarea id="message" rows={4} required value={message} onChange={e => setMessage(e.target.value)} placeholder={t("message_placeholder")} className={`${inputClass} resize-none`} />
       </div>
       {error && <p className="text-sm text-red-600">{error}</p>}
+      <Turnstile ref={turnstileRef} onTokenChange={setTurnstileToken} />
       <Button type="submit" disabled={sending} className="w-full bg-primary-700 py-2.5 text-base text-white hover:bg-primary-800 disabled:opacity-50">
         {sending ? "Envoi…" : t("send")}
       </Button>
