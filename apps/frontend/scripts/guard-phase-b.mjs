@@ -138,6 +138,11 @@ if (!calendar.includes('writeStorage(VIEW_STORAGE_KEY, v)')) {
 if (!calendar.includes("'rdv-week-start'") || !calendar.includes("'monday'")) {
   violations.push('RendezVousCalendarClient.tsx — début de semaine configurable (défaut lundi) manquant (B4)');
 }
+if (!calendar.includes('const [mounted, setMounted] = useState(false)')) {
+  violations.push(
+    'RendezVousCalendarClient.tsx — flag mounted manquant : localStorage/matchMedia lus dans l\'initialiseur paresseux causeraient un mismatch d\'hydratation (B4)',
+  );
+}
 
 if (violations.length > 0) {
   console.error(`✗ guard-phase-b — ${violations.length} violation(s) :`);

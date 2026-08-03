@@ -112,17 +112,14 @@ export default function RendezVousCalendarClient({ initialBookings, tenantId }: 
 
   const today = useMemo(() => new Date(), [])
   const [events, setEvents] = useState<CalBooking[]>(initialBookings)
-  // B4 — vue persistée par device ; sans préférence : mois sur desktop
-  // (pointeur précis), semaine sur tactile (pointer: coarse).
-  const [view, setView] = useState<View>(() => {
-    const saved = readStorage(VIEW_STORAGE_KEY)
-    if (saved === 'mois' || saved === 'semaine') return saved
-    return typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches ? 'semaine' : 'mois'
-  })
-  const [weekStart, setWeekStart] = useState<WeekStart>(() => {
-    const saved = readStorage(WEEK_START_STORAGE_KEY)
-    return saved === 'sunday' || saved === 'saturday' ? saved : 'monday'
-  })
+  // B4 — vue persistée par device. Défaut serveur STABLE ('mois') : les
+  // lectures localStorage/matchMedia sont des API client-only — les faire
+  // dans l'initialiseur paresseux créerait un mismatch d'hydratation pour
+  // tout visiteur ayant une préférence stockée (SSR ≠ premier rendu client).
+  // La préférence réelle est lue APRÈS montage (voir effet ci-dessous).
+  const [view, setView] = useState<View>('mois')
+  const [weekStart, setWeekStart] = useState<WeekStart>('monday')
+  const [mounted, setMounted] = useState(false)
   const changeView = (v: View) => {
     setView(v)
     writeStorage(VIEW_STORAGE_KEY, v)
@@ -132,6 +129,17 @@ export default function RendezVousCalendarClient({ initialBookings, tenantId }: 
     writeStorage(WEEK_START_STORAGE_KEY, w)
   }
   const [cursor, setCursor] = useState(() => new Date(today.getFullYear(), today.getMonth(), 1))
+
+  useEffect(() => {
+    // B4 — après hydratation : préférence stockée, sinon défaut par device
+    // (tactile → semaine, pointeur précis → mois).
+    const saved = readStorage(VIEW_STORAGE_KEY)
+    if (saved === 'mois' || saved === 'semaine') setView(saved)
+    else if (window.matchMedia('(pointer: coarse)').matches) setView('semaine')
+    const ws = readStorage(WEEK_START_STORAGE_KEY)
+    if (ws === 'sunday' || ws === 'saturday') setWeekStart(ws)
+    setMounted(true)
+  }, [])
   const [listMode, setListMode] = useState<'avenir' | 'passes'>('avenir')
   const [editing, setEditing] = useState<CalBooking | null>(null)
   const [creating, setCreating] = useState<string | null>(null)
@@ -334,6 +342,13 @@ export default function RendezVousCalendarClient({ initialBookings, tenantId }: 
         <p className="text-[13.5px] text-stone-600 capitalize">{fmtDayLong(today.toISOString())}</p>
       </div>
 
+      {!mounted ? (
+        // Placeholder stable SSR/client : la vue réelle n'est montée qu'après
+        // hydratation (lecture de la préférence) — aucun flash de vue.
+        <div className="rounded-2xl border border-stone-200 bg-white p-8 text-center text-sm text-stone-500 shadow-sm">
+          Chargement du calendrier…
+        </div>
+      ) : (
       <div className="grid grid-cols-1 gap-6 lg:h-[calc(100vh-190px)] lg:grid-cols-3">
         {/* Calendrier — 2/3 */}
         <div className="lg:col-span-2 lg:flex lg:min-h-0 lg:flex-col">
@@ -601,6 +616,7 @@ export default function RendezVousCalendarClient({ initialBookings, tenantId }: 
           </div>
         </div>
       </div>
+      )}
 
       {/* B1 — « look first, edit second » : le tap ouvre la vue lecture ;
           « Modifier » y monte le formulaire. La création reste en formulaire. */}
