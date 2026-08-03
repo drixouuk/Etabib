@@ -3,7 +3,7 @@ import { verifyDemoToken, consumeDemoToken } from '@/lib/demo-tokens'
 import { sendEmail } from '@/lib/resend-send'
 
 const CMS_URL = process.env.NEXT_PUBLIC_CMS_URL || 'https://cms.etabibi.ma'
-const CMS_API_KEY = process.env.PAYLOAD_API_KEY || ''
+const CMS_API_KEY = process.env.INTERNAL_BOOKING_API_KEY || ''
 
 const DEMO_EMAIL = 'drdemo@gmail.com'
 
@@ -40,7 +40,7 @@ export async function GET(req: NextRequest) {
     const newPassword = generatePassword()
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${CMS_API_KEY}`,
+      'x-internal-api-key': CMS_API_KEY,
     }
 
     const findRes = await fetch(`${CMS_URL}/api/users?where[email][equals]=${encodeURIComponent(DEMO_EMAIL)}&limit=1`, { headers })

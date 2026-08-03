@@ -17,14 +17,14 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Non autorisé' }, { status: 403 })
   }
 
-  const apiKey = process.env.PAYLOAD_API_KEY
+  const apiKey = process.env.INTERNAL_BOOKING_API_KEY
   if (!apiKey) {
     return NextResponse.json({ error: 'Configuration serveur incomplète' }, { status: 500 })
   }
 
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
-    Authorization: `Bearer ${apiKey}`,
+    'x-internal-api-key': apiKey,
   }
 
   const findRes = await fetch(`${CMS_URL}/api/users?where[email][equals]=${encodeURIComponent(DEMO_EMAIL)}&limit=1`, { headers })

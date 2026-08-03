@@ -1,5 +1,12 @@
 import type { CollectionConfig } from 'payload'
 
+// Clé interne serveur-à-serveur (même pattern que CalBookings/Tenants/Subscriptions) :
+// utilisée par les routes frontend (demo approve / reset) pour gérer le compte démo.
+function isInternalKey(req: any): boolean {
+  const apiKey = req?.headers?.get?.('x-internal-api-key') || req?.headers?.['x-internal-api-key']
+  return !!apiKey && apiKey === process.env.INTERNAL_BOOKING_API_KEY
+}
+
 export const Users: CollectionConfig = {
   slug: 'users',
   auth: {
@@ -21,7 +28,9 @@ export const Users: CollectionConfig = {
 
       return callerTenantId === targetTenantId
     },
-    update: ({ req: { user }, id }: any) => {
+    update: ({ req, id }: any) => {
+      if (isInternalKey(req)) return true
+      const user = req?.user
       const roles: string[] = user?.roles ?? []
       if (roles.includes('superadmin')) return true
       if (user?.id === id) return true
@@ -32,7 +41,9 @@ export const Users: CollectionConfig = {
       }
       return false
     },
-    read: ({ req: { user } }: any) => {
+    read: ({ req }: any) => {
+      if (isInternalKey(req)) return true
+      const user = req?.user
       if ((user?.roles as string[])?.includes('superadmin')) return true
       if (!user?.tenant) return false
       return {
