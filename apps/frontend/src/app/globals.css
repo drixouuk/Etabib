@@ -182,8 +182,10 @@
  *
  * Le scroll de l'app se fait sur <body> ; .app-scroll (posé par LayoutShell)
  * marque la région de contenu dans le flux de scroll. Tout élément avec
- * backdrop-filter y devient un layer GPU indépendant → compositor mobile
- * saturé → écran blanc au scroll sur iOS WebKit / Android Blink.
+ * backdrop-filter OU filter y devient un layer GPU indépendant → compositor
+ * mobile saturé → écran blanc au scroll sur iOS WebKit / Android Blink.
+ * (filter: est de la même famille que backdrop-filter : il force aussi un
+ * layer — d'où sa neutralisation ici, pas seulement le blur.)
  *
  * Les overlays shadcn (Sheet, Dialog, Toaster) sont portalisés sur <body>,
  * HORS de .app-scroll : ils gardent leur blur. Idem pour les nav fixes
@@ -194,4 +196,5 @@
 .app-scroll *::after {
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
+  filter: none !important;
 }

@@ -62,8 +62,11 @@ const DARK_SURFACE_TOKENS = new Set(['--_color-surface', '--_color-surface-work'
 
 const RATIO_COMMENT = /\/\*[^*]*\d+\.\d{2}:1/;
 
-// A3 — blur : classes Tailwind backdrop-blur-* ou CSS backdrop-filter.
-const BLUR_RE = /backdrop-blur(?:-[a-z\d]+|\[[^\]]+\])?|backdrop-filter/;
+// A3 — blur/filtres : classes Tailwind (backdrop-blur-*, blur-*, drop-shadow-*,
+// grayscale-*) ou CSS (backdrop-filter:, filter:). filter: force un layer GPU
+// comme backdrop-filter (même famille que le bug #166).
+const BLUR_RE =
+  /backdrop-blur(?:-[a-z\d]+|\[[^\]]+\])?|backdrop-filter|filter\s*:|drop-shadow(?:-[a-z\d]+|\[[^\]]+\])|blur(?:-[a-z\d]+|\[[^\]]+\])|grayscale(?:-[a-z\d]+|\[[^\]]+\])/;
 
 // Exceptions A3 nommées avec leur raison — toutes hors du flux de scroll
 // (.app-scroll) : elles gardent le blur, comme la nav yuvomi.
@@ -235,7 +238,7 @@ for (const { full, rel } of scanned) {
     const reason = A3_EXCEPTIONS.get(rel);
     if (!reason) {
       violations.push(
-        `${rel} — backdrop-blur / backdrop-filter hors de src/components/ui/ (overlays). `
+        `${rel} — blur / filtre (backdrop-blur, blur-*, drop-shadow-*, grayscale-*, backdrop-filter:, filter:) hors de src/components/ui/ (overlays). `
         + `Ajouter la classe app-scroll ou déplacer l'effet dans un overlay ui/.`,
       );
     }
