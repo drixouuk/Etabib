@@ -80,7 +80,7 @@ export default function EditPatientForm({ patient }: Props) {
   }
 
   const inputClass =
-    'w-full rounded-lg border border-stone-300 bg-white px-4 py-2.5 text-sm text-stone-800 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none'
+    'w-full rounded-lg border border-stone-300 bg-white px-4 py-2.5 text-sm text-stone-800 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20'
 
   return (
     <form onSubmit={handleSubmit} className="mt-8 flex flex-col gap-4">

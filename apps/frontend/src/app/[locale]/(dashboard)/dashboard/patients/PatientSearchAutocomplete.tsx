@@ -84,7 +84,7 @@ export default function PatientSearchAutocomplete({ initialQ = '' }: { initialQ?
           onBlur={closeSoon}
           placeholder="Rechercher par nom ou CIN…"
           autoComplete="off"
-          className="min-w-0 flex-1 border-none bg-transparent text-sm text-stone-800 placeholder:text-stone-600 focus:outline-none"
+          className="min-w-0 flex-1 border-none bg-transparent text-sm text-stone-800 placeholder:text-stone-600"
         />
         {query && (
           <button

@@ -64,7 +64,7 @@ export default function SharePatientWidget({ patientId, sharedWithIds, isCliniqu
         )}
         {doctors.filter(d => !shared.includes(d.id)).length > 0 && (
           <select value="" onChange={(e) => { if (e.target.value) share(e.target.value) }}
-            className="rounded-lg border border-warm bg-white px-3 py-1.5 text-xs text-stone-600 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none">
+            className="rounded-lg border border-warm bg-white px-3 py-1.5 text-xs text-stone-600 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20">
             <option value="">+ Partager avec un confrère</option>
             {doctors.filter(d => !shared.includes(d.id)).map(d => (
               <option key={d.id} value={d.id}>{d.name} — {d.email}</option>

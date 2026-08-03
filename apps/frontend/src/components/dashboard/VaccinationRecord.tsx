@@ -21,7 +21,7 @@ const ROUTE_OPTIONS = [
   { value: 'intradermal', label: 'ID' },
 ]
 
-const inputClass = 'rounded border border-stone-300 px-2 py-1 text-xs focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none'
+const inputClass = 'rounded border border-stone-300 px-2 py-1 text-xs focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20'
 
 function computeAgeMonths(birthDate: string): number {
   const now = new Date(); const birth = new Date(birthDate)

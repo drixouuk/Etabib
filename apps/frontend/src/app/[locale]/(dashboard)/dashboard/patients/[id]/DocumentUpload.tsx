@@ -81,7 +81,7 @@ export default function DocumentUpload({ patientId, documents }: Props) {
               value={documentType}
               onChange={e => setDocumentType(e.target.value)}
               required
-              className="w-full rounded-lg border border-stone-300 bg-white px-4 py-2.5 text-sm focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
+              className="w-full rounded-lg border border-stone-300 bg-white px-4 py-2.5 text-sm focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20"
             >
               <option value="radio">Radio</option>
               <option value="analyse">Analyse</option>

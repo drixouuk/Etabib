@@ -6,11 +6,13 @@
  *
  *   G1. Tokens privés (--_x) assignés UNIQUEMENT dans :root ou un bloc dark
  *       (.dark, [data-theme=…], @media (prefers-color-scheme: dark)).
- *   G2. Tokens publics (--color-*, --module-*, --glass-*, --focus-*) jamais
+ *   G2. Tokens publics (--color-*, --module-*, --glass-*) jamais
  *       assignés à une valeur littérale — indirection var() uniquement.
  *       EXCEPTION documentée : les arêtes (--color-border[-subtle|-strong],
  *       --glass-border-subtle) peuvent recevoir un hex en contexte dark —
  *       décision « bordures indépendantes » (item A2, cf. yuvomi v1.57.0).
+ *       (Les --focus-ring-* sont des tokens de DIMENSION — width/offset —
+ *       hors du champ de l'indirection couleur.)
  *   A2. Arêtes dark — pour chaque palier (--_color-border-subtle, --border,
  *       --_color-border-strong et leurs alias publics) en contexte dark :
  *       (a) hex fixe à 6 chiffres, (b) hex ≠ hex des surfaces dark du fichier
@@ -18,6 +20,11 @@
  *   A3. Discipline no-blur : aucun backdrop-blur (classe Tailwind) ni
  *       backdrop-filter (CSS) hors de src/components/ui/ (overlays) — les
  *       exceptions sont nommées avec leur raison, cf. pattern yuvomi.
+ *       Hardening : couvre aussi filter:, drop-shadow-*, blur-*, grayscale-*.
+ *   A5. Focus ring : aucune classe outline-* ni propriété outline: dans
+ *       src/components/** (hors ui/) et src/app/** — la règle de base
+ *       :focus-visible vit dans globals.css ; une exception documentée ne
+ *       surcharge QUE --focus-ring-color.
  *   G3. tokens.css est bien importé par globals.css (sinon les tokens
  *       n'existent qu'à moitié).
  *
@@ -181,7 +188,7 @@ for (const { file, decls } of readStylesheets()) {
 
     // G2 — publics en littéral (hors exception arêtes en dark)
     if (
-      /^--(color|module|glass|focus)-/.test(d.name) &&
+      /^--(color|module|glass)-/.test(d.name) &&
       !d.value.includes('var(') &&
       !(EDGE_EXCEPTION.has(d.name) && dark)
     ) {
@@ -227,6 +234,13 @@ function sourceFiles(dir, prefix) {
   return out;
 }
 
+// A5 — outline : classe Tailwind outline-* ou propriété CSS outline:.
+// La règle de base :focus-visible vit dans globals.css (non scanné) ; les
+// composants ne posent aucun outline. Exceptions documentées (map, vide pour
+// l'instant) : une exception CSS ne surcharge QUE --focus-ring-color.
+const OUTLINE_RE = /\boutline(?:-[a-zA-Z0-9_[\]]+|:)/;
+const A5_EXCEPTIONS = new Map([]);
+
 const uiDir = path.join(COMPONENTS_DIR, 'ui');
 const scanned = [
   ...sourceFiles(COMPONENTS_DIR).filter((f) => !f.rel.startsWith('src/components/ui/')),
@@ -243,6 +257,15 @@ for (const { full, rel } of scanned) {
       );
     }
   }
+  if (OUTLINE_RE.test(src)) {
+    const reason = A5_EXCEPTIONS.get(rel);
+    if (!reason) {
+      violations.push(
+        `${rel} — classe outline-* ou propriété outline: hors de la règle de base :focus-visible (globals.css). `
+        + `Une exception documentée ne surcharge QUE --focus-ring-color.`,
+      );
+    }
+  }
 }
 
 if (violations.length > 0) {
@@ -250,4 +273,4 @@ if (violations.length > 0) {
   for (const v of violations) console.error(`  ${v}`);
   process.exit(1);
 }
-console.log('✓ guard-design — invariants A1 + A2 + A3 respectés');
+console.log('✓ guard-design — invariants A1 + A2 + A3 + A5 respectés');

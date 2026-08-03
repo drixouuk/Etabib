@@ -96,7 +96,7 @@ export default function PatientClinicalFields({ patientId, initialData }: Props)
                   rows={4}
                   value={val}
                   onChange={(e) => setValues((prev) => ({ ...prev, [f.key]: e.target.value }))}
-                  className="w-full rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm text-stone-800 placeholder:text-stone-600 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
+                  className="w-full rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm text-stone-800 placeholder:text-stone-600 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20"
                   placeholder={`Saisir ${f.label.toLowerCase()}...`}
                 />
                 <div className="flex items-center gap-2">

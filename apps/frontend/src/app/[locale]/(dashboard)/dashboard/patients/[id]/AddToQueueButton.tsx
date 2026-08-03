@@ -69,7 +69,7 @@ export default function AddToQueueButton({ patientId }: Props) {
           id="visitReason"
           value={reason}
           onChange={(e) => setReason(e.target.value)}
-          className="rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
+          className="rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20"
         >
           <option value="consultation">Consultation</option>
           <option value="controle">Contrôle</option>

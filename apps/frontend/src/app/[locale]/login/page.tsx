@@ -166,7 +166,7 @@ export default function LoginPage() {
                   id="email" name="email" type="email" required autoComplete="email"
                   value={email}
                   onChange={e => setEmail(e.target.value)}
-                  className="w-full rounded-[11px] border border-stone-200 bg-white px-[14px] py-3 text-[.94rem] text-stone-800 placeholder:text-stone-400 focus:border-primary-500 focus:shadow-[0_0_0_3.5px_rgba(13,148,136,.14)] focus:outline-none transition-colors"
+                  className="w-full rounded-[11px] border border-stone-200 bg-white px-[14px] py-3 text-[.94rem] text-stone-800 placeholder:text-stone-400 focus:border-primary-500 focus:shadow-[0_0_0_3.5px_rgba(13,148,136,.14)] transition-colors"
                 />
               </div>
             </div>
@@ -177,7 +177,7 @@ export default function LoginPage() {
                 <input
                   id="password" name="password" type={showPwd ? 'text' : 'password'} required autoComplete="current-password"
                   placeholder="••••••••"
-                  className="w-full rounded-[11px] border border-stone-200 bg-white px-[14px] py-3 pr-10 text-[.94rem] text-stone-800 placeholder:text-stone-400 focus:border-primary-500 focus:shadow-[0_0_0_3.5px_rgba(13,148,136,.14)] focus:outline-none transition-colors"
+                  className="w-full rounded-[11px] border border-stone-200 bg-white px-[14px] py-3 pr-10 text-[.94rem] text-stone-800 placeholder:text-stone-400 focus:border-primary-500 focus:shadow-[0_0_0_3.5px_rgba(13,148,136,.14)] transition-colors"
                 />
                 <button type="button" onClick={() => setShowPwd(!showPwd)} className="absolute right-[11px] top-1/2 -translate-y-1/2 flex items-center justify-center size-[26px] text-stone-500 bg-transparent border-none cursor-pointer" aria-label="Afficher le mot de passe">
                   {showPwd ? <EyeOff className="size-[18px]" /> : <Eye className="size-[18px]" />}
@@ -224,7 +224,7 @@ export default function LoginPage() {
                       value={demoName}
                       onChange={e => setDemoName(e.target.value)}
                       required
-                      className="w-full rounded-[11px] border border-stone-200 bg-white px-[14px] py-2.5 text-[.88rem] text-stone-800 placeholder:text-stone-400 focus:border-primary-500 focus:shadow-[0_0_0_3.5px_rgba(13,148,136,.14)] focus:outline-none transition-colors"
+                      className="w-full rounded-[11px] border border-stone-200 bg-white px-[14px] py-2.5 text-[.88rem] text-stone-800 placeholder:text-stone-400 focus:border-primary-500 focus:shadow-[0_0_0_3.5px_rgba(13,148,136,.14)] transition-colors"
                     />
                     <input
                       type="email"
@@ -232,14 +232,14 @@ export default function LoginPage() {
                       value={demoEmail}
                       onChange={e => setDemoEmail(e.target.value)}
                       required
-                      className="w-full rounded-[11px] border border-stone-200 bg-white px-[14px] py-2.5 text-[.88rem] text-stone-800 placeholder:text-stone-400 focus:border-primary-500 focus:shadow-[0_0_0_3.5px_rgba(13,148,136,.14)] focus:outline-none transition-colors"
+                      className="w-full rounded-[11px] border border-stone-200 bg-white px-[14px] py-2.5 text-[.88rem] text-stone-800 placeholder:text-stone-400 focus:border-primary-500 focus:shadow-[0_0_0_3.5px_rgba(13,148,136,.14)] transition-colors"
                     />
                     <textarea
                       placeholder="Message (optionnel)"
                       value={demoMessage}
                       onChange={e => setDemoMessage(e.target.value)}
                       rows={2}
-                      className="w-full rounded-[11px] border border-stone-200 bg-white px-[14px] py-2.5 text-[.88rem] text-stone-800 placeholder:text-stone-400 focus:border-primary-500 focus:shadow-[0_0_0_3.5px_rgba(13,148,136,.14)] focus:outline-none transition-colors resize-none"
+                      className="w-full rounded-[11px] border border-stone-200 bg-white px-[14px] py-2.5 text-[.88rem] text-stone-800 placeholder:text-stone-400 focus:border-primary-500 focus:shadow-[0_0_0_3.5px_rgba(13,148,136,.14)] transition-colors resize-none"
                     />
                     {demoError && (
                       <p className="text-[.82rem] text-red-600 font-medium">{demoError}</p>

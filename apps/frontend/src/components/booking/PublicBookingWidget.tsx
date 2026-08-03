@@ -177,11 +177,11 @@ export default function PublicBookingWidget({ tenantId }: Props) {
             {selectedDate && selectedTime && (
               <div className="border-t border-stone-200 px-[22px] py-[18px] space-y-3">
                 <input value={name} onChange={e => setName(e.target.value)} placeholder="Nom complet *"
-                  className="w-full rounded-xl border border-stone-200 bg-white px-4 py-2.5 text-sm focus:border-primary-500 focus:outline-none" />
+                  className="w-full rounded-xl border border-stone-200 bg-white px-4 py-2.5 text-sm focus:border-primary-500" />
                 <input value={phone} onChange={e => setPhone(e.target.value)} placeholder="Téléphone"
-                  className="w-full rounded-xl border border-stone-200 bg-white px-4 py-2.5 text-sm focus:border-primary-500 focus:outline-none" />
+                  className="w-full rounded-xl border border-stone-200 bg-white px-4 py-2.5 text-sm focus:border-primary-500" />
                 <input value={email} onChange={e => setEmail(e.target.value)} placeholder="Email" type="email"
-                  className="w-full rounded-xl border border-stone-200 bg-white px-4 py-2.5 text-sm focus:border-primary-500 focus:outline-none" />
+                  className="w-full rounded-xl border border-stone-200 bg-white px-4 py-2.5 text-sm focus:border-primary-500" />
                 {error && <p className="text-sm text-red-600">{error}</p>}
                 <Turnstile ref={turnstileRef} onTokenChange={setTurnstileToken} />
                 <button onClick={handleSubmit} disabled={saving || !turnstileToken}

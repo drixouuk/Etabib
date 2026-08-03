@@ -164,7 +164,7 @@ export default function PrescriptionForm({ patientId, prescriptions, consultatio
     setSaving(false)
   }
 
-  const inputClass = 'w-full rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm text-stone-800 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none'
+  const inputClass = 'w-full rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm text-stone-800 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20'
 
   return (
     <div className="flex flex-col gap-4 p-4">
@@ -183,7 +183,7 @@ export default function PrescriptionForm({ patientId, prescriptions, consultatio
                     if (t.notes) setNotes(t.notes)
                   }
                 }}
-                className="rounded-lg border border-warm bg-white px-3 py-2 text-sm text-stone-800 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
+                className="rounded-lg border border-warm bg-white px-3 py-2 text-sm text-stone-800 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20"
               >
                 <option value="">Charger un modèle...</option>
                 {templates.map(t => (
@@ -292,7 +292,7 @@ export default function PrescriptionForm({ patientId, prescriptions, consultatio
               <div className="flex items-center gap-2">
                 <input value={templateName} onChange={e => setTemplateName(e.target.value)}
                   placeholder="Nom du modèle" autoFocus
-                  className="rounded-lg border border-warm bg-white px-3 py-2 text-sm text-stone-800 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none" />
+                  className="rounded-lg border border-warm bg-white px-3 py-2 text-sm text-stone-800 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20" />
                 <button type="button" onClick={saveAsTemplate} disabled={savingTemplate || !templateName.trim()}
                   className="rounded-lg bg-cta-600 px-3 py-2 text-sm font-medium text-white hover:bg-cta-700 disabled:opacity-50">
                   Enregistrer

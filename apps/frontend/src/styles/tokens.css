@@ -69,6 +69,22 @@
   --color-accent-brand-hover: var(--_color-accent-brand-hover);
   --_color-on-accent-brand: #FFFFFF;    /* 5.47:1 sur #0F766E — AA */
   --color-on-accent-brand: var(--_color-on-accent-brand);
+
+  /* --------------------------------------------------------
+   * 5. Focus ring — 3 tokens, PAS de shorthand (cf. yuvomi v1.60.0) :
+   *    un `--focus-ring` combiné sur :root bâclerait la couleur à la
+   *    déclaration et rendrait les overrides locaux muets. Les composants
+   *    écrivent les deux lignes (width+color, offset), et une exception
+   *    justifiée ne surcharge QUE --focus-ring-color.
+   *    Couleur = accent du module actif (--active-module-accent, posé par
+   *    les layouts, item A6) ; fallback --color-accent-brand.
+   *    --focus-ring-offset-inset : pour les éléments sur bord clippé
+   *    (overflow: hidden sur un ancêtre coupe un offset positif).
+   * -------------------------------------------------------- */
+  --focus-ring-width:        2px;
+  --focus-ring-color:        var(--active-module-accent, var(--color-accent-brand));
+  --focus-ring-offset:       2px;
+  --focus-ring-offset-inset: -2px;
 }
 
 /* --------------------------------------------------------

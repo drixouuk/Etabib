@@ -52,7 +52,7 @@ export default function ReferringPractitionersWidget({ patientId, initialIds }: 
       )}
       {available.length > 0 && (
         <select value="" onChange={(e) => { if (e.target.value) toggle(e.target.value) }}
-          className="w-full rounded-lg border border-warm bg-white px-3 py-1.5 text-xs text-stone-600 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none">
+          className="w-full rounded-lg border border-warm bg-white px-3 py-1.5 text-xs text-stone-600 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20">
           <option value="">+ Ajouter un médecin référent</option>
           {available.map(p => (
             <option key={p.id} value={p.id}>{p.name}{p.specialty ? ` — ${p.specialty}` : ''}{p.city ? ` (${p.city})` : ''}</option>

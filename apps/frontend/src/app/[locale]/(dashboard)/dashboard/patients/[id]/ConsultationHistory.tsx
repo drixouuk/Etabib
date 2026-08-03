@@ -49,19 +49,19 @@ export default function ConsultationHistory({ consultations, doctorInfo, patient
               <label className="mb-0.5 block text-xs text-stone-600">Rechercher</label>
               <input type="text" value={filterQuery} onChange={e => setFilterQuery(e.target.value)}
                 placeholder="Motif, diagnostic..."
-                className="w-full rounded-lg border border-warm bg-white px-3 py-1.5 text-sm text-stone-800 placeholder:text-stone-600 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
+                className="w-full rounded-lg border border-warm bg-white px-3 py-1.5 text-sm text-stone-800 placeholder:text-stone-600 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20"
               />
             </div>
             <div>
               <label className="mb-0.5 block text-xs text-stone-600">Du</label>
               <input type="date" value={filterDateFrom} onChange={e => setFilterDateFrom(e.target.value)}
-                className="rounded-lg border border-warm bg-white px-2 py-1.5 text-sm text-stone-800 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
+                className="rounded-lg border border-warm bg-white px-2 py-1.5 text-sm text-stone-800 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20"
               />
             </div>
             <div>
               <label className="mb-0.5 block text-xs text-stone-600">Au</label>
               <input type="date" value={filterDateTo} onChange={e => setFilterDateTo(e.target.value)}
-                className="rounded-lg border border-warm bg-white px-2 py-1.5 text-sm text-stone-800 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
+                className="rounded-lg border border-warm bg-white px-2 py-1.5 text-sm text-stone-800 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20"
               />
             </div>
             {(filterQuery || filterDateFrom || filterDateTo) && (

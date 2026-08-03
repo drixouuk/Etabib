@@ -28,7 +28,7 @@ const tiers: TierDef[] = [
 
 type SuccessData = { domain: string; email: string }
 
-const inputClass = 'w-full rounded-lg border border-stone-300 bg-white px-4 py-2.5 text-sm text-stone-800 placeholder:text-stone-400 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none transition-colors duration-200'
+const inputClass = 'w-full rounded-lg border border-stone-300 bg-white px-4 py-2.5 text-sm text-stone-800 placeholder:text-stone-400 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-colors duration-200'
 const labelClass = 'mb-1 block text-sm font-medium text-stone-700'
 
 export default function OnboardingFlow() {

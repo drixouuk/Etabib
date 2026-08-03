@@ -73,7 +73,7 @@ export default function PatientSearchBar() {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Rechercher un patient…"
-            className="flex-1 border-none bg-transparent text-sm text-stone-800 placeholder:text-stone-600 focus:outline-none"
+            className="flex-1 border-none bg-transparent text-sm text-stone-800 placeholder:text-stone-600"
           />
           {loading && <Loader2 className="size-4 animate-spin text-stone-600" />}
           {!loading && <kbd className="ml-auto rounded-md bg-stone-100 px-2 py-0.5 text-[10.5px] text-stone-600">⌘K</kbd>}
