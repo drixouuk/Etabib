@@ -2,8 +2,8 @@ import { getTenantId } from '@/lib/tenant'
 import { requireAuth } from '@/lib/auth'
 import { fetchCMS } from '@/lib/cms-fetch'
 import { Link } from '@/i18n/navigation'
-import { AlertTriangle, CalendarCheck } from 'lucide-react'
-import { computePatientAlerts, computeAgeMonths } from '@/lib/vaccination-utils'
+import { CalendarCheck } from 'lucide-react'
+import { computePatientAlerts } from '@/lib/vaccination-utils'
 import type { ScheduleEntry, VaccinationData } from '@/lib/vaccination-utils'
 
 type Patient = {
@@ -29,10 +29,7 @@ export default async function VaccinationAlerts() {
 
   if (patients.length === 0) {
     return (
-      <div className="rounded-xl border border-warm bg-white p-4 shadow-sm">
-        <h3 className="font-heading text-base font-semibold text-stone-800">Rappels vaccinaux</h3>
-        <p className="mt-2 text-sm text-stone-500">Aucun patient enregistré</p>
-      </div>
+      <p className="text-sm text-stone-500">Aucun patient enregistré</p>
     )
   }
 
@@ -43,23 +40,15 @@ export default async function VaccinationAlerts() {
 
   if (alerts.length === 0) {
     return (
-      <div className="rounded-xl border border-primary/15 bg-primary-50 p-4">
-        <div className="flex items-center gap-2">
-          <CalendarCheck className="size-5 text-primary-600" />
-          <h3 className="font-heading text-base font-semibold text-primary-700">Rappels vaccinaux</h3>
-        </div>
-        <p className="mt-2 text-sm text-primary-600">Tous les patients sont à jour</p>
+      <div className="flex items-center gap-2 rounded-[10px] bg-primary-50 px-3.5 py-3 text-[13px] text-primary-700">
+        <CalendarCheck className="size-5 shrink-0 text-primary-600" />
+        Tous les patients sont à jour
       </div>
     )
   }
 
   return (
-    <div className="rounded-xl border border-warm bg-white shadow-sm">
-      <div className="flex items-center gap-2 border-b border-stone-100 px-4 py-3">
-        <AlertTriangle className="size-5 text-warning" />
-        <h3 className="font-heading text-base font-semibold text-stone-800">Rappels vaccinaux</h3>
-      </div>
-      <div className="divide-y divide-stone-100">
+    <div className="divide-y divide-stone-100">
         {alerts.map((a) => (
           <div key={a!.patientId} className="flex items-center justify-between px-4 py-2.5">
             <div className="min-w-0 flex-1">
@@ -88,6 +77,5 @@ export default async function VaccinationAlerts() {
           </div>
         ))}
       </div>
-    </div>
   )
 }
