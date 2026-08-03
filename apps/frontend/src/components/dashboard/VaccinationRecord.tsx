@@ -122,7 +122,7 @@ export default function VaccinationRecord({ patientId, schedule, vaccinations, p
               <th className="px-4 py-2.5 font-medium">Statut</th>
               <th className="px-4 py-2.5 font-medium hidden md:table-cell">Voie</th>
               <th className="px-4 py-2.5 font-medium hidden md:table-cell">Lot</th>
-              <th className="w-[310px] px-4 py-2.5 font-medium" />
+              <th className="px-4 py-2.5 font-medium" />
             </tr>
           </thead>
           <tbody className="divide-y divide-stone-100">
@@ -165,7 +165,7 @@ export default function VaccinationRecord({ patientId, schedule, vaccinations, p
                   <td className={`px-4 py-2.5 ${statusColor}`}><span className="flex items-center gap-1.5">{statusIcon}{statusText}</span></td>
                   <td className="px-4 py-2.5 text-stone-600 hidden md:table-cell">{done?.administrationRoute || '—'}</td>
                   <td className="px-4 py-2.5 text-stone-600 hidden md:table-cell text-xs font-mono">{done?.lotNumber || '—'}</td>
-                  <td className="w-[310px] px-4 py-2.5">
+                  <td className="px-4 py-2.5"><div className="min-w-[300px]">
                     {!done && !excluded && !showForm && (
                       <div className="flex items-center gap-1">
                         <button onClick={() => { setActiveForm(key); setDateValue(new Date().toISOString().slice(0, 10)); setRouteValue(''); setLotValue('') }}
@@ -179,11 +179,11 @@ export default function VaccinationRecord({ patientId, schedule, vaccinations, p
                     {showForm && (
                       <div className="flex items-center gap-1.5 flex-nowrap">
                         <input type="date" value={dateValue} onChange={(e) => setDateValue(e.target.value)} className={`w-24 ${inputClass}`} />
-                        <select value={routeValue} onChange={e => setRouteValue(e.target.value)} className={`w-16 ${inputClass}`}>
+                        <select value={routeValue} onChange={e => setRouteValue(e.target.value)} className={`w-14 ${inputClass}`}>
                           <option value="">Voie</option>
                           {ROUTE_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
                         </select>
-                        <input type="text" value={lotValue} onChange={e => setLotValue(e.target.value)} placeholder="Lot" className={`w-20 ${inputClass}`} />
+                        <input type="text" value={lotValue} onChange={e => setLotValue(e.target.value)} placeholder="Lot" className={`w-16 ${inputClass}`} />
                         <button onClick={() => handleSubmit(entry)} disabled={saving}
                           className="rounded bg-cta-600 px-2.5 py-1 text-xs font-medium text-white hover:bg-cta-700 disabled:opacity-50">{saving ? '…' : 'OK'}</button>
                         <button onClick={() => setActiveForm(null)} className="text-xs text-stone-600 hover:text-stone-600">✕</button>
@@ -194,12 +194,12 @@ export default function VaccinationRecord({ patientId, schedule, vaccinations, p
                         <input type="date" value={editForm.date}
                           onChange={(e) => setEditForm({ ...editForm, date: e.target.value })} className={`w-24 ${inputClass}`} />
                         <select value={editForm.route}
-                          onChange={(e) => setEditForm({ ...editForm, route: e.target.value })} className={`w-16 ${inputClass}`}>
+                          onChange={(e) => setEditForm({ ...editForm, route: e.target.value })} className={`w-14 ${inputClass}`}>
                           <option value="">Voie</option>
                           {ROUTE_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
                         </select>
                         <input type="text" value={editForm.lot}
-                          onChange={(e) => setEditForm({ ...editForm, lot: e.target.value })} placeholder="Lot" className={`w-20 ${inputClass}`} />
+                          onChange={(e) => setEditForm({ ...editForm, lot: e.target.value })} placeholder="Lot" className={`w-16 ${inputClass}`} />
                         <button onClick={saveEdit} disabled={saving}
                           className="rounded bg-cta-600 px-2.5 py-1 text-xs font-medium text-white hover:bg-cta-700 disabled:opacity-50">{saving ? '…' : 'OK'}</button>
                         <button onClick={() => setEditForm(null)} className="text-xs text-stone-600 hover:text-stone-600">✕</button>
@@ -218,7 +218,7 @@ export default function VaccinationRecord({ patientId, schedule, vaccinations, p
                         ✎ Modifier
                       </button>
                     )}
-                  </td>
+                  </div></td>
                 </tr>
               )
             })}

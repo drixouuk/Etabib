@@ -193,7 +193,7 @@ export default function LoginPage() {
               <Turnstile ref={turnstileRef} onTokenChange={setTurnstileToken} />
             </div>
 
-            <button type="submit" disabled={loading} className={`w-full rounded-[11px] bg-primary-700 py-[13px] font-bold text-[.95rem] text-white flex items-center justify-center gap-2 transition-colors hover:bg-primary-800 active:scale-[.99] ${loading ? 'pointer-events-none' : ''}`}>
+            <button type="submit" disabled={loading || !turnstileToken} className={`w-full rounded-[11px] bg-primary-700 py-[13px] font-bold text-[.95rem] text-white flex items-center justify-center gap-2 transition-colors hover:bg-primary-800 active:scale-[.99] ${loading ? 'pointer-events-none' : ''}`}>
               {loading ? (
                 <span className="size-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
               ) : (
@@ -247,7 +247,7 @@ export default function LoginPage() {
                     <Turnstile ref={demoTurnstileRef} onTokenChange={setDemoTurnstileToken} />
                     <button
                       type="submit"
-                      disabled={demoSending}
+                      disabled={demoSending || !demoTurnstileToken}
                       className="w-full rounded-[11px] border border-primary-300 bg-white py-[11px] text-[.88rem] font-semibold text-primary-700 transition-colors hover:bg-primary-50 disabled:opacity-50"
                     >
                       {demoSending ? 'Envoi…' : 'Demander l\'accès'}

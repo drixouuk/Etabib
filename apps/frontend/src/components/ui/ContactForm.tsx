@@ -70,7 +70,7 @@ export default function ContactForm({ locale }: Props) {
       </div>
       {error && <p className="text-sm text-red-600">{error}</p>}
       <Turnstile ref={turnstileRef} onTokenChange={setTurnstileToken} />
-      <Button type="submit" disabled={sending} className="w-full bg-primary-700 py-2.5 text-base text-white hover:bg-primary-800 disabled:opacity-50">
+      <Button type="submit" disabled={sending || !turnstileToken} className="w-full bg-primary-700 py-2.5 text-base text-white hover:bg-primary-800 disabled:opacity-50">
         {sending ? "Envoi…" : t("send")}
       </Button>
     </form>
