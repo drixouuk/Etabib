@@ -22,6 +22,10 @@
  *       <input>/<textarea>/<select> (le clavier ne peut structurellement pas
  *       s'ouvrir) ; RdvDetailView affiche la récurrence via describeRRule ;
  *       les deux vues portent un jeton d'ancienneté (viewSeq).
+ *   B4. Persistance de la vue calendrier : clé 'rdv-calendar-view' lue au
+ *       montage (localStorage) avec défaut par device explicite (pointer:
+ *       coarse → semaine, sinon mois) ; choix manuel persisté ; début de
+ *       semaine configurable ('rdv-week-start', défaut lundi).
  *
  * Usage : pnpm --filter frontend guard:phase-b
  */
@@ -118,6 +122,21 @@ if (!rdvDetail.includes('describeRRule')) {
 const patientDetail = read('src/components/patient/PatientDetailView.tsx');
 if (!patientDetail.includes('computeAge')) {
   violations.push('PatientDetailView.tsx — âge non affiché (computeAge) (B1)');
+}
+
+// B4 — persistance de la vue + défaut par device + début de semaine
+const calendar = read('src/components/dashboard/RendezVousCalendarClient.tsx');
+if (!calendar.includes("'rdv-calendar-view'") || !calendar.includes('readStorage(VIEW_STORAGE_KEY)')) {
+  violations.push('RendezVousCalendarClient.tsx — vue non lue depuis localStorage au montage (B4)');
+}
+if (!calendar.includes('(pointer: coarse)')) {
+  violations.push('RendezVousCalendarClient.tsx — défaut par device manquant (pointer: coarse → semaine) (B4)');
+}
+if (!calendar.includes('writeStorage(VIEW_STORAGE_KEY, v)')) {
+  violations.push('RendezVousCalendarClient.tsx — choix manuel non persisté (B4)');
+}
+if (!calendar.includes("'rdv-week-start'") || !calendar.includes("'monday'")) {
+  violations.push('RendezVousCalendarClient.tsx — début de semaine configurable (défaut lundi) manquant (B4)');
 }
 
 if (violations.length > 0) {
