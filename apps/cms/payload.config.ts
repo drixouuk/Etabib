@@ -9,6 +9,7 @@ import { Tenants } from "./src/collections/Tenants";
 import { Users } from "./src/collections/Users";
 import { Patients } from "./src/collections/Patients";
 import { AuditLogs } from "./src/collections/AuditLogs";
+import { AuditLedger } from "./src/collections/AuditLedger";
 import { QueueItems } from "./src/collections/QueueItems";
 import { Doctors } from "./src/collections/Doctors";
 import { Services } from "./src/collections/Services";
@@ -64,6 +65,7 @@ export default buildConfig({
     ContactMessages,
     ReferringPractitioners,
     AvailabilitySlots,
+    AuditLedger,
   ],
   db: postgresAdapter({
     pool: {

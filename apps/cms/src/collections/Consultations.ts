@@ -1,5 +1,6 @@
 import type { CollectionConfig } from 'payload'
 import { auditReadHook, auditWriteHook } from '../hooks/logPatientAccess'
+import { ledgerAfterChange } from '../hooks/auditLedger'
 
 export const Consultations: CollectionConfig = {
   slug: 'consultations',
@@ -57,7 +58,7 @@ export const Consultations: CollectionConfig = {
       },
     ],
     afterRead: [auditReadHook('consultations')],
-    afterChange: [auditWriteHook('consultations')],
+    afterChange: [auditWriteHook('consultations'), ledgerAfterChange('consultation')],
   },
   fields: [
     {

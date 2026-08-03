@@ -1,6 +1,7 @@
 import type { CollectionConfig } from 'payload'
 import { sql } from '@payloadcms/db-postgres'
 import { auditReadHook, auditWriteHook } from '../hooks/logPatientAccess'
+import { ledgerRead } from '../hooks/auditLedger'
 
 function tenantId(user: any): string | undefined {
   if (!user?.tenant) return undefined
@@ -125,7 +126,7 @@ export const Patients: CollectionConfig = {
     },
   },
   hooks: {
-    afterRead: [auditReadHook('patients')],
+    afterRead: [auditReadHook('patients'), ledgerRead('patient', (d) => d.id)],
     afterChange: [auditWriteHook('patients')],
     beforeChange: [
       ({ req, data, operation }: any) => {

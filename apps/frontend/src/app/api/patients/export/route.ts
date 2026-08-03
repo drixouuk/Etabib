@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { fetchCMS } from '@/lib/cms-fetch'
+import { fetchCMS, postCMS } from '@/lib/cms-fetch'
 
 type Patient = {
   fullName: string
@@ -29,6 +29,9 @@ export async function GET() {
       `${esc(p.fullName)},${esc(p.gender)},${esc(p.birthDate?.slice(0, 10))},${esc(p.nationalId)}`,
   )
   const csv = [header, ...rows].join('\r\n')
+
+  // D1 — événement « exported » dans le ledger (non bloquant, session CMS).
+  await postCMS('/api/audit-ledger/export-event', { patientId: null })
 
   return new Response(csv, {
     status: 200,
