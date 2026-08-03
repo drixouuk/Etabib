@@ -93,12 +93,21 @@ export const AuditLedger: CollectionConfig = {
         if (patientId != null && typeof patientId !== 'string' && typeof patientId !== 'number') {
           return Response.json({ error: 'patientId invalide' }, { status: 400 })
         }
+        // Trace actionnable (CNDP) : un export bulk doit documenter CE QUI a
+        // été exporté — nombre de lignes + ids (bornés), pas seulement qui.
+        const detail: Record<string, unknown> = { exportedAt: new Date().toISOString() }
+        if (req.body?.count != null && Number.isFinite(Number(req.body.count))) {
+          detail.count = Number(req.body.count)
+        }
+        if (Array.isArray(req.body?.ids)) {
+          detail.ids = req.body.ids.slice(0, 500)
+        }
         await ledgerWrite(req.payload, req, {
           patient: patientId ?? null,
           action: 'exported',
           entity: 'patient',
           entityId: patientId ?? 'bulk-export',
-          detail: { exportedAt: new Date().toISOString() },
+          detail,
           dedupKey: null,
         })
         return Response.json({ ok: true })

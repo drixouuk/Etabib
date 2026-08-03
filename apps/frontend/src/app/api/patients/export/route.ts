@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { fetchCMS, postCMS } from '@/lib/cms-fetch'
 
 type Patient = {
+  id: string
   fullName: string
   gender?: string | null
   birthDate?: string | null
@@ -31,7 +32,12 @@ export async function GET() {
   const csv = [header, ...rows].join('\r\n')
 
   // D1 — événement « exported » dans le ledger (non bloquant, session CMS).
-  await postCMS('/api/audit-ledger/export-event', { patientId: null })
+  // Trace actionnable : nombre de lignes + ids exportés (bornés à 500).
+  await postCMS('/api/audit-ledger/export-event', {
+    patientId: null,
+    count: patients.length,
+    ids: patients.map((p) => p.id).slice(0, 500),
+  })
 
   return new Response(csv, {
     status: 200,

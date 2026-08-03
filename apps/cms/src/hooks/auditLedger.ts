@@ -48,9 +48,19 @@ export async function ledgerWrite(payload: any, req: any, entry: LedgerEntry): P
       },
       req,
     })
-  } catch (err) {
-    // Non bloquant — y compris les doublons d'index unique (lectures fenêtrées).
-    payload.logger?.warn?.('[audit-ledger]', err)
+  } catch (err: any) {
+    // Les doublons d'index unique (lecture fenêtrée déjà tracée dans l'heure,
+    // événement rejoué) sont le comportement NOMINAL du dedup — silencieux
+    // (debug). Tout autre échec est une vraie panne d'audit : warn, sans
+    // jamais faire échouer l'opération médicale qui déclenche l'écriture.
+    const isDedup =
+      err?.code === '23505' ||
+      /duplicate key value violates unique constraint/.test(String(err?.message ?? err))
+    if (isDedup) {
+      payload.logger?.debug?.('[audit-ledger] dédupliqué (déjà tracé)', entry.dedupKey)
+    } else {
+      payload.logger?.warn?.('[audit-ledger]', err)
+    }
   }
 }
 
