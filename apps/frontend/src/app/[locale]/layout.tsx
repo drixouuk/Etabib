@@ -11,9 +11,10 @@ import {
 } from 'next/font/google'
 import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
+import LandingHeader from '@/components/layout/LandingHeader'
+import LandingFooter from '@/components/layout/LandingFooter'
 import LayoutShell from '@/components/layout/LayoutShell'
 import { getDoctorProfile, getPracticeInfo } from '@/lib/payload'
-import type { PracticeInfo } from '@/lib/payload'
 import '../globals.css'
 import { BRAND, SITE_DOMAIN } from '@/lib/brand'
 
@@ -144,6 +145,9 @@ export default async function LocaleLayout({ children, params }: Props) {
   const tenantId = h.get('x-tenant-id') || 'default'
   const pathname = h.get('x-pathname') || ''
   const isLanding = pathname.includes('/landing')
+  // Pages légales plateforme : chrome landing (header/footer Etabib), pas celui du tenant
+  const isLegal = /\/cgv$|\/confidentialite$|\/mentions-legales$/.test(pathname)
+  const isLandingChrome = isLanding || isLegal
   const dataLocale = DATA_LOCALE[locale] || 'fr'
   const siteUrl = await getSiteUrl()
   const doctor = await getDoctorProfile(tenantId, dataLocale)
@@ -216,10 +220,12 @@ export default async function LocaleLayout({ children, params }: Props) {
       <body className={`${bodyFont} flex min-h-full flex-col bg-cream-100 text-stone-800 antialiased`}>
         <NextIntlClientProvider>
           <LayoutShell
-            header={isLanding ? undefined : <Header doctorName={doctorName} doctorNameShort={doctorNameShort} />}
-            footer={isLanding ? undefined : <Footer locale={locale} />}
+            header={isLandingChrome ? undefined : <Header doctorName={doctorName} doctorNameShort={doctorNameShort} />}
+            footer={isLandingChrome ? undefined : <Footer locale={locale} />}
           >
+            {isLegal && <LandingHeader />}
             {children}
+            {isLegal && <LandingFooter />}
           </LayoutShell>
         </NextIntlClientProvider>
         <script

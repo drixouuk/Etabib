@@ -10,7 +10,7 @@ type Props = {
 export default function LegalPage({ locale, title, children }: Props) {
   return (
     <div className="bg-cream-100 min-h-screen">
-      <div className="mx-auto max-w-3xl px-4 py-14 md:px-6">
+      <div className="mx-auto max-w-3xl px-4 pt-[130px] pb-14 md:px-6">
         <Link
           href="/landing"
           className="inline-flex items-center gap-1.5 text-sm font-medium text-stone-600 hover:text-primary-700 transition-colors"

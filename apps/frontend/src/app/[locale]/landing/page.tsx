@@ -1,15 +1,17 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { useTranslations, useLocale } from 'next-intl'
+import { useTranslations } from 'next-intl'
 import { Link } from '@/i18n/navigation'
 import {
-  Activity, Check, ArrowRight, ChevronDown, Lock, Globe, Calendar, Shield,
-  FileText, Users, BarChart3, Menu, X
+  Check, ArrowRight, ChevronDown, Lock, Globe, Calendar, Shield,
+  FileText, Users, BarChart3
 } from 'lucide-react'
-import { useScrollDirection } from '@/hooks/use-scroll-direction'
-import LanguageSwitcher from '@/components/layout/LanguageSwitcher'
-import { BRAND, SITE_DOMAIN, SUPPORT_EMAIL } from '@/lib/brand'
+import LandingHeader from '@/components/layout/LandingHeader'
+import LandingFooter from '@/components/layout/LandingFooter'
+import { SITE_DOMAIN } from '@/lib/brand'
+
+const DEMO_URL = `https://drdemo.${SITE_DOMAIN}/login`
 
 const trustItems = [
   { icon: Lock, key: 'trust_1' },
@@ -43,13 +45,8 @@ const steps = [
 
 const faqs = ['faq_1', 'faq_2', 'faq_3', 'faq_4', 'faq_5', 'faq_6'] as const
 
-const DEMO_URL = `https://drdemo.${SITE_DOMAIN}/login`
-
 export default function LandingPage() {
   const t = useTranslations('landing')
-  const locale = useLocale()
-  const { isHidden } = useScrollDirection()
-  const [mobileOpen, setMobileOpen] = useState(false)
   const [openFaq, setOpenFaq] = useState<string | null>('faq_1')
   const [chartAnimated, setChartAnimated] = useState(false)
   const chartRef = useRef<SVGSVGElement>(null)
@@ -81,49 +78,7 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen bg-cream-100 text-[#2A241C] font-body overflow-x-hidden">
-      {/* ========== HEADER ========== */}
-      <header className={`fixed top-4 left-4 right-4 z-50 transition-transform duration-300 ${isHidden ? '-translate-y-[calc(100%+1rem)]' : 'translate-y-0'}`}>
-        <div className="mx-auto flex max-w-[1160px] items-center justify-between rounded-[18px] bg-white/80 px-4 py-3 shadow-sm backdrop-blur-md">
-          <a href={`/${locale}/landing`} className="flex items-center gap-2.5 font-heading font-extrabold text-[1.1rem] text-[#2A241C]">
-            <span className="flex size-8 items-center justify-center rounded-[9px] bg-primary-600">
-              <Activity className="size-[18px] text-white" />
-            </span>
-            <span className="text-primary-700">{BRAND.name}</span>
-          </a>
-          <nav className={`hidden md:flex items-center gap-1 ${mobileOpen ? 'max-md:flex max-md:flex-col max-md:absolute max-md:top-full max-md:left-0 max-md:right-0 max-md:bg-white max-md:border max-md:border-stone-200 max-md:rounded-2xl max-md:p-2 max-md:shadow-md max-md:mt-2' : ''}`}>
-            {navLinks.map(({ href, key }) => (
-              <a key={href} href={href} onClick={() => setMobileOpen(false)}
-                className="rounded-[10px] px-3 py-2 text-[.92rem] font-semibold text-[#8A8175] transition-colors hover:text-primary-700 hover:bg-primary-50">
-                {t(key)}
-              </a>
-            ))}
-          </nav>
-          <div className="flex items-center gap-3.5">
-            <LanguageSwitcher />
-            <a href={DEMO_URL} target="_blank" rel="noopener"
-              className="hidden md:inline-flex items-center gap-2 rounded-full bg-cta-600 px-5 py-2.5 text-[.88rem] font-bold text-white shadow-sm transition-all hover:bg-cta-700 hover:-translate-y-0.5 hover:shadow-md">
-              {t('header_cta')}
-            </a>
-            <button onClick={() => setMobileOpen(!mobileOpen)} className="flex size-9 items-center justify-center md:hidden" aria-label="Menu">
-              {mobileOpen ? <X className="size-[22px]" /> : <Menu className="size-[22px]" />}
-            </button>
-          </div>
-          {mobileOpen && (
-            <div className="absolute left-4 right-4 top-full mt-2 rounded-2xl border border-stone-200 bg-white p-2 shadow-md md:hidden">
-              {navLinks.map(({ href, key }) => (
-                <a key={href} href={href} onClick={() => setMobileOpen(false)}
-                  className="block rounded-lg px-3.5 py-3 text-[.92rem] font-semibold text-[#8A8175] hover:bg-primary-50">
-                  {t(key)}
-                </a>
-              ))}
-                <a href={DEMO_URL} target="_blank" rel="noopener"
-                    className="block mt-1 rounded-full bg-cta-600 px-4 py-2.5 text-center text-sm font-bold text-white">
-                {t('header_cta')}
-              </a>
-            </div>
-          )}
-        </div>
-      </header>
+      <LandingHeader />
 
       <main>
         {/* ========== HERO ========== */}
@@ -444,43 +399,7 @@ export default function LandingPage() {
         </section>
       </main>
 
-      {/* ========== FOOTER ========== */}
-      <footer className="pt-[70px] pb-[30px]">
-        <div className="container mx-auto max-w-[1160px] px-6">
-          <div className="grid grid-cols-2 md:grid-cols-[1.4fr_1fr_1fr_1fr] gap-9 pb-11">
-            <div>
-          <a href={`/${locale}/landing`} className="flex items-center gap-2.5 font-heading font-extrabold text-[1.1rem] text-[#2A241C]">
-            <span className="flex size-8 items-center justify-center rounded-[9px] bg-primary-600">
-              <Activity className="size-[18px] text-white" />
-            </span>
-            <span className="text-primary-700">{BRAND.name}</span>
-          </a>
-          <p className="text-[.88rem] text-[#8A8175] max-w-[280px] mt-3.5">{t('footer_desc')}</p>
-            </div>
-            <div>
-              <h5 className="font-heading text-[.86rem] font-bold text-[#2A241C] mb-4">{t('footer_product')}</h5>
-              <a href="#fonctionnalites" className="block text-[.88rem] text-[#8A8175] py-1.5 hover:text-primary-700">{t('nav_features')}</a>
-              <a href="#tarifs" className="block text-[.88rem] text-[#8A8175] py-1.5 hover:text-primary-700">{t('nav_pricing')}</a>
-              <a href="#demo" className="block text-[.88rem] text-[#8A8175] py-1.5 hover:text-primary-700">{t('nav_demo')}</a>
-            </div>
-            <div>
-              <h5 className="font-heading text-[.86rem] font-bold text-[#2A241C] mb-4">{t('footer_support')}</h5>
-              <a href="#faq" className="block text-[.88rem] text-[#8A8175] py-1.5 hover:text-primary-700">{t('nav_faq')}</a>
-              <a href={`mailto:${SUPPORT_EMAIL}`} className="block text-[.88rem] text-[#8A8175] py-1.5 hover:text-primary-700">{SUPPORT_EMAIL}</a>
-            </div>
-            <div>
-              <h5 className="font-heading text-[.86rem] font-bold text-[#2A241C] mb-4">{t('footer_legal')}</h5>
-              <a href={`/${locale}/mentions-legales`} className="block text-[.88rem] text-[#8A8175] py-1.5 hover:text-primary-700">{t('footer_legal_1')}</a>
-              <a href={`/${locale}/confidentialite`} className="block text-[.88rem] text-[#8A8175] py-1.5 hover:text-primary-700">{t('footer_legal_2')}</a>
-              <a href={`/${locale}/cgv`} className="block text-[.88rem] text-[#8A8175] py-1.5 hover:text-primary-700">{t('footer_legal_3')}</a>
-            </div>
-          </div>
-          <div className="flex flex-wrap justify-between gap-2.5 border-t border-stone-200/50 pt-6 text-[.82rem] text-[#B9B2A4]">
-            <span>&copy; 2026 {BRAND.name}. {t('footer_rights')}</span>
-            <span>{t('footer_made')}</span>
-          </div>
-        </div>
-      </footer>
+      <LandingFooter />
     </div>
   )
 }
