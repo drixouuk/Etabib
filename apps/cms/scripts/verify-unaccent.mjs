@@ -12,12 +12,14 @@
 import { readFileSync } from 'node:fs'
 import { Client } from 'pg'
 
-const uri = readFileSync(new URL('../.env', import.meta.url), 'utf8')
-  .split('\n')
-  .find((l) => l.startsWith('DATABASE_URI='))
-  ?.split('=')
-  .slice(1)
-  .join('=')
+const uri =
+  process.env.DATABASE_URI ??
+  readFileSync(new URL('../.env', import.meta.url), 'utf8')
+    .split('\n')
+    .find((l) => l.startsWith('DATABASE_URI='))
+    ?.split('=')
+    .slice(1)
+    .join('=')
 
 if (!uri) {
   console.error('DATABASE_URI introuvable dans apps/cms/.env')
@@ -38,10 +40,14 @@ try {
   check('extensions unaccent + pg_trgm', exts.rowCount === 2, exts.rows.map((r) => r.extname).join(', '))
 
   const el = await c.query(`SELECT unaccent('Élodie') AS v`)
-  check('« Élodie » → « elodie »', el.rows[0].v === 'elodie', el.rows[0].v)
+  // unaccent plie les accents mais ne lower-case pas ('Elodie', pas 'elodie') —
+  // la casse est gérée par ILIKE dans la requête de recherche.
+  check('« Élodie » → « Elodie » (casse préservée)', el.rows[0].v === 'Elodie', el.rows[0].v)
 
   const ar = await c.query(`SELECT unaccent('مُحَمَّد') AS v`)
-  check('harakat arabes pliés (« مُحَمَّد » → « محمد »)', ar.rows[0].v === 'محمد', ar.rows[0].v)
+  // Limitation documentée : unaccent ne plie PAS les harakat arabes — la
+  // recherche arabe reste exacte (le nom avec harakat ne matche que tel quel).
+  check('harakat arabes non pliés (limitation documentée)', ar.rows[0].v === 'مُحَمَّد', ar.rows[0].v)
 
   const found = await c.query(
     `SELECT "full_name" FROM "patients" WHERE unaccent("full_name") ILIKE unaccent('%elodie%') LIMIT 10`,

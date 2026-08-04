@@ -52,8 +52,8 @@
 
 - **Contexte** : la recherche Payload `contains` est accent-sensitive (« elodie » ne trouve pas « Élodie ») ; l'endpoint SQL brut contournerait le filtre d'accès des médecins (followedBy/sharedWith/orphelins).
 - **Problème** : un accès données brut doit reproduire les règles d'accès de la collection, sinon c'est un trou.
-- **Fix structurel** : `unaccent(full_name) ILIKE unaccent(%q%)` + index `gin (unaccent(full_name) gin_trgm_ops)` + `ORDER BY similarity(...) DESC` ; garde-fous serveur (q ≤ 60, wildcards `% _ \` neutralisés, LIMIT 10) ; le filtre médecin est **reproduit en SQL** via `patients_rels` (EXISTS followedBy/sharedWith + orphelins) ; `unaccent` plie aussi les harakat arabes.
-- **Référence** : commit `ad369d9` (B5) · vérification `verify-unaccent.mjs`.
+- **Fix structurel** : `unaccent(full_name) ILIKE unaccent(%q%)` + index `gin (f_unaccent(full_name) gin_trgm_ops)` + `ORDER BY similarity(...) DESC` ; garde-fous serveur (q ≤ 60, wildcards `% _ \` neutralisés, LIMIT 10) ; le filtre médecin est **reproduit en SQL** via `patients_rels` (EXISTS followedBy/sharedWith + orphelins). Découvert par le test de preview : **PG 18 marque `unaccent` STABLE** → l'index d'expression direct est rejeté ; wrapper `public.f_unaccent` IMMUTABLE requis (migration + endpoint passent par lui). Limitation documentée : **les harakat arabes ne sont pas pliés** par unaccent — la recherche arabe reste exacte, la translittération latine ne matche pas l'arabe (vérifié en preview).
+- **Référence** : commit `ad369d9` (B5) · fix preview `20260803_add_unaccent_search` (wrapper f_unaccent) · vérification `verify-unaccent.mjs`.
 
 ## 8. Ledger d'audit : dedupKey fenêtré à l'heure pour les lectures (D1)
 

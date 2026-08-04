@@ -16,15 +16,29 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
     CREATE EXTENSION IF NOT EXISTS unaccent;
     CREATE EXTENSION IF NOT EXISTS pg_trgm;
 
-    -- unaccent est IMMUTABLE : l'index d'expression est légal et sert
-    -- unaccent(full_name) ILIKE unaccent(...) ainsi que la similarité.
+    -- PG 18 marque unaccent() STABLE (pas IMMUTABLE) : un index d'expression
+    -- direct sur unaccent(full_name) est rejeté (« functions in index
+    -- expression must be marked IMMUTABLE » — attrapé par le test de preview).
+    -- Wrapper IMMUTABLE : l'index et les requêtes (endpoint /patients/search)
+    -- passent par lui, le planificateur peut utiliser l'index.
+    CREATE OR REPLACE FUNCTION public.f_unaccent(text)
+    RETURNS text
+    LANGUAGE sql
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    AS $func$
+      SELECT public.unaccent('public.unaccent', $1);
+    $func$;
+
     CREATE INDEX IF NOT EXISTS "patients_full_name_unaccent_trgm_idx"
-      ON "patients" USING gin (unaccent("full_name") gin_trgm_ops);
+      ON "patients" USING gin (public.f_unaccent("full_name") gin_trgm_ops);
   `)
 }
 
 export async function down({ db, payload, req }: MigrateDownArgs): Promise<void> {
   await db.execute(sql`
     DROP INDEX IF EXISTS "patients_full_name_unaccent_trgm_idx";
+    DROP FUNCTION IF EXISTS public.f_unaccent(text);
   `)
 }

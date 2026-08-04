@@ -36,11 +36,11 @@ const PATIENT_SEARCH_SQL = (q: string, tid: string | undefined, uid: string, isD
            p."national_id" AS "nationalId",
            p."tenant_id" AS "tenantId"
     FROM "patients" p
-    WHERE (unaccent(p."full_name") ILIKE unaccent(${like})
-           OR (p."national_id" IS NOT NULL AND unaccent(p."national_id") ILIKE unaccent(${like})))
+    WHERE (public.f_unaccent(p."full_name") ILIKE public.f_unaccent(${like})
+           OR (p."national_id" IS NOT NULL AND public.f_unaccent(p."national_id") ILIKE public.f_unaccent(${like})))
       AND (${tid ? sql`p."tenant_id" = ${Number(tid)}` : sql`TRUE`})
       ${doctorScope}
-    ORDER BY similarity(unaccent(p."full_name"), unaccent(${q})) DESC, p."full_name" ASC
+    ORDER BY similarity(public.f_unaccent(p."full_name"), public.f_unaccent(${q})) DESC, p."full_name" ASC
     LIMIT 10
   `
 }
