@@ -41,11 +41,22 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
     CREATE UNIQUE INDEX IF NOT EXISTS "audit_ledger_dedup_idx"
       ON "audit_ledger" USING btree ("entity", "entity_id", "action", "dedup_key")
       WHERE "dedup_key" IS NOT NULL;
+
+    -- Payload verrouille les documents en cours d'édition via
+    -- payload_locked_documents_rels : une colonne par collection. Sans elle,
+    -- TOUTE écriture utilisateur échoue sur la requête de locked-documents
+    -- (attrapé en prod pendant un reset de mot de passe).
+    ALTER TABLE "payload_locked_documents_rels" ADD COLUMN IF NOT EXISTS "audit_ledger_id" integer;
+    ALTER TABLE "payload_locked_documents_rels" ADD CONSTRAINT "payload_locked_documents_rels_audit_ledger_fk"
+      FOREIGN KEY ("audit_ledger_id") REFERENCES "public"."audit_ledger"("id") ON DELETE cascade ON UPDATE no action;
+    CREATE INDEX IF NOT EXISTS "payload_locked_documents_rels_audit_ledger_id_idx"
+      ON "payload_locked_documents_rels" USING btree ("audit_ledger_id");
   `)
 }
 
 export async function down({ db, payload, req }: MigrateDownArgs): Promise<void> {
   await db.execute(sql`
+    ALTER TABLE "payload_locked_documents_rels" DROP COLUMN IF EXISTS "audit_ledger_id";
     DROP TABLE IF EXISTS "audit_ledger" CASCADE;
   `)
 }
