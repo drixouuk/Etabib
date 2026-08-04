@@ -57,10 +57,12 @@ export default async function HomePage({ params }: Props) {
       <main className="flex-1">
       {/* ============ HERO ============ */}
       <section className="relative overflow-hidden px-4 pb-[70px] pt-[132px] md:pt-[110px]">
-        {/* Blobs décoratifs : dégradés radiaux, pas de flou ni de filtre CSS —
-            un filtre dans le flux de scroll crée un layer GPU (famille #166, guard A3). */}
-        <span className="absolute left-[60%] -top-[100px] z-0 size-[340px] rounded-full bg-[radial-gradient(closest-side,rgba(254,243,199,0.9),transparent)]" />
-        <span className="absolute -bottom-[60px] -left-[80px] z-0 size-[260px] rounded-full bg-[radial-gradient(closest-side,rgba(204,251,241,0.95),transparent)]" />
+        {/* Blobs décoratifs : dégradés radiaux calibrés pour reproduire
+            l'ampleur du rendu flouté original (340px/70% blur 60 → halo ~460px),
+            SANS filter/blur — un filtre dans le flux de scroll crée un layer
+            GPU (famille #166, guard A3). */}
+        <span className="absolute left-[60%] -top-[100px] z-0 size-[460px] rounded-full bg-[radial-gradient(closest-side,rgba(254,243,199,0.55),transparent)]" />
+        <span className="absolute -bottom-[60px] -left-[80px] z-0 size-[380px] rounded-full bg-[radial-gradient(closest-side,rgba(204,251,241,0.65),transparent)]" />
 
         <div className="container relative z-10 mx-auto grid max-w-[1200px] grid-cols-1 items-center gap-14 lg:grid-cols-[1.1fr_0.9fr]">
           <div>

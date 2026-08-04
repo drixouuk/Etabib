@@ -4,6 +4,7 @@ import { useCallback, useRef, useState } from 'react'
 import { User, Clock, Timer, Phone, Mail, MapPin, Repeat, X, Pencil, type LucideIcon } from 'lucide-react'
 import { Sheet, SheetContent } from '@/components/ui/sheet'
 import { BookingForm, type BookingDraft } from '@/components/dashboard/BookingSheet'
+import { Link } from '@/i18n/navigation'
 import { describeRRule } from '@/lib/rrule'
 
 export type RdvDetail = {
@@ -133,7 +134,19 @@ export function RdvDetailView({ tenantId, booking, whenLabel, onClose, onSaved, 
 
             <div className="flex items-center gap-2 border-b border-stone-100 bg-primary-50/60 px-5 py-3">
               <User className="size-4 text-primary-700" />
-              <span className="text-sm font-semibold text-stone-800">{b.attendeeName}</span>
+              {b.attendeeName ? (
+                // Le RDV ne porte pas d'id patient : le nom mène à la liste
+                // filtrée, d'où l'on ouvre le dossier.
+                <Link
+                  href={`/dashboard/patients?q=${encodeURIComponent(b.attendeeName)}`}
+                  onClick={onClose}
+                  className="text-sm font-semibold text-stone-800 underline-offset-2 hover:text-primary-700 hover:underline"
+                >
+                  {b.attendeeName}
+                </Link>
+              ) : (
+                <span className="text-sm font-semibold text-stone-800">{b.attendeeName}</span>
+              )}
               <span className="rounded-full bg-white px-2 py-0.5 text-xs font-medium text-stone-600">{STATUS_LABELS[b.status] ?? b.status}</span>
             </div>
 

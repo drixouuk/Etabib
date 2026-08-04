@@ -108,24 +108,18 @@ if (!/nextOccurrenceDate\(/.test(settings)) {
   violations.push('ScheduleAndSlots.tsx — n’utilise pas nextOccurrenceDate pour la prochaine occurrence (B3)');
 }
 
-// B1 — vues lecture seule : zéro champ de saisie, récurrence en clair, jeton
-const detailViews = ['src/components/agenda/RdvDetailView.tsx', 'src/components/patient/PatientDetailView.tsx'];
-for (const file of detailViews) {
-  const src = read(file);
-  if (/<input|<textarea|<select/.test(src)) {
-    violations.push(`${file} — vue lecture avec champ de saisie (<input>/<textarea>/<select>) : le clavier pourrait s'ouvrir (B1)`);
-  }
-  if (!/viewSeq/.test(src)) {
-    violations.push(`${file} — jeton d'ancienneté (viewSeq) manquant (B1)`);
-  }
-}
+// B1 — vue lecture seule du RDV : zéro champ de saisie, récurrence en clair,
+// jeton d'ancienneté. (La vue patient a été retirée après revue prod : le nom
+// du patient mène directement au dossier.)
 const rdvDetail = read('src/components/agenda/RdvDetailView.tsx');
+if (/<input|<textarea|<select/.test(rdvDetail)) {
+  violations.push('RdvDetailView.tsx — vue lecture avec champ de saisie (<input>/<textarea>/<select>) : le clavier pourrait s\'ouvrir (B1)');
+}
+if (!rdvDetail.includes('viewSeq')) {
+  violations.push('RdvDetailView.tsx — jeton d\'ancienneté (viewSeq) manquant (B1)');
+}
 if (!rdvDetail.includes('describeRRule')) {
   violations.push('RdvDetailView.tsx — récurrence non affichée via describeRRule (B1)');
-}
-const patientDetail = read('src/components/patient/PatientDetailView.tsx');
-if (!patientDetail.includes('computeAge')) {
-  violations.push('PatientDetailView.tsx — âge non affiché (computeAge) (B1)');
 }
 
 // B4 — persistance de la vue + défaut par device + début de semaine
