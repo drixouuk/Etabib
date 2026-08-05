@@ -4,6 +4,7 @@ import { postgresAdapter } from "@payloadcms/db-postgres";
 import { lexicalEditor } from "@payloadcms/richtext-lexical";
 import path from "path";
 import { fileURLToPath } from "url";
+import { resendAdapter } from "./src/lib/resend-adapter";
 
 import { Tenants } from "./src/collections/Tenants";
 import { Users } from "./src/collections/Users";
@@ -73,6 +74,15 @@ export default buildConfig({
     },
     push: false,
   }),
+  // Circuit email (mot de passe oublié, invites) via Resend — adaptateur
+  // maison en fetch direct (aucune dépendance npm à ajouter).
+  email: process.env.RESEND_API_KEY
+    ? resendAdapter({
+        apiKey: process.env.RESEND_API_KEY,
+        fromAddress: process.env.RESEND_FROM_ADDRESS || 'contact@etabibi.ma',
+        fromName: 'Etabib',
+      })
+    : undefined,
   plugins: [
     s3Storage({
       collections: {

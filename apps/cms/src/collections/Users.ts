@@ -11,6 +11,30 @@ export const Users: CollectionConfig = {
   slug: 'users',
   auth: {
     useAPIKey: true,
+    forgotPassword: {
+      // Le lien pointe vers la page de reset du FRONTEND (qui appelle
+      // /api/users/reset-password), pas vers l'admin Payload.
+      generateEmailSubject: () => 'Etabib — Réinitialisation de votre mot de passe',
+      generateEmailHTML: async ({ req, token, user }: any) => {
+        const site = process.env.NEXT_PUBLIC_SITE_DOMAIN || 'etabibi.ma'
+        let domain: string | null = null
+        const tid = user?.tenant && typeof user.tenant === 'object' ? user.tenant.id : user?.tenant
+        if (tid) {
+          const tenant = await req.payload
+            .findByID({ collection: 'tenants', id: tid, depth: 0 })
+            .catch(() => null)
+          if (tenant?.domain) domain = tenant.domain
+        }
+        const base = domain ? `https://${domain}` : `https://${site}`
+        const link = `${base}/fr/reinitialiser-mot-de-passe?token=${token}`
+        return (
+          `<p>Bonjour,</p>` +
+          `<p>Une demande de réinitialisation de mot de passe a été faite pour votre compte.</p>` +
+          `<p><a href="${link}">Définir un nouveau mot de passe</a></p>` +
+          `<p>Ce lien est valable 1 heure. Si vous n'êtes pas à l'origine de la demande, ignorez cet email.</p>`
+        )
+      },
+    },
   },
   admin: {
     useAsTitle: 'email',
