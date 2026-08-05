@@ -8,11 +8,23 @@ const CMS_URL = process.env.NEXT_PUBLIC_CMS_URL || 'https://cms.etabibi.ma'
 const DEFAULT_READ_TTL = 30
 
 // Tag de cache par collection dérivé du chemin (ex. /api/queue-items → col:queue-items).
-// La clé d'entrée du Data Cache inclut le header Authorization du fetch :
-// chaque compte possède ses propres entrées, jamais partagées (porte d'isolation 8a).
+// ISOLATION : la clé d'entrée du Data Cache Next est l'URL SEULE — les
+// headers Authorization n'en font pas partie (vérifié en prod : users/me
+// était partagé entre comptes). On injecte un param _ck dérivé du token
+// dans l'URL pour rendre chaque entrée propre à une session (porte
+// d'isolation 8a, clé explicite).
 function collectionTag(pathname: string): string | null {
   const m = pathname.match(/\/api\/([a-z0-9-]+)/)
   return m ? `col:${m[1]}` : null
+}
+
+function sessionCacheKey(token: string): string {
+  let h = 0x811c9dc5
+  for (let i = 0; i < token.length; i++) {
+    h ^= token.charCodeAt(i)
+    h = Math.imul(h, 0x01000193)
+  }
+  return (h >>> 0).toString(36)
 }
 
 async function getToken(): Promise<string | null> {
@@ -30,6 +42,7 @@ export async function fetchCMS<T>(
   try {
     const url = new URL(path.startsWith('http') ? path : `${CMS_URL}${path}`)
     url.searchParams.set('depth', '1')
+    url.searchParams.set('_ck', sessionCacheKey(token))
 
     const colTag = collectionTag(url.pathname)
     const res = await fetch(url.toString(), {

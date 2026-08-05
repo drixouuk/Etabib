@@ -11,7 +11,6 @@ const AUTH_TTL = 20
 
 // Tag de cache dérivé du token de session — hash FNV-1a 32 bits, jamais le
 // token brut dans une clé ou un tag (évite de fuiter le secret en logs/cache).
-// Deux sessions distinctes → deux tags distincts → isolation stricte du cache.
 export function authTagForToken(token: string): string {
   let h = 0x811c9dc5
   for (let i = 0; i < token.length; i++) {
@@ -19,6 +18,15 @@ export function authTagForToken(token: string): string {
     h = Math.imul(h, 0x01000193)
   }
   return `auth:${(h >>> 0).toString(36)}`
+}
+
+// Clé de session pour le Data Cache Next : la clé d'entrée du cache est
+// l'URL SEULE (les headers Authorization/Cookie n'y entrent PAS — vérifié
+// empiriquement : /api/users/me était partagé entre comptes). On rend la
+// clé explicitement dépendante de la session via un param _ck dans l'URL,
+// dérivé du token (jamais le token brut). Deux sessions → deux clés.
+export function sessionCacheKey(token: string): string {
+  return authTagForToken(token).replace('auth:', '')
 }
 
 export type PayloadUser = {
@@ -33,16 +41,17 @@ export type PayloadUser = {
 
 // Déduplication par requête serveur : requireAuth (layout) + requireTier
 // (page) + routes API appellent tous authenticate() — cache() garantit un
-// seul users/me réel par requête HTTP. Le fetch est lui-même mis en cache
-// 20s par token dans le Data Cache (la clé inclut le header Authorization,
-// donc les comptes ne partagent jamais d'entrée — porte d'isolation 8a).
+// seul users/me réel par requête HTTP. Le fetch est mis en cache 20s par
+// session via une clé explicite _ck dans l'URL (la clé du Data Cache
+// n'inclut pas les headers — voir sessionCacheKey), taggée par session et
+// purgée au logout.
 export const authenticate = cache(async (): Promise<PayloadUser | null> => {
   try {
     const cookieStore = await cookies()
     const token = cookieStore.get('payload-token')?.value
     if (!token) return null
 
-    const res = await fetch(`${CMS_URL}/api/users/me`, {
+    const res = await fetch(`${CMS_URL}/api/users/me?_ck=${sessionCacheKey(token)}`, {
       headers: {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
