@@ -68,42 +68,42 @@ export default function QueueBar() {
   const isAboveAverage = stats.dailyAverage > 0 && stats.todayTotal > stats.dailyAverage
 
   return (
-    <div className="mx-[10px] mt-3 rounded-lg border border-stone-100 bg-white px-3 py-2.5 shadow-sm">
+    <div className="mx-[10px] mt-3 rounded-lg border border-border bg-card px-3 py-2.5 shadow-sm">
       {/* Chiffres */}
       <div className="flex items-baseline justify-between">
         <div>
           <span className={`inline-block text-lg font-bold tabular-nums transition-all duration-300 ${
             popWaiting ? 'scale-110' : 'scale-100'
-          } ${isTense ? 'text-cta-600' : 'text-stone-800'}`}>
+          } ${isTense ? 'text-cta-600' : 'text-foreground'}`}>
             {stats.waiting}
           </span>
-          <p className="text-[9px] text-stone-400 leading-none mt-0.5">en attente</p>
+          <p className="text-[9px] text-muted-foreground leading-none mt-0.5">en attente</p>
         </div>
         <div className="text-end">
           <span className={`inline-block text-lg font-bold tabular-nums transition-all duration-300 ${
             popToday ? 'scale-110' : 'scale-100'
-          } ${isAboveAverage ? 'text-success-500' : 'text-stone-800'} ${justBrokeRecord ? 'ring-1 ring-cta-200 rounded' : ''}`}>
+          } ${isAboveAverage ? 'text-success-500' : 'text-foreground'} ${justBrokeRecord ? 'ring-1 ring-cta-200 rounded' : ''}`}>
             {stats.todayTotal}
           </span>
-          <p className="text-[9px] text-stone-400 leading-none mt-0.5">aujourd&apos;hui</p>
+          <p className="text-[9px] text-muted-foreground leading-none mt-0.5">aujourd&apos;hui</p>
         </div>
       </div>
 
       {/* Ligne de progression */}
-      <div className="relative mt-2.5 h-[3px] rounded-full bg-stone-200">
+      <div className="relative mt-2.5 h-[3px] rounded-full bg-accent">
         <div
-          className={`absolute inset-y-0 left-0 rounded-full transition-all duration-700 ease-out ${
+          className={`absolute inset-y-0 start-0 rounded-full transition-all duration-700 ease-out ${
             isAboveAverage ? 'bg-success-500' : 'bg-primary-500'
           }`}
           style={{ width: `${todayPct}%` }}
         />
         <div
-          className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 size-[5px] rounded-full bg-stone-400"
+          className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 size-[5px] rounded-full bg-muted"
           style={{ left: `${avgPct}%` }}
         />
         <div
           className={`absolute top-1/2 -translate-y-1/2 -translate-x-1/2 size-[6px] rounded-[1px] rotate-45 transition-colors duration-500 ${
-            justBrokeRecord ? 'bg-cta-500' : 'bg-stone-500'
+            justBrokeRecord ? 'bg-cta-500' : 'bg-muted-foreground/30'
           }`}
           style={{ left: `${recPct}%` }}
         />
@@ -112,13 +112,13 @@ export default function QueueBar() {
       {/* Labels sous les marqueurs */}
       <div className="relative h-3 mt-0.5">
         <span
-          className="absolute -translate-x-1/2 text-[8px] text-stone-400"
+          className="absolute -translate-x-1/2 text-[8px] text-muted-foreground"
           style={{ left: `${avgPct}%` }}
         >
           {stats.dailyAverage}
         </span>
         <span
-          className="absolute -translate-x-1/2 text-[8px] text-stone-400"
+          className="absolute -translate-x-1/2 text-[8px] text-muted-foreground"
           style={{ left: `${recPct}%` }}
         >
           {stats.dailyRecord}

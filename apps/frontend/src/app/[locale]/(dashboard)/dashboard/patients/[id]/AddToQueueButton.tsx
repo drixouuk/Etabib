@@ -24,7 +24,7 @@ export default function AddToQueueButton({ patientId }: Props) {
   }, [patientId])
 
   if (active === null) return null
-  if (active) return <p className="text-sm text-stone-600">Patient déjà en file d'attente active.</p>
+  if (active) return <p className="text-sm text-muted-foreground">Patient déjà en file d'attente active.</p>
 
   const handleAdd = async () => {
     setSaving(true)
@@ -60,16 +60,16 @@ export default function AddToQueueButton({ patientId }: Props) {
   }
 
   return (
-    <div className="flex flex-wrap items-end gap-3 rounded-lg border border-warm bg-stone-50 p-4">
+    <div className="flex flex-wrap items-end gap-3 rounded-lg border border-border bg-muted p-4">
       <div>
-        <label htmlFor="visitReason" className="mb-1 block text-xs font-medium text-stone-600">
+        <label htmlFor="visitReason" className="mb-1 block text-xs font-medium text-muted-foreground">
           Motif de visite
         </label>
         <select
           id="visitReason"
           value={reason}
           onChange={(e) => setReason(e.target.value)}
-          className="rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20"
+          className="rounded-lg border border-border bg-card px-3 py-2 text-sm focus:border-primary focus:ring-2 focus:ring-primary-500/20"
         >
           <option value="consultation">Consultation</option>
           <option value="controle">Contrôle</option>
@@ -86,7 +86,7 @@ export default function AddToQueueButton({ patientId }: Props) {
         {saving ? 'Ajout…' : 'Ajouter à la file d\'attente du jour'}
       </button>
 
-      {error && <p className="w-full text-sm text-red-600">{error}</p>}
+      {error && <p className="w-full text-sm text-destructive">{error}</p>}
     </div>
   )
 }

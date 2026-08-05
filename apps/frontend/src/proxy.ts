@@ -123,7 +123,9 @@ export default async function middleware(request: NextRequest) {
   )
   if (isPlatformDomain && isLocalizedRoot) {
     const locale = pathname === '/' ? (request.nextUrl.locale || 'fr') : localeSeg
-    return NextResponse.redirect(new URL(`/${locale}/landing`, request.url))
+    // 308 — redirection permanente : les racines localisées n'existent plus
+    // (la vitrine ne vit que sur les sous-domaines tenants).
+    return NextResponse.redirect(new URL(`/${locale}/landing`, request.url), 308)
   }
 
   // 5. Injection dans la REQUÊTE (indispensable pour headers() dans les Server Components)

@@ -14,11 +14,11 @@ const roleLabels: Record<string, string> = {
 
 function roleBadge(roles: string[]): { label: string; className: string } {
   if (roles.includes('superadmin') || roles.includes('tenant_admin')) {
-    return { label: 'Médecin · Admin', className: 'bg-primary-50 text-primary-700' }
+    return { label: 'Médecin · Admin', className: 'bg-primary/10 text-primary-700' }
   }
-  if (roles.includes('doctor')) return { label: 'Médecin', className: 'bg-primary-50 text-primary-700' }
+  if (roles.includes('doctor')) return { label: 'Médecin', className: 'bg-primary/10 text-primary-700' }
   if (roles.includes('secretary')) return { label: 'Secrétaire', className: 'bg-warning/10 text-warning' }
-  return { label: roles.map((r) => roleLabels[r] || r).join(', '), className: 'bg-stone-100 text-stone-600' }
+  return { label: roles.map((r) => roleLabels[r] || r).join(', '), className: 'bg-accent text-muted-foreground' }
 }
 
 function initialsOf(name: string): string {
@@ -49,17 +49,17 @@ function ResetPasswordButton({ userId }: { userId: string }) {
     <div className="flex items-center gap-2">
       <input type="password" value={newPassword} onChange={e => setNewPassword(e.target.value)}
         placeholder="Nouveau MDP" minLength={8}
-        className="w-36 rounded-lg border border-warm bg-white px-2 py-1 text-sm focus:border-primary-500" />
+        className="w-36 rounded-lg border border-border bg-card px-2 py-1 text-sm focus:border-primary" />
       <button onClick={handleReset} disabled={saving}
         className="text-sm font-medium text-primary-600 hover:text-primary-700 disabled:opacity-50">OK</button>
-      <button onClick={() => setShowForm(false)} className="text-sm text-stone-600 hover:text-stone-600">✕</button>
-      {error && <span className="text-xs text-red-500">{error}</span>}
+      <button onClick={() => setShowForm(false)} className="text-sm text-muted-foreground hover:text-muted-foreground">✕</button>
+      {error && <span className="text-xs text-destructive">{error}</span>}
     </div>
   )
 
   return (
     <div className="flex items-center gap-2">
-      {done && <span className="text-xs text-green-600">Modifié ✓</span>}
+      {done && <span className="text-xs text-success">Modifié ✓</span>}
       <button onClick={() => setShowForm(true)}
         className="text-sm font-medium text-primary-600 hover:text-primary-700">Réinitialiser MDP</button>
     </div>
@@ -127,13 +127,13 @@ export default function ManageAccounts({ users, currentUserId, isAdmin = true }:
     router.refresh()
   }
 
-  const inputClass = 'w-full rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm text-stone-800 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20'
-  const labelClass = 'mb-0.5 block text-xs text-stone-600'
+  const inputClass = 'w-full rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground focus:border-primary focus:ring-2 focus:ring-primary-500/20'
+  const labelClass = 'mb-0.5 block text-xs text-muted-foreground'
 
   return (
-    <div className="rounded-xl border border-warm bg-white shadow-sm">
-      <div className="flex items-center justify-between border-b border-stone-100 px-4 py-3">
-        <h2 className="font-heading text-lg font-semibold text-stone-800">Comptes du cabinet</h2>
+    <div className="rounded-xl border border-border bg-card shadow-sm">
+      <div className="flex items-center justify-between border-b border-border px-4 py-3">
+        <h2 className="font-heading text-lg font-semibold text-foreground">Comptes du cabinet</h2>
         {isAdmin && (
           <button onClick={() => setShowForm(!showForm)}
             className="rounded-lg bg-cta-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-cta-700">
@@ -143,7 +143,7 @@ export default function ManageAccounts({ users, currentUserId, isAdmin = true }:
       </div>
 
       {showForm && isAdmin && (
-        <div className="border-b border-stone-100 bg-stone-50 p-4">
+        <div className="border-b border-border bg-muted p-4">
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <div>
               <label className={labelClass}>Nom complet *</label>
@@ -171,19 +171,19 @@ export default function ManageAccounts({ users, currentUserId, isAdmin = true }:
               <input type="password" value={form.password} onChange={e => setForm({ ...form, password: e.target.value })} className={inputClass} />
             </div>
           </div>
-          {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
+          {error && <p className="mt-2 text-sm text-destructive">{error}</p>}
           <div className="mt-3 flex items-center gap-2">
             <button onClick={handleCreate} disabled={saving}
               className="rounded-lg bg-cta-600 px-4 py-1.5 text-xs font-medium text-white hover:bg-cta-700 disabled:opacity-50">
               {saving ? '…' : 'Créer le compte'}
             </button>
-            <button onClick={() => setShowForm(false)} className="text-xs text-stone-600 hover:text-stone-800">Annuler</button>
+            <button onClick={() => setShowForm(false)} className="text-xs text-muted-foreground hover:text-foreground">Annuler</button>
           </div>
         </div>
       )}
 
       {users.length === 0 ? (
-        <p className="px-4 py-6 text-center text-sm text-stone-500">Aucun utilisateur trouvé.</p>
+        <p className="px-4 py-6 text-center text-sm text-muted-foreground">Aucun utilisateur trouvé.</p>
       ) : (
         <div className="divide-y divide-stone-100">
           {users.map((u) => {
@@ -194,18 +194,18 @@ export default function ManageAccounts({ users, currentUserId, isAdmin = true }:
                   {initialsOf(u.name || u.email)}
                 </div>
                 <div className="min-w-0 flex-1 basis-full sm:basis-auto">
-                  <p className="truncate text-[13.5px] font-semibold text-stone-800">
+                  <p className="truncate text-[13.5px] font-semibold text-foreground">
                     {u.name || u.email}
-                    {u.id === currentUserId && <span className="ml-2 text-xs font-normal text-stone-600">(vous)</span>}
+                    {u.id === currentUserId && <span className="ms-2 text-xs font-normal text-muted-foreground">(vous)</span>}
                   </p>
-                  <p className="truncate text-xs text-stone-500">{u.email}</p>
+                  <p className="truncate text-xs text-muted-foreground">{u.email}</p>
                 </div>
                 <span className={`shrink-0 rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${badge.className}`}>{badge.label}</span>
                 <div className="flex shrink-0 items-center gap-3">
                   <ResetPasswordButton userId={u.id} />
                   {isAdmin && u.id !== currentUserId && (
                     <button onClick={() => handleDelete(u)} disabled={deleting}
-                      className="rounded p-1 text-stone-500 hover:text-red-600 transition-colors" title="Supprimer ce compte">
+                      className="rounded p-1 text-muted-foreground hover:text-destructive transition-colors" title="Supprimer ce compte">
                       <Trash2 className="size-3.5" />
                     </button>
                   )}

@@ -41,18 +41,18 @@ export default function ReferringPractitionersManager() {
     fetchAll(); router.refresh()
   }
 
-  const inputClass = 'w-full rounded-lg border border-warm bg-white px-3 py-2 text-sm focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20'
+  const inputClass = 'w-full rounded-lg border border-border bg-card px-3 py-2 text-sm focus:border-primary focus:ring-2 focus:ring-primary-500/20'
 
-  if (loading) return <p className="text-sm text-stone-600">Chargement…</p>
+  if (loading) return <p className="text-sm text-muted-foreground">Chargement…</p>
 
   return (
-    <div className="rounded-xl border border-warm bg-white shadow-sm">
-      <div className="flex items-center justify-between border-b border-stone-100 px-4 py-3">
-        <h2 className="font-heading text-lg font-semibold text-stone-800">Médecins référents</h2>
+    <div className="rounded-xl border border-border bg-card shadow-sm">
+      <div className="flex items-center justify-between border-b border-border px-4 py-3">
+        <h2 className="font-heading text-lg font-semibold text-foreground">Médecins référents</h2>
         <button onClick={openNew} className="rounded-lg bg-cta-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-cta-700"><Plus className="size-3.5 inline mr-1" />Ajouter</button>
       </div>
       {showNew && (
-        <div className="border-b border-stone-100 p-4 space-y-3 bg-stone-50">
+        <div className="border-b border-border p-4 space-y-3 bg-muted">
           <input value={name} onChange={e => setName(e.target.value)} placeholder="Nom *" className={inputClass} />
           <div className="grid grid-cols-2 gap-3">
             <input value={specialty} onChange={e => setSpecialty(e.target.value)} placeholder="Spécialité" className={inputClass} />
@@ -60,28 +60,28 @@ export default function ReferringPractitionersManager() {
           </div>
           <input value={phone} onChange={e => setPhone(e.target.value)} placeholder="Téléphone" className={inputClass} />
           <input value={notes} onChange={e => setNotes(e.target.value)} placeholder="Notes" className={inputClass} />
-          {error && <p className="text-xs text-red-600">{error}</p>}
+          {error && <p className="text-xs text-destructive">{error}</p>}
           <div className="flex items-center gap-2">
             <button onClick={handleSave} disabled={saving} className="rounded-lg bg-cta-600 px-4 py-1.5 text-xs font-medium text-white hover:bg-cta-700 disabled:opacity-50">
               {saving ? '…' : editing ? 'Modifier' : 'Ajouter'}
             </button>
-            <button onClick={cancel} className="text-xs text-stone-600 hover:text-stone-800">Annuler</button>
+            <button onClick={cancel} className="text-xs text-muted-foreground hover:text-foreground">Annuler</button>
           </div>
         </div>
       )}
       {practitioners.length === 0 ? (
-        <p className="px-4 py-6 text-center text-sm text-stone-500">Aucun médecin référent enregistré.</p>
+        <p className="px-4 py-6 text-center text-sm text-muted-foreground">Aucun médecin référent enregistré.</p>
       ) : (
         <div className="divide-y divide-stone-100">
           {practitioners.map(p => (
             <div key={p.id} className="flex items-center justify-between px-4 py-3">
               <div className="min-w-0 flex-1">
-                <p className="text-sm font-medium text-stone-800">{p.name}</p>
-                <p className="text-xs text-stone-600">{[p.specialty, p.city, p.phone].filter(Boolean).join(' · ') || '—'}</p>
+                <p className="text-sm font-medium text-foreground">{p.name}</p>
+                <p className="text-xs text-muted-foreground">{[p.specialty, p.city, p.phone].filter(Boolean).join(' · ') || '—'}</p>
               </div>
-              <div className="flex items-center gap-1 ml-2">
-                <button onClick={() => openEdit(p)} className="rounded p-1 text-stone-600 hover:text-primary-600"><Pencil className="size-3.5" /></button>
-                <button onClick={() => handleDelete(p.id)} className="rounded p-1 text-stone-600 hover:text-red-600"><Trash2 className="size-3.5" /></button>
+              <div className="flex items-center gap-1 ms-2">
+                <button onClick={() => openEdit(p)} className="rounded p-1 text-muted-foreground hover:text-primary-600"><Pencil className="size-3.5" /></button>
+                <button onClick={() => handleDelete(p.id)} className="rounded p-1 text-muted-foreground hover:text-destructive"><Trash2 className="size-3.5" /></button>
               </div>
             </div>
           ))}

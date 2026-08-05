@@ -21,13 +21,13 @@ export type BillingRow = {
 }
 
 const STATUS_STYLES: Record<string, string> = {
-  trialing: 'bg-primary-50 text-primary-700',
+  trialing: 'bg-primary/10 text-primary-700',
   active: 'bg-success/10 text-success',
   past_due: 'bg-warning/10 text-warning',
   grace: 'bg-error/10 text-error',
-  suspended: 'bg-stone-800 text-white',
-  expired: 'bg-stone-100 text-stone-600',
-  canceled: 'bg-stone-100 text-stone-600',
+  suspended: 'bg-foreground text-background',
+  expired: 'bg-accent text-muted-foreground',
+  canceled: 'bg-accent text-muted-foreground',
 }
 
 function daysLate(periodEnd: string | null): number | null {
@@ -89,9 +89,9 @@ export default function BillingAdminTable({ initialRows }: { initialRows: Billin
   const fmtDate = (iso: string | null) => (iso ? new Date(iso).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' }) : '—')
 
   return (
-    <div className="rounded-xl border border-warm bg-white shadow-sm">
-      <div className="flex items-center justify-between border-b border-stone-100 px-4 py-3">
-        <h2 className="font-heading text-lg font-semibold text-stone-800">File d&apos;attente dunning</h2>
+    <div className="rounded-xl border border-border bg-card shadow-sm">
+      <div className="flex items-center justify-between border-b border-border px-4 py-3">
+        <h2 className="font-heading text-lg font-semibold text-foreground">File d&apos;attente dunning</h2>
         <div className="flex items-center gap-2">
           <button
             onClick={runCycle}
@@ -100,18 +100,18 @@ export default function BillingAdminTable({ initialRows }: { initialRows: Billin
           >
             <RefreshCcw className="size-3.5" />{running ? 'Cycle…' : 'Lancer le cycle'}
           </button>
-          <button onClick={refresh} disabled={busy} className="rounded-lg border border-stone-200 px-3 py-1.5 text-xs font-medium text-stone-600 hover:bg-stone-50">
+          <button onClick={refresh} disabled={busy} className="rounded-lg border border-border px-3 py-1.5 text-xs font-medium text-muted-foreground hover:bg-muted">
             Actualiser
           </button>
         </div>
       </div>
 
-      {message && <p className="border-b border-stone-100 bg-primary-50/50 px-4 py-2 text-xs text-primary-700">{message}</p>}
+      {message && <p className="border-b border-border bg-primary-50/50 px-4 py-2 text-xs text-primary-700">{message}</p>}
 
       <div className="overflow-x-auto">
-        <table className="w-full text-left text-sm">
+        <table className="w-full text-start text-sm">
           <thead>
-            <tr className="border-b border-stone-100 text-xs uppercase text-stone-500">
+            <tr className="border-b border-border text-xs uppercase text-muted-foreground">
               <th className="px-4 py-2.5 font-semibold">Cabinet</th>
               <th className="px-4 py-2.5 font-semibold">Plan</th>
               <th className="px-4 py-2.5 font-semibold">Statut</th>
@@ -120,31 +120,31 @@ export default function BillingAdminTable({ initialRows }: { initialRows: Billin
               <th className="px-4 py-2.5 font-semibold">Montant</th>
               <th className="px-4 py-2.5 font-semibold">Dernière relance</th>
               <th className="px-4 py-2.5 font-semibold">Notes</th>
-              <th className="px-4 py-2.5 text-right font-semibold">Actions</th>
+              <th className="px-4 py-2.5 text-end font-semibold">Actions</th>
             </tr>
           </thead>
           <tbody>
             {rows.length === 0 && (
-              <tr><td colSpan={9} className="px-4 py-8 text-center text-stone-500">Aucun abonnement à suivre.</td></tr>
+              <tr><td colSpan={9} className="px-4 py-8 text-center text-muted-foreground">Aucun abonnement à suivre.</td></tr>
             )}
             {rows.map((row) => (
-              <tr key={row.id} className="border-b border-stone-50 align-top hover:bg-stone-50/50">
+              <tr key={row.id} className="border-b border-border/50 align-top hover:bg-muted/50">
                 <td className="px-4 py-3">
-                  <p className="font-medium text-stone-800">{row.tenantName}</p>
-                  <p className="text-xs text-stone-500">{row.domain}</p>
-                  {row.billingEmail && <p className="text-xs text-stone-500">{row.billingEmail}</p>}
+                  <p className="font-medium text-foreground">{row.tenantName}</p>
+                  <p className="text-xs text-muted-foreground">{row.domain}</p>
+                  {row.billingEmail && <p className="text-xs text-muted-foreground">{row.billingEmail}</p>}
                 </td>
-                <td className="px-4 py-3 text-stone-700 capitalize">{row.plan}</td>
+                <td className="px-4 py-3 text-muted-foreground capitalize">{row.plan}</td>
                 <td className="px-4 py-3">
-                  <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${STATUS_STYLES[row.status] || 'bg-stone-100 text-stone-600'}`}>
+                  <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${STATUS_STYLES[row.status] || 'bg-accent text-muted-foreground'}`}>
                     {row.statusLabel}
                   </span>
                 </td>
-                <td className="px-4 py-3 text-stone-600">{fmtDate(row.currentPeriodEnd)}</td>
-                <td className="px-4 py-3 text-stone-600">{daysLate(row.currentPeriodEnd) !== null ? `${daysLate(row.currentPeriodEnd)} j` : '—'}</td>
-                <td className="px-4 py-3 text-stone-600">{row.amount || 0} MAD</td>
-                <td className="px-4 py-3 text-stone-600">{fmtDate(row.lastReminderAt)}</td>
-                <td className="max-w-[180px] px-4 py-3 text-xs text-stone-500 whitespace-pre-line">{row.notes || ''}</td>
+                <td className="px-4 py-3 text-muted-foreground">{fmtDate(row.currentPeriodEnd)}</td>
+                <td className="px-4 py-3 text-muted-foreground">{daysLate(row.currentPeriodEnd) !== null ? `${daysLate(row.currentPeriodEnd)} j` : '—'}</td>
+                <td className="px-4 py-3 text-muted-foreground">{row.amount || 0} MAD</td>
+                <td className="px-4 py-3 text-muted-foreground">{fmtDate(row.lastReminderAt)}</td>
+                <td className="max-w-[180px] px-4 py-3 text-xs text-muted-foreground whitespace-pre-line">{row.notes || ''}</td>
                 <td className="px-4 py-3">
                   <div className="flex flex-wrap justify-end gap-1">
                     {row.status !== 'active' && (
@@ -154,7 +154,7 @@ export default function BillingAdminTable({ initialRows }: { initialRows: Billin
                       </button>
                     )}
                     <button onClick={() => act('remind', row)} disabled={busy} title="Envoyer une relance"
-                      className="inline-flex items-center gap-1 rounded-md bg-primary-50 px-2 py-1 text-xs font-medium text-primary-700 hover:bg-primary-100 disabled:opacity-50">
+                      className="inline-flex items-center gap-1 rounded-md bg-primary/10 px-2 py-1 text-xs font-medium text-primary-700 hover:bg-primary/15 disabled:opacity-50">
                       <Bell className="size-3" />Relance
                     </button>
                     {row.status !== 'suspended' && row.status !== 'expired' && (
@@ -165,12 +165,12 @@ export default function BillingAdminTable({ initialRows }: { initialRows: Billin
                     )}
                     {['suspended', 'expired', 'grace'].includes(row.status) && (
                       <button onClick={() => act('restore', row)} disabled={busy} title="Restaurer"
-                        className="inline-flex items-center gap-1 rounded-md bg-stone-100 px-2 py-1 text-xs font-medium text-stone-700 hover:bg-stone-200 disabled:opacity-50">
+                        className="inline-flex items-center gap-1 rounded-md bg-accent px-2 py-1 text-xs font-medium text-muted-foreground hover:bg-accent disabled:opacity-50">
                         <RotateCcw className="size-3" />Restaurer
                       </button>
                     )}
                     <button onClick={() => { const n = prompt('Note interne (appel, accord…)'); if (n) act('note', row, n) }} disabled={busy} title="Ajouter une note"
-                      className="inline-flex items-center gap-1 rounded-md bg-stone-100 px-2 py-1 text-xs font-medium text-stone-600 hover:bg-stone-200 disabled:opacity-50">
+                      className="inline-flex items-center gap-1 rounded-md bg-accent px-2 py-1 text-xs font-medium text-muted-foreground hover:bg-accent disabled:opacity-50">
                       <StickyNote className="size-3" />Note
                     </button>
                   </div>

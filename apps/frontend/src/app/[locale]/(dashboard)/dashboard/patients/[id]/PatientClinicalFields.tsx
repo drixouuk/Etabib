@@ -36,7 +36,7 @@ export default function PatientClinicalFields({ patientId, initialData }: Props)
 
   if (!initialData) {
     return (
-      <div className="rounded-lg border border-warm bg-stone-50 px-4 py-6 text-center text-sm text-stone-600">
+      <div className="rounded-lg border border-border bg-muted px-4 py-6 text-center text-sm text-muted-foreground">
         Dossier clinique — accès restreint aux médecins.
       </div>
     )
@@ -74,16 +74,16 @@ export default function PatientClinicalFields({ patientId, initialData }: Props)
           <div
             key={f.key}
             className={`rounded-[14px] border p-4 shadow-sm ${
-              hasContent ? 'border-red-200 bg-red-50/30' : 'border-warm bg-white'
+              hasContent ? 'border-destructive/30 bg-red-50/30' : 'border-border bg-card'
             }`}
           >
             <div className="flex items-center justify-between mb-2">
-              <h4 className="text-[13.5px] font-semibold text-stone-800">{f.label}</h4>
+              <h4 className="text-[13.5px] font-semibold text-foreground">{f.label}</h4>
               {!isEditing && (
                 <button
                   type="button"
                   onClick={() => setEditing(f.key)}
-                  className="rounded-lg p-1 text-stone-600 transition-colors duration-200 hover:bg-stone-100 hover:text-stone-600"
+                  className="rounded-lg p-1 text-muted-foreground transition-colors duration-200 hover:bg-accent hover:text-muted-foreground"
                   aria-label={`Modifier ${f.label}`}
                 >
                   <Pencil className="size-3.5" />
@@ -96,7 +96,7 @@ export default function PatientClinicalFields({ patientId, initialData }: Props)
                   rows={4}
                   value={val}
                   onChange={(e) => setValues((prev) => ({ ...prev, [f.key]: e.target.value }))}
-                  className="w-full rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm text-stone-800 placeholder:text-stone-600 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20"
+                  className="w-full rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary-500/20"
                   placeholder={`Saisir ${f.label.toLowerCase()}...`}
                 />
                 <div className="flex items-center gap-2">
@@ -111,26 +111,26 @@ export default function PatientClinicalFields({ patientId, initialData }: Props)
                   <button
                     type="button"
                     onClick={() => { setEditing(null); setValues((prev) => ({ ...prev, [f.key]: initialData?.[f.key as keyof typeof initialData] ?? '' })) }}
-                    className="text-xs text-stone-600 hover:text-stone-800"
+                    className="text-xs text-muted-foreground hover:text-foreground"
                   >
                     Annuler
                   </button>
-                  {saved === f.key && <span className="text-xs text-green-600">✓</span>}
+                  {saved === f.key && <span className="text-xs text-success">✓</span>}
                 </div>
               </div>
             ) : (
               <>
                 {val?.trim() ? (
-                  <p className="text-sm text-stone-800 whitespace-pre-wrap">{val}</p>
+                  <p className="text-sm text-foreground whitespace-pre-wrap">{val}</p>
                 ) : (
-                  <p className="text-xs italic text-stone-300">Aucune information</p>
+                  <p className="text-xs italic text-muted-foreground/70">Aucune information</p>
                 )}
               </>
             )}
           </div>
         )
       })}
-      {error && <p className="col-span-full text-sm text-red-600">{error}</p>}
+      {error && <p className="col-span-full text-sm text-destructive">{error}</p>}
     </div>
   )
 }

@@ -47,10 +47,10 @@ export default function Header({ doctorName, doctorNameShort }: Props) {
 
         <div className="flex items-center gap-2.5">
           <LanguageSwitcher />
-          <a href="/fr#rdv"
+          <Link href="/#rdv"
             className="hidden h-10 items-center justify-center rounded-xl bg-cta-600 px-[18px] text-[.87rem] font-semibold text-white shadow-sm transition-all duration-200 hover:bg-cta-700 hover:-translate-y-0.5 hover:shadow-md md:inline-flex">
             {t('cta')}
-          </a>
+          </Link>
           <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className="flex size-[34px] items-center justify-center rounded-lg md:hidden" aria-label="Menu">
             {mobileMenuOpen ? <X className="size-[21px]" /> : <Menu className="size-[21px]" />}
@@ -65,10 +65,10 @@ export default function Header({ doctorName, doctorNameShort }: Props) {
                 {t(key)}
               </Link>
             ))}
-            <a href="/fr#rdv" onClick={() => setMobileMenuOpen(false)}
+            <Link href="/#rdv" onClick={() => setMobileMenuOpen(false)}
               className="block rounded-lg px-[14px] py-[11px] text-[.92rem] font-bold text-cta-700">
               {t('cta')}
-            </a>
+            </Link>
           </div>
         )}
       </nav>

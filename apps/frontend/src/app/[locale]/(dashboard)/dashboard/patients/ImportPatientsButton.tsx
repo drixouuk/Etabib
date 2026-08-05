@@ -152,7 +152,7 @@ export default function ImportPatientsButton() {
       {!parsed && !done && (
         <button
           onClick={() => fileRef.current?.click()}
-          className="flex items-center gap-2 rounded-lg border border-stone-300 bg-white px-4 py-2.5 text-sm font-medium text-stone-800 transition-colors duration-200 hover:bg-stone-50"
+          className="flex items-center gap-2 rounded-lg border border-border bg-card px-4 py-2.5 text-sm font-medium text-foreground transition-colors duration-200 hover:bg-muted"
         >
           <Upload className="size-4" />
           Importer un CSV
@@ -160,15 +160,15 @@ export default function ImportPatientsButton() {
       )}
 
       {parsed && !importing && (
-        <div className="rounded-xl border border-warm bg-white p-4 shadow-sm">
-          <p className="mb-2 text-sm text-stone-800">
+        <div className="rounded-xl border border-border bg-card p-4 shadow-sm">
+          <p className="mb-2 text-sm text-foreground">
             <strong>{parsed.valid.length}</strong> patients valides détectés
             {parsed.errors.length > 0 && (
               <>, <strong>{parsed.errors.length}</strong> ligne(s) avec erreur(s)</>
             )}
           </p>
           {parsed.errors.length > 0 && (
-            <ul className="mb-3 list-inside list-disc text-xs text-red-500">
+            <ul className="mb-3 list-inside list-disc text-xs text-destructive">
               {parsed.errors.slice(0, 5).map((e, i) => (
                 <li key={i}>Ligne {e.line} : {e.reason}</li>
               ))}
@@ -184,7 +184,7 @@ export default function ImportPatientsButton() {
             </button>
             <button
               onClick={() => { setParsed(null); setResult(null) }}
-              className="text-sm text-stone-600 hover:text-stone-800"
+              className="text-sm text-muted-foreground hover:text-foreground"
             >
               Annuler
             </button>
@@ -193,21 +193,21 @@ export default function ImportPatientsButton() {
       )}
 
       {importing && (
-        <div className="rounded-xl border border-warm bg-stone-50 p-4">
-          <p className="text-sm text-stone-600">Import en cours…</p>
+        <div className="rounded-xl border border-border bg-muted p-4">
+          <p className="text-sm text-muted-foreground">Import en cours…</p>
         </div>
       )}
 
       {done && result && (
-        <div className="rounded-xl border border-warm bg-white p-4 shadow-sm">
-          <p className="text-sm text-stone-800">
-            <strong className="text-green-600">{result.imported}</strong> patient{result.imported > 1 ? 's' : ''} importé{result.imported > 1 ? 's' : ''}
+        <div className="rounded-xl border border-border bg-card p-4 shadow-sm">
+          <p className="text-sm text-foreground">
+            <strong className="text-success">{result.imported}</strong> patient{result.imported > 1 ? 's' : ''} importé{result.imported > 1 ? 's' : ''}
             {result.errors.length > 0 && (
-              <>, <strong className="text-red-600">{result.errors.length}</strong> ligne{result.errors.length > 1 ? 's' : ''} en erreur</>
+              <>, <strong className="text-destructive">{result.errors.length}</strong> ligne{result.errors.length > 1 ? 's' : ''} en erreur</>
             )}.
           </p>
           {result.errors.length > 0 && (
-            <ul className="mt-2 list-inside list-disc text-xs text-red-500">
+            <ul className="mt-2 list-inside list-disc text-xs text-destructive">
               {result.errors.map((e, i) => (
                 <li key={i}>Ligne {e.line} : {e.reason}</li>
               ))}

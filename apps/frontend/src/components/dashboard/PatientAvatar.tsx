@@ -27,11 +27,11 @@ export default function PatientAvatar({ fullName, gender, size = 'md', className
   const bgColor =
     gender === 'girl' ? 'bg-avatar-girl' :
     gender === 'boy' ? 'bg-avatar-boy' :
-    'bg-stone-300'
+    'bg-muted'
 
   return (
     <Avatar className={`${SIZE_CLASSES[size]} ${bgColor} ${className}`}>
-      <AvatarFallback className="bg-transparent text-white font-bold">
+      <AvatarFallback className="bg-transparent text-foreground font-bold">
         {getInitials(fullName)}
       </AvatarFallback>
     </Avatar>

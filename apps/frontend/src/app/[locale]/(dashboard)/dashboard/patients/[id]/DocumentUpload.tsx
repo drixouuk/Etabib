@@ -60,9 +60,9 @@ export default function DocumentUpload({ patientId, documents }: Props) {
   }
 
   return (
-    <div className="rounded-xl border border-warm bg-white shadow-sm">
-      <div className="flex items-center justify-between border-b border-stone-100 px-4 py-3">
-        <h2 className="font-heading text-lg font-semibold text-stone-800">Documents</h2>
+    <div className="rounded-xl border border-border bg-card shadow-sm">
+      <div className="flex items-center justify-between border-b border-border px-4 py-3">
+        <h2 className="font-heading text-lg font-semibold text-foreground">Documents</h2>
         {!showForm && (
           <button
             onClick={() => setShowForm(true)}
@@ -76,12 +76,12 @@ export default function DocumentUpload({ patientId, documents }: Props) {
       {showForm && (
         <form onSubmit={handleSubmit} className="flex flex-col gap-4 p-4">
           <div>
-            <label className="mb-1 block text-sm font-medium text-stone-800">Type de document *</label>
+            <label className="mb-1 block text-sm font-medium text-foreground">Type de document *</label>
             <select
               value={documentType}
               onChange={e => setDocumentType(e.target.value)}
               required
-              className="w-full rounded-lg border border-stone-300 bg-white px-4 py-2.5 text-sm focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20"
+              className="w-full rounded-lg border border-border bg-card px-4 py-2.5 text-sm focus:border-primary focus:ring-2 focus:ring-primary-500/20"
             >
               <option value="radio">Radio</option>
               <option value="analyse">Analyse</option>
@@ -91,28 +91,28 @@ export default function DocumentUpload({ patientId, documents }: Props) {
             </select>
           </div>
           <div>
-            <label className="mb-1 block text-sm font-medium text-stone-800">Fichier *</label>
+            <label className="mb-1 block text-sm font-medium text-foreground">Fichier *</label>
             <input
               type="file"
               accept="image/*,application/pdf"
               onChange={e => setFile(e.target.files?.[0] || null)}
               required
-              className="w-full text-sm text-stone-600 file:mr-3 file:rounded-lg file:border-0 file:bg-primary-50 file:px-3 file:py-2 file:text-sm file:font-medium file:text-primary-700 hover:file:bg-primary-100"
+              className="w-full text-sm text-muted-foreground file:me-3 file:rounded-lg file:border-0 file:bg-primary/10 file:px-3 file:py-2 file:text-sm file:font-medium file:text-primary-700 hover:file:bg-primary/15"
             />
           </div>
           <div className="flex items-center gap-3">
             <button type="submit" disabled={saving || !file} className="rounded-lg bg-cta-600 px-4 py-2 text-sm font-medium text-white hover:bg-cta-700 disabled:opacity-50">
               {saving ? 'Upload…' : 'Ajouter le document'}
             </button>
-            <button type="button" onClick={() => setShowForm(false)} className="text-sm text-stone-600 hover:text-stone-800">Annuler</button>
+            <button type="button" onClick={() => setShowForm(false)} className="text-sm text-muted-foreground hover:text-foreground">Annuler</button>
           </div>
-          {error && <p className="text-sm text-red-600">{error}</p>}
+          {error && <p className="text-sm text-destructive">{error}</p>}
         </form>
       )}
 
       {documents.length === 0 && !showForm ? (
-        <div className="flex cursor-pointer flex-col items-center justify-center gap-2.5 border-2 border-dashed border-primary/15 px-4 py-11 text-sm text-stone-600 transition-colors duration-200 hover:border-primary-500 hover:bg-primary-50/30" onClick={() => setShowForm(true)}>
-          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" className="text-stone-600"><path d="M12 16 V5"/><polyline points="7 9 12 4 17 9"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+        <div className="flex cursor-pointer flex-col items-center justify-center gap-2.5 border-2 border-dashed border-primary/15 px-4 py-11 text-sm text-muted-foreground transition-colors duration-200 hover:border-primary hover:bg-primary-50/30" onClick={() => setShowForm(true)}>
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" className="text-muted-foreground"><path d="M12 16 V5"/><polyline points="7 9 12 4 17 9"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
           Glissez un document ici, ou cliquez pour en ajouter
         </div>
       ) : documents.length > 0 && (
@@ -120,8 +120,8 @@ export default function DocumentUpload({ patientId, documents }: Props) {
           {documents.map(d => (
             <div key={d.id} className="flex items-center justify-between px-4 py-3">
               <div>
-                <span className="text-sm font-medium text-stone-800">{typeLabels[d.documentType] || d.documentType}</span>
-                <p className="text-xs text-stone-600">
+                <span className="text-sm font-medium text-foreground">{typeLabels[d.documentType] || d.documentType}</span>
+                <p className="text-xs text-muted-foreground">
                   {new Date(d.createdAt).toLocaleDateString('fr-FR')}
                   {d.filename && ` — ${d.filename}`}
                 </p>

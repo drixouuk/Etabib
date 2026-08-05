@@ -35,17 +35,17 @@ export default async function DashboardPage() {
       </div>
 
       <div className="grid min-h-0 flex-1 grid-cols-1 gap-4 lg:grid-cols-[1.1fr_1fr]">
-        <div className="flex min-h-0 flex-col overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm">
-          <h3 className="shrink-0 border-b border-stone-100 px-5 py-3.5 font-heading text-[14.5px] font-semibold text-[#2A241C]">File d&apos;attente</h3>
+        <div className="flex min-h-0 flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
+          <h3 className="shrink-0 border-b border-border px-5 py-3.5 font-heading text-[14.5px] font-semibold text-[#2A241C]">File d&apos;attente</h3>
           <div className="min-h-0 flex-1 overflow-y-auto px-5 py-4 lg:pr-4">
             <QueuePreview />
           </div>
         </div>
-        <div className="flex min-h-0 flex-col overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm">
-          <h3 className="shrink-0 border-b border-stone-100 px-5 py-3.5 font-heading text-[14.5px] font-semibold text-[#2A241C]">Rappels vaccinaux</h3>
+        <div className="flex min-h-0 flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
+          <h3 className="shrink-0 border-b border-border px-5 py-3.5 font-heading text-[14.5px] font-semibold text-[#2A241C]">Rappels vaccinaux</h3>
           <div className="min-h-0 flex-1 overflow-y-auto lg:pr-1">
             {isPediatrie ? <VaccinationAlerts /> : (
-              <div className="flex items-center gap-2.5 rounded-[10px] bg-primary-50 px-3.5 py-3 text-[13px] text-primary-700">
+              <div className="flex items-center gap-2.5 rounded-[10px] bg-primary/10 px-3.5 py-3 text-[13px] text-primary-700">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><circle cx="12" cy="12" r="9"/><polyline points="8 12 11 15 16 9"/></svg>
                 Tous les patients sont à jour
               </div>

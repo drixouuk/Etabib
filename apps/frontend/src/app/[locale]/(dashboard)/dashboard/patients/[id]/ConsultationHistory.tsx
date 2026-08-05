@@ -43,30 +43,30 @@ export default function ConsultationHistory({ consultations, doctorInfo, patient
   return (
     <div>
       {consultations.length > 0 && (
-        <div className="border-b border-stone-100 px-4 py-3">
+        <div className="border-b border-border px-4 py-3">
           <div className="flex flex-wrap items-end gap-2">
             <div className="min-w-[180px] flex-1">
-              <label className="mb-0.5 block text-xs text-stone-600">Rechercher</label>
+              <label className="mb-0.5 block text-xs text-muted-foreground">Rechercher</label>
               <input type="text" value={filterQuery} onChange={e => setFilterQuery(e.target.value)}
                 placeholder="Motif, diagnostic..."
-                className="w-full rounded-lg border border-warm bg-white px-3 py-1.5 text-sm text-stone-800 placeholder:text-stone-600 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20"
+                className="w-full rounded-lg border border-border bg-card px-3 py-1.5 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary-500/20"
               />
             </div>
             <div>
-              <label className="mb-0.5 block text-xs text-stone-600">Du</label>
+              <label className="mb-0.5 block text-xs text-muted-foreground">Du</label>
               <input type="date" value={filterDateFrom} onChange={e => setFilterDateFrom(e.target.value)}
-                className="rounded-lg border border-warm bg-white px-2 py-1.5 text-sm text-stone-800 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20"
+                className="rounded-lg border border-border bg-card px-2 py-1.5 text-sm text-foreground focus:border-primary focus:ring-2 focus:ring-primary-500/20"
               />
             </div>
             <div>
-              <label className="mb-0.5 block text-xs text-stone-600">Au</label>
+              <label className="mb-0.5 block text-xs text-muted-foreground">Au</label>
               <input type="date" value={filterDateTo} onChange={e => setFilterDateTo(e.target.value)}
-                className="rounded-lg border border-warm bg-white px-2 py-1.5 text-sm text-stone-800 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20"
+                className="rounded-lg border border-border bg-card px-2 py-1.5 text-sm text-foreground focus:border-primary focus:ring-2 focus:ring-primary-500/20"
               />
             </div>
             {(filterQuery || filterDateFrom || filterDateTo) && (
               <button onClick={() => { setFilterQuery(''); setFilterDateFrom(''); setFilterDateTo('') }}
-                className="rounded-lg border border-warm bg-white px-3 py-1.5 text-sm text-stone-600 hover:text-stone-800 transition-colors duration-200">
+                className="rounded-lg border border-border bg-card px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors duration-200">
                 Effacer
               </button>
             )}
@@ -75,7 +75,7 @@ export default function ConsultationHistory({ consultations, doctorInfo, patient
       )}
 
       {filtered.length === 0 ? (
-        <p className="px-4 py-6 text-center text-sm text-stone-600">
+        <p className="px-4 py-6 text-center text-sm text-muted-foreground">
           {consultations.length > 0 ? 'Aucune consultation ne correspond à la recherche.' : 'Aucune consultation.'}
         </p>
       ) : (
@@ -84,7 +84,7 @@ export default function ConsultationHistory({ consultations, doctorInfo, patient
             <div key={c.id} className="px-4 py-3">
               <div className="flex items-baseline justify-between">
                 <span
-                  className={`text-sm font-medium ${onEdit ? 'cursor-pointer text-primary-700 hover:text-primary-600' : 'text-stone-800'}`}
+                  className={`text-sm font-medium ${onEdit ? 'cursor-pointer text-primary-700 hover:text-primary-600' : 'text-foreground'}`}
                   onClick={() => onEdit?.(c)}
                 >
                   {new Date(c.date).toLocaleDateString('fr-FR')}
@@ -106,19 +106,19 @@ export default function ConsultationHistory({ consultations, doctorInfo, patient
                       PDF
                     </button>
                   )}
-                  <span className="text-xs text-stone-600">
+                  <span className="text-xs text-muted-foreground">
                     {c.practitioner?.name || c.practitioner?.email || '—'}
                   </span>
                 </span>
               </div>
-              {c.motif && <p className="mt-1 text-sm text-stone-600">{c.motif}</p>}
+              {c.motif && <p className="mt-1 text-sm text-muted-foreground">{c.motif}</p>}
               {(c.poids || c.taille || c.perimetreCranien) && (
-                <p className="mt-0.5 text-xs text-stone-600">
+                <p className="mt-0.5 text-xs text-muted-foreground">
                   {c.poids && `${c.poids} kg`}{c.poids && c.taille ? ' · ' : ''}{c.taille && `${c.taille} cm`}
                   {((c.poids || c.taille) && c.perimetreCranien) ? ' · ' : ''}{c.perimetreCranien && `PC ${c.perimetreCranien} cm`}
                 </p>
               )}
-              {c.diagnostic && <p className="mt-0.5 text-xs font-medium text-stone-800">{c.diagnostic}</p>}
+              {c.diagnostic && <p className="mt-0.5 text-xs font-medium text-foreground">{c.diagnostic}</p>}
             </div>
           ))}
         </div>

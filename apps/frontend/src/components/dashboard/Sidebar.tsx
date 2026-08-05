@@ -108,8 +108,8 @@ export default function Sidebar({ user, tenant, onNavigate }: Props) {
           </svg>
         </div>
         <div>
-          <p className="text-sm font-bold leading-tight text-stone-800">{tenant?.name || 'Cabinet'}</p>
-          <p className="text-[11.5px] text-stone-600">{tierLabels[tenant?.settings?.activeTier || ''] || ''}</p>
+          <p className="text-sm font-bold leading-tight text-foreground">{tenant?.name || 'Cabinet'}</p>
+          <p className="text-[11.5px] text-muted-foreground">{tierLabels[tenant?.settings?.activeTier || ''] || ''}</p>
         </div>
       </div>
 
@@ -128,14 +128,14 @@ export default function Sidebar({ user, tenant, onNavigate }: Props) {
         />
       )}
 
-      <div className="border-t border-primary-600/15 px-[10px] pt-4 mt-auto">
+      <div className="border-t border-primary/15 px-[10px] pt-4 mt-auto">
         <div className="flex items-center gap-[10px]">
           <div className="flex size-[38px] shrink-0 items-center justify-center rounded-full bg-primary-600 text-[13.5px] font-bold text-white">
             {initials}
           </div>
           <div className="min-w-0 flex-1">
-            <p className="text-[13px] font-semibold text-stone-800">{user.name || user.email}</p>
-            <p className="text-[11px] text-stone-600">{effectiveRoles?.map((r) => roleLabels[r] || r).join(', ')}</p>
+            <p className="text-[13px] font-semibold text-foreground">{user.name || user.email}</p>
+            <p className="text-[11px] text-muted-foreground">{effectiveRoles?.map((r) => roleLabels[r] || r).join(', ')}</p>
             {user.roles?.includes('substitute') && user.accessExpiresAt && (
               <p className="mt-0.5 text-[11px] font-medium text-warning">
                 Expire le {new Date(user.accessExpiresAt).toLocaleDateString('fr-FR')}
@@ -144,7 +144,7 @@ export default function Sidebar({ user, tenant, onNavigate }: Props) {
           </div>
         </div>
         <form action="/api/auth/logout" method="POST" className="mt-3">
-          <button type="submit" className="flex w-full items-center gap-2 rounded-[10px] px-3 py-2 text-[13px] font-medium text-stone-600 transition-colors duration-200 hover:text-red-600">
+          <button type="submit" className="flex w-full items-center gap-2 rounded-[10px] px-3 py-2 text-[13px] font-medium text-muted-foreground transition-colors duration-200 hover:text-destructive">
             <LogOut className="size-4" />Déconnexion
           </button>
         </form>

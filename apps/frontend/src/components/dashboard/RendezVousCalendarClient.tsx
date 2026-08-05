@@ -322,13 +322,13 @@ export default function RendezVousCalendarClient({ initialBookings, tenantId }: 
             e.stopPropagation()
             openEdit(b)
           }}
-          className="truncate rounded-md bg-primary-50 px-1.5 py-0.5 text-left text-[10.5px] leading-[1.35] text-primary-700 transition-colors hover:bg-primary-100"
+          className="truncate rounded-md bg-primary/10 px-1.5 py-0.5 text-start text-[10.5px] leading-[1.35] text-primary-700 transition-colors hover:bg-primary/15"
         >
           <b className="font-bold">{fmtTime(b.startTime)}</b> {b.attendeeName || 'Patient'}
         </button>
       ))}
       {appts.length > max && (
-        <div className="px-1.5 text-[10px] text-stone-500">
+        <div className="px-1.5 text-[10px] text-muted-foreground">
           +{appts.length - max} autres
         </div>
       )}
@@ -338,14 +338,14 @@ export default function RendezVousCalendarClient({ initialBookings, tenantId }: 
   return (
     <>
       <div className="mb-4 flex flex-wrap items-center justify-between gap-4">
-        <h1 className="font-heading text-[27px] font-bold tracking-tight text-stone-800">Rendez-vous</h1>
-        <p className="text-[13.5px] text-stone-600 capitalize">{fmtDayLong(today.toISOString())}</p>
+        <h1 className="font-heading text-[27px] font-bold tracking-tight text-foreground">Rendez-vous</h1>
+        <p className="text-[13.5px] text-muted-foreground capitalize">{fmtDayLong(today.toISOString())}</p>
       </div>
 
       {!mounted ? (
         // Placeholder stable SSR/client : la vue réelle n'est montée qu'après
         // hydratation (lecture de la préférence) — aucun flash de vue.
-        <div className="rounded-2xl border border-stone-200 bg-white p-8 text-center text-sm text-stone-500 shadow-sm">
+        <div className="rounded-2xl border border-border bg-card p-8 text-center text-sm text-muted-foreground shadow-sm">
           Chargement du calendrier…
         </div>
       ) : (
@@ -356,24 +356,24 @@ export default function RendezVousCalendarClient({ initialBookings, tenantId }: 
             <div className="flex items-center gap-2">
               <button
                 onClick={goToday}
-                className="rounded-[10px] border border-primary-600/20 bg-white px-3.5 py-2 text-[13px] font-medium text-stone-800 transition-colors hover:bg-primary-50"
+                className="rounded-[10px] border border-primary/20 bg-card px-3.5 py-2 text-[13px] font-medium text-foreground transition-colors hover:bg-primary/10"
               >
                 Aujourd&apos;hui
               </button>
               <button
                 onClick={() => stepCursor(-1)}
                 aria-label="Précédent"
-                className="flex size-[34px] items-center justify-center rounded-[10px] border border-primary-600/20 bg-white text-stone-500 transition-colors hover:bg-primary-50 hover:text-primary-700"
+                className="flex size-[34px] items-center justify-center rounded-[10px] border border-primary/20 bg-card text-muted-foreground transition-colors hover:bg-primary/10 hover:text-primary-700"
               >
                 <ChevronLeft className="size-4" />
               </button>
-              <div className="min-w-[130px] text-center text-base font-bold text-stone-800 capitalize">
+              <div className="min-w-[130px] text-center text-base font-bold text-foreground capitalize">
                 {calendarLabel}
               </div>
               <button
                 onClick={() => stepCursor(1)}
                 aria-label="Suivant"
-                className="flex size-[34px] items-center justify-center rounded-[10px] border border-primary-600/20 bg-white text-stone-500 transition-colors hover:bg-primary-50 hover:text-primary-700"
+                className="flex size-[34px] items-center justify-center rounded-[10px] border border-primary/20 bg-card text-muted-foreground transition-colors hover:bg-primary/10 hover:text-primary-700"
               >
                 <ChevronRight className="size-4" />
               </button>
@@ -382,7 +382,7 @@ export default function RendezVousCalendarClient({ initialBookings, tenantId }: 
               <select
                 value={view}
                 onChange={(e) => changeView(e.target.value as View)}
-                className="cursor-pointer rounded-[9px] border border-primary-600/20 bg-white px-3 py-2 text-[12.5px] text-stone-800"
+                className="cursor-pointer rounded-[9px] border border-primary/20 bg-card px-3 py-2 text-[12.5px] text-foreground"
                 aria-label="Vue"
               >
                 <option value="mois">Mois</option>
@@ -391,7 +391,7 @@ export default function RendezVousCalendarClient({ initialBookings, tenantId }: 
               <select
                 value={weekStart}
                 onChange={(e) => changeWeekStart(e.target.value as WeekStart)}
-                className="hidden cursor-pointer rounded-[9px] border border-primary-600/20 bg-white px-3 py-2 text-[12.5px] text-stone-800 md:block"
+                className="hidden cursor-pointer rounded-[9px] border border-primary/20 bg-card px-3 py-2 text-[12.5px] text-foreground md:block"
                 aria-label="Début de semaine"
               >
                 <option value="monday">Lundi</option>
@@ -403,18 +403,18 @@ export default function RendezVousCalendarClient({ initialBookings, tenantId }: 
                 value={dateInputValue}
                 onChange={(e) => onDateInput(e.target.value)}
                 aria-label="Date"
-                className="cursor-pointer rounded-[9px] border border-primary-600/20 bg-white px-3 py-2 text-[12.5px] text-stone-800"
+                className="cursor-pointer rounded-[9px] border border-primary/20 bg-card px-3 py-2 text-[12.5px] text-foreground"
               />
             </div>
           </div>
 
           <div dir={isRTL ? 'rtl' : 'ltr'} className="flex min-h-0 flex-1 flex-col">
-            <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm">
+            <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
             {view === 'mois' ? (
               <>
             <div className="grid shrink-0 grid-cols-7">
               {WEEKDAY_HEADS.map((h) => (
-                <div key={h} className="border-b border-stone-100 px-2.5 pb-2 pt-3 text-[10.5px] font-bold uppercase tracking-wide text-stone-500">
+                <div key={h} className="border-b border-border px-2.5 pb-2 pt-3 text-[10.5px] font-bold uppercase tracking-wide text-muted-foreground">
                   {h}
                 </div>
               ))}
@@ -426,17 +426,17 @@ export default function RendezVousCalendarClient({ initialBookings, tenantId }: 
                       <div
                         key={cell.key}
                         onClick={() => openCreate(cell.date)}
-                        className={`flex min-h-[96px] cursor-pointer flex-col gap-1 border-r p-2 transition-colors hover:bg-cream-50 lg:min-h-0 ${
+                        className={`flex min-h-[96px] cursor-pointer flex-col gap-1 border-r p-2 transition-colors hover:bg-muted lg:min-h-0 ${
                           ri < monthRows.length - 1 ? 'border-b' : ''
-                        } ${cell.out ? 'bg-stone-50/60' : ''}`}
+                        } ${cell.out ? 'bg-muted/60' : ''}`}
                       >
                         <div
                           className={`flex size-[22px] items-center justify-center rounded-full text-[12.5px] font-semibold ${
                             cell.key === todayKey
                               ? 'bg-primary-600 text-white'
                               : cell.out
-                                ? 'text-stone-400'
-                                : 'text-stone-600'
+                                ? 'text-muted-foreground'
+                                : 'text-muted-foreground'
                           }`}
                         >
                           {cell.date.getDate()}
@@ -450,16 +450,16 @@ export default function RendezVousCalendarClient({ initialBookings, tenantId }: 
               </>
             ) : (
               <>
-            <div className="grid shrink-0 grid-cols-[44px_repeat(7,minmax(0,1fr))] border-b border-stone-100">
+            <div className="grid shrink-0 grid-cols-[44px_repeat(7,minmax(0,1fr))] border-b border-border">
               <div />
               {weekCells.map((cell) => (
                 <div key={cell.key} className="flex flex-col items-center gap-0.5 py-1.5">
-                  <span className="text-[9.5px] font-bold uppercase tracking-wide text-stone-500">
+                  <span className="text-[9.5px] font-bold uppercase tracking-wide text-muted-foreground">
                     {DAY_NAMES_SHORT[cell.date.getDay()]}
                   </span>
                   <span
                     className={`flex size-[22px] items-center justify-center rounded-full text-[12.5px] font-semibold ${
-                      cell.key === todayKey ? 'bg-primary-600 text-white' : 'text-stone-600'
+                      cell.key === todayKey ? 'bg-primary-600 text-white' : 'text-muted-foreground'
                     }`}
                   >
                     {cell.date.getDate()}
@@ -468,11 +468,11 @@ export default function RendezVousCalendarClient({ initialBookings, tenantId }: 
               ))}
             </div>
             <div className="grid min-h-[380px] flex-1 grid-cols-[44px_repeat(7,minmax(0,1fr))]">
-              <div className="relative border-r border-stone-100">
+              <div className="relative border-r border-border">
                 {Array.from({ length: DAY_HOURS + 1 }, (_, i) => DAY_START + i).map((h) => (
                   <span
                     key={h}
-                    className="absolute right-1.5 text-[9.5px] font-medium text-stone-400"
+                    className="absolute end-1.5 text-[9.5px] font-medium text-muted-foreground"
                     style={{
                       top: `calc(${((h - DAY_START) / DAY_HOURS) * 100}% + 3px)`,
                       transform: h === DAY_END ? 'translateY(-100%)' : undefined,
@@ -486,14 +486,14 @@ export default function RendezVousCalendarClient({ initialBookings, tenantId }: 
                 <div
                   key={cell.key}
                   onClick={() => openCreate(cell.date)}
-                  className={`relative min-h-0 cursor-pointer border-r border-stone-100 ${
-                    cell.key === todayKey ? 'bg-cream-50' : ''
+                  className={`relative min-h-0 cursor-pointer border-r border-border ${
+                    cell.key === todayKey ? 'bg-muted' : ''
                   }`}
                 >
                   {Array.from({ length: DAY_HOURS + 1 }, (_, i) => DAY_START + i).map((h) => (
                     <div
                       key={h}
-                      className="pointer-events-none absolute inset-x-0 border-t border-stone-100/80"
+                      className="pointer-events-none absolute inset-x-0 border-t border-border/80"
                       style={{ top: `${((h - DAY_START) / DAY_HOURS) * 100}%` }}
                     />
                   ))}
@@ -512,7 +512,7 @@ export default function RendezVousCalendarClient({ initialBookings, tenantId }: 
                           e.stopPropagation()
                           openEdit(b)
                         }}
-                        className="absolute inset-x-1 z-10 truncate rounded-md border-l-2 border-primary-600 bg-primary-50 px-1.5 text-left text-[10.5px] leading-snug text-primary-700 transition-colors hover:bg-primary-100"
+                        className="absolute inset-x-1 z-10 truncate rounded-md border-s-2 border-primary-600 bg-primary/10 px-1.5 text-start text-[10.5px] leading-snug text-primary-700 transition-colors hover:bg-primary/15"
                         style={{ top: `${topPct}%`, height: `max(${MIN_BLOCK_PX}px, ${heightPct}%)` }}
                       >
                         <b className="font-bold">{fmtTime(b.startTime)}</b> {b.attendeeName || 'Patient'}
@@ -530,11 +530,11 @@ export default function RendezVousCalendarClient({ initialBookings, tenantId }: 
 
         {/* Liste — 1/3 */}
         <div className="lg:flex lg:min-h-0 lg:flex-col">
-          <div className="mb-4 inline-flex shrink-0 rounded-[10px] bg-primary-50 p-0.5">
+          <div className="mb-4 inline-flex shrink-0 rounded-[10px] bg-primary/10 p-0.5">
             <button
               onClick={() => setListMode('avenir')}
               className={`rounded-lg px-4 py-1.5 text-[13px] font-medium transition-all ${
-                listMode === 'avenir' ? 'bg-white text-stone-800 shadow-sm' : 'text-stone-600 hover:text-stone-800'
+                listMode === 'avenir' ? 'bg-card text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'
               }`}
             >
               À venir ({upcoming.length})
@@ -542,16 +542,16 @@ export default function RendezVousCalendarClient({ initialBookings, tenantId }: 
             <button
               onClick={() => setListMode('passes')}
               className={`rounded-lg px-4 py-1.5 text-[13px] font-medium transition-all ${
-                listMode === 'passes' ? 'bg-white text-stone-800 shadow-sm' : 'text-stone-600 hover:text-stone-800'
+                listMode === 'passes' ? 'bg-card text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'
               }`}
             >
               Passés ({past.length})
             </button>
           </div>
 
-          <div className="min-h-0 flex-1 overflow-y-auto rounded-2xl border border-stone-200 bg-white shadow-sm lg:pr-0.5">
+          <div className="min-h-0 flex-1 overflow-y-auto rounded-2xl border border-border bg-card shadow-sm lg:pe-0.5">
             {activeList.length === 0 && (
-              <div className="px-9 py-9 text-center text-[13px] text-stone-500">
+              <div className="px-9 py-9 text-center text-[13px] text-muted-foreground">
                 Aucun rendez-vous {listMode === 'avenir' ? 'à venir' : 'passé'} sur cette période.
               </div>
             )}
@@ -561,19 +561,19 @@ export default function RendezVousCalendarClient({ initialBookings, tenantId }: 
                 <div
                   key={b.id}
                   onClick={() => openEdit(b)}
-                  className="flex cursor-pointer items-start gap-3.5 border-t border-stone-100 px-5 py-3.5 transition-colors first:border-t-0 hover:bg-stone-50/60"
+                  className="flex cursor-pointer items-start gap-3.5 border-t border-border px-5 py-3.5 transition-colors first:border-t-0 hover:bg-muted/60"
                 >
                   <div className="w-[104px] shrink-0">
                     <div className="text-[13px] font-bold text-primary-700">
                       {fmtTime(b.startTime)} — {fmtTime(end)}
                     </div>
-                    <div className="text-[11.5px] text-stone-500">({b.duration || 30} min)</div>
+                    <div className="text-[11.5px] text-muted-foreground">({b.duration || 30} min)</div>
                   </div>
                   <div className="min-w-0 flex-1">
-                    <div className="text-[13.5px] font-semibold text-stone-800">{b.attendeeName || 'Patient'}</div>
-                    {b.title && <div className="mt-0.5 text-[12.5px] text-stone-600">{b.title}</div>}
+                    <div className="text-[13.5px] font-semibold text-foreground">{b.attendeeName || 'Patient'}</div>
+                    {b.title && <div className="mt-0.5 text-[12.5px] text-muted-foreground">{b.title}</div>}
                     {(b.attendeeEmail || b.attendeePhone) && (
-                      <div className="mt-1.5 flex flex-wrap gap-3.5 text-[11.5px] text-stone-500">
+                      <div className="mt-1.5 flex flex-wrap gap-3.5 text-[11.5px] text-muted-foreground">
                         {b.attendeeEmail && (
                           <span className="inline-flex items-center gap-1.5"><Mail className="size-3" />{b.attendeeEmail}</span>
                         )}
@@ -588,14 +588,14 @@ export default function RendezVousCalendarClient({ initialBookings, tenantId }: 
                         target="_blank"
                         rel="noopener noreferrer"
                         onClick={(e) => e.stopPropagation()}
-                        className="mt-1.5 inline-flex items-center gap-1.5 rounded-lg bg-primary-50 px-2.5 py-1.5 text-[11.5px] font-semibold text-primary-700 transition-colors hover:bg-primary-100"
+                        className="mt-1.5 inline-flex items-center gap-1.5 rounded-lg bg-primary/10 px-2.5 py-1.5 text-[11.5px] font-semibold text-primary-700 transition-colors hover:bg-primary/15"
                       >
                         <Video className="size-3.5" />Rejoindre la visio
                       </a>
                     )}
                   </div>
                   <div className="flex shrink-0 flex-col items-end gap-2">
-                    <span className={`rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${STATUS_CLASSES[b.status] || 'bg-stone-100 text-stone-600'}`}>
+                    <span className={`rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${STATUS_CLASSES[b.status] || 'bg-accent text-muted-foreground'}`}>
                       {STATUS_LABELS[b.status] || b.status}
                     </span>
                     {b.status !== 'cancelled' && (

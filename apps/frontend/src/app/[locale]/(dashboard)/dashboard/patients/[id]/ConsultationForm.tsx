@@ -111,11 +111,11 @@ export default function ConsultationForm({ patientId, consultations, isPediatrie
     setSaving(false)
   }
 
-  const inputClass = 'w-full rounded-lg border border-stone-300 bg-white px-4 py-2.5 text-sm text-stone-800 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20'
+  const inputClass = 'w-full rounded-lg border border-border bg-card px-4 py-2.5 text-sm text-foreground focus:border-primary focus:ring-2 focus:ring-primary-500/20'
 
   return (
     <div className="flex flex-col gap-4 p-4">
-      <h3 className="font-heading text-base font-semibold text-stone-800">
+      <h3 className="font-heading text-base font-semibold text-foreground">
         {editingConsultation ? 'Modifier la consultation' : 'Nouvelle consultation'}
       </h3>
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
@@ -132,7 +132,7 @@ export default function ConsultationForm({ patientId, consultations, isPediatrie
                     setCodeActe(t.codeActe || '')
                   }
                 }}
-                className="rounded-lg border border-warm bg-white px-3 py-2 text-sm text-stone-800 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20"
+                className="rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground focus:border-primary focus:ring-2 focus:ring-primary-500/20"
               >
                 <option value="">Charger un modèle...</option>
                 {templates.map(t => (
@@ -142,35 +142,35 @@ export default function ConsultationForm({ patientId, consultations, isPediatrie
             </div>
           )}
           <div>
-            <label className="mb-1 block text-sm font-medium text-stone-800">Motif</label>
+            <label className="mb-1 block text-sm font-medium text-foreground">Motif</label>
             <input value={motif} onChange={e => setMotif(e.target.value)} className={inputClass} />
           </div>
           <div>
-            <label className="mb-1 block text-sm font-medium text-stone-800">Examen clinique</label>
+            <label className="mb-1 block text-sm font-medium text-foreground">Examen clinique</label>
             <textarea rows={4} value={examenClinique} onChange={e => setExamenClinique(e.target.value)} className={inputClass} />
           </div>
           <div className={`grid gap-4 ${isPediatrie ? 'grid-cols-3' : 'grid-cols-2'}`}>
             <div>
-              <label className="mb-1 block text-sm font-medium text-stone-800">Poids (kg)</label>
+              <label className="mb-1 block text-sm font-medium text-foreground">Poids (kg)</label>
               <input type="number" step="0.1" value={poids} onChange={e => setPoids(e.target.value)} className={inputClass} />
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-stone-800">Taille (cm)</label>
+              <label className="mb-1 block text-sm font-medium text-foreground">Taille (cm)</label>
               <input type="number" step="0.1" value={taille} onChange={e => setTaille(e.target.value)} className={inputClass} />
             </div>
             {isPediatrie && (
               <div>
-                <label className="mb-1 block text-sm font-medium text-stone-800">PC (cm)</label>
+                <label className="mb-1 block text-sm font-medium text-foreground">PC (cm)</label>
                 <input type="number" step="0.1" value={perimetreCranien} onChange={e => setPerimetreCranien(e.target.value)} className={inputClass} />
               </div>
             )}
           </div>
           <div>
-            <label className="mb-1 block text-sm font-medium text-stone-800">Diagnostic</label>
+            <label className="mb-1 block text-sm font-medium text-foreground">Diagnostic</label>
             <textarea rows={3} value={diagnostic} onChange={e => setDiagnostic(e.target.value)} className={inputClass} />
           </div>
           <div>
-            <label className="mb-1 block text-sm font-medium text-stone-800">Code acte (NGAP)</label>
+            <label className="mb-1 block text-sm font-medium text-foreground">Code acte (NGAP)</label>
             <input value={codeActe} onChange={e => setCodeActe(e.target.value)} className={inputClass} />
           </div>
           <div className="flex flex-wrap items-center gap-3">
@@ -179,29 +179,29 @@ export default function ConsultationForm({ patientId, consultations, isPediatrie
             </button>
             {!showTemplateSave ? (
               <button type="button" onClick={() => setShowTemplateSave(true)}
-                className="rounded-lg border border-warm bg-white px-3 py-2 text-sm font-medium text-stone-600 hover:bg-stone-50">
+                className="rounded-lg border border-border bg-card px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-muted">
                 Sauvegarder comme modèle
               </button>
             ) : (
               <div className="flex items-center gap-2">
                 <input value={templateName} onChange={e => setTemplateName(e.target.value)}
                   placeholder="Nom du modèle" autoFocus
-                  className="rounded-lg border border-warm bg-white px-3 py-2 text-sm text-stone-800 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20" />
+                  className="rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground focus:border-primary focus:ring-2 focus:ring-primary-500/20" />
                 <button type="button" onClick={saveAsTemplate} disabled={savingTemplate || !templateName.trim()}
                   className="rounded-lg bg-cta-600 px-3 py-2 text-sm font-medium text-white hover:bg-cta-700 disabled:opacity-50">
                   Enregistrer
                 </button>
                 <button type="button" onClick={() => { setShowTemplateSave(false); setTemplateName('') }}
-                  className="text-sm text-stone-600 hover:text-stone-800">
+                  className="text-sm text-muted-foreground hover:text-foreground">
                   Annuler
                 </button>
               </div>
             )}
-            <button type="button" onClick={onClose} className="text-sm text-stone-600 hover:text-stone-800">
+            <button type="button" onClick={onClose} className="text-sm text-muted-foreground hover:text-foreground">
               Annuler
             </button>
           </div>
-          {error && <p className="text-sm text-red-600">{error}</p>}
+          {error && <p className="text-sm text-destructive">{error}</p>}
         </form>
     </div>
   )
