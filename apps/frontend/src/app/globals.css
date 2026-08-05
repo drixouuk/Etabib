@@ -57,11 +57,14 @@
   --color-cream-800: #D4A02D;
   --color-cream-900: #A67C1A;
 
-  --font-heading: var(--font-heading), Figtree, sans-serif;
+  --font-heading: var(--font-heading), Vazirmatn, sans-serif;
   --font-body: var(--font-body), 'Noto Sans', sans-serif;
   --font-tifinagh: var(--font-tifinagh), 'Noto Sans Tifinagh', 'Noto Sans', sans-serif;
 
-  --font-sans: var(--font-heading);
+  /* Corps par défaut = --font-body (Noto Sans / Noto Sans Arabic selon la
+     locale) — jamais le titrage : --font-heading est réservé aux éléments
+     explicitement marqués comme titres. */
+  --font-sans: var(--font-body);
   --font-mono: 'ui-monospace', 'SFMono-Regular', monospace;
 
   --width-container: 1200px;
@@ -78,7 +81,7 @@
 
 @theme inline {
   --font-heading: var(--font-heading);
-  --font-sans: var(--font-heading);
+  --font-sans: var(--font-body);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
