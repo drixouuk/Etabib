@@ -29,22 +29,22 @@ export default function ChangePasswordForm({ userId }: Props) {
     setSaving(false)
   }
 
-  const inputClass = 'w-full rounded-lg border border-border bg-card px-4 py-2.5 text-sm text-foreground focus:border-primary focus:ring-2 focus:ring-primary-500/20'
+  const inputClass = 'w-full rounded-lg border border-stone-300 bg-white px-4 py-2.5 text-sm text-stone-800 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20'
 
   return (
-    <div className="rounded-xl border border-border bg-card shadow-sm">
-      <div className="border-b border-border px-4 py-3"><h2 className="font-heading text-lg font-semibold text-foreground">Changer mon mot de passe</h2></div>
+    <div className="rounded-xl border border-warm bg-white shadow-sm">
+      <div className="border-b border-stone-100 px-4 py-3"><h2 className="font-heading text-lg font-semibold text-stone-800">Changer mon mot de passe</h2></div>
       <form onSubmit={handleSubmit} className="flex flex-col gap-4 p-4">
         <div>
-          <label className="mb-1 block text-sm font-medium text-foreground">Nouveau mot de passe</label>
+          <label className="mb-1 block text-sm font-medium text-stone-800">Nouveau mot de passe</label>
           <input type="password" value={newPassword} onChange={e => setNewPassword(e.target.value)} required minLength={8} className={inputClass} />
         </div>
         <div>
-          <label className="mb-1 block text-sm font-medium text-foreground">Confirmer le mot de passe</label>
+          <label className="mb-1 block text-sm font-medium text-stone-800">Confirmer le mot de passe</label>
           <input type="password" value={confirm} onChange={e => setConfirm(e.target.value)} required className={inputClass} />
         </div>
-        {error && <p className="text-sm text-destructive">{error}</p>}
-        {success && <p className="text-sm text-success">Mot de passe modifié avec succès.</p>}
+        {error && <p className="text-sm text-red-600">{error}</p>}
+        {success && <p className="text-sm text-green-600">Mot de passe modifié avec succès.</p>}
         <button type="submit" disabled={saving}
           className="self-start rounded-lg bg-cta-600 px-4 py-2 text-sm font-medium text-white hover:bg-cta-700 disabled:opacity-50">
           {saving ? 'Enregistrement…' : 'Modifier le mot de passe'}

@@ -4,8 +4,8 @@ import { useState, useEffect, FormEvent } from 'react'
 import { useRouter } from 'next/navigation'
 import { MapPin, Phone, Mail, Tag, CreditCard } from 'lucide-react'
 
-const inputClass = 'w-full rounded-lg border border-border bg-card px-4 py-2.5 text-sm text-foreground focus:border-primary focus:ring-2 focus:ring-primary-500/20'
-const labelClass = 'mb-1 block text-sm font-medium text-muted-foreground'
+const inputClass = 'w-full rounded-lg border border-stone-300 bg-white px-4 py-2.5 text-sm text-stone-800 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20'
+const labelClass = 'mb-1 block text-sm font-medium text-stone-700'
 
 export default function PracticeEditor() {
   const router = useRouter()
@@ -46,11 +46,11 @@ export default function PracticeEditor() {
     setSaving(false)
   }
 
-  if (loading) return <p className="text-sm text-muted-foreground">Chargement…</p>
+  if (loading) return <p className="text-sm text-stone-500">Chargement…</p>
 
   return (
-    <div className="rounded-xl border border-border bg-card shadow-sm">
-      <div className="border-b border-border px-4 py-3"><h2 className="font-heading text-lg font-semibold text-foreground">Cabinet</h2></div>
+    <div className="rounded-xl border border-warm bg-white shadow-sm">
+      <div className="border-b border-stone-100 px-4 py-3"><h2 className="font-heading text-lg font-semibold text-stone-800">Cabinet</h2></div>
       <form onSubmit={handleSubmit} className="flex flex-col gap-4 p-4">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
@@ -78,8 +78,8 @@ export default function PracticeEditor() {
             <input value={form.paymentNote} onChange={e => setForm({ ...form, paymentNote: e.target.value })} className={inputClass} placeholder="Paiement en espèces uniquement" />
           </div>
         </div>
-        {error && <p className="text-sm text-destructive">{error}</p>}
-        {success && <p className="text-sm text-success">Enregistré.</p>}
+        {error && <p className="text-sm text-red-600">{error}</p>}
+        {success && <p className="text-sm text-green-600">Enregistré.</p>}
         <button type="submit" disabled={saving} className="self-start rounded-lg bg-cta-600 px-4 py-2 text-sm font-medium text-white hover:bg-cta-700 disabled:opacity-50">
           {saving ? '…' : 'Enregistrer'}
         </button>

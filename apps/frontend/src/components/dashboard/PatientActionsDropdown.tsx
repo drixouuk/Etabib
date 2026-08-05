@@ -28,17 +28,17 @@ export default function PatientActionsDropdown({ patientId, patientName }: Props
     <div ref={ref} className="relative">
       <button
         onClick={() => setOpen(!open)}
-        className="flex size-7 items-center justify-center rounded-lg text-muted-foreground transition-colors duration-200 hover:bg-accent hover:text-muted-foreground"
+        className="flex size-7 items-center justify-center rounded-lg text-stone-600 transition-colors duration-200 hover:bg-stone-100 hover:text-stone-600"
         aria-label="Actions"
       >
         <MoreHorizontal className="size-4" />
       </button>
       {open && (
-        <div className="absolute start-0 top-full z-20 mt-1 w-40 rounded-lg border border-border bg-card py-1 shadow-lg">
+        <div className="absolute start-0 top-full z-20 mt-1 w-40 rounded-lg border border-warm bg-white py-1 shadow-lg">
           <Link
             href={`/dashboard/patients/${patientId}/edit`}
             onClick={() => setOpen(false)}
-            className="flex items-center gap-2 px-3 py-2 text-sm text-foreground transition-colors duration-200 hover:bg-muted"
+            className="flex items-center gap-2 px-3 py-2 text-sm text-stone-800 transition-colors duration-200 hover:bg-stone-50"
           >
             <Pencil className="size-3.5" />
             Éditer

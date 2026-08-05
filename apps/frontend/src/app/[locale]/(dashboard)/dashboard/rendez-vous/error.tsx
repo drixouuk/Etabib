@@ -15,17 +15,17 @@ export default function RendezVousError({ error, reset }: Props) {
 
   return (
     <div className="mx-auto max-w-container px-4 py-12 md:px-6 lg:px-8">
-      <h1 className="font-heading text-2xl font-bold text-foreground">Rendez-vous</h1>
-      <div className="mt-6 flex flex-col items-center justify-center rounded-2xl border border-border bg-card py-16 text-center shadow-sm">
-        <Calendar className="size-12 text-muted-foreground/70" />
-        <h2 className="mt-4 font-heading text-lg font-semibold text-foreground">
+      <h1 className="font-heading text-2xl font-bold text-stone-800">Rendez-vous</h1>
+      <div className="mt-6 flex flex-col items-center justify-center rounded-2xl border border-warm bg-white py-16 text-center shadow-sm">
+        <Calendar className="size-12 text-stone-300" />
+        <h2 className="mt-4 font-heading text-lg font-semibold text-stone-800">
           Impossible de charger le calendrier
         </h2>
-        <p className="mt-2 max-w-md text-sm text-muted-foreground">
+        <p className="mt-2 max-w-md text-sm text-stone-600">
           Une erreur est survenue lors du chargement du calendrier. Cela peut être
           temporaire.
         </p>
-        <p className="mt-1 max-w-md text-xs text-muted-foreground break-all">
+        <p className="mt-1 max-w-md text-xs text-stone-400 break-all">
           {error.message || 'Erreur inconnue'}
         </p>
         <button

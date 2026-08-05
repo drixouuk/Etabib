@@ -149,18 +149,18 @@ export function BookingForm({ tenantId, booking, initialStart, whenLabel, onClos
     }
   }
 
-  const inputClass = 'w-full rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground focus:border-primary focus:ring-2 focus:ring-primary-500/20'
-  const labelClass = 'mb-0.5 block text-xs text-muted-foreground'
+  const inputClass = 'w-full rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm text-stone-800 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20'
+  const labelClass = 'mb-0.5 block text-xs text-stone-600'
 
   return (
     <>
-        <div className="flex items-start justify-between gap-3 border-b border-border px-5 py-4">
+        <div className="flex items-start justify-between gap-3 border-b border-stone-100 px-5 py-4">
           <div>
-            <h2 className="font-heading text-lg font-semibold text-foreground">
+            <h2 className="font-heading text-lg font-semibold text-stone-800">
               {isEdit ? 'Modifier le rendez-vous' : 'Nouveau rendez-vous'}
             </h2>
             {isEdit && (
-              <p className="mt-0.5 flex items-center gap-1.5 text-xs text-muted-foreground capitalize">
+              <p className="mt-0.5 flex items-center gap-1.5 text-xs text-stone-600 capitalize">
                 <Clock className="size-3" />
                 {whenLabel || formatRange(booking!.startTime, booking!.endTime)}
               </p>
@@ -169,21 +169,21 @@ export function BookingForm({ tenantId, booking, initialStart, whenLabel, onClos
           {onBack ? (
             // Mode détail (B1) : « Retour » ne sauvegarde rien, le formulaire
             // reste monté — la vue lecture reprend la main.
-            <button onClick={onBack} className="rounded-lg border border-border px-3 py-1.5 text-xs font-medium text-muted-foreground hover:bg-muted">
+            <button onClick={onBack} className="rounded-lg border border-stone-300 px-3 py-1.5 text-xs font-medium text-stone-700 hover:bg-stone-50">
               Retour
             </button>
           ) : (
-            <button onClick={onClose} className="rounded p-1 text-muted-foreground hover:bg-accent hover:text-muted-foreground" aria-label="Fermer">
+            <button onClick={onClose} className="rounded p-1 text-stone-500 hover:bg-stone-100 hover:text-stone-700" aria-label="Fermer">
               <X className="size-4" />
             </button>
           )}
         </div>
 
         {isEdit && booking!.attendeeName && (
-          <div className="flex items-center gap-2 border-b border-border bg-primary/10 px-5 py-3">
+          <div className="flex items-center gap-2 border-b border-stone-100 bg-primary-50/60 px-5 py-3">
             <Calendar className="size-4 text-primary-700" />
-            <span className="text-sm font-semibold text-foreground">{booking!.attendeeName}</span>
-            <span className="rounded-full bg-card px-2 py-0.5 text-xs font-medium text-muted-foreground">{STATUS_LABELS[booking!.status]}</span>
+            <span className="text-sm font-semibold text-stone-800">{booking!.attendeeName}</span>
+            <span className="rounded-full bg-white px-2 py-0.5 text-xs font-medium text-stone-600">{STATUS_LABELS[booking!.status]}</span>
           </div>
         )}
 
@@ -244,14 +244,14 @@ export function BookingForm({ tenantId, booking, initialStart, whenLabel, onClos
           </div>
         </div>
 
-        {error && <p className="px-5 pb-1 text-sm text-destructive">{error}</p>}
+        {error && <p className="px-5 pb-1 text-sm text-red-600">{error}</p>}
 
         {isEdit && booking!.location && booking!.status !== 'cancelled' && (
           <div className="px-5 pb-3">
             <a
               href={booking!.location.startsWith('http') ? booking!.location : `https://${booking!.location}`}
               target="_blank" rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 rounded-lg bg-primary/10 px-3 py-1.5 text-xs font-medium text-primary-700 transition-colors hover:bg-primary/15"
+              className="inline-flex items-center gap-1.5 rounded-lg bg-primary-50 px-3 py-1.5 text-xs font-medium text-primary-700 transition-colors hover:bg-primary-100"
             >
               {booking!.location.startsWith('http') ? <Video className="size-3.5" /> : <MapPin className="size-3.5" />}
               {booking!.location.startsWith('http') ? 'Rejoindre la visio' : booking!.location}
@@ -259,7 +259,7 @@ export function BookingForm({ tenantId, booking, initialStart, whenLabel, onClos
           </div>
         )}
 
-        <div className="flex flex-wrap items-center justify-between gap-2 border-t border-border px-5 py-4">
+        <div className="flex flex-wrap items-center justify-between gap-2 border-t border-stone-100 px-5 py-4">
           <div className="flex items-center gap-2">
             <button
               onClick={() => save()}
@@ -268,7 +268,7 @@ export function BookingForm({ tenantId, booking, initialStart, whenLabel, onClos
             >
               {saving ? '…' : isEdit ? 'Enregistrer' : 'Créer le rendez-vous'}
             </button>
-            <button onClick={onBack ?? onClose} className="text-sm text-muted-foreground hover:text-foreground">
+            <button onClick={onBack ?? onClose} className="text-sm text-stone-600 hover:text-stone-800">
               {onBack ? 'Retour' : 'Fermer'}
             </button>
           </div>
@@ -276,7 +276,7 @@ export function BookingForm({ tenantId, booking, initialStart, whenLabel, onClos
             <button
               onClick={cancelBooking}
               disabled={saving}
-              className="text-sm font-medium text-destructive transition-colors hover:text-destructive disabled:opacity-50"
+              className="text-sm font-medium text-red-600 transition-colors hover:text-red-700 disabled:opacity-50"
             >
               Annuler le rendez-vous
             </button>

@@ -80,12 +80,12 @@ export default function EditPatientForm({ patient }: Props) {
   }
 
   const inputClass =
-    'w-full rounded-lg border border-border bg-card px-4 py-2.5 text-sm text-foreground focus:border-primary focus:ring-2 focus:ring-primary-500/20'
+    'w-full rounded-lg border border-stone-300 bg-white px-4 py-2.5 text-sm text-stone-800 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20'
 
   return (
     <form onSubmit={handleSubmit} className="mt-8 flex flex-col gap-4">
       <div>
-        <label htmlFor="fullName" className="mb-1 block text-sm font-medium text-foreground">
+        <label htmlFor="fullName" className="mb-1 block text-sm font-medium text-stone-800">
           Nom complet *
         </label>
         <input
@@ -99,7 +99,7 @@ export default function EditPatientForm({ patient }: Props) {
       </div>
 
       <div>
-        <label htmlFor="gender" className="mb-1 block text-sm font-medium text-foreground">
+        <label htmlFor="gender" className="mb-1 block text-sm font-medium text-stone-800">
           Sexe *
         </label>
         <select
@@ -116,7 +116,7 @@ export default function EditPatientForm({ patient }: Props) {
       </div>
 
       <div>
-        <label htmlFor="birthDate" className="mb-1 block text-sm font-medium text-foreground">
+        <label htmlFor="birthDate" className="mb-1 block text-sm font-medium text-stone-800">
           Date de naissance
         </label>
         <input
@@ -129,7 +129,7 @@ export default function EditPatientForm({ patient }: Props) {
       </div>
 
       <div>
-        <label htmlFor="address" className="mb-1 block text-sm font-medium text-foreground">
+        <label htmlFor="address" className="mb-1 block text-sm font-medium text-stone-800">
           Adresse
         </label>
         <input
@@ -142,7 +142,7 @@ export default function EditPatientForm({ patient }: Props) {
       </div>
 
       <div>
-        <label htmlFor="phone" className="mb-1 block text-sm font-medium text-foreground">
+        <label htmlFor="phone" className="mb-1 block text-sm font-medium text-stone-800">
           Téléphone
         </label>
         <input
@@ -155,7 +155,7 @@ export default function EditPatientForm({ patient }: Props) {
       </div>
 
       <div>
-        <label htmlFor="email" className="mb-1 block text-sm font-medium text-foreground">
+        <label htmlFor="email" className="mb-1 block text-sm font-medium text-stone-800">
           Email
         </label>
         <input
@@ -168,12 +168,12 @@ export default function EditPatientForm({ patient }: Props) {
       </div>
 
       <div>
-        <label htmlFor="nationalId" className="mb-1 block text-sm font-medium text-foreground">CIN (optionnel)</label>
+        <label htmlFor="nationalId" className="mb-1 block text-sm font-medium text-stone-800">CIN (optionnel)</label>
         <input id="nationalId" value={nationalId} onChange={e => setNationalId(e.target.value)} type="text" className={inputClass} />
       </div>
 
       <div>
-        <label className="mb-1 block text-sm font-medium text-foreground">Provenance</label>
+        <label className="mb-1 block text-sm font-medium text-stone-800">Provenance</label>
         <select value={patientSource} onChange={e => setPatientSource(e.target.value)} className={inputClass}>
           <option value="">Non renseigné</option>
           <option value="referring_practitioner">Médecin référent</option>
@@ -189,7 +189,7 @@ export default function EditPatientForm({ patient }: Props) {
 
       {patientSource === 'referring_practitioner' && (
         <div>
-          <label className="mb-1 block text-sm font-medium text-foreground">Médecin référent</label>
+          <label className="mb-1 block text-sm font-medium text-stone-800">Médecin référent</label>
           <select value={referringIds[0] || ''} onChange={e => setReferringIds(e.target.value ? [e.target.value] : [])} className={inputClass}>
             <option value="">Sélectionner…</option>
             {referringOptions.map(r => <option key={r.id} value={r.id}>{r.name}</option>)}
@@ -198,11 +198,11 @@ export default function EditPatientForm({ patient }: Props) {
       )}
 
       <div>
-        <label className="mb-1 block text-sm font-medium text-foreground">Détail <span className="text-muted-foreground font-normal">(optionnel)</span></label>
+        <label className="mb-1 block text-sm font-medium text-stone-800">Détail <span className="text-stone-600 font-normal">(optionnel)</span></label>
         <input value={patientSourceDetail} onChange={e => setPatientSourceDetail(e.target.value)} type="text" placeholder="Ex: Groupe Facebook..." className={inputClass} />
       </div>
 
-      {error && <p className="text-sm font-medium text-destructive">{error}</p>}
+      {error && <p className="text-sm font-medium text-red-600">{error}</p>}
 
       <div className="flex items-center gap-3">
         <button
@@ -214,7 +214,7 @@ export default function EditPatientForm({ patient }: Props) {
         </button>
         <Link
           href={`/dashboard/patients/${patient.id}`}
-          className="text-sm font-medium text-muted-foreground hover:text-foreground"
+          className="text-sm font-medium text-stone-600 hover:text-stone-800"
         >
           Annuler
         </Link>

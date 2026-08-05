@@ -45,26 +45,26 @@ export default function SharePatientWidget({ patientId, sharedWithIds, isCliniqu
   const sharedDoctors = doctors.filter(d => shared.includes(d.id))
 
   return (
-    <div className="rounded-xl border border-border bg-card shadow-sm">
-      <div className="border-b border-border px-4 py-3">
-        <h2 className="font-heading text-lg font-semibold text-foreground flex items-center gap-2">
-          <Share2 className="size-4 text-muted-foreground" /> Partage
+    <div className="rounded-xl border border-warm bg-white shadow-sm">
+      <div className="border-b border-stone-100 px-4 py-3">
+        <h2 className="font-heading text-lg font-semibold text-stone-800 flex items-center gap-2">
+          <Share2 className="size-4 text-stone-600" /> Partage
         </h2>
       </div>
       <div className="px-4 py-3 space-y-2">
         {sharedDoctors.length > 0 && (
           <div className="flex flex-wrap gap-1.5">
             {sharedDoctors.map(d => (
-              <span key={d.id} className="inline-flex items-center gap-1 rounded-full bg-warning/10 px-2.5 py-1 text-xs font-medium text-warning">
+              <span key={d.id} className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2.5 py-1 text-xs font-medium text-amber-700">
                 {d.name}
-                <button onClick={() => unshare(d.id)} className="text-amber-400 hover:text-warning"><X className="size-3" /></button>
+                <button onClick={() => unshare(d.id)} className="text-amber-400 hover:text-amber-600"><X className="size-3" /></button>
               </span>
             ))}
           </div>
         )}
         {doctors.filter(d => !shared.includes(d.id)).length > 0 && (
           <select value="" onChange={(e) => { if (e.target.value) share(e.target.value) }}
-            className="rounded-lg border border-border bg-card px-3 py-1.5 text-xs text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary-500/20">
+            className="rounded-lg border border-warm bg-white px-3 py-1.5 text-xs text-stone-600 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20">
             <option value="">+ Partager avec un confrère</option>
             {doctors.filter(d => !shared.includes(d.id)).map(d => (
               <option key={d.id} value={d.id}>{d.name} — {d.email}</option>
@@ -72,7 +72,7 @@ export default function SharePatientWidget({ patientId, sharedWithIds, isCliniqu
           </select>
         )}
         {sharedDoctors.length === 0 && doctors.length === 0 && (
-          <p className="text-xs text-muted-foreground">Aucun confrère dans ce cabinet.</p>
+          <p className="text-xs text-stone-600">Aucun confrère dans ce cabinet.</p>
         )}
       </div>
     </div>

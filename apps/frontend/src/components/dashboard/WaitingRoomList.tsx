@@ -150,15 +150,15 @@ export default function WaitingRoomList({ tenantId, isClinique, currentDoctorId 
   const activeItems = items.filter((i) => i.status === 'waiting' || i.status === 'in_consultation')
 
   return (
-    <div className="rounded-xl border border-border bg-card shadow-sm">
-      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border px-4 py-3">
-        <h2 className="font-heading text-lg font-semibold text-foreground">File d&apos;attente en direct</h2>
+    <div className="rounded-xl border border-warm bg-white shadow-sm">
+      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-stone-100 px-4 py-3">
+        <h2 className="font-heading text-lg font-semibold text-stone-800">File d&apos;attente en direct</h2>
         <div className="flex items-center gap-2">
           {isClinique && doctors.length > 0 && (
             <select
               value={selectedDoctorId || ''}
               onChange={(e) => setSelectedDoctorId(e.target.value || undefined)}
-              className="rounded-lg border border-border bg-card px-3 py-1.5 text-sm text-foreground focus:border-primary focus:ring-2 focus:ring-primary-500/20"
+              className="rounded-lg border border-warm bg-white px-3 py-1.5 text-sm text-stone-800 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20"
             >
               <option value="">Tous les médecins</option>
               {doctors.map((d) => (
@@ -173,7 +173,7 @@ export default function WaitingRoomList({ tenantId, isClinique, currentDoctorId 
       </div>
 
       {undoItem && (
-        <div className="flex items-center justify-between bg-primary/10 px-4 py-2 text-sm">
+        <div className="flex items-center justify-between bg-primary-50 px-4 py-2 text-sm">
           <span className="text-primary-700">{undoItem.patient?.fullName} — consultation terminée</span>
           <button onClick={undoComplete} className="font-medium text-primary-700 hover:text-primary-800 underline">
             Annuler
@@ -181,9 +181,9 @@ export default function WaitingRoomList({ tenantId, isClinique, currentDoctorId 
         </div>
       )}
       {loading && items.length === 0 ? (
-        <div className="px-4 py-8 text-center text-sm text-muted-foreground">Chargement…</div>
+        <div className="px-4 py-8 text-center text-sm text-stone-500">Chargement…</div>
       ) : activeItems.length === 0 ? (
-        <div className="px-4 py-8 text-center text-sm text-muted-foreground">Aucun patient en attente.</div>
+        <div className="px-4 py-8 text-center text-sm text-stone-600">Aucun patient en attente.</div>
       ) : (
         <div className="divide-y divide-stone-100">
           {activeItems.map((item) => {
@@ -198,21 +198,21 @@ export default function WaitingRoomList({ tenantId, isClinique, currentDoctorId 
                   {patient?.id ? (
                     <Link
                       href={`/dashboard/patients/${patient.id}`}
-                      className="truncate text-sm font-semibold text-foreground hover:text-primary-600 transition-colors duration-200"
+                      className="truncate text-sm font-semibold text-stone-800 hover:text-primary-600 transition-colors duration-200"
                     >
                       {patient.fullName || '—'}
                     </Link>
                   ) : (
-                    <p className="truncate text-sm font-semibold text-foreground">{patient?.fullName || '—'}</p>
+                    <p className="truncate text-sm font-semibold text-stone-800">{patient?.fullName || '—'}</p>
                   )}
-                  <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-muted-foreground">
-                    {isClinique && item.doctor?.name && <span className="text-muted-foreground">Dr. {item.doctor.name}</span>}
+                  <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-stone-600">
+                    {isClinique && item.doctor?.name && <span className="text-stone-600">Dr. {item.doctor.name}</span>}
                     {patient?.birthDate && <span>{computeAge(patient.birthDate)}</span>}
                     <span className={`inline-block rounded px-1.5 py-0.5 font-medium ${
                       item.visitReason === 'controle' ? 'bg-info/10 text-info' :
                       item.visitReason === 'vaccin' ? 'bg-secondary/10 text-secondary-700' :
                       item.visitReason === 'urgence' ? 'bg-error/10 text-error' :
-                      'bg-accent text-foreground'
+                      'bg-stone-100 text-stone-800'
                     }`}>
                       {visitReasonLabel(item.visitReason)}
                     </span>

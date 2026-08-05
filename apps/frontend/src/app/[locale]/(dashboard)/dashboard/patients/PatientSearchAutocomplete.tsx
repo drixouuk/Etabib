@@ -68,12 +68,12 @@ export default function PatientSearchAutocomplete({ initialQ = '' }: { initialQ?
         method="GET"
         action="/dashboard/patients"
         onSubmit={() => setOpen(false)}
-        className="flex min-w-0 items-center gap-2 rounded-xl border border-primary/15 bg-card py-2.5 px-[14px] transition-all duration-200 hover:border-primary hover:shadow-[0_0_0_3px_rgba(13,148,136,0.08)]"
+        className="flex min-w-0 items-center gap-2 rounded-xl border border-primary/15 bg-white py-2.5 px-[14px] transition-all duration-200 hover:border-primary-500 hover:shadow-[0_0_0_3px_rgba(13,148,136,0.08)]"
       >
         {loading ? (
-          <Loader2 className="size-3.5 shrink-0 animate-spin text-muted-foreground" />
+          <Loader2 className="size-3.5 shrink-0 animate-spin text-stone-600" />
         ) : (
-          <Search className="size-3.5 shrink-0 text-muted-foreground" />
+          <Search className="size-3.5 shrink-0 text-stone-600" />
         )}
         <input
           type="text"
@@ -84,13 +84,13 @@ export default function PatientSearchAutocomplete({ initialQ = '' }: { initialQ?
           onBlur={closeSoon}
           placeholder="Rechercher par nom ou CIN…"
           autoComplete="off"
-          className="min-w-0 flex-1 border-none bg-transparent text-sm text-foreground placeholder:text-muted-foreground"
+          className="min-w-0 flex-1 border-none bg-transparent text-sm text-stone-800 placeholder:text-stone-600"
         />
         {query && (
           <button
             type="button"
             onClick={() => { setQuery(''); setSuggestions([]); setOpen(false); router.push('/dashboard/patients') }}
-            className="shrink-0 text-sm font-medium text-muted-foreground hover:text-foreground"
+            className="shrink-0 text-sm font-medium text-stone-600 hover:text-stone-800"
           >
             Effacer
           </button>
@@ -98,19 +98,19 @@ export default function PatientSearchAutocomplete({ initialQ = '' }: { initialQ?
       </form>
 
       {open && suggestions.length > 0 && (
-        <div className="absolute start-0 end-0 top-full z-30 mt-1 overflow-hidden rounded-xl border border-border bg-card shadow-lg">
+        <div className="absolute start-0 end-0 top-full z-30 mt-1 overflow-hidden rounded-xl border border-warm bg-white shadow-lg">
           <div className="max-h-[320px] overflow-y-auto py-1">
             {suggestions.map(p => (
               <Link
                 key={p.id}
                 href={`/dashboard/patients/${p.id}`}
                 onClick={() => setOpen(false)}
-                className="flex items-center gap-3 px-3 py-2 transition-colors hover:bg-primary/10"
+                className="flex items-center gap-3 px-3 py-2 transition-colors hover:bg-primary-50"
               >
                 <PatientAvatar fullName={p.fullName} gender={p.gender as 'boy' | 'girl' | null} size="sm" />
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-medium text-foreground">{p.fullName}</p>
-                  <p className="text-xs text-muted-foreground">
+                  <p className="truncate text-sm font-medium text-stone-800">{p.fullName}</p>
+                  <p className="text-xs text-stone-500">
                     {p.birthDate ? computeAge(p.birthDate) : ''}
                     {p.birthDate && p.nationalId ? ' · ' : ''}
                     {p.nationalId || ''}
@@ -119,7 +119,7 @@ export default function PatientSearchAutocomplete({ initialQ = '' }: { initialQ?
               </Link>
             ))}
           </div>
-          <div className="border-t border-border bg-muted/50 px-3 py-2">
+          <div className="border-t border-stone-100 bg-stone-50/50 px-3 py-2">
             <Link
               href={`/dashboard/patients?q=${encodeURIComponent(query.trim())}`}
               onClick={() => setOpen(false)}
@@ -132,7 +132,7 @@ export default function PatientSearchAutocomplete({ initialQ = '' }: { initialQ?
       )}
 
       {showNoResults && (
-        <div className="absolute start-0 end-0 top-full z-30 mt-1 rounded-xl border border-border bg-card px-3 py-3 text-sm text-muted-foreground shadow-lg">
+        <div className="absolute start-0 end-0 top-full z-30 mt-1 rounded-xl border border-warm bg-white px-3 py-3 text-sm text-stone-500 shadow-lg">
           Aucun patient trouvé.
         </div>
       )}

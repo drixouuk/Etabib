@@ -29,7 +29,7 @@ export default async function VaccinationAlerts() {
 
   if (patients.length === 0) {
     return (
-      <p className="text-sm text-muted-foreground">Aucun patient enregistré</p>
+      <p className="text-sm text-stone-500">Aucun patient enregistré</p>
     )
   }
 
@@ -40,7 +40,7 @@ export default async function VaccinationAlerts() {
 
   if (alerts.length === 0) {
     return (
-      <div className="flex items-center gap-2 rounded-[10px] bg-primary/10 px-3.5 py-3 text-[13px] text-primary-700">
+      <div className="flex items-center gap-2 rounded-[10px] bg-primary-50 px-3.5 py-3 text-[13px] text-primary-700">
         <CalendarCheck className="size-5 shrink-0 text-primary-600" />
         Tous les patients sont à jour
       </div>
@@ -54,18 +54,18 @@ export default async function VaccinationAlerts() {
             <div className="min-w-0 flex-1">
               <Link
                 href={`/dashboard/patients/${a!.patientId}`}
-                className="text-sm font-medium text-foreground hover:text-primary-600 transition-colors duration-200"
+                className="text-sm font-medium text-stone-800 hover:text-primary-600 transition-colors duration-200"
               >
                 {a!.patientName}
               </Link>
               <div className="mt-0.5 flex flex-wrap gap-1">
                 {a!.vaccines.slice(0, 3).map((v, i) => (
-                  <span key={i} className="inline-block rounded bg-accent px-1.5 py-0.5 text-xs text-muted-foreground">
+                  <span key={i} className="inline-block rounded bg-stone-100 px-1.5 py-0.5 text-xs text-stone-600">
                     {v.vaccineName}
                   </span>
                 ))}
                 {a!.vaccines.length > 3 && (
-                  <span className="text-xs text-muted-foreground">+{a!.vaccines.length - 3}</span>
+                  <span className="text-xs text-stone-600">+{a!.vaccines.length - 3}</span>
                 )}
               </div>
             </div>

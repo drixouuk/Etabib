@@ -126,42 +126,40 @@
 }
 
 :root {
-  --background: var(--_background);
-  --foreground: var(--_foreground);
-  --card: var(--_card);
-  --card-foreground: var(--_card-foreground);
-  --popover: var(--_popover);
-  --popover-foreground: var(--_popover-foreground);
-  --primary: var(--_primary);
-  --primary-foreground: var(--_primary-foreground);
-  --secondary: var(--_secondary);
-  --secondary-foreground: var(--_secondary-foreground);
-  --muted: var(--_muted);
-  --muted-foreground: var(--_muted-foreground);
-  --accent: var(--_accent);
-  --accent-foreground: var(--_accent-foreground);
-  --destructive: var(--_destructive);
-  --input: var(--_input);
-  /* Arête standard — seam direct (le dark #484844 vit dans tokens.css,
-     gardé par guard A2). */
+  --background: #FFFBF0;
+  --foreground: #292524;
+  --card: #FFFFFF;
+  --card-foreground: #292524;
+  --popover: #FFFFFF;
+  --popover-foreground: #292524;
+  --primary: #0D9488;
+  --primary-foreground: #FFFFFF;
+  --secondary: #FFF7E0;
+  --secondary-foreground: #292524;
+  --muted: #FFF7E0;
+  --muted-foreground: #78716C;
+  --accent: #FEF0C7;
+  --accent-foreground: #292524;
+  --destructive: #EF4444;
   --border: #E7E5E4;
+  --input: #D6D3D1;
   /* A5 — seam shadcn : --ring suit le focus ring tokenisé, les composants
      ui/ (ring-ring, outline-ring/50) suivent sans être édités. */
   --ring: var(--focus-ring-color);
-  --chart-1: var(--_chart-1);
-  --chart-2: var(--_chart-2);
-  --chart-3: var(--_chart-3);
-  --chart-4: var(--_chart-4);
-  --chart-5: var(--_chart-5);
+  --chart-1: #0D9488;
+  --chart-2: #14B8A6;
+  --chart-3: #F59E0B;
+  --chart-4: #F97316;
+  --chart-5: #115E59;
   --radius: 0.5rem;
-  --sidebar: var(--_sidebar);
-  --sidebar-foreground: var(--_sidebar-foreground);
-  --sidebar-primary: var(--_sidebar-primary);
-  --sidebar-primary-foreground: var(--_sidebar-primary-foreground);
-  --sidebar-accent: var(--_sidebar-accent);
-  --sidebar-accent-foreground: var(--_sidebar-accent-foreground);
-  --sidebar-border: var(--_sidebar-border);
-  --sidebar-ring: var(--_sidebar-ring);
+  --sidebar: #FFFFFF;
+  --sidebar-foreground: #292524;
+  --sidebar-primary: #0D9488;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: #FFF7E0;
+  --sidebar-accent-foreground: #292524;
+  --sidebar-border: #E7E5E4;
+  --sidebar-ring: #14B8A6;
 }
 
 .navbar-floating {

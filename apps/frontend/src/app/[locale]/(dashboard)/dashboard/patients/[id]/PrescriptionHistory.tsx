@@ -49,30 +49,30 @@ export default function PrescriptionHistory({ prescriptions, doctorInfo, patient
   return (
     <div>
       {prescriptions.length > 0 && (
-        <div className="border-b border-border px-4 py-3">
+        <div className="border-b border-stone-100 px-4 py-3">
           <div className="flex flex-wrap items-end gap-2">
             <div className="min-w-[180px] flex-1">
-              <label className="mb-0.5 block text-xs text-muted-foreground">Rechercher</label>
+              <label className="mb-0.5 block text-xs text-stone-600">Rechercher</label>
               <input type="text" value={filterQuery} onChange={e => setFilterQuery(e.target.value)}
                 placeholder="Médicament, notes..."
-                className="w-full rounded-lg border border-border bg-card px-3 py-1.5 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary-500/20"
+                className="w-full rounded-lg border border-warm bg-white px-3 py-1.5 text-sm text-stone-800 placeholder:text-stone-600 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20"
               />
             </div>
             <div>
-              <label className="mb-0.5 block text-xs text-muted-foreground">Du</label>
+              <label className="mb-0.5 block text-xs text-stone-600">Du</label>
               <input type="date" value={filterDateFrom} onChange={e => setFilterDateFrom(e.target.value)}
-                className="rounded-lg border border-border bg-card px-2 py-1.5 text-sm text-foreground focus:border-primary focus:ring-2 focus:ring-primary-500/20"
+                className="rounded-lg border border-warm bg-white px-2 py-1.5 text-sm text-stone-800 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20"
               />
             </div>
             <div>
-              <label className="mb-0.5 block text-xs text-muted-foreground">Au</label>
+              <label className="mb-0.5 block text-xs text-stone-600">Au</label>
               <input type="date" value={filterDateTo} onChange={e => setFilterDateTo(e.target.value)}
-                className="rounded-lg border border-border bg-card px-2 py-1.5 text-sm text-foreground focus:border-primary focus:ring-2 focus:ring-primary-500/20"
+                className="rounded-lg border border-warm bg-white px-2 py-1.5 text-sm text-stone-800 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20"
               />
             </div>
             {(filterQuery || filterDateFrom || filterDateTo) && (
               <button onClick={() => { setFilterQuery(''); setFilterDateFrom(''); setFilterDateTo('') }}
-                className="rounded-lg border border-border bg-card px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors duration-200">
+                className="rounded-lg border border-warm bg-white px-3 py-1.5 text-sm text-stone-600 hover:text-stone-800 transition-colors duration-200">
                 Effacer
               </button>
             )}
@@ -81,7 +81,7 @@ export default function PrescriptionHistory({ prescriptions, doctorInfo, patient
       )}
 
       {filtered.length === 0 ? (
-        <p className="px-4 py-6 text-center text-sm text-muted-foreground">
+        <p className="px-4 py-6 text-center text-sm text-stone-600">
           {prescriptions.length > 0 ? 'Aucune ordonnance ne correspond à la recherche.' : 'Aucune ordonnance.'}
         </p>
       ) : (
@@ -90,7 +90,7 @@ export default function PrescriptionHistory({ prescriptions, doctorInfo, patient
             <div key={p.id} className="px-4 py-3">
               <div className="flex items-baseline justify-between">
                 <span
-                  className={`text-sm font-medium ${onEdit ? 'cursor-pointer text-primary-700 hover:text-primary-600' : 'text-foreground'}`}
+                  className={`text-sm font-medium ${onEdit ? 'cursor-pointer text-primary-700 hover:text-primary-600' : 'text-stone-800'}`}
                   onClick={() => onEdit?.(p)}
                 >
                   {new Date(p.date).toLocaleDateString('fr-FR')}
@@ -109,19 +109,19 @@ export default function PrescriptionHistory({ prescriptions, doctorInfo, patient
                       PDF
                     </button>
                   )}
-                  <span className="text-xs text-muted-foreground">
+                  <span className="text-xs text-stone-600">
                     {p.practitioner?.name || p.practitioner?.email || '—'}
                   </span>
                 </span>
               </div>
               <ul className="mt-1 space-y-0.5">
                 {p.medications?.map((m, i) => (
-                  <li key={i} className="text-sm text-muted-foreground">
+                  <li key={i} className="text-sm text-stone-600">
                     {m.nom}{m.dci ? ` (${m.dci})` : ''} — {m.posologie} — {m.duree}
                   </li>
                 ))}
               </ul>
-              {p.notes && <p className="mt-1 text-xs text-muted-foreground">{p.notes}</p>}
+              {p.notes && <p className="mt-1 text-xs text-stone-600">{p.notes}</p>}
             </div>
           ))}
         </div>

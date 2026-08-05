@@ -114,43 +114,6 @@
      surchargent ces deux valeurs à la racine de leur section. */
   --module-accent:          var(--color-accent-brand);
   --active-module-accent:   var(--color-accent-brand);
-
-  /* --------------------------------------------------------
-   * 8. Seam sémantique shadcn — privés uniquement ici ; les publics
-   *    (--background, --foreground…) vivent dans globals.css :root et
-   *    pointent sur ces privés (A1). Le bloc .dark ne réécrit QUE les
-   *    privés (A2 : hex fixes mesurés contre #232019, ratio en commentaire).
-   *    --border reste un seam direct (guard A2).
-   * -------------------------------------------------------- */
-  --_background: #FFFBF0;
-  --_foreground: #292524;
-  --_card: #FFFFFF;
-  --_card-foreground: #292524;
-  --_popover: #FFFFFF;
-  --_popover-foreground: #292524;
-  --_primary: #0D9488;
-  --_primary-foreground: #FFFFFF;
-  --_secondary: #FFF7E0;
-  --_secondary-foreground: #292524;
-  --_muted: #FFF7E0;
-  --_muted-foreground: #78716C;
-  --_accent: #FEF0C7;
-  --_accent-foreground: #292524;
-  --_destructive: #EF4444;
-  --_input: #D6D3D1;
-  --_chart-1: #0D9488;
-  --_chart-2: #14B8A6;
-  --_chart-3: #F59E0B;
-  --_chart-4: #F97316;
-  --_chart-5: #115E59;
-  --_sidebar: #FFFFFF;
-  --_sidebar-foreground: #292524;
-  --_sidebar-primary: #0D9488;
-  --_sidebar-primary-foreground: #FFFFFF;
-  --_sidebar-accent: #FFF7E0;
-  --_sidebar-accent-foreground: #292524;
-  --_sidebar-border: #E7E5E4;
-  --_sidebar-ring: #14B8A6;
 }
 
 /* --------------------------------------------------------
@@ -204,41 +167,6 @@
   --_color-border-subtle: #3A3A37;  /* 1.42:1 sur #232019 — séparateurs, cartes calmes */
   --border:                #484844; /* 1.77:1 sur #232019 — standard, champs */
   --_color-border-strong:  #6A6A66; /* 2.99:1 sur #232019 — hover, cadres accentués */
-
-  /* --------------------------------------------------------
-   * Seam sémantique shadcn — valeurs dark mesurées contre #232019.
-   * --border (ci-dessus) reste un seam direct ; tout le reste passe par
-   * les privés --_x du §8.
-   * -------------------------------------------------------- */
-  --_background: #181612;          /* page — arête portée par --border */
-  --_foreground: #F2EFE7;          /* 14.14:1 sur surface-work */
-  --_card: #232019;                /* = surface-work */
-  --_card-foreground: #F2EFE7;     /* 14.14:1 sur card */
-  --_popover: #232019;
-  --_popover-foreground: #F2EFE7;
-  --_primary: #2DD4BF;             /* 8.73:1 sur surface-work */
-  --_primary-foreground: #04211C;  /* 9.10:1 sur primary */
-  --_secondary: #2A261E;           /* = surface-raised */
-  --_secondary-foreground: #F2EFE7; /* 13.11:1 sur secondary */
-  --_muted: #2A261E;
-  --_muted-foreground: #B0AA9C;    /* 6.51:1 sur muted */
-  --_accent: #2A261E;
-  --_accent-foreground: #F2EFE7;
-  --_destructive: #F87171;         /* 5.88:1 sur surface-work */
-  --_input: #2A261E;
-  --_chart-1: #A78BFA;             /* 5.97:1 sur card */
-  --_chart-2: #2DD4BF;             /* 8.73:1 sur card */
-  --_chart-3: #FB923C;             /* 7.18:1 sur card */
-  --_chart-4: #60A5FA;             /* 6.39:1 sur card */
-  --_chart-5: #FCD34D;             /* 11.27:1 sur card */
-  --_sidebar: #141413;
-  --_sidebar-foreground: #F2EFE7;  /* 16.04:1 sur sidebar */
-  --_sidebar-primary: #2DD4BF;
-  --_sidebar-primary-foreground: #04211C;
-  --_sidebar-accent: #2A261E;
-  --_sidebar-accent-foreground: #F2EFE7;
-  --_sidebar-border: #3A3A37;      /* 1.40:1 — même palier que border-subtle */
-  --_sidebar-ring: #2DD4BF;
 }
 
 /* --------------------------------------------------------

@@ -26,7 +26,7 @@ export default async function QueuePreview() {
   return (
     <div>
       {items.length === 0 ? (
-        <p className="text-sm text-muted-foreground">Aucun patient en attente</p>
+        <p className="text-sm text-stone-500">Aucun patient en attente</p>
       ) : (
         <div className="divide-y divide-warm">
           {items.map((item) => {
@@ -35,15 +35,15 @@ export default async function QueuePreview() {
               <div key={item.id} className="flex items-center gap-3 py-2.5 first:pt-0">
                 <PatientAvatar fullName={p?.fullName || '?'} gender={(p?.gender as 'boy' | 'girl' | null) || null} size="sm" />
                 <div className="min-w-0 flex-1">
-                  <Link href={`/dashboard/patients/${p?.id}`} className="text-sm font-medium text-foreground hover:text-primary-600 transition-colors duration-200">
+                  <Link href={`/dashboard/patients/${p?.id}`} className="text-sm font-medium text-stone-800 hover:text-primary-600 transition-colors duration-200">
                     {p?.fullName || '—'}
                   </Link>
-                  <div className="text-xs text-muted-foreground">
-                    <span className="inline-block rounded bg-accent px-1.5 py-0.5 font-medium text-foreground">{item.visitReason}</span>
+                  <div className="text-xs text-stone-600">
+                    <span className="inline-block rounded bg-stone-100 px-1.5 py-0.5 font-medium text-stone-800">{item.visitReason}</span>
                   </div>
                 </div>
                 {item.arrivalTime && (
-                  <span className="ms-auto shrink-0 rounded-full bg-warning/10 px-2.5 py-0.5 text-xs font-semibold text-warning">
+                  <span className="ms-auto shrink-0 rounded-full bg-amber-50 px-2.5 py-0.5 text-xs font-semibold text-amber-700">
                     {new Date(item.arrivalTime).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
                   </span>
                 )}

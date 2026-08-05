@@ -21,7 +21,7 @@ const ROUTE_OPTIONS = [
   { value: 'intradermal', label: 'ID' },
 ]
 
-const inputClass = 'rounded border border-border px-2 py-1 text-xs focus:border-primary focus:ring-2 focus:ring-primary-500/20'
+const inputClass = 'rounded border border-stone-300 px-2 py-1 text-xs focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20'
 
 function computeAgeMonths(birthDate: string): number {
   const now = new Date(); const birth = new Date(birthDate)
@@ -41,8 +41,8 @@ export default function VaccinationRecord({ patientId, schedule, vaccinations, p
 
   if (!patientBirthDate) return (
     <div className="mb-8">
-      <h3 className="mb-2 font-heading text-lg font-semibold text-foreground">Carnet vaccinal</h3>
-      <p className="text-sm text-muted-foreground">Date de naissance manquante — impossible d&apos;évaluer le calendrier vaccinal.</p>
+      <h3 className="mb-2 font-heading text-lg font-semibold text-stone-800">Carnet vaccinal</h3>
+      <p className="text-sm text-stone-500">Date de naissance manquante — impossible d&apos;évaluer le calendrier vaccinal.</p>
     </div>
   )
 
@@ -103,18 +103,18 @@ export default function VaccinationRecord({ patientId, schedule, vaccinations, p
 
   if (sorted.length === 0) return (
     <div className="mb-8">
-      <h3 className="mb-2 font-heading text-lg font-semibold text-foreground">Carnet vaccinal</h3>
-      <p className="text-sm text-muted-foreground">Aucun vaccin dans le calendrier de référence.</p>
+      <h3 className="mb-2 font-heading text-lg font-semibold text-stone-800">Carnet vaccinal</h3>
+      <p className="text-sm text-stone-500">Aucun vaccin dans le calendrier de référence.</p>
     </div>
   )
 
   return (
     <div className="mb-8">
-      <h3 className="mb-3 font-heading text-lg font-semibold text-foreground">Carnet vaccinal</h3>
-      <p className="mb-3 text-xs text-muted-foreground">Âge du patient : {Math.floor(ageMonths / 12)} ans {ageMonths % 12} mois</p>
-      <div className="overflow-x-auto rounded-xl border border-border bg-card shadow-sm">
+      <h3 className="mb-3 font-heading text-lg font-semibold text-stone-800">Carnet vaccinal</h3>
+      <p className="mb-3 text-xs text-stone-600">Âge du patient : {Math.floor(ageMonths / 12)} ans {ageMonths % 12} mois</p>
+      <div className="overflow-x-auto rounded-xl border border-warm bg-white shadow-sm">
         <table className="min-w-[640px] w-full text-start text-sm">
-          <thead className="border-b border-border text-xs uppercase text-muted-foreground">
+          <thead className="border-b border-warm text-xs uppercase text-stone-600">
             <tr>
               <th className="px-4 py-2.5 font-medium">Vaccin</th>
               <th className="px-4 py-2.5 font-medium">Dose</th>
@@ -136,44 +136,44 @@ export default function VaccinationRecord({ patientId, schedule, vaccinations, p
               let statusIcon: React.ReactNode; let statusText: string; let statusColor: string; let rowBg = ''
 
               if (excluded) {
-                rowBg = 'bg-muted/50'
+                rowBg = 'bg-stone-50/50'
                 if (excluded.status === 'contraindicated') {
                   statusIcon = <AlertCircle className="size-4 text-purple-500" />
                   statusText = 'Contre-indiqué'; statusColor = 'text-purple-600'
                 } else {
-                  statusIcon = <AlertCircle className="size-4 text-muted-foreground" />
-                  statusText = 'Refusé'; statusColor = 'text-muted-foreground'
+                  statusIcon = <AlertCircle className="size-4 text-stone-600" />
+                  statusText = 'Refusé'; statusColor = 'text-stone-600'
                 }
               } else if (done) {
                 rowBg = 'bg-green-50/30'
                 statusIcon = <CheckCircle2 className="size-4 text-green-500" />
                 statusText = done.dateAdministered ? `Administré le ${formatDate(done.dateAdministered)}` : 'Administré'
-                statusColor = 'text-success'
+                statusColor = 'text-green-600'
               } else if (isFuture) {
-                statusIcon = <Clock className="size-4 text-muted-foreground/70" />
-                statusText = 'À venir'; statusColor = 'text-muted-foreground/70'
+                statusIcon = <Clock className="size-4 text-stone-300" />
+                statusText = 'À venir'; statusColor = 'text-stone-300'
               } else {
-                statusIcon = <AlertCircle className="size-4 text-destructive" />
-                statusText = 'En retard'; statusColor = 'text-destructive'
+                statusIcon = <AlertCircle className="size-4 text-red-500" />
+                statusText = 'En retard'; statusColor = 'text-red-600'
               }
 
               return (
-                <tr key={key} className={`hover:bg-muted ${rowBg}`}>
-                  <td className="px-4 py-2.5 font-medium text-foreground">{entry.vaccineName}</td>
-                  <td className="px-4 py-2.5 text-muted-foreground">{entry.doseLabel}{entry.notes && <span className="ms-1 text-xs text-muted-foreground">({entry.notes})</span>}</td>
-                  <td className="px-4 py-2.5 text-muted-foreground">{entry.ageMonths < 1 ? 'Naissance' : entry.ageMonths >= 12 ? `${Math.floor(entry.ageMonths / 12)} ans` : `${entry.ageMonths} mois`}</td>
+                <tr key={key} className={`hover:bg-stone-50 ${rowBg}`}>
+                  <td className="px-4 py-2.5 font-medium text-stone-800">{entry.vaccineName}</td>
+                  <td className="px-4 py-2.5 text-stone-600">{entry.doseLabel}{entry.notes && <span className="ms-1 text-xs text-stone-600">({entry.notes})</span>}</td>
+                  <td className="px-4 py-2.5 text-stone-600">{entry.ageMonths < 1 ? 'Naissance' : entry.ageMonths >= 12 ? `${Math.floor(entry.ageMonths / 12)} ans` : `${entry.ageMonths} mois`}</td>
                   <td className={`px-4 py-2.5 ${statusColor}`}><span className="flex items-center gap-1.5">{statusIcon}{statusText}</span></td>
-                  <td className="px-4 py-2.5 text-muted-foreground hidden md:table-cell">{done?.administrationRoute || '—'}</td>
-                  <td className="px-4 py-2.5 text-muted-foreground hidden md:table-cell text-xs font-mono">{done?.lotNumber || '—'}</td>
+                  <td className="px-4 py-2.5 text-stone-600 hidden md:table-cell">{done?.administrationRoute || '—'}</td>
+                  <td className="px-4 py-2.5 text-stone-600 hidden md:table-cell text-xs font-mono">{done?.lotNumber || '—'}</td>
                   <td className="px-4 py-2.5"><div className="min-w-[300px]">
                     {!done && !excluded && !showForm && (
                       <div className="flex items-center gap-1">
                         <button onClick={() => { setActiveForm(key); setDateValue(new Date().toISOString().slice(0, 10)); setRouteValue(''); setLotValue('') }}
                           className="rounded bg-cta-600 px-2.5 py-1 text-xs font-medium text-white hover:bg-cta-700">Administré</button>
                         <button onClick={() => quickStatus(entry, 'contraindicated')}
-                          className="rounded border border-border bg-card px-2 py-1 text-xs font-medium text-muted-foreground hover:text-foreground">Contre-indiqué</button>
+                          className="rounded border border-warm bg-white px-2 py-1 text-xs font-medium text-stone-600 hover:text-stone-800">Contre-indiqué</button>
                         <button onClick={() => quickStatus(entry, 'refused')}
-                          className="rounded border border-border bg-card px-2 py-1 text-xs font-medium text-muted-foreground hover:text-foreground">Refusé</button>
+                          className="rounded border border-warm bg-white px-2 py-1 text-xs font-medium text-stone-600 hover:text-stone-800">Refusé</button>
                       </div>
                     )}
                     {showForm && (
@@ -186,7 +186,7 @@ export default function VaccinationRecord({ patientId, schedule, vaccinations, p
                         <input type="text" value={lotValue} onChange={e => setLotValue(e.target.value)} placeholder="Lot" className={`w-16 ${inputClass}`} />
                         <button onClick={() => handleSubmit(entry)} disabled={saving}
                           className="rounded bg-cta-600 px-2.5 py-1 text-xs font-medium text-white hover:bg-cta-700 disabled:opacity-50">{saving ? '…' : 'OK'}</button>
-                        <button onClick={() => setActiveForm(null)} className="text-xs text-muted-foreground hover:text-muted-foreground">✕</button>
+                        <button onClick={() => setActiveForm(null)} className="text-xs text-stone-600 hover:text-stone-600">✕</button>
                       </div>
                     )}
                     {done && editForm?.key === key && (
@@ -202,7 +202,7 @@ export default function VaccinationRecord({ patientId, schedule, vaccinations, p
                           onChange={(e) => setEditForm({ ...editForm, lot: e.target.value })} placeholder="Lot" className={`w-16 ${inputClass}`} />
                         <button onClick={saveEdit} disabled={saving}
                           className="rounded bg-cta-600 px-2.5 py-1 text-xs font-medium text-white hover:bg-cta-700 disabled:opacity-50">{saving ? '…' : 'OK'}</button>
-                        <button onClick={() => setEditForm(null)} className="text-xs text-muted-foreground hover:text-muted-foreground">✕</button>
+                        <button onClick={() => setEditForm(null)} className="text-xs text-stone-600 hover:text-stone-600">✕</button>
                       </div>
                     )}
                     {done && editForm?.key !== key && (
@@ -213,7 +213,7 @@ export default function VaccinationRecord({ patientId, schedule, vaccinations, p
                           route: done.administrationRoute || '',
                           lot: done.lotNumber || '',
                         })}
-                        className="rounded border border-border bg-card px-2 py-1 text-xs font-medium text-muted-foreground hover:text-foreground"
+                        className="rounded border border-warm bg-white px-2 py-1 text-xs font-medium text-stone-600 hover:text-stone-800"
                       >
                         ✎ Modifier
                       </button>

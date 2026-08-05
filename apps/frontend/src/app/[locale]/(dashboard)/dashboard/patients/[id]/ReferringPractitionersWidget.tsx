@@ -33,7 +33,7 @@ export default function ReferringPractitionersWidget({ patientId, initialIds }: 
     router.refresh()
   }
 
-  if (loading) return <p className="text-xs text-muted-foreground">Chargement…</p>
+  if (loading) return <p className="text-xs text-stone-600">Chargement…</p>
 
   const selected = practitioners.filter(p => selectedIds.includes(p.id))
   const available = practitioners.filter(p => !selectedIds.includes(p.id))
@@ -43,7 +43,7 @@ export default function ReferringPractitionersWidget({ patientId, initialIds }: 
       {selected.length > 0 && (
         <div className="flex flex-wrap gap-1.5">
           {selected.map(p => (
-            <span key={p.id} className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary-700">
+            <span key={p.id} className="inline-flex items-center gap-1 rounded-full bg-primary-50 px-2.5 py-1 text-xs font-medium text-primary-700">
               {p.name}{p.specialty ? ` (${p.specialty})` : ''}
               <button onClick={() => toggle(p.id)} className="ms-0.5 text-primary-400 hover:text-primary-600"><X className="size-3" /></button>
             </span>
@@ -52,14 +52,14 @@ export default function ReferringPractitionersWidget({ patientId, initialIds }: 
       )}
       {available.length > 0 && (
         <select value="" onChange={(e) => { if (e.target.value) toggle(e.target.value) }}
-          className="w-full rounded-lg border border-border bg-card px-3 py-1.5 text-xs text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary-500/20">
+          className="w-full rounded-lg border border-warm bg-white px-3 py-1.5 text-xs text-stone-600 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20">
           <option value="">+ Ajouter un médecin référent</option>
           {available.map(p => (
             <option key={p.id} value={p.id}>{p.name}{p.specialty ? ` — ${p.specialty}` : ''}{p.city ? ` (${p.city})` : ''}</option>
           ))}
         </select>
       )}
-      {practitioners.length === 0 && <p className="text-xs text-muted-foreground">Aucun médecin référent enregistré.</p>}
+      {practitioners.length === 0 && <p className="text-xs text-stone-600">Aucun médecin référent enregistré.</p>}
     </div>
   )
 }

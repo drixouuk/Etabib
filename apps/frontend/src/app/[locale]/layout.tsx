@@ -14,7 +14,6 @@ import Footer from '@/components/layout/Footer'
 import LandingHeader from '@/components/layout/LandingHeader'
 import LandingFooter from '@/components/layout/LandingFooter'
 import LayoutShell from '@/components/layout/LayoutShell'
-import { ThemeProvider } from 'next-themes'
 import { getDoctorProfile, getPracticeInfo } from '@/lib/payload'
 import '../globals.css'
 import { BRAND, SITE_DOMAIN } from '@/lib/brand'
@@ -201,7 +200,6 @@ export default async function LocaleLayout({ children, params }: Props) {
     <html
       lang={locale}
       dir={dir}
-      suppressHydrationWarning
       className={`${fontVars} h-full`}
     >
       <head>
@@ -231,18 +229,16 @@ export default async function LocaleLayout({ children, params }: Props) {
         )}
       </head>
       <body className={`${bodyFont} flex min-h-full flex-col bg-cream-100 text-stone-800 antialiased`}>
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <NextIntlClientProvider>
-            <LayoutShell
-              header={isLandingChrome ? undefined : <Header doctorName={doctorName} doctorNameShort={doctorNameShort} />}
-              footer={isLandingChrome ? undefined : <Footer locale={locale} />}
-            >
-              {isLegal && <LandingHeader hideLanguageSwitcher />}
-              {children}
-              {isLegal && <LandingFooter />}
-            </LayoutShell>
-          </NextIntlClientProvider>
-        </ThemeProvider>
+        <NextIntlClientProvider>
+          <LayoutShell
+            header={isLandingChrome ? undefined : <Header doctorName={doctorName} doctorNameShort={doctorNameShort} />}
+            footer={isLandingChrome ? undefined : <Footer locale={locale} />}
+          >
+            {isLegal && <LandingHeader hideLanguageSwitcher />}
+            {children}
+            {isLegal && <LandingFooter />}
+          </LayoutShell>
+        </NextIntlClientProvider>
         <script
           dangerouslySetInnerHTML={{
             __html: "if('serviceWorker'in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register('/sw.js').catch(()=>{})})}",

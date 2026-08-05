@@ -63,8 +63,8 @@ export default async function PatientsListPage({ searchParams }: Props) {
     <div className="mx-auto max-w-container px-4 py-12 md:px-6 lg:px-8">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="font-heading text-3xl font-bold text-foreground">Patients</h1>
-          <p className="mt-1 text-[13.5px] text-muted-foreground">{patients.length} patients suivis</p>
+          <h1 className="font-heading text-3xl font-bold text-stone-800">Patients</h1>
+          <p className="mt-1 text-[13.5px] text-stone-600">{patients.length} patients suivis</p>
         </div>
         <div className="flex w-full items-center gap-3 md:w-auto">
           <PatientSearchAutocomplete initialQ={q || ''} />

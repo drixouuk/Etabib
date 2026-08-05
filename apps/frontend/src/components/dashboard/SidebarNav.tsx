@@ -29,7 +29,7 @@ export default function SidebarNav({ items, adminItems, onNavigate }: Props) {
   return (
     <nav className="relative flex flex-1 flex-col gap-0.5 pt-1">
       <div
-        className="absolute start-0 end-0 h-10 rounded-[10px] bg-primary/10 transition-all duration-300 ease-out z-0"
+        className="absolute start-0 end-0 h-10 rounded-[10px] bg-primary-50 transition-all duration-300 ease-out z-0"
         style={{
           transform: `translateY(${activeIndex >= 0 && activeIndex < items.length ? activeIndex * 42 : 0}px)`,
           opacity: activeIndex >= 0 ? 1 : 0,
@@ -44,10 +44,10 @@ export default function SidebarNav({ items, adminItems, onNavigate }: Props) {
             onClick={onNavigate}
             className={`relative z-10 flex items-center gap-[11px] rounded-[10px] px-3 py-[10px] text-[13.5px] font-medium transition-colors duration-200 ${
               item.disabled
-                ? 'pointer-events-none text-muted-foreground'
+                ? 'pointer-events-none text-stone-400'
                 : active
                   ? 'text-primary-700 font-semibold'
-                  : 'text-muted-foreground hover:text-foreground'
+                  : 'text-stone-600 hover:text-stone-800'
             }`}
             aria-disabled={item.disabled}
             tabIndex={item.disabled ? -1 : undefined}
@@ -59,7 +59,7 @@ export default function SidebarNav({ items, adminItems, onNavigate }: Props) {
       })}
       {adminItems.length > 0 && (
         <>
-          <div className="my-2 border-t border-primary/15" />
+          <div className="my-2 border-t border-primary-600/15" />
           {adminItems.map((item) => {
             const active = isActive(item.href, pathname)
             return (
@@ -68,7 +68,7 @@ export default function SidebarNav({ items, adminItems, onNavigate }: Props) {
                 href={item.href}
                 onClick={onNavigate}
                 className={`relative z-10 flex items-center gap-[11px] rounded-[10px] px-3 py-[10px] text-[13.5px] font-medium transition-colors duration-200 ${
-                  active ? 'text-primary-700 font-semibold' : 'text-muted-foreground hover:text-foreground'
+                  active ? 'text-primary-700 font-semibold' : 'text-stone-600 hover:text-stone-800'
                 }`}
               >
                 {item.icon}

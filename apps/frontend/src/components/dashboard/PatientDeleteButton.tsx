@@ -37,19 +37,19 @@ export default function PatientDeleteButton({ patientId, patientName }: Props) {
   if (confirming) {
     return (
       <div className="px-3 py-2">
-        <p className="text-sm font-medium text-destructive">Supprimer {patientName} ?</p>
-        <p className="mt-1 text-xs text-muted-foreground">L'historique clinique (consultations, prescriptions, documents) sera définitivement perdu.</p>
+        <p className="text-sm font-medium text-red-700">Supprimer {patientName} ?</p>
+        <p className="mt-1 text-xs text-stone-600">L'historique clinique (consultations, prescriptions, documents) sera définitivement perdu.</p>
         <div className="mt-2 flex items-center gap-2">
           <button onClick={handleDelete} disabled={deleting}
-            className="text-sm font-medium text-destructive hover:text-destructive disabled:opacity-50">
+            className="text-sm font-medium text-red-600 hover:text-red-700 disabled:opacity-50">
             {deleting ? 'Suppression…' : 'Supprimer définitivement'}
           </button>
           <button onClick={() => { setConfirming(false); setError('') }}
-            className="text-sm text-muted-foreground hover:text-muted-foreground">
+            className="text-sm text-stone-600 hover:text-stone-600">
             Annuler
           </button>
         </div>
-        {error && <p className="mt-1 text-xs text-destructive">{error}</p>}
+        {error && <p className="mt-1 text-xs text-red-500">{error}</p>}
       </div>
     )
   }
@@ -57,7 +57,7 @@ export default function PatientDeleteButton({ patientId, patientName }: Props) {
   return (
     <button
       onClick={() => setConfirming(true)}
-      className="flex w-full items-center gap-2 px-3 py-2 text-sm text-foreground transition-colors duration-200 hover:bg-muted"
+      className="flex w-full items-center gap-2 px-3 py-2 text-sm text-stone-800 transition-colors duration-200 hover:bg-stone-50"
     >
       <Trash2 className="size-3.5" />
       Supprimer

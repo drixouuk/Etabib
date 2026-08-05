@@ -164,11 +164,11 @@ export default function PrescriptionForm({ patientId, prescriptions, consultatio
     setSaving(false)
   }
 
-  const inputClass = 'w-full rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground focus:border-primary focus:ring-2 focus:ring-primary-500/20'
+  const inputClass = 'w-full rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm text-stone-800 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20'
 
   return (
     <div className="flex flex-col gap-4 p-4">
-      <h3 className="font-heading text-base font-semibold text-foreground">
+      <h3 className="font-heading text-base font-semibold text-stone-800">
         {editingPrescription ? "Modifier l'ordonnance" : 'Nouvelle ordonnance'}
       </h3>
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
@@ -183,7 +183,7 @@ export default function PrescriptionForm({ patientId, prescriptions, consultatio
                     if (t.notes) setNotes(t.notes)
                   }
                 }}
-                className="rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground focus:border-primary focus:ring-2 focus:ring-primary-500/20"
+                className="rounded-lg border border-warm bg-white px-3 py-2 text-sm text-stone-800 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20"
               >
                 <option value="">Charger un modèle...</option>
                 {templates.map(t => (
@@ -193,16 +193,16 @@ export default function PrescriptionForm({ patientId, prescriptions, consultatio
             </div>
           )}
           {medications.map((med, i) => (
-            <div key={i} className="rounded-lg border border-border bg-muted p-3">
+            <div key={i} className="rounded-lg border border-warm bg-stone-50 p-3">
               <div className="mb-2 flex items-center justify-between">
-                <span className="text-xs font-medium text-muted-foreground">Médicament {i + 1}</span>
+                <span className="text-xs font-medium text-stone-600">Médicament {i + 1}</span>
                 {medications.length > 1 && (
-                  <button type="button" onClick={() => removeMedication(i)} className="text-xs text-destructive hover:text-destructive">Retirer</button>
+                  <button type="button" onClick={() => removeMedication(i)} className="text-xs text-red-500 hover:text-red-700">Retirer</button>
                 )}
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div className="relative">
-                  <label className="mb-0.5 block text-xs text-muted-foreground">Nom *</label>
+                  <label className="mb-0.5 block text-xs text-stone-600">Nom *</label>
                   <input
                     ref={(el) => { inputRefs.current[i] = el }}
                     value={med.nom}
@@ -219,31 +219,31 @@ export default function PrescriptionForm({ patientId, prescriptions, consultatio
                     autoComplete="off"
                   />
                   {openDropdown === i && suggestions[i]?.length > 0 && (
-                    <div className="absolute start-0 top-full z-20 mt-1 w-full rounded-lg border border-border bg-card py-1 shadow-lg">
+                    <div className="absolute start-0 top-full z-20 mt-1 w-full rounded-lg border border-warm bg-white py-1 shadow-lg">
                       {suggestions[i].map((s, si) => (
                         <button
                           key={si}
                           type="button"
                           onMouseDown={(e) => { e.preventDefault(); updateMed(i, 'nom', s.nom); updateMed(i, 'dci', s.dci); setOpenDropdown(null) }}
-                          className="flex w-full items-center justify-between px-3 py-2 text-start text-sm text-foreground transition-colors duration-200 hover:bg-primary/10"
+                          className="flex w-full items-center justify-between px-3 py-2 text-start text-sm text-stone-800 transition-colors duration-200 hover:bg-primary-50"
                         >
                           <span className="font-medium">{s.nom}</span>
-                          <span className="text-xs text-muted-foreground">{s.count !== undefined && `×${s.count}`}</span>
+                          <span className="text-xs text-stone-600">{s.count !== undefined && `×${s.count}`}</span>
                         </button>
                       ))}
                     </div>
                   )}
                 </div>
                 <div>
-                  <label className="mb-0.5 block text-xs text-muted-foreground">DCI</label>
+                  <label className="mb-0.5 block text-xs text-stone-600">DCI</label>
                   <input value={med.dci} onChange={e => updateMed(i, 'dci', e.target.value)} className={inputClass} />
                 </div>
                 <div>
-                  <label className="mb-0.5 block text-xs text-muted-foreground">Posologie *</label>
+                  <label className="mb-0.5 block text-xs text-stone-600">Posologie *</label>
                   <input value={med.posologie} onChange={e => updateMed(i, 'posologie', e.target.value)} required className={inputClass} />
                 </div>
                 <div>
-                  <label className="mb-0.5 block text-xs text-muted-foreground">Durée *</label>
+                  <label className="mb-0.5 block text-xs text-stone-600">Durée *</label>
                   <input value={med.duree} onChange={e => updateMed(i, 'duree', e.target.value)} required className={inputClass} />
                 </div>
               </div>
@@ -255,14 +255,14 @@ export default function PrescriptionForm({ patientId, prescriptions, consultatio
           </button>
 
           <div>
-            <label className="mb-1 block text-sm font-medium text-foreground">Notes</label>
+            <label className="mb-1 block text-sm font-medium text-stone-800">Notes</label>
             <textarea rows={3} value={notes} onChange={e => setNotes(e.target.value)} className={inputClass} />
           </div>
 
           {consultations.length > 0 && (
             <div>
-              <label className="mb-1 block text-sm font-medium text-foreground">
-                Rattacher à une consultation <span className="text-muted-foreground">(optionnel)</span>
+              <label className="mb-1 block text-sm font-medium text-stone-800">
+                Rattacher à une consultation <span className="text-stone-600">(optionnel)</span>
               </label>
               <select
                 value={consultationId}
@@ -285,27 +285,27 @@ export default function PrescriptionForm({ patientId, prescriptions, consultatio
             </button>
             {!showTemplateSave ? (
               <button type="button" onClick={() => setShowTemplateSave(true)}
-                className="rounded-lg border border-border bg-card px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-muted">
+                className="rounded-lg border border-warm bg-white px-3 py-2 text-sm font-medium text-stone-600 hover:bg-stone-50">
                 Sauvegarder comme modèle
               </button>
             ) : (
               <div className="flex items-center gap-2">
                 <input value={templateName} onChange={e => setTemplateName(e.target.value)}
                   placeholder="Nom du modèle" autoFocus
-                  className="rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground focus:border-primary focus:ring-2 focus:ring-primary-500/20" />
+                  className="rounded-lg border border-warm bg-white px-3 py-2 text-sm text-stone-800 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20" />
                 <button type="button" onClick={saveAsTemplate} disabled={savingTemplate || !templateName.trim()}
                   className="rounded-lg bg-cta-600 px-3 py-2 text-sm font-medium text-white hover:bg-cta-700 disabled:opacity-50">
                   Enregistrer
                 </button>
                 <button type="button" onClick={() => { setShowTemplateSave(false); setTemplateName('') }}
-                  className="text-sm text-muted-foreground hover:text-foreground">
+                  className="text-sm text-stone-600 hover:text-stone-800">
                   Annuler
                 </button>
               </div>
             )}
-            <button type="button" onClick={onClose} className="text-sm text-muted-foreground hover:text-foreground">Annuler</button>
+            <button type="button" onClick={onClose} className="text-sm text-stone-600 hover:text-stone-800">Annuler</button>
           </div>
-          {error && <p className="text-sm text-destructive">{error}</p>}
+          {error && <p className="text-sm text-red-600">{error}</p>}
         </form>
     </div>
   )
