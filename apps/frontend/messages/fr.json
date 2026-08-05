@@ -22,7 +22,8 @@
     "tagline": "La santé de vos enfants, entre de bonnes mains",
     "cta_primary": "Prendre rendez-vous",
     "cta_secondary": "En savoir plus",
-    "badge_langues": "Plusieurs langues"
+    "badge_langues": "Plusieurs langues",
+    "photoPlaceholder": "Photo à intégrer"
   },
   "presentation": {
     "title": "Présentation",
@@ -49,12 +50,17 @@
       "fri": "Vendredi",
       "sat": "Samedi",
       "sun": "Dimanche"
-    }
+    },
+    "badge": "Infos",
+    "phone_title": "Téléphone",
+    "mapUnavailable": "Carte non disponible"
   },
   "rdv": {
     "title": "Prendre rendez-vous",
     "subtitle": "Choisissez le créneau qui vous convient",
-    "loading": "Chargement du calendrier…"
+    "loading": "Chargement du calendrier…",
+    "unavailable": "Réservation en ligne temporairement indisponible",
+    "unavailableCall": "Appelez le cabinet au {phone}"
   },
   "contact": {
     "title": "Nous contacter",
@@ -68,7 +74,10 @@
     "message_placeholder": "Votre message"
   },
   "reviews": {
-    "title": "Avis"
+    "title": "Avis",
+    "heading": "Ce que disent nos patients",
+    "countLabel": "sur {count} avis Google",
+    "google": "Google"
   },
   "dashboard": {
     "overview": "Vue d'ensemble",
@@ -293,5 +302,13 @@
     "doctorCountLabel": "Nombre de médecins",
     "doctorCountHint": "Chaque médecin supplémentaire ajoute 199 MAD/mois",
     "totalPrice": "Total : {price} MAD/mois"
+  },
+  "notFound": {
+    "title": "Page introuvable",
+    "description": "La page que vous cherchez n'existe pas ou a été déplacée.",
+    "back": "Retour à l'accueil"
+  },
+  "theme": {
+    "toggleLabel": "Basculer le thème clair/sombre"
   }
 }

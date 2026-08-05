@@ -52,7 +52,7 @@ export default async function InfosSection({ locale, practiceInfo }: Props) {
     { icon: MapPin, title: t("address_title"), text: practiceInfo?.address || '' },
     { icon: Clock, title: t("hours_title"), text: hoursStr || t("hours_note"), html: true },
     { icon: CreditCard, title: t("fees_title"), text: `${practiceInfo?.paymentNote || t("payment")}.` },
-    { icon: Phone, title: "Téléphone", text: practiceInfo?.phone || '' },
+    { icon: Phone, title: t("phone_title"), text: practiceInfo?.phone || '' },
   ]
 
   return (
@@ -60,10 +60,10 @@ export default async function InfosSection({ locale, practiceInfo }: Props) {
       <div className="container mx-auto max-w-[1200px]">
         <div className="mx-auto mb-12 max-w-[620px] text-center">
           <span className="mb-4 inline-flex items-center gap-1.5 rounded-full bg-cream-200 px-3.5 py-1.5 text-[.8rem] font-bold text-primary-700">
-            Infos
+            {t("badge")}
           </span>
           <h2 className="text-[clamp(1.6rem,3vw,2.15rem)] font-heading font-extrabold text-stone-800">
-            Informations pratiques
+            {t("title")}
           </h2>
         </div>
 
@@ -91,8 +91,8 @@ export default async function InfosSection({ locale, practiceInfo }: Props) {
             <p className="text-sm font-bold text-amber-800">Fermetures à venir</p>
             <ul className="mt-1.5 space-y-1">
               {upcomingClosures.map((c: any, i: number) => {
-                const start = new Date(c.startDate).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })
-                const end = c.endDate ? new Date(c.endDate).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }) : null
+                const start = new Date(c.startDate).toLocaleDateString(locale, { day: 'numeric', month: 'long', year: 'numeric' })
+                const end = c.endDate ? new Date(c.endDate).toLocaleDateString(locale, { day: 'numeric', month: 'long', year: 'numeric' }) : null
                 return (
                   <li key={i} className="text-sm text-amber-800">
                     {c.label} — {start}{end ? ` au ${end}` : ''}
@@ -114,7 +114,7 @@ export default async function InfosSection({ locale, practiceInfo }: Props) {
               />
             ) : (
               <div className="flex min-h-[280px] items-center justify-center bg-stone-50">
-                <p className="text-sm text-stone-500">Carte non disponible</p>
+                <p className="text-sm text-stone-500">{t("mapUnavailable")}</p>
               </div>
             )}
             <div className="flex items-center gap-2 border-t border-stone-200 px-5 py-3 text-sm text-stone-500">

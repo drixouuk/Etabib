@@ -22,7 +22,8 @@
     "tagline": "صحة أطفالكم في أيدٍ أمينة",
     "cta_primary": "حجز موعد",
     "cta_secondary": "اعرف المزيد",
-    "badge_langues": "لغات متعددة"
+    "badge_langues": "لغات متعددة",
+    "photoPlaceholder": "الصورة قريبًا"
   },
   "presentation": {
     "title": "عن الطبيبة",
@@ -49,12 +50,17 @@
       "fri": "الجمعة",
       "sat": "السبت",
       "sun": "الأحد"
-    }
+    },
+    "badge": "معلومات",
+    "phone_title": "الهاتف",
+    "mapUnavailable": "الخريطة غير متاحة"
   },
   "rdv": {
     "title": "حجز موعد",
     "subtitle": "اختر الموعد الذي يناسبك",
-    "loading": "جاري تحميل التقويم…"
+    "loading": "جاري تحميل التقويم…",
+    "unavailable": "الحجز عبر الإنترنت غير متاح مؤقتًا",
+    "unavailableCall": "اتصل بالعيادة على {phone}"
   },
   "contact": {
     "title": "اتصل بنا",
@@ -68,7 +74,10 @@
     "message_placeholder": "رسالتك"
   },
   "reviews": {
-    "title": "ماذا يقول مرضانا"
+    "title": "ماذا يقول مرضانا",
+    "heading": "ماذا يقول مرضانا",
+    "countLabel": "بناءً على {count} تقييمات Google",
+    "google": "Google"
   },
   "dashboard": {
     "overview": "نظرة عامة",
@@ -293,5 +302,13 @@
     "doctorCountLabel": "عدد الأطباء",
     "doctorCountHint": "كل طبيب إضافي يضيف 199 درهم/شهر",
     "totalPrice": "الإجمالي: {price} درهم/شهر"
+  },
+  "notFound": {
+    "title": "الصفحة غير موجودة",
+    "description": "الصفحة التي تبحث عنها غير موجودة أو تم نقلها.",
+    "back": "العودة إلى الرئيسية"
+  },
+  "theme": {
+    "toggleLabel": "تبديل المظهر الفاتح/الداكن"
   }
 }

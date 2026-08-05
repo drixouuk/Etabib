@@ -105,7 +105,7 @@ export default async function HomePage({ params }: Props) {
                 <Stethoscope className="size-12 text-primary-700" />
               </div>
               <span className="absolute bottom-3.5 right-3.5 rounded-full bg-stone-800/55 px-2.5 py-1 text-[.68rem] font-semibold text-white">
-                Photo à intégrer
+                {t('photoPlaceholder')}
               </span>
             </div>
             <p className="mt-4 text-center font-heading text-base font-bold text-stone-800">

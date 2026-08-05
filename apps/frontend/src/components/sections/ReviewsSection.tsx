@@ -20,12 +20,14 @@ type Props = {
   locale: string;
 };
 
-export default function ReviewsSection({ reviews }: Props) {
+export default function ReviewsSection({ reviews, locale }: Props) {
   const t = useTranslations("reviews");
   const trackRef = useRef<HTMLDivElement>(null);
   const [paused, setPaused] = useState(false);
 
   useEffect(() => {
+    // Point 9 — l'avance automatique est désactivée sous prefers-reduced-motion.
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const track = trackRef.current;
     if (!track) return;
     const interval = setInterval(() => {
@@ -44,7 +46,12 @@ export default function ReviewsSection({ reviews }: Props) {
 
   if (reviews.length === 0) return null;
 
-  const avgRating = (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1)
+  const avgRating = (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length)
+  // Point 2 — note au format de la locale active (4.9 en EN, 4,9 en FR/AR).
+  const formattedRating = new Intl.NumberFormat(locale, { minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(avgRating)
+  // Point 2 — date au format de la locale, jamais d'ISO brute dans le DOM.
+  const formatDate = (iso: string) =>
+    new Intl.DateTimeFormat(locale, { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(iso))
 
   return (
     <section id="reviews" className="scroll-mt-24 px-4 py-[88px] md:py-[60px]" style={{ background: 'linear-gradient(180deg, #FFFBF0, #fff)' }}>
@@ -54,15 +61,15 @@ export default function ReviewsSection({ reviews }: Props) {
             {t('title')}
           </span>
           <h2 className="text-[clamp(1.6rem,3vw,2.15rem)] font-heading font-extrabold text-stone-800">
-            Ce que disent nos patients
+            {t('heading')}
           </h2>
           <div className="mt-3 flex items-center justify-center gap-3.5 flex-wrap">
-            <span className="font-heading text-[2.6rem] font-extrabold text-stone-800">{avgRating}</span>
+            <span className="font-heading text-[2.6rem] font-extrabold text-stone-800">{formattedRating}</span>
             <div>
               <div className="flex gap-0.5">
                 {[...Array(5)].map((_, i) => <Star key={i} className="size-[19px] fill-amber-400 text-amber-400" />)}
               </div>
-              <p className="text-[.92rem] font-semibold text-stone-500">sur {reviews.length} avis Google</p>
+              <p className="text-[.92rem] font-semibold text-stone-500">{t('countLabel', { count: reviews.length })}</p>
             </div>
           </div>
         </div>
@@ -85,11 +92,11 @@ export default function ReviewsSection({ reviews }: Props) {
                 </div>
                 <div className="ml-auto flex shrink-0 items-center gap-1">
                   <span className="flex size-[15px] items-center justify-center rounded-full bg-[#4285F4] text-[9px] font-extrabold text-white">G</span>
-                  <span className="text-[.72rem] text-stone-500">Google</span>
+                  <span className="text-[.72rem] text-stone-500">{t('google')}</span>
                 </div>
               </div>
               <p className="flex-1 text-[.89rem] leading-relaxed text-stone-600 before:mr-0.5 before:text-primary-300 before:font-serif before:text-[1.3rem] before:content-['\201C']">{r.text}</p>
-              <p className="text-[.76rem] text-stone-500">{r.date}</p>
+              <p className="text-[.76rem] text-stone-500">{formatDate(r.date)}</p>
             </div>
           ))}
         </div>

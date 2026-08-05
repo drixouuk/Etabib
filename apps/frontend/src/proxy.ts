@@ -7,6 +7,9 @@ const CMS_URL =
 
 const intlMiddleware = createMiddleware(routing);
 
+// Locales supportées (miroir de i18n/routing) pour la détection des racines localisées.
+const LOCALE_LIST = ['fr', 'en', 'ar', 'tzm'];
+
 // Cache LRU borné (200 entrées max, expiration 10 min) pour la résolution de tenant.
 // Un Map simple sans limite serait vulnérable à un flood de hostnames arbitraires
 // via les headers Host / X-Forwarded-Host (memory leak / DoS).
@@ -109,8 +112,17 @@ export default async function middleware(request: NextRequest) {
 
   const SITE_DOMAIN = process.env.NEXT_PUBLIC_SITE_DOMAIN || 'etabibi.ma'
   const isPlatformDomain = !tenant && (hostname === SITE_DOMAIN || hostname === `www.${SITE_DOMAIN}`)
-  if (isPlatformDomain && pathname === '/' && !pathname.startsWith('/landing')) {
-    const locale = request.nextUrl.locale || 'fr'
+
+  // Point 10 — domaine racine = landing SaaS localisée ; les vitrines tenants
+  // ne sont servies QUE sur leurs sous-domaines (<medecin>.etabibi.ma).
+  // / et /[locale] sur le domaine racine redirigent vers /[locale]/landing ;
+  // toute autre route (login, onboarding, api…) reste inchangée.
+  const localeSeg = pathname.split('/')[1]
+  const isLocalizedRoot = pathname === '/' || (
+    (LOCALE_LIST as readonly string[]).includes(localeSeg) && pathname.split('/').length === 2
+  )
+  if (isPlatformDomain && isLocalizedRoot) {
+    const locale = pathname === '/' ? (request.nextUrl.locale || 'fr') : localeSeg
     return NextResponse.redirect(new URL(`/${locale}/landing`, request.url))
   }
 

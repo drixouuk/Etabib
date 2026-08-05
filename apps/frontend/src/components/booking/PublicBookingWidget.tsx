@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback, useRef } from 'react'
-import { useTranslations } from 'next-intl'
+import { useTranslations, useLocale } from 'next-intl'
 import { ChevronLeft, ChevronRight, ArrowRight } from 'lucide-react'
 import Turnstile, { type TurnstileHandle } from '@/components/ui/Turnstile'
 
@@ -29,12 +29,14 @@ type Props = { tenantId: string }
 
 export default function PublicBookingWidget({ tenantId }: Props) {
   const t = useTranslations('rdv')
+  const locale = useLocale()
   const tid = parseInt(tenantId, 10)
   const isAvailable = !!tid
 
   const [weekStart, setWeekStart] = useState(() => getMonday(new Date()))
   const [days, setDays] = useState<DayAvail[]>([])
   const [loading, setLoading] = useState(true)
+  const [practicePhone, setPracticePhone] = useState('')
   const [selectedDate, setSelectedDate] = useState<string | null>(null)
   const [selectedTime, setSelectedTime] = useState<string | null>(null)
   const [name, setName] = useState('')
@@ -45,6 +47,14 @@ export default function PublicBookingWidget({ tenantId }: Props) {
   const [done, setDone] = useState(false)
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null)
   const turnstileRef = useRef<TurnstileHandle>(null)
+
+  // Point 3 — l'état indisponible propose immédiatement le téléphone du cabinet.
+  useEffect(() => {
+    fetch(`/api/cms-proxy/practice-info?where[tenant.id][equals]=${tid}&depth=0&limit=1`)
+      .then(r => r.json())
+      .then(d => { const p = d?.docs?.[0]; if (p?.phone) setPracticePhone(String(p.phone)) })
+      .catch(() => {})
+  }, [tid])
 
   const fetchWeek = useCallback(() => {
     setLoading(true)
@@ -64,7 +74,7 @@ export default function PublicBookingWidget({ tenantId }: Props) {
 
   const midWeek = new Date(weekStart)
   midWeek.setDate(midWeek.getDate() + 3)
-  const monthLabel = midWeek.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })
+  const monthLabel = midWeek.toLocaleDateString(locale, { month: 'long', year: 'numeric' })
 
   const selectedDay = days.find(d => d.iso === selectedDate)
 
@@ -104,7 +114,13 @@ export default function PublicBookingWidget({ tenantId }: Props) {
             <span className="mb-4 inline-flex items-center gap-1.5 rounded-full bg-cream-200 px-3.5 py-1.5 text-[.8rem] font-bold text-primary-700">{t('title')}</span>
             <h2 className="text-[clamp(1.6rem,3vw,2.15rem)] font-heading font-extrabold text-stone-800">{t('title')}</h2>
           </div>
-          <p className="text-center text-stone-500">Réservation en ligne temporairement indisponible</p>
+          <p className="text-center text-stone-500">{t('unavailable')}</p>
+          {practicePhone && (
+            <p className="mt-2 text-center text-sm text-stone-600">
+              {t('unavailableCall', { phone: practicePhone })}
+              <a href={`tel:${practicePhone}`} className="ms-1 font-semibold text-primary-700 hover:underline">{practicePhone}</a>
+            </p>
+          )}
         </div>
       </section>
     )
@@ -186,7 +202,7 @@ export default function PublicBookingWidget({ tenantId }: Props) {
                 <Turnstile ref={turnstileRef} onTokenChange={setTurnstileToken} />
                 <button onClick={handleSubmit} disabled={saving || !turnstileToken}
                   className="flex w-full items-center justify-center gap-2 rounded-xl bg-cta-600 py-3.5 text-[.95rem] font-semibold text-white shadow-sm transition-all duration-200 hover:bg-cta-700">
-                  {saving ? 'Réservation…' : `Confirmer le ${new Date(selectedDate).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })} à ${selectedTime}`}
+                  {saving ? 'Réservation…' : `Confirmer le ${new Date(selectedDate).toLocaleDateString(locale, { day: 'numeric', month: 'long' })} à ${selectedTime}`}
                   {!saving && <ArrowRight className="size-[17px]" />}
                 </button>
               </div>

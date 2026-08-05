@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { Menu, X } from 'lucide-react'
 import Sidebar from './Sidebar'
+import { ThemeToggle } from '@/components/ui/theme-toggle'
 import { Link } from '@/i18n/navigation'
 import type { PayloadUser } from '@/lib/auth'
 import type { Tenant } from '@/lib/payload'
@@ -32,6 +33,9 @@ export default function DashboardShell({ user, tenant, billingStatus, children }
     <div data-module="patients" className="flex min-h-screen bg-cream-100">
       <aside className="hidden md:flex w-[252px] shrink-0 flex-col border-r border-primary-600/15 bg-cream-50">
         <Sidebar user={user} tenant={tenant} />
+        <div className="mt-auto flex items-center justify-center border-t border-primary-600/15 p-3">
+          <ThemeToggle />
+        </div>
       </aside>
 
       {sidebarOpen && (
@@ -67,6 +71,7 @@ export default function DashboardShell({ user, tenant, billingStatus, children }
             <Menu className="size-5" />
           </button>
           <span className="truncate font-heading text-sm font-semibold text-stone-800">{tenant?.name || 'Cabinet'}</span>
+          <div className="ms-auto"><ThemeToggle /></div>
         </div>
         <main className="flex-1 min-h-0 overflow-auto">{children}</main>
       </div>

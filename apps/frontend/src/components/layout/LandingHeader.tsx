@@ -27,7 +27,7 @@ export default function LandingHeader({ hideLanguageSwitcher = false }: Props) {
   ]
 
   return (
-    <header className={`fixed top-4 start-4 end-4 z-50 transition-transform duration-300 ${isHidden ? '-translate-y-[calc(100%+1rem)]' : 'translate-y-0'}`}>
+    <header className={`fixed top-4 start-4 end-4 z-50 transition-transform duration-300 motion-reduce:transition-none ${isHidden ? '-translate-y-[calc(100%+1rem)]' : 'translate-y-0'}`}>
       <div className="mx-auto flex max-w-[1160px] items-center justify-between rounded-[18px] bg-white/80 px-4 py-3 shadow-sm backdrop-blur-md">
         <a href={`/${locale}/landing`} className="flex items-center gap-2.5 font-heading font-extrabold text-[1.1rem] text-[#2A241C]">
           <span className="flex size-8 items-center justify-center rounded-[9px] bg-primary-600">

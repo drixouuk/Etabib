@@ -91,7 +91,7 @@ export default function LandingPage() {
                 {t('hero_badge')}
               </span>
               <h1 className="text-[clamp(2.15rem,4vw,3.15rem)] font-heading font-extrabold text-[#2A241C] mb-5 leading-tight tracking-[-.01em]">
-                {t('hero_title_1')} <em className="not-italic text-primary-700">{t('hero_title_em')}</em> {t('hero_title_2')}
+                {t('hero_title_1')} <span className="text-primary-700">{t('hero_title_em')}</span> {t('hero_title_2')}
               </h1>
               <p className="text-[1.13rem] text-[#8A8175] max-w-[520px] mb-8">{t('hero_sub')}</p>
               <div className="flex flex-wrap gap-3.5 mb-5">
