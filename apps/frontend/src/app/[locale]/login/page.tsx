@@ -74,7 +74,12 @@ export default function LoginPage() {
     const data = await res.json().catch(() => null)
     const isPlatformAdmin =
       !!data?.user && !data.user.tenant && data.user.roles?.includes('superadmin')
-    router.push(isPlatformAdmin ? '/dashboard/billing-admin' : '/dashboard')
+    // Purge du router cache client : la session a changé, les segments mis en
+    // cache par le compte précédent (même onglet) ne doivent pas resservir.
+    // Sans cela, un changement de compte peut afficher les données du compte
+    // précédent jusqu'au prochain rafraîchissement (bug observé en test).
+    router.refresh()
+    router.replace(isPlatformAdmin ? '/dashboard/billing-admin' : '/dashboard')
   }
 
   const handleDemoRequest = async (e: FormEvent) => {
