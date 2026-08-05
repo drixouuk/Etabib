@@ -14,10 +14,10 @@ export default async function LiveStatsWidget({ clickable }: Props) {
   const baseWhere = `where[tenant][equals]=${tenantId}`
 
   const [scheduled, waiting, inConsultation, completed] = await Promise.all([
-    fetchCMS<{ totalDocs: number }>(`/api/queue-items?${baseWhere}&where[status][equals]=scheduled&depth=0&limit=0`, { revalidate: 0 }),
-    fetchCMS<{ totalDocs: number }>(`/api/queue-items?${baseWhere}&where[status][equals]=waiting&depth=0&limit=0`, { revalidate: 0 }),
-    fetchCMS<{ totalDocs: number }>(`/api/queue-items?${baseWhere}&where[status][equals]=in_consultation&depth=0&limit=0`, { revalidate: 0 }),
-    fetchCMS<{ totalDocs: number }>(`/api/queue-items?${baseWhere}&where[status][equals]=completed&depth=0&limit=0`, { revalidate: 0 }),
+    fetchCMS<{ totalDocs: number }>(`/api/queue-items?${baseWhere}&where[status][equals]=scheduled&depth=0&limit=0`),
+    fetchCMS<{ totalDocs: number }>(`/api/queue-items?${baseWhere}&where[status][equals]=waiting&depth=0&limit=0`),
+    fetchCMS<{ totalDocs: number }>(`/api/queue-items?${baseWhere}&where[status][equals]=in_consultation&depth=0&limit=0`),
+    fetchCMS<{ totalDocs: number }>(`/api/queue-items?${baseWhere}&where[status][equals]=completed&depth=0&limit=0`),
   ])
 
   const cards = [

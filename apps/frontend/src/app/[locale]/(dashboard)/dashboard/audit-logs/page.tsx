@@ -26,7 +26,6 @@ export default async function AuditLogsPage() {
 
   const data = await fetchCMS<{ docs: AuditLog[] }>(
     `/api/audit-logs?where[tenant][equals]=${getTenantId(user)}&sort=-timestamp&limit=100`,
-    { revalidate: 0 },
   )
   const logs = data?.docs ?? []
 

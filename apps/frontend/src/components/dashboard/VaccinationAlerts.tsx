@@ -20,7 +20,7 @@ export default async function VaccinationAlerts() {
   const [patientsData, scheduleData, vaccinsData] = await Promise.all([
     fetchCMS<{ docs: Patient[] }>(`/api/patients?where[tenant][equals]=${tenantId}&limit=500&depth=0`, { revalidate: 60 }),
     fetchCMS<{ docs: ScheduleEntry[] }>('/api/vaccine-schedule?sort=ageMonths&limit=100&depth=0', { revalidate: 60 }),
-    fetchCMS<{ docs: VaccinationData[] }>(`/api/vaccinations?where[tenant][equals]=${tenantId}&limit=1000&depth=0`, { revalidate: 0 }),
+    fetchCMS<{ docs: VaccinationData[] }>(`/api/vaccinations?where[tenant][equals]=${tenantId}&limit=1000&depth=0`),
   ])
 
   const patients = patientsData?.docs ?? []

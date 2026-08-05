@@ -101,19 +101,15 @@ export default async function ActivityPage({ searchParams }: Props) {
   const [patientsData, consultationsData, queueData, bookingsData] = await Promise.all([
     fetchCMS<{ docs: { id: string; createdAt: string }[] }>(
       `/api/patients?where[tenant][equals]=${tenantId}&where[createdAt][greater_than_equal]=${isoStart}&limit=5000&depth=0`,
-      { revalidate: 0 },
     ),
     fetchCMS<{ docs: { id: string; date: string }[] }>(
       `/api/consultations?where[tenant][equals]=${tenantId}&where[date][greater_than_equal]=${isoStart}&limit=5000&depth=0`,
-      { revalidate: 0 },
     ),
     fetchCMS<{ docs: { id: string; visitReason: string; arrivalTime: string; status: string }[] }>(
       `/api/queue-items?where[tenant][equals]=${tenantId}&where[arrivalTime][greater_than_equal]=${isoStart}&depth=0&limit=5000`,
-      { revalidate: 0 },
     ),
     fetchCMS<{ docs: { id: string; status: string }[] }>(
       `/api/calbookings?where[tenant][equals]=${tenantId}&where[startTime][greater_than_equal]=${isoStart}&depth=0&limit=5000`,
-      { revalidate: 0 },
     ),
   ])
 

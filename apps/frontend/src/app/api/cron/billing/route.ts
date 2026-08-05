@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { revalidateTag } from 'next/cache'
 import { runBillingCycle, type CmsApi } from '@/lib/billing-cycle'
 
 function getCMSURL(): string {
@@ -29,5 +30,11 @@ export async function GET(request: NextRequest) {
   }
 
   const result = await runBillingCycle(cms, { sendEmails: true })
+
+  // B7 — le cron a pu changer les statuts d'abonnement : les lectures mises
+  // en cache (bannière facturation, gardes d'écriture) reflètent le cycle.
+  revalidateTag('col:subscriptions', 'default')
+  revalidateTag('col:tenants', 'default')
+
   return NextResponse.json(result)
 }

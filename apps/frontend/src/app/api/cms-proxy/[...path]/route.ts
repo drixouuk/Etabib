@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { revalidateTag } from 'next/cache'
 import { requireWritable } from '@/lib/subscription'
 
 function getCMSURL(): string {
@@ -78,6 +79,14 @@ async function proxyRequest(request: NextRequest, method: string, path: string[]
     } as any)
 
     const data = await res.json().catch(() => null)
+
+    // B7 — après une écriture réussie, invalide les lectures mises en cache
+    // de la collection touchée : l'auteur voit sa donnée immédiatement, les
+    // autres postes restent bornés par le TTL (30s) des lectures.
+    if (res.ok && method !== 'GET' && path[0]) {
+      revalidateTag(`col:${path[0]}`, 'default')
+    }
+
     return NextResponse.json(data, { status: res.status })
   } catch {
     return NextResponse.json({ error: 'Erreur de proxy' }, { status: 502 })

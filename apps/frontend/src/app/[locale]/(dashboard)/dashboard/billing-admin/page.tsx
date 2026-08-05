@@ -15,7 +15,6 @@ export default async function BillingAdminPage() {
 
   const data = await fetchCMS<{ docs: Subscription[] }>(
     '/api/subscriptions?where[status][in]=trialing,past_due,grace,suspended,expired,canceled&depth=1&limit=200&sort=currentPeriodEnd',
-    { revalidate: 0 },
   )
   const STATUS_LABELS: Record<string, string> = {
     trialing: 'Essai', active: 'Actif', past_due: 'En retard', grace: 'Lecture seule',

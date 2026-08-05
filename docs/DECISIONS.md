@@ -68,3 +68,11 @@
 - **Problème** : un export bulk anonyme n'est pas une trace exploitable.
 - **Fix structurel** : `detail { count, ids ≤ 500 }` validés par l'endpoint (`/audit-ledger/export-event`) et fournis par la route d'export — le périmètre exact de l'export est documenté dans la ligne.
 - **Référence** : commit `45ad5dc`.
+
+## 10. Data Cache Next pour les lectures authentifiées : TTL bornés + revalidation par écriture (Perf A+B)
+
+- **Contexte** : le render serveur dominait le coût des switchs de vue (450-750 ms par RSC) : `authenticate()` appelait `/api/users/me` en `revalidate: 0` à chaque navigation (layout + page + routes), et `fetchCMS` défaillait aussi en non-cache — toutes les données authentifiées étaient re-fetchées fraîches à chaque render.
+- **Problème** : un cache global naïf croiserait les comptes (même requête, sessions différentes) ; une invalidation imprécise servirait des données périmées.
+- **Fix structurel** : **isolation par credentials dans la clé de cache** — `fetch` inclut le header `Authorization` dans les options, donc dans la clé du Data Cache Next (aucune entrée partagée entre tokens, prouvé par le test bi-compte) ; tags `auth:<hashFnv1a-du-token>` (jamais le token brut) pour le profil utilisateur, purgés au logout ; `authenticate()` enveloppé dans `cache()` React (dédup par requête : layout + page + route API = 1 seul users/me) ; lectures `fetchCMS` en TTL 30 s par défaut avec tags `col:<collection>` dérivés du chemin ; **toute écriture réussie revalide le tag de sa collection** (proxy CMS, bookings, annulation, export) — l'auteur voit sa donnée instantanément, les autres postes restent bornés par le TTL.
+- **Trade-off accepté** : une révocation de rôle met jusqu'à 20 s à se propager (users/me en TTL) ; une donnée écrite depuis un autre poste met jusqu'à 30 s à apparaître (bornée par la revalidation à l'écriture locale et par le polling de file). Les mutations elles-mêmes ne passent jamais par le cache.
+- **Référence** : yuvomi perf-session (Data Cache + tags) · commits du lot Perf A+B.

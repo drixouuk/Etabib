@@ -15,7 +15,7 @@ export default async function SettingsPage() {
   let practicePhone = ''
   let subscription = null
   if (tenantId) {
-    const practiceRes = await fetchCMS<{ phone?: string }>('/api/globals/practice-info?depth=0', { revalidate: 0 })
+    const practiceRes = await fetchCMS<{ phone?: string }>('/api/globals/practice-info?depth=0')
     practicePhone = practiceRes?.phone || ''
     subscription = await getSubscriptionByTenant(tenantId)
   }
@@ -24,7 +24,6 @@ export default async function SettingsPage() {
   if (isAdmin && tenantId) {
     const res = await fetchCMS<{ docs: { id: string; email: string; name: string; roles: string[] }[] }>(
       `/api/users?where[tenant][equals]=${tenantId}&depth=0&limit=50`,
-      { revalidate: 0 },
     )
     tenantUsers = res?.docs ?? []
   }

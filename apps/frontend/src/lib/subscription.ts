@@ -1,4 +1,5 @@
 import { fetchCMS } from '@/lib/cms-fetch'
+import { authenticate } from '@/lib/auth'
 import { calculateCabinetPrice } from '@/lib/pricing'
 
 export const SUBSCRIPTION_STATUSES = ['trialing', 'active', 'past_due', 'grace', 'suspended', 'expired', 'canceled'] as const
@@ -60,8 +61,8 @@ export async function getSubscriptionByTenant(tenantId: string): Promise<Subscri
 // Statut de paiement du tenant de l'utilisateur courant (côté serveur)
 // Retourne null si pas de session, pas de tenant (superadmin global) ou pas de subscription (legacy = actif)
 export async function getCurrentSubscription(): Promise<Subscription | null> {
-  const me = await fetchCMS<{ user: { tenant?: string | { id: string } } | null }>('/api/users/me', { revalidate: 0 })
-  const tenant = me?.user?.tenant
+  const user = await authenticate()
+  const tenant = user?.tenant
   if (!tenant) return null
   const tenantId = typeof tenant === 'object' ? tenant.id : tenant
   if (!tenantId) return null

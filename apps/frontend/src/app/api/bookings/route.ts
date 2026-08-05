@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { revalidateTag } from 'next/cache'
 import { moroccoWallTimeToUTC } from '@/lib/morocco-time'
 import { NOTIFICATIONS_EMAIL, BRAND } from '@/lib/brand'
 import { isWritable } from '@/lib/subscription'
@@ -132,6 +133,10 @@ export async function POST(request: NextRequest) {
   if (email?.trim()) {
     sendConfirmationEmail({ name: name.trim(), email: email.trim(), date: moroccoDate, bookingUid }).catch(() => {})
   }
+
+  // B7 — le créneau vient d'être réservé : les lectures calbookings mises en
+  // cache (agenda praticien, widget public) doivent refléter le changement.
+  revalidateTag('col:calbookings', 'default')
 
   return NextResponse.json({ success: true })
 }

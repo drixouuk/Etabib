@@ -102,23 +102,20 @@ export default async function PatientDetailPage({ params }: Props) {
   const isPediatrie = tenant?.settings?.specialty === 'pediatrie'
   const isClinique = tenant?.settings?.activeTier === 'cabinet'
   const [patient, consultationsData, prescriptionsData, documentsData, scheduleData, vaccinationsData, doctor, practiceInfo, doctorsData] = await Promise.all([
-    fetchCMS<Patient>(`/api/patients/${id}`, { revalidate: 0 }),
+    fetchCMS<Patient>(`/api/patients/${id}`),
     canViewClinical
       ? fetchCMS<{ docs: Consultation[] }>(
           `/api/consultations?where[patient][equals]=${id}&sort=-date&depth=1&limit=50`,
-          { revalidate: 0 },
         )
       : Promise.resolve(null),
     canViewClinical
       ? fetchCMS<{ docs: Prescription[] }>(
           `/api/prescriptions?where[patient][equals]=${id}&sort=-date&depth=1&limit=50`,
-          { revalidate: 0 },
         )
       : Promise.resolve(null),
     canViewClinical
       ? fetchCMS<{ docs: Document[] }>(
           `/api/documents?where[patient][equals]=${id}&sort=-createdAt&depth=0&limit=50`,
-          { revalidate: 0 },
         )
       : Promise.resolve(null),
     canViewClinical && isPediatrie
@@ -130,7 +127,6 @@ export default async function PatientDetailPage({ params }: Props) {
     canViewClinical && isPediatrie
       ? fetchCMS<{ docs: VaccinationData[] }>(
           `/api/vaccinations?where[patient][equals]=${id}&depth=0&limit=100`,
-          { revalidate: 0 },
         )
       : Promise.resolve(null),
     tenantId ? getDoctorProfile(tenantId, 'fr') : Promise.resolve(null),
@@ -138,7 +134,6 @@ export default async function PatientDetailPage({ params }: Props) {
     tenantId && isClinique
       ? fetchCMS<{ docs: { id: string }[] }>(
           `/api/users?where[roles][contains]=doctor&depth=0&limit=50`,
-          { revalidate: 0 },
         )
       : Promise.resolve(null),
   ])

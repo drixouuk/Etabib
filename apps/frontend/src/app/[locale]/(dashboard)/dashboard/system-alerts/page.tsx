@@ -22,7 +22,6 @@ export default async function SystemAlertsPage() {
 
   const data = await fetchCMS<{ docs: SystemAlert[] }>(
     `/api/system-alerts?sort=-timestamp&limit=100`,
-    { revalidate: 0 },
   )
   const alerts = data?.docs ?? []
 

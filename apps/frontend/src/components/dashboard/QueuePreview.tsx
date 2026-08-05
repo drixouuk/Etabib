@@ -19,7 +19,6 @@ export default async function QueuePreview() {
 
   const data = await fetchCMS<{ docs: QueueItem[] }>(
     `/api/queue-items?where[tenant][equals]=${tenantId}&where[status][in]=waiting&where[status][in]=in_consultation&sort=arrivalTime&depth=1&limit=5`,
-    { revalidate: 0 },
   )
   const items = data?.docs ?? []
 

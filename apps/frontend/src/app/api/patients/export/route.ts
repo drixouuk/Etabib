@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { revalidateTag } from 'next/cache'
 import { fetchCMS, postCMS } from '@/lib/cms-fetch'
 
 type Patient = {
@@ -38,6 +39,9 @@ export async function GET() {
     count: patients.length,
     ids: patients.map((p) => p.id).slice(0, 500),
   })
+
+  // B7 — la vue Registre d'audit reflète l'événement d'export immédiatement.
+  revalidateTag('col:audit-ledger', 'default')
 
   return new Response(csv, {
     status: 200,
