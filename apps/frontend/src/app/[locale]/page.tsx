@@ -1,6 +1,6 @@
 import { setRequestLocale, getTranslations } from "next-intl/server";
 import { headers } from "next/headers";
-import { MapPin, Star, Stethoscope, ArrowRight } from "lucide-react";
+import { MapPin, Star, Stethoscope, ArrowRight, BadgeCheck, Languages } from "lucide-react";
 import PresentationSection from "@/components/sections/PresentationSection";
 import ServicesSection from "@/components/sections/ServicesSection";
 import ReviewsSection from "@/components/sections/ReviewsSection";
@@ -59,7 +59,7 @@ export default async function HomePage({ params }: Props) {
       <ClosureBanner closures={(practiceInfo?.exceptionalClosures ?? []) as any} />
       <main className="flex-1">
       {/* ============ HERO ============ */}
-      <section className="relative overflow-hidden px-4 pb-[70px] pt-[132px] md:pt-[110px]">
+      <section className="relative overflow-hidden px-4 pb-[60px] pt-[112px] md:pt-[130px]">
         {/* Blobs décoratifs : dégradés radiaux calibrés pour reproduire
             l'ampleur du rendu flouté original (340px/70% blur 60 → halo ~460px),
             SANS filter/blur — un filtre dans le flux de scroll crée un layer
@@ -67,7 +67,7 @@ export default async function HomePage({ params }: Props) {
         <span className="absolute left-[60%] -top-[100px] z-0 size-[460px] rounded-full bg-[radial-gradient(closest-side,rgba(254,243,199,0.55),transparent)]" />
         <span className="absolute -bottom-[60px] -left-[80px] z-0 size-[380px] rounded-full bg-[radial-gradient(closest-side,rgba(204,251,241,0.65),transparent)]" />
 
-        <div className="container relative z-10 mx-auto grid max-w-[1200px] grid-cols-1 items-center gap-14 lg:grid-cols-[1.1fr_0.9fr]">
+        <div className="container relative z-10 mx-auto grid max-w-[1160px] grid-cols-1 items-center gap-14 lg:grid-cols-[1.1fr_0.9fr]">
           <div>
             <span className="mb-5 inline-flex items-center gap-1.5 rounded-full border border-primary-200 bg-primary-50 px-3.5 py-1.5 text-[.82rem] font-semibold text-primary-700">
               <MapPin className="size-3.5" />
@@ -90,10 +90,10 @@ export default async function HomePage({ params }: Props) {
                 {t('cta_secondary')}
               </a>
             </div>
-            <div className="flex flex-wrap items-center gap-x-[18px] gap-y-2 text-[.87rem] font-medium text-stone-500">
+            <div className="flex flex-wrap gap-[18px] text-[.87rem] font-semibold text-[#B9B2A4]">
               {reviewsData.length > 0 && (
                 <span className="inline-flex items-center gap-1.5">
-                  <Star className="size-3.5 fill-amber-400 text-amber-400" />
+                  <Star className="size-3.5 text-primary-500" />
                   {t('badge_rating', {
                     rating: (reviewsData.reduce((sum, r) => sum + r.rating, 0) / reviewsData.length)
                       .toFixed(1)
@@ -102,10 +102,14 @@ export default async function HomePage({ params }: Props) {
                   })}
                 </span>
               )}
-              <span className="size-1.5 rounded-full bg-primary-400" />
-              <span>{t('badge_experience')}</span>
-              <span className="size-1.5 rounded-full bg-primary-400" />
-              <span>{t('badge_langues')}</span>
+              <span className="inline-flex items-center gap-1.5">
+                <BadgeCheck className="size-3.5 text-primary-500" />
+                {t('badge_experience')}
+              </span>
+              <span className="inline-flex items-center gap-1.5">
+                <Languages className="size-3.5 text-primary-500" />
+                {t('badge_langues')}
+              </span>
             </div>
           </div>
 

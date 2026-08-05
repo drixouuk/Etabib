@@ -108,8 +108,8 @@ export default function PublicBookingWidget({ tenantId }: Props) {
 
   if (!isAvailable) {
     return (
-      <section id="rdv" className="scroll-mt-24 border-y border-stone-200 bg-white px-4 py-[88px] md:py-[60px]">
-        <div className="container mx-auto max-w-[1200px]">
+      <section id="rdv" className="scroll-mt-24 border-y border-stone-200 bg-white px-4 py-[68px] md:py-[104px]">
+        <div className="container mx-auto max-w-[1160px]">
           <div className="mx-auto mb-12 max-w-[620px] text-center">
             <span className="mb-4 inline-flex items-center gap-1.5 rounded-full bg-cream-200 px-3.5 py-1.5 text-[.8rem] font-bold text-primary-700">{t('title')}</span>
             <h2 className="text-[clamp(1.6rem,3vw,2.15rem)] font-heading font-extrabold text-stone-800">{t('title')}</h2>
@@ -127,8 +127,8 @@ export default function PublicBookingWidget({ tenantId }: Props) {
   }
 
   return (
-    <section id="rdv" className="scroll-mt-24 border-y border-stone-200 bg-white px-4 py-[88px] md:py-[60px]">
-      <div className="container mx-auto max-w-[1200px]">
+    <section id="rdv" className="scroll-mt-24 border-y border-stone-200 bg-white px-4 py-[68px] md:py-[104px]">
+      <div className="container mx-auto max-w-[1160px]">
         <div className="mx-auto mb-12 max-w-[620px] text-center">
           <span className="mb-4 inline-flex items-center gap-1.5 rounded-full bg-cream-200 px-3.5 py-1.5 text-[.8rem] font-bold text-primary-700">{t('title')}</span>
           <h2 className="text-[clamp(1.6rem,3vw,2.15rem)] font-heading font-extrabold text-stone-800">{t('title')}</h2>

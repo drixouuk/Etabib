@@ -54,8 +54,8 @@ export default function ReviewsSection({ reviews, locale }: Props) {
     new Intl.DateTimeFormat(locale, { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(iso))
 
   return (
-    <section id="reviews" className="scroll-mt-24 px-4 py-[88px] md:py-[60px]" style={{ background: 'linear-gradient(180deg, #FFFBF0, #fff)' }}>
-      <div className="container mx-auto max-w-[1200px]">
+    <section id="reviews" className="scroll-mt-24 px-4 py-[68px] md:py-[104px]" style={{ background: 'linear-gradient(180deg, #FFFBF0, #fff)' }}>
+      <div className="container mx-auto max-w-[1160px]">
         <div className="mx-auto mb-8 max-w-[620px] text-center">
           <span className="mb-4 inline-flex items-center gap-1.5 rounded-full bg-cream-200 px-3.5 py-1.5 text-[.8rem] font-bold text-primary-700">
             {t('title')}

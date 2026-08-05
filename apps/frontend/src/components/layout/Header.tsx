@@ -27,7 +27,7 @@ export default function Header({ doctorName, doctorNameShort }: Props) {
 
   return (
     <header className={`navbar-floating transition-transform duration-300 ${isHidden ? 'nav-hidden' : ''}`}>
-      <nav className="mx-auto flex max-w-[1200px] items-center justify-between gap-4 rounded-2xl bg-white/80 px-4 py-3 shadow-sm backdrop-blur-md md:px-4">
+      <nav className="mx-auto flex max-w-[1160px] items-center justify-between gap-4 rounded-2xl bg-white/80 px-4 py-3 shadow-sm backdrop-blur-md md:px-4">
         <Link href="/" className="flex items-center gap-2.5 font-heading text-base font-bold text-primary-700">
           <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary-600">
             <Activity className="size-[17px] text-white" />

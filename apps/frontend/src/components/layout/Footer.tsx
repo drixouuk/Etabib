@@ -39,7 +39,7 @@ export default async function Footer({ locale }: Props) {
     <footer>
       <div className="h-2 bg-gradient-to-b from-cream-100 to-primary-800" />
       <div className="bg-primary-800">
-        <div className="mx-auto max-w-[1200px] px-6 py-6">
+        <div className="mx-auto max-w-[1160px] px-6 py-6">
           <div className="flex flex-col items-center gap-4 text-center md:grid md:grid-cols-3 md:items-center">
             <p className="text-sm font-medium text-stone-300 md:text-start">
               {doctorName}{doctorName && specialty ? ' — ' : ''}
