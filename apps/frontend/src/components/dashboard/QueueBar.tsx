@@ -85,7 +85,7 @@ export default function QueueBar() {
           } ${isAboveAverage ? 'text-success-500' : 'text-stone-800'} ${justBrokeRecord ? 'ring-1 ring-cta-200 rounded' : ''}`}>
             {stats.todayTotal}
           </span>
-          <p className="text-[9px] text-stone-400 leading-none mt-0.5">aujourd&apos;hui</p>
+          <p className="text-[10px] text-stone-600 leading-none mt-0.5">aujourd&apos;hui</p>
         </div>
       </div>
 
@@ -110,15 +110,15 @@ export default function QueueBar() {
       </div>
 
       {/* Labels sous les marqueurs */}
-      <div className="relative h-3 mt-0.5">
+      <div className="relative h-3.5 mt-0.5">
         <span
-          className="absolute -translate-x-1/2 text-[8px] text-stone-400"
+          className="absolute -translate-x-1/2 text-[10px] font-medium text-stone-600"
           style={{ left: `${avgPct}%` }}
         >
           {stats.dailyAverage}
         </span>
         <span
-          className="absolute -translate-x-1/2 text-[8px] text-stone-400"
+          className="absolute -translate-x-1/2 text-[10px] font-medium text-stone-600"
           style={{ left: `${recPct}%` }}
         >
           {stats.dailyRecord}

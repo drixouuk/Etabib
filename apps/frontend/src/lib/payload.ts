@@ -71,7 +71,15 @@ export type Doctor = {
   specialty: string
   bio: unknown
   rpps: string
+  photo?: { url?: string } | string | null
   languages: { language: string }[]
+}
+
+/** URL média CMS absolue (le champ url est relatif : /api/media/file/…). */
+export function resolveMediaUrl(url?: string | null): string | null {
+  if (!url) return null
+  if (url.startsWith('http')) return url
+  return `${CMS_URL}${url}`
 }
 
 export type CalComSettings = {

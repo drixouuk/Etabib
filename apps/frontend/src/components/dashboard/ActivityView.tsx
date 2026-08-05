@@ -75,8 +75,10 @@ export default function ActivityView({
 
   return (
     <div className="flex flex-col gap-4">
-      {/* En-tête + période */}
-      <div className="flex flex-wrap items-center justify-between gap-4">
+      {/* En-tête + période — sticky sous la barre d'app mobile (57px) :
+          sans cela, scrolé, le sélecteur passe SOUS la barre sticky (z-30)
+          et les taps sur « Mois »/« Année » ne déclenchent rien (B2). */}
+      <div className="sticky top-[57px] z-20 -mx-4 -mt-2 flex flex-wrap items-center justify-between gap-4 bg-background px-4 pb-3 pt-2 md:static md:mx-0 md:mt-0 md:bg-transparent md:p-0 md:pb-0">
         <div>
           <h1 className="text-[27px] font-bold tracking-tight text-stone-800">Activité</h1>
           <p className="mt-0.5 text-[13.5px] text-stone-600">{periodLabel}</p>

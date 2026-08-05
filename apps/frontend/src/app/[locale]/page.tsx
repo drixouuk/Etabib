@@ -7,7 +7,7 @@ import ReviewsSection from "@/components/sections/ReviewsSection";
 import PublicBookingWidget from "@/components/booking/PublicBookingWidget";
 import InfosSection from "@/components/sections/InfosSection";
 import ClosureBanner from "@/components/sections/ClosureBanner";
-import { getServices, getPracticeInfo, getReviews, getTenantById, getDoctorProfile } from "@/lib/payload";
+import { getServices, getPracticeInfo, getReviews, getTenantById, getDoctorProfile, resolveMediaUrl } from "@/lib/payload";
 import type { Service, PracticeInfo, Review, Doctor } from "@/lib/payload";
 
 const DATA_LOCALE: Record<string, string> = {
@@ -48,6 +48,9 @@ export default async function HomePage({ params }: Props) {
   }
 
   const doctorName = doctor?.name || 'Dr Guinane Aicha'
+  const doctorPhotoUrl = resolveMediaUrl(
+    typeof doctor?.photo === 'string' ? doctor.photo : doctor?.photo?.url,
+  )
   const city = practiceInfo?.city || 'Inezgane, Souss-Massa'
   const specialty = doctor?.specialty || 'Pédiatre'
 
@@ -101,12 +104,23 @@ export default async function HomePage({ params }: Props) {
 
           <div className="relative order-first mx-auto max-w-[280px] md:order-none md:max-w-[360px]">
             <div className="relative flex aspect-[4/5] w-full items-center justify-center overflow-hidden rounded-[26px] bg-gradient-to-br from-primary-50 via-primary-100 to-primary-200 shadow-lg">
-              <div className="flex size-[104px] items-center justify-center rounded-full bg-white/70 shadow-sm">
-                <Stethoscope className="size-12 text-primary-700" />
-              </div>
-              <span className="absolute bottom-3.5 right-3.5 rounded-full bg-stone-800/55 px-2.5 py-1 text-[.68rem] font-semibold text-white">
-                {t('photoPlaceholder')}
-              </span>
+              {doctorPhotoUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={doctorPhotoUrl}
+                  alt={t('photoPlaceholder')}
+                  className="absolute inset-0 h-full w-full object-cover"
+                />
+              ) : (
+                <>
+                  <div className="flex size-[104px] items-center justify-center rounded-full bg-white/70 shadow-sm">
+                    <Stethoscope className="size-12 text-primary-700" />
+                  </div>
+                  <span className="absolute bottom-3.5 right-3.5 rounded-full bg-stone-800/55 px-2.5 py-1 text-[.68rem] font-semibold text-white">
+                    {t('photoPlaceholder')}
+                  </span>
+                </>
+              )}
             </div>
             <p className="mt-4 text-center font-heading text-base font-bold text-stone-800">
               {doctorName}
