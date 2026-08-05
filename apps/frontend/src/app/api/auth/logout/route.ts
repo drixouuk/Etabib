@@ -8,10 +8,14 @@ export async function POST(request: NextRequest) {
     // Purge l'entrée users/me de CETTE session dans le Data Cache.
     revalidateTag(authTagForToken(token), 'default')
   }
-  // Redirection vers la page de connexion LOCALISÉE : /login nu (sans locale)
-  // enchaînait un double redirect POST→307 qui affichait une page vide.
+  // Redirection vers la page de connexion LOCALISÉE sur le domaine PUBLIC :
+  // request.url porte le hostname interne du reverse proxy (ex. localhost:3000
+  // dans le conteneur) — on reconstruit l'origin depuis les headers forwards
+  // (même logique que proxy.ts), sinon le logout renverrait vers l'hôte interne.
+  const forwardedHost = (request.headers.get('x-forwarded-host') || request.headers.get('host') || '').split(',')[0].trim()
+  const forwardedProto = request.headers.get('x-forwarded-proto') || 'https'
   const locale = request.cookies.get('NEXT_LOCALE')?.value || 'fr'
-  const loginUrl = new URL(`/${locale}/login`, request.url)
+  const loginUrl = new URL(`/${locale}/login`, `${forwardedProto}://${forwardedHost}`)
   const response = NextResponse.redirect(loginUrl)
   response.cookies.set('payload-token', '', {
     httpOnly: true,
