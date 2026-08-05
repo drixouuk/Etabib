@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, FormEvent, useEffect, useRef } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useSearchParams } from 'next/navigation'
 import { Link } from '@/i18n/navigation'
 import { Activity, Check, ArrowLeft, ArrowRight, Eye, EyeOff, AlertCircle, ChevronDown } from 'lucide-react'
 import Turnstile, { type TurnstileHandle } from '@/components/ui/Turnstile'
@@ -9,7 +9,6 @@ import Turnstile, { type TurnstileHandle } from '@/components/ui/Turnstile'
 const DEMO_EMAIL = 'drdemo@gmail.com'
 
 export default function LoginPage() {
-  const router = useRouter()
   const searchParams = useSearchParams()
   const isDemoHost = searchParams.get('demo') === 'true' || (typeof window !== 'undefined' && window.location.hostname.startsWith('drdemo.'))
   const [isDemo, setIsDemo] = useState(isDemoHost)
@@ -74,12 +73,14 @@ export default function LoginPage() {
     const data = await res.json().catch(() => null)
     const isPlatformAdmin =
       !!data?.user && !data.user.tenant && data.user.roles?.includes('superadmin')
-    // Purge du router cache client : la session a changé, les segments mis en
-    // cache par le compte précédent (même onglet) ne doivent pas resservir.
-    // Sans cela, un changement de compte peut afficher les données du compte
-    // précédent jusqu'au prochain rafraîchissement (bug observé en test).
-    router.refresh()
-    router.replace(isPlatformAdmin ? '/dashboard/billing-admin' : '/dashboard')
+    // NAVIGATION PLEIN PAGE : le changement de session doit réinitialiser
+    // entièrement l'application cliente. Le router cache de Next conserve les
+    // segments RSC par URL (même onglet) : un changement de compte pouvait
+    // afficher les patients du compte précédent jusqu'au rafraîchissement
+    // manuel (router.refresh() ne suffisait pas en conditions réelles).
+    // window.location = chargement document complet → cache client vidé.
+    const target = isPlatformAdmin ? '/dashboard/billing-admin' : '/dashboard'
+    window.location.assign(target)
   }
 
   const handleDemoRequest = async (e: FormEvent) => {

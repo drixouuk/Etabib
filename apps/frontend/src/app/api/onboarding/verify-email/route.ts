@@ -28,6 +28,6 @@ export async function GET(req: NextRequest) {
   // Domain public (le lien de vérification est envoyé par email avec le
   // domaine public du tenant) : request.url porte l'hôte interne du proxy.
   const forwardedHost = (req.headers.get('x-forwarded-host') || req.headers.get('host') || '').split(',')[0].trim()
-  const forwardedProto = req.headers.get('x-forwarded-proto') || 'https'
+  const forwardedProto = process.env.NODE_ENV === 'production' ? 'https' : (req.headers.get('x-forwarded-proto') || 'https')
   return NextResponse.redirect(new URL('/fr/login?verified=true', `${forwardedProto}://${forwardedHost}`))
 }
