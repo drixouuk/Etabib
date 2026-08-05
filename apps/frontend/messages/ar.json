@@ -23,6 +23,8 @@
     "cta_primary": "حجز موعد",
     "cta_secondary": "اعرف المزيد",
     "badge_langues": "لغات متعددة",
+    "badge_rating": "{rating}/5 · {count} تقييم على Google",
+    "badge_experience": "خبرة مؤكدة",
     "photoPlaceholder": "الصورة قريبًا"
   },
   "presentation": {

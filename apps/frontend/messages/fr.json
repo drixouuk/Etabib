@@ -23,6 +23,8 @@
     "cta_primary": "Prendre rendez-vous",
     "cta_secondary": "En savoir plus",
     "badge_langues": "Plusieurs langues",
+    "badge_rating": "{rating}/5 · {count} avis Google",
+    "badge_experience": "Expérience confirmée",
     "photoPlaceholder": "Photo à intégrer"
   },
   "presentation": {

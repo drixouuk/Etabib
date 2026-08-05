@@ -68,7 +68,7 @@ export default function DashboardShell({ user, tenant, billingStatus, children }
           </button>
           <span className="truncate font-heading text-sm font-semibold text-stone-800">{tenant?.name || 'Cabinet'}</span>
         </div>
-        <main className="flex-1 min-h-0 overflow-auto">{children}</main>
+        <main className="flex-1 min-h-0 overflow-visible md:overflow-auto">{children}</main>
       </div>
     </div>
   )

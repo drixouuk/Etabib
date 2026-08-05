@@ -23,6 +23,8 @@
     "cta_primary": "Book an appointment",
     "cta_secondary": "Learn more",
     "badge_langues": "Multiple languages",
+    "badge_rating": "{rating}/5 · {count} Google reviews",
+    "badge_experience": "Confirmed experience",
     "photoPlaceholder": "Photo coming soon"
   },
   "presentation": {

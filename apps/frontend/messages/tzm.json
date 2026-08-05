@@ -23,6 +23,8 @@
     "cta_primary": "ⴰⵙⵏⵓⴱⴳ ⵏ ⵜⵎⵉⵔⵉⵜ",
     "cta_secondary": "ⵙⵙⵉⵏ ⴰⵎⵓⵔ",
     "badge_langues": "ⵜⵓⴳⵜ ⵏ ⵜⵓⵜⵍⴰⵢⵉⵏ",
+    "badge_rating": "{rating}/5 · {count} ⵏ ⵜⵡⵉⵙⵉⵡⵉⵏ ⴳ Google",
+    "badge_experience": "ⵜⴰⵔⵎⵉⵜ ⵜⴻⵜⵜⵡⴰⵙⵙⴰⵏ",
     "photoPlaceholder": "الصورة قريبًا"
   },
   "presentation": {

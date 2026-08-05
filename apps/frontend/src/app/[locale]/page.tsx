@@ -47,7 +47,7 @@ export default async function HomePage({ params }: Props) {
     console.error("=== [DEBUG FRONTEND] ERREUR FETCH CMS ===", err)
   }
 
-  const doctorName = doctor?.name || 'Dr Guinane Aicha'
+  const doctorName = doctor?.name || 'Dr Demo'
   const doctorPhotoUrl = resolveMediaUrl(
     typeof doctor?.photo === 'string' ? doctor.photo : doctor?.photo?.url,
   )
@@ -91,12 +91,19 @@ export default async function HomePage({ params }: Props) {
               </a>
             </div>
             <div className="flex flex-wrap items-center gap-x-[18px] gap-y-2 text-[.87rem] font-medium text-stone-500">
-              <span className="inline-flex items-center gap-1.5">
-                <Star className="size-3.5 fill-amber-400 text-amber-400" />
-                4,9/5 · 11 avis Google
-              </span>
+              {reviewsData.length > 0 && (
+                <span className="inline-flex items-center gap-1.5">
+                  <Star className="size-3.5 fill-amber-400 text-amber-400" />
+                  {t('badge_rating', {
+                    rating: (reviewsData.reduce((sum, r) => sum + r.rating, 0) / reviewsData.length)
+                      .toFixed(1)
+                      .replace('.', ','),
+                    count: reviewsData.length,
+                  })}
+                </span>
+              )}
               <span className="size-1.5 rounded-full bg-primary-400" />
-              <span>20 ans d'expérience</span>
+              <span>{t('badge_experience')}</span>
               <span className="size-1.5 rounded-full bg-primary-400" />
               <span>{t('badge_langues')}</span>
             </div>

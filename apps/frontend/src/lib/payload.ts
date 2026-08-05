@@ -69,7 +69,7 @@ export type Doctor = {
   name: string
   slug: string
   specialty: string
-  bio: unknown
+  bio?: string | null
   rpps: string
   photo?: { url?: string } | string | null
   languages: { language: string }[]
@@ -139,7 +139,12 @@ export async function getServices(tenantId: string, locale: string): Promise<Ser
 }
 
 export async function getReviews(tenantId: string, locale: string): Promise<Review[]> {
-  const data = await fetchAPI<Review[]>('/api/reviews', [`tenant-${tenantId}`, 'reviews', 'published'], undefined, locale)
+  const data = await fetchAPI<Review[]>(
+    '/api/reviews',
+    [`tenant-${tenantId}`, 'reviews', 'published'],
+    { 'where[tenant.id][equals]': tenantId, sort: '-date', limit: '50' },
+    locale,
+  )
   return data ?? []
 }
 
