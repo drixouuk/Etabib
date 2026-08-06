@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { generateConsultationPDF, type DoctorInfo, type PatientInfo } from '@/lib/generate-pdf'
 import FseStatusBadge from '@/components/dashboard/FseStatusBadge'
+import CnssPortalEmbed from '@/components/dashboard/CnssPortalEmbed'
 
 type Consultation = {
   id: string
@@ -73,6 +74,9 @@ export default function ConsultationHistory({ consultations, doctorInfo, patient
                 Effacer
               </button>
             )}
+            <div className="ms-auto">
+              <CnssPortalEmbed />
+            </div>
           </div>
         </div>
       )}

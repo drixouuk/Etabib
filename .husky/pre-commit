@@ -8,7 +8,9 @@ if git diff --cached --name-only | grep -q "apps/cms/src/collections/"; then
 fi
 
 if git diff --cached --name-only | grep -q "\.env\.example$"; then
-  STAGED_SECRETS=$(git diff --cached -- ".env.example" | grep -E '^\+.*(DATABASE_URI=|_SECRET=|_KEY=)' | grep -v 'XXXXX' | grep -E '.{21,}$')
+  # `|| true` : husky exécute le hook sous `sh -e` — une substitution dont le
+  # dernier grep ne matche rien sort en code 1 et tuerait le hook avant les guards.
+  STAGED_SECRETS=$(git diff --cached -- ".env.example" | grep -E '^\+.*(DATABASE_URI=|_SECRET=|_KEY=)' | grep -v 'XXXXX' | grep -E '.{21,}$' || true)
   if [ -n "$STAGED_SECRETS" ]; then
     echo "⚠️  Valeur non-placeholder détectée dans .env.example"
     echo "   Remplace par XXXXX avant de commit, ou force avec --no-verify si c'est un faux positif volontaire."
