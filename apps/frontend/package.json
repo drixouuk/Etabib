@@ -19,6 +19,7 @@
     "@schedule-x/calendar": "^4.6.1",
     "@schedule-x/events-service": "^4.6.1",
     "@schedule-x/theme-default": "^4.6.1",
+    "@sentry/nextjs": "^10.69.0",
     "@tailwindcss/typography": "^0.5.20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
