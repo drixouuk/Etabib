@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { generateConsultationPDF, type DoctorInfo, type PatientInfo } from '@/lib/generate-pdf'
+import FseStatusBadge from '@/components/dashboard/FseStatusBadge'
 
 type Consultation = {
   id: string
@@ -12,6 +13,8 @@ type Consultation = {
   taille?: number | null
   perimetreCranien?: number | null
   diagnostic?: string | null
+  fseStatus?: string | null
+  fseSentAt?: string | null
 }
 
 type Props = {
@@ -90,6 +93,7 @@ export default function ConsultationHistory({ consultations, doctorInfo, patient
                   {new Date(c.date).toLocaleDateString('fr-FR')}
                 </span>
                 <span className="flex items-center gap-2">
+                  <FseStatusBadge status={c.fseStatus} sentAt={c.fseSentAt} />
                   {c.diagnostic && doctorInfo && patientInfo && (
                     <button
                       onClick={() => generateConsultationPDF(doctorInfo, patientInfo, {

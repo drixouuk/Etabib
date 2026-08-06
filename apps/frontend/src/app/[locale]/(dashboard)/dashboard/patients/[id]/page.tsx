@@ -47,6 +47,8 @@ export type Consultation = {
   taille?: number | null
   perimetreCranien?: number | null
   diagnostic?: string | null
+  fseStatus?: string | null
+  fseSentAt?: string | null
 }
 
 type Medication = {
