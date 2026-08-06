@@ -7,7 +7,6 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { FileText, ExternalLink, Pencil } from 'lucide-react'
-import { Link } from '@/i18n/navigation'
 import FseStatusBadge, { FSE_STATUS_OPTIONS } from '@/components/dashboard/FseStatusBadge'
 import CnssPortalEmbed from '@/components/dashboard/CnssPortalEmbed'
 import { generateFsePDF, type DoctorInfo } from '@/lib/generate-pdf'
@@ -49,6 +48,33 @@ type Props = {
 export default function CnssTab({ patient, consultations, doctorInfo }: Props) {
   const router = useRouter()
   const [savingId, setSavingId] = useState<string | null>(null)
+  const [editing, setEditing] = useState(false)
+  const [editNumber, setEditNumber] = useState(patient.cnssRegistrationNumber || '')
+  const [editRegime, setEditRegime] = useState(patient.cnssRegime || '')
+  const [editCardDate, setEditCardDate] = useState(patient.cnssCardUploadedAt ? patient.cnssCardUploadedAt.slice(0, 10) : '')
+  const [savingCnss, setSavingCnss] = useState(false)
+  const [cnssError, setCnssError] = useState('')
+
+  const saveCnss = async () => {
+    setSavingCnss(true)
+    setCnssError('')
+    const res = await fetch(`/api/cms-proxy/patients/${patient.id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        cnssRegistrationNumber: editNumber.trim() || undefined,
+        cnssRegime: editRegime || undefined,
+        cnssCardUploadedAt: editCardDate || undefined,
+      }),
+    }).catch(() => null)
+    setSavingCnss(false)
+    if (res && res.ok) {
+      setEditing(false)
+      router.refresh()
+    } else {
+      setCnssError('Erreur lors de l’enregistrement des informations CNSS.')
+    }
+  }
 
   const updateFseStatus = async (c: CnssConsultation, value: string) => {
     setSavingId(c.id)
@@ -96,13 +122,77 @@ export default function CnssTab({ patient, consultations, doctorInfo }: Props) {
       <div className="rounded-xl border border-warm bg-white p-4 shadow-sm">
         <div className="flex items-center justify-between gap-3">
           <h3 className="font-heading text-[14.5px] font-semibold text-stone-800">Couverture CNSS / AMO</h3>
-          <Link
-            href={`/dashboard/patients/${patient.id}/edit`}
-            className="inline-flex items-center gap-1.5 text-[12.5px] font-semibold text-primary-700 hover:text-primary-800"
-          >
-            <Pencil className="size-3.5" /> Modifier
-          </Link>
+          {!editing && (
+            <button
+              type="button"
+              onClick={() => setEditing(true)}
+              className="inline-flex items-center gap-1.5 text-[12.5px] font-semibold text-primary-700 hover:text-primary-800"
+            >
+              <Pencil className="size-3.5" /> Modifier
+            </button>
+          )}
         </div>
+
+        {editing ? (
+          <div className="mt-3 flex flex-col gap-3">
+            <div className="grid gap-3 sm:grid-cols-3">
+              <div>
+                <label htmlFor="cnssEditNumber" className="mb-1 block text-[12.5px] font-medium text-stone-700">N° immatriculation</label>
+                <input
+                  id="cnssEditNumber"
+                  value={editNumber}
+                  onChange={(e) => setEditNumber(e.target.value)}
+                  type="text"
+                  placeholder="Ex : 100482193"
+                  className="w-full rounded-lg border border-stone-300 bg-white px-3 py-2 text-[13px] text-stone-800 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20"
+                />
+              </div>
+              <div>
+                <label htmlFor="cnssEditRegime" className="mb-1 block text-[12.5px] font-medium text-stone-700">Régime</label>
+                <select
+                  id="cnssEditRegime"
+                  value={editRegime}
+                  onChange={(e) => setEditRegime(e.target.value)}
+                  className="w-full rounded-lg border border-stone-300 bg-white px-3 py-2 text-[13px] text-stone-800 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20"
+                >
+                  <option value="">Non renseigné</option>
+                  <option value="ayant_droit">Ayant droit</option>
+                  <option value="salarie">Salarié</option>
+                  <option value="independant">Indépendant</option>
+                  <option value="etudiant">Étudiant</option>
+                </select>
+              </div>
+              <div>
+                <label htmlFor="cnssEditCard" className="mb-1 block text-[12.5px] font-medium text-stone-700">Carte CNSS uploadée le</label>
+                <input
+                  id="cnssEditCard"
+                  value={editCardDate}
+                  onChange={(e) => setEditCardDate(e.target.value)}
+                  type="date"
+                  className="w-full rounded-lg border border-stone-300 bg-white px-3 py-2 text-[13px] text-stone-800 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20"
+                />
+              </div>
+            </div>
+            {cnssError && <p className="text-[12.5px] font-medium text-error-600">{cnssError}</p>}
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={saveCnss}
+                disabled={savingCnss}
+                className="rounded-lg bg-cta-600 px-4 py-2 text-[12.5px] font-semibold text-white hover:bg-cta-700 disabled:opacity-50"
+              >
+                {savingCnss ? 'Enregistrement…' : 'Enregistrer'}
+              </button>
+              <button
+                type="button"
+                onClick={() => { setEditing(false); setCnssError('') }}
+                className="text-[12.5px] font-medium text-stone-600 hover:text-stone-800"
+              >
+                Annuler
+              </button>
+            </div>
+          </div>
+        ) : (
         <div className="mt-3 grid gap-3 text-[13px] sm:grid-cols-3">
           <div className="rounded-lg bg-primary-50/50 px-3.5 py-2.5">
             <p className="text-[11px] font-semibold uppercase tracking-wider text-stone-500">N° immatriculation</p>
@@ -123,6 +213,7 @@ export default function CnssTab({ patient, consultations, doctorInfo }: Props) {
             </p>
           </div>
         </div>
+        )}
       </div>
 
       {/* Suivi FSE */}

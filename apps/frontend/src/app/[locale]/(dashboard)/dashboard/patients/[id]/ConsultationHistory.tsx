@@ -2,8 +2,6 @@
 
 import { useState } from 'react'
 import { generateConsultationPDF, type DoctorInfo, type PatientInfo } from '@/lib/generate-pdf'
-import FseStatusBadge from '@/components/dashboard/FseStatusBadge'
-import CnssPortalEmbed from '@/components/dashboard/CnssPortalEmbed'
 
 type Consultation = {
   id: string
@@ -74,9 +72,6 @@ export default function ConsultationHistory({ consultations, doctorInfo, patient
                 Effacer
               </button>
             )}
-            <div className="ms-auto">
-              <CnssPortalEmbed />
-            </div>
           </div>
         </div>
       )}
@@ -97,7 +92,6 @@ export default function ConsultationHistory({ consultations, doctorInfo, patient
                   {new Date(c.date).toLocaleDateString('fr-FR')}
                 </span>
                 <span className="flex items-center gap-2">
-                  <FseStatusBadge status={c.fseStatus} sentAt={c.fseSentAt} />
                   {c.diagnostic && doctorInfo && patientInfo && (
                     <button
                       onClick={() => generateConsultationPDF(doctorInfo, patientInfo, {
