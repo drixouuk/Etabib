@@ -9,6 +9,14 @@ export const FSE_ALERT_DAYS = 30
 
 export type FseStatus = 'non_envoyee' | 'envoyee' | 'acceptee' | 'remboursee' | 'rejetee'
 
+export const FSE_STATUS_OPTIONS: { value: FseStatus; label: string }[] = [
+  { value: 'non_envoyee', label: 'Non envoyée' },
+  { value: 'envoyee', label: 'Envoyée' },
+  { value: 'acceptee', label: 'Acceptée' },
+  { value: 'remboursee', label: 'Remboursée' },
+  { value: 'rejetee', label: 'Rejetée' },
+]
+
 const STATUS_META: Record<FseStatus, { label: string; className: string }> = {
   non_envoyee: { label: 'Non envoyée', className: 'bg-stone-100 text-stone-600' },
   envoyee: { label: 'Envoyée', className: 'bg-sky-50 text-sky-700' },

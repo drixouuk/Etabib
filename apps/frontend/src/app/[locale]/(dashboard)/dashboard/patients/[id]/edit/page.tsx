@@ -9,6 +9,9 @@ type Patient = {
   gender?: string | null
   birthDate?: string | null
   nationalId?: string | null
+  cnssRegistrationNumber?: string | null
+  cnssRegime?: string | null
+  cnssCardUploadedAt?: string | null
 }
 
 type Props = {
