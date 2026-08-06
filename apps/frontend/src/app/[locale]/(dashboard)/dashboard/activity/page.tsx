@@ -60,6 +60,42 @@ function groupByPeriod<T extends Record<string, unknown>>(
 
 type Period = 'day' | 'week' | 'month' | 'year'
 
+// Classement des jours/mois les plus et moins actifs — motifs récurrents
+// (jour du mois en vue mois, jour de semaine en vue semaine, mois en vue
+// année), calculés sur une fenêtre large pour refléter la tendance, pas le
+// mois en cours. Weekends exclus en vues mois/semaine (toujours les pires).
+export type ActivityRanking = {
+  unit: 'month-day' | 'weekday' | 'month'
+  top: { label: string; count: number }[]
+  bottom: { label: string; count: number }[]
+} | null
+
+const WEEKDAYS = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi']
+const MONTHS = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre']
+
+function computeRanking(period: Period, items: { date: string }[]): ActivityRanking {
+  if (period === 'day') return null
+  const counts = new Map<string, number>()
+  for (const item of items) {
+    const d = new Date(item.date)
+    const dow = d.getDay()
+    if ((period === 'month' || period === 'week') && (dow === 0 || dow === 6)) continue
+    const key = period === 'year' ? `m${d.getMonth() + 1}` : period === 'week' ? `w${dow}` : `d${d.getDate()}`
+    counts.set(key, (counts.get(key) || 0) + 1)
+  }
+  const entries = Array.from(counts.entries())
+  if (entries.length === 0) return null
+  const fmt = (key: string): string =>
+    period === 'year' ? MONTHS[Number(key.slice(1)) - 1] : period === 'week' ? WEEKDAYS[Number(key.slice(1))] : `${Number(key.slice(1))}`
+  const top = [...entries].sort((a, b) => b[1] - a[1]).slice(0, 3)
+  const bottom = [...entries].sort((a, b) => a[1] - b[1]).slice(0, 3)
+  return {
+    unit: period === 'year' ? 'month' : period === 'week' ? 'weekday' : 'month-day',
+    top: top.map(([k, v]) => ({ label: fmt(k), count: v })),
+    bottom: bottom.map(([k, v]) => ({ label: fmt(k), count: v })),
+  }
+}
+
 function visitReasonLabel(reason: string): string {
   const labels: Record<string, string> = { consultation: 'Consultation', controle: 'Contrôle', vaccin: 'Vaccin', urgence: 'Urgence' }
   return labels[reason] || reason
@@ -216,6 +252,14 @@ export default async function ActivityPage({ searchParams }: Props) {
   const cancelledBookings = bookings.filter(b => b.status === 'cancelled').length
   const attendanceRate = totalBookings > 0 ? Math.round(((totalBookings - cancelledBookings) / totalBookings) * 100) : null
 
+  // Classement (SX) : fenêtre large (12 mois pour mois/semaine, 36 mois pour
+  // l'année) — le motif reflète la tendance, pas la période affichée.
+  const rankingStart = new Date(Date.now() - (period === 'year' ? 36 : 12) * 30 * 24 * 3600 * 1000)
+  const rankingRes = await fetchCMS<{ docs: { date: string }[] }>(
+    `/api/consultations?where[tenant][equals]=${tenantId}&where[date][greater_than_equal]=${rankingStart.toISOString()}&depth=0&limit=5000`,
+  )
+  const ranking = computeRanking(period, rankingRes?.docs ?? [])
+
   return (
     <div className="mx-auto max-w-container px-4 py-8 md:px-6 lg:px-8">
       <ActivityView
@@ -233,6 +277,7 @@ export default async function ActivityPage({ searchParams }: Props) {
         attendanceRate={attendanceRate}
         totalBookings={totalBookings}
         cancelledBookings={cancelledBookings}
+        ranking={ranking}
       />
     </div>
   )

@@ -1,10 +1,11 @@
 'use client'
 
-import { useMemo } from 'react'
+
 import { useRouter, useSearchParams } from 'next/navigation'
 import { BarChart, Bar, AreaChart, Area, XAxis, YAxis, CartesianGrid, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts'
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart'
 import { UserPlus, Stethoscope, CheckCheck, TrendingUp, TrendingDown } from 'lucide-react'
+import type { ActivityRanking } from '@/app/[locale]/(dashboard)/dashboard/activity/page'
 
 type Props = {
   period: 'day' | 'week' | 'month' | 'year'
@@ -21,6 +22,7 @@ type Props = {
   attendanceRate: number | null
   totalBookings: number
   cancelledBookings: number
+  ranking: ActivityRanking
 }
 
 function trendFor(period: string, count: number): string | null {
@@ -38,7 +40,7 @@ const cardClass = 'rounded-xl border border-warm bg-white p-3.5 shadow-sm'
 const cardTitleClass = 'mb-2 font-heading text-[13.5px] font-semibold text-stone-800'
 
 export default function ActivityView({
-  period, newPatients, consultationsDone, completedToday, reasonData, hourlyData, sourceData, chartData, cumulativePatients, cumulativeTotal, ageData, attendanceRate, totalBookings, cancelledBookings,
+  period, newPatients, consultationsDone, completedToday, reasonData, hourlyData, sourceData, chartData, cumulativePatients, cumulativeTotal, ageData, attendanceRate, totalBookings, cancelledBookings, ranking,
 }: Props) {
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -74,35 +76,19 @@ export default function ActivityView({
     { label: 'Patients vus', value: completedToday, icon: <CheckCheck className="size-4" />, iconClass: 'bg-primary-50 text-primary-700', topClass: 'border-t-primary-700' },
   ]
 
-  // Classement des jours (mois) / mois (année) les plus et les moins actifs.
-  // La page complète la période (jours/mois à zéro inclus) — le bas du
-  // classement reflète réellement les jours sans activité.
-  const ranked = useMemo(() => {
-    if (period !== 'month' && period !== 'year') return null
-    const sorted = [...chartData].sort((a, b) => b.consultations - a.consultations)
-    const top = sorted.slice(0, 3)
-    const bottom = [...chartData].sort((a, b) => a.consultations - b.consultations).slice(0, 3)
-    return { top, bottom }
-  }, [chartData, period])
-
-  const rankLabel = (date: string): string => {
-    const [num, month, year] = date.split('/').map(Number)
-    if (period === 'year') {
-      const names = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sep', 'Oct', 'Nov', 'Déc']
-      return `${names[(month || 1) - 1]} ${year}`
-    }
-    return `${num} ${['janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin', 'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.'][(month || 1) - 1]}`
+  const rankTitles: Record<string, { top: string; bottom: string }> = {
+    'month-day': { top: 'Jours du mois les plus actifs', bottom: 'Jours du mois les moins actifs' },
+    weekday: { top: 'Jours de la semaine les plus actifs', bottom: 'Jours de la semaine les moins actifs' },
+    month: { top: 'Mois les plus actifs', bottom: 'Mois les moins actifs' },
   }
-
-  const rankTitle = period === 'year' ? 'mois' : 'jours'
-  const rankValue = (d: { date: string; consultations: number }) => `${d.consultations} cons.`
+  const rankTitle = ranking ? rankTitles[ranking.unit] : null
 
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-3 lg:h-[calc(100vh-110px)]">
       {/* En-tête + période — sticky sous la barre d'app mobile (57px) :
           sans cela, scrolé, le sélecteur passe SOUS la barre sticky (z-30)
           et les taps sur « Mois »/« Année » ne déclenchent rien (B2). */}
-      <div className="sticky top-[57px] z-20 -mx-4 -mt-2 flex flex-wrap items-center justify-between gap-4 bg-background px-4 pb-3 pt-2 md:static md:mx-0 md:mt-0 md:bg-transparent md:p-0 md:pb-0">
+      <div className="sticky top-[57px] z-20 -mx-4 -mt-2 flex shrink-0 flex-wrap items-center justify-between gap-4 bg-background px-4 pb-3 pt-2 md:static md:mx-0 md:mt-0 md:bg-transparent md:p-0 md:pb-0">
         <div>
           <h1 className="text-[27px] font-bold tracking-tight text-stone-800">Activité</h1>
           <p className="mt-0.5 text-[13.5px] text-stone-600">{periodLabel}</p>
@@ -122,7 +108,7 @@ export default function ActivityView({
       </div>
 
       {/* Rangée 1 — KPI */}
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+      <div className="grid shrink-0 grid-cols-1 gap-3 sm:grid-cols-3">
         {kpiCards.map((k) => (
           <div key={k.label} className={`rounded-xl border border-warm border-t-[3px] rounded-t-[4px] bg-white px-3.5 py-3 shadow-sm ${k.topClass}`}>
             <div className="flex items-center gap-2">
@@ -138,8 +124,8 @@ export default function ActivityView({
       </div>
 
       {/* Rangée 2 — chart activité + cumulé + motifs */}
-      <div className="grid grid-cols-1 gap-3 lg:grid-cols-3">
-        <div className={cardClass}>
+      <div className="grid min-h-0 flex-1 grid-cols-1 gap-3 lg:grid-cols-3">
+        <div className={`${cardClass} h-full`}>
           <h3 className={cardTitleClass}>Consultations par {period === 'year' ? 'mois' : 'jour'}</h3>
           <ChartContainer config={chartConfig} className="h-[120px] w-full">
             <BarChart data={chartData} margin={{ top: 4, right: 4, bottom: 0, left: -16 }}>
@@ -153,7 +139,7 @@ export default function ActivityView({
           </ChartContainer>
         </div>
 
-        <div className={cardClass}>
+        <div className={`${cardClass} h-full`}>
           <div className="flex items-baseline justify-between">
             <p className="text-[11.5px] font-semibold uppercase tracking-wider text-stone-600">Total patients suivis</p>
             <span className="rounded-full bg-primary-50 px-2.5 py-0.5 text-[10.5px] font-semibold text-primary-700">cumulé</span>
@@ -176,7 +162,7 @@ export default function ActivityView({
           </ChartContainer>
         </div>
 
-        <div className={cardClass}>
+        <div className={`${cardClass} h-full`}>
           <h3 className={cardTitleClass}>Motifs de visite</h3>
           <div className="flex items-center gap-5">
             <ResponsiveContainer width={92} height={92}>
@@ -199,8 +185,8 @@ export default function ActivityView({
       </div>
 
       {/* Rangée 3 — âge + arrivées + présence */}
-      <div className="grid grid-cols-1 gap-3 lg:grid-cols-3">
-        <div className={cardClass}>
+      <div className="grid min-h-0 flex-1 grid-cols-1 gap-3 lg:grid-cols-3">
+        <div className={`${cardClass} h-full`}>
           <h3 className={cardTitleClass}>Répartition par âge</h3>
           <div className="flex flex-col gap-2">
             {ageData.map((a) => (
@@ -216,7 +202,7 @@ export default function ActivityView({
           </div>
         </div>
 
-        <div className={cardClass}>
+        <div className={`${cardClass} h-full`}>
           <h3 className={cardTitleClass}>Arrivées par heure</h3>
           <ChartContainer config={chartConfig} className="h-[96px] w-full">
             <BarChart data={hourlyData} margin={{ top: 4, right: 4, bottom: 0, left: -16 }}>
@@ -229,7 +215,7 @@ export default function ActivityView({
           </ChartContainer>
         </div>
 
-        <div className={cardClass}>
+        <div className={`${cardClass} h-full`}>
           <h3 className={cardTitleClass}>Présence aux rendez-vous</h3>
           <p className="text-[26px] font-bold text-stone-800">{attendanceRate !== null ? `${attendanceRate}%` : '—'}</p>
           <p className="text-[12px] text-stone-600">{totalBookings > 0 ? `${totalBookings - cancelledBookings} présents / ${totalBookings} rendez-vous` : 'Aucun rendez-vous sur cette période'}</p>
@@ -237,48 +223,44 @@ export default function ActivityView({
       </div>
 
       {/* Rangée 4 — classement + provenance */}
-      <div className="grid grid-cols-1 gap-3 lg:grid-cols-3">
-        <div className={cardClass}>
-          <h3 className={cardTitleClass}>
-            <TrendingUp className="me-1.5 inline size-3.5 text-emerald-600" />
-            {period === 'year' ? 'Mois' : 'Jours'} les plus actifs
-          </h3>
-          {ranked ? (
+      <div className="grid min-h-0 flex-1 grid-cols-1 gap-3 lg:grid-cols-3">
+        {rankTitle && ranking && (
+          <div className={`${cardClass} h-full`}>
+            <h3 className={cardTitleClass}>
+              <TrendingUp className="me-1.5 inline size-3.5 text-emerald-600" />
+              {rankTitle.top}
+            </h3>
             <div className="flex flex-col gap-1.5">
-              {ranked.top.map((d, i) => (
-                <div key={d.date} className="flex items-center gap-2.5">
+              {ranking.top.map((d, i) => (
+                <div key={d.label} className="flex items-center gap-2.5">
                   <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-primary-50 text-[11px] font-bold text-primary-700">{i + 1}</span>
-                  <span className="flex-1 truncate text-[12.5px] text-stone-800">{rankLabel(d.date)}</span>
-                  <span className="text-[12.5px] font-semibold text-stone-800">{rankValue(d)}</span>
+                  <span className="flex-1 truncate text-[12.5px] text-stone-800">{d.label}</span>
+                  <span className="text-[12.5px] font-semibold text-stone-800">{d.count} cons.</span>
                 </div>
               ))}
             </div>
-          ) : (
-            <p className="text-[12.5px] text-stone-500">Disponible en vue Mois ou Année.</p>
-          )}
-        </div>
+          </div>
+        )}
 
-        <div className={cardClass}>
-          <h3 className={cardTitleClass}>
-            <TrendingDown className="me-1.5 inline size-3.5 text-red-500" />
-            {period === 'year' ? 'Mois' : 'Jours'} les moins actifs
-          </h3>
-          {ranked ? (
+        {rankTitle && ranking && (
+          <div className={`${cardClass} h-full`}>
+            <h3 className={cardTitleClass}>
+              <TrendingDown className="me-1.5 inline size-3.5 text-red-500" />
+              {rankTitle.bottom}
+            </h3>
             <div className="flex flex-col gap-1.5">
-              {ranked.bottom.map((d, i) => (
-                <div key={d.date} className="flex items-center gap-2.5">
+              {ranking.bottom.map((d, i) => (
+                <div key={d.label} className="flex items-center gap-2.5">
                   <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-stone-100 text-[11px] font-bold text-stone-600">{i + 1}</span>
-                  <span className="flex-1 truncate text-[12.5px] text-stone-800">{rankLabel(d.date)}</span>
-                  <span className="text-[12.5px] font-semibold text-stone-800">{rankValue(d)}</span>
+                  <span className="flex-1 truncate text-[12.5px] text-stone-800">{d.label}</span>
+                  <span className="text-[12.5px] font-semibold text-stone-800">{d.count} cons.</span>
                 </div>
               ))}
             </div>
-          ) : (
-            <p className="text-[12.5px] text-stone-500">Disponible en vue Mois ou Année.</p>
-          )}
-        </div>
+          </div>
+        )}
 
-        <div className={cardClass}>
+        <div className={`${cardClass} h-full`}>
           <h3 className={cardTitleClass}>Provenance des patients</h3>
           {(sourceData || []).length === 0 ? (
             <p className="text-[12.5px] text-stone-500">Aucune donnée sur cette période.</p>

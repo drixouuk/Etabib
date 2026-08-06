@@ -39,7 +39,7 @@ export default function Header({ doctorName, doctorNameShort }: Props) {
         <div className="hidden items-center gap-0.5 md:flex">
           {navLinks.map(({ href, key }) => (
             <Link key={href} href={href}
-              className="rounded-lg px-[13px] py-2.5 text-[.92rem] font-medium text-stone-600 transition-colors duration-150 hover:bg-cream-200 hover:text-primary-700">
+              className="rounded-[10px] px-3 py-2 text-[.92rem] font-semibold text-[#8A8175] transition-colors duration-150 hover:bg-primary-50 hover:text-primary-700">
               {t(key)}
             </Link>
           ))}
@@ -61,7 +61,7 @@ export default function Header({ doctorName, doctorNameShort }: Props) {
           <div className="absolute start-4 end-4 top-full mt-2 rounded-2xl border border-stone-200 bg-white p-2 shadow-lg md:hidden">
             {navLinks.map(({ href, key }) => (
               <Link key={href} href={href} onClick={() => setMobileMenuOpen(false)}
-                className="block rounded-lg px-[14px] py-[11px] text-[.92rem] font-medium text-stone-600 hover:bg-cream-200">
+                className="block rounded-lg px-[14px] py-[11px] text-[.92rem] font-semibold text-[#8A8175] hover:bg-primary-50 hover:text-primary-700">
                 {t(key)}
               </Link>
             ))}
