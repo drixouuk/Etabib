@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { Menu, X } from 'lucide-react'
 import Sidebar from './Sidebar'
 import { Link } from '@/i18n/navigation'
+import { initQueueSync } from '@/lib/offline-queue'
 import type { PayloadUser } from '@/lib/auth'
 import type { Tenant } from '@/lib/payload'
 type Props = {
@@ -15,6 +16,13 @@ type Props = {
 
 export default function DashboardShell({ user, tenant, billingStatus, children }: Props) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
+
+  // SX-100 : file persistante — écoute online/visibility + vidage initial au
+  // montage (couvre la reconnexion : après login, le dashboard se remonte et
+  // la file se vide sans action de l'utilisateur).
+  useEffect(() => {
+    void initQueueSync()
+  }, [])
 
   useEffect(() => {
     const onResize = () => { if (window.innerWidth >= 768) setSidebarOpen(false) }

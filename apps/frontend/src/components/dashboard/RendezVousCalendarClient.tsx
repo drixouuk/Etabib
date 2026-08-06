@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import { ChevronLeft, ChevronRight, Check, Mail, Phone, Video } from 'lucide-react'
 import BookingSheet, { type BookingDraft } from './BookingSheet'
 import { RdvDetailView, type RdvDetail } from '@/components/agenda/RdvDetailView'
+import { withReadCache } from '@/lib/offline-cache'
 import type { CalBooking } from '@/lib/booking'
 
 const TZ = 'Africa/Casablanca'
@@ -93,13 +94,21 @@ function weekStartOf(d: Date, start: WeekStart): Date {
   return date
 }
 
-async function loadRange(start: Date, end: Date): Promise<CalBooking[]> {
+async function loadRange(start: Date, end: Date, onCached?: (cachedAt: number) => void): Promise<CalBooking[]> {
+  // SX-100 : cache de lecture — write-through en ligne, repli hors ligne avec
+  // garde-fou clinique (l'appelant affiche l'horodatage quand fromCache).
+  const key = `rdv:${start.toISOString()}:${end.toISOString()}`
   try {
-    const res = await fetch(
-      `/api/cms-proxy/calbookings?where[startTime][greater_than_equal]=${encodeURIComponent(start.toISOString())}&where[startTime][less_than]=${encodeURIComponent(end.toISOString())}&sort=startTime&depth=0&limit=200`
-    )
-    const data = await res.json()
-    return (data.docs ?? []) as CalBooking[]
+    const result = await withReadCache<CalBooking[]>(key, async () => {
+      const res = await fetch(
+        `/api/cms-proxy/calbookings?where[startTime][greater_than_equal]=${encodeURIComponent(start.toISOString())}&where[startTime][less_than]=${encodeURIComponent(end.toISOString())}&sort=startTime&depth=0&limit=200`
+      )
+      if (!res.ok) throw new Error(`HTTP ${res.status}`)
+      const data = await res.json()
+      return (data.docs ?? []) as CalBooking[]
+    })
+    if (result.fromCache) onCached?.(result.cachedAt)
+    return result.data
   } catch {
     return []
   }
@@ -112,6 +121,7 @@ export default function RendezVousCalendarClient({ initialBookings, tenantId }: 
 
   const today = useMemo(() => new Date(), [])
   const [events, setEvents] = useState<CalBooking[]>(initialBookings)
+  const [cacheNotice, setCacheNotice] = useState<{ cachedAt: number } | null>(null)
   // B4 — vue persistée par device. Défaut serveur STABLE ('mois') : les
   // lectures localStorage/matchMedia sont des API client-only — les faire
   // dans l'initialiseur paresseux créerait un mismatch d'hydratation pour
@@ -165,7 +175,7 @@ export default function RendezVousCalendarClient({ initialBookings, tenantId }: 
       start = new Date(ws.getFullYear(), ws.getMonth(), ws.getDate() - 1)
       end = new Date(ws.getFullYear(), ws.getMonth(), ws.getDate() + 30)
     }
-    loadRange(start, end).then((docs) => {
+    loadRange(start, end, (cachedAt) => setCacheNotice({ cachedAt })).then((docs) => {
       if (!cancelled) setEvents(docs)
     })
     return () => { cancelled = true }
@@ -173,10 +183,10 @@ export default function RendezVousCalendarClient({ initialBookings, tenantId }: 
 
   const refresh = useCallback(async () => {
     if (view === 'mois') {
-      setEvents(await loadRange(new Date(cursor.getFullYear(), cursor.getMonth(), 1 - 7), new Date(cursor.getFullYear(), cursor.getMonth() + 1, 8)))
+      setEvents(await loadRange(new Date(cursor.getFullYear(), cursor.getMonth(), 1 - 7), new Date(cursor.getFullYear(), cursor.getMonth() + 1, 8), (cachedAt) => setCacheNotice({ cachedAt })))
     } else {
       const ws = weekStartOf(cursor, weekStart)
-      setEvents(await loadRange(new Date(ws.getFullYear(), ws.getMonth(), ws.getDate() - 1), new Date(ws.getFullYear(), ws.getMonth(), ws.getDate() + 30)))
+      setEvents(await loadRange(new Date(ws.getFullYear(), ws.getMonth(), ws.getDate() - 1), new Date(ws.getFullYear(), ws.getMonth(), ws.getDate() + 30), (cachedAt) => setCacheNotice({ cachedAt })))
     }
     router.refresh()
   }, [cursor, view, router])
@@ -341,6 +351,13 @@ export default function RendezVousCalendarClient({ initialBookings, tenantId }: 
         <h1 className="font-heading text-[27px] font-bold tracking-tight text-stone-800">Rendez-vous</h1>
         <p className="text-[13.5px] text-stone-600 capitalize">{fmtDayLong(today.toISOString())}</p>
       </div>
+
+      {cacheNotice && (
+        <div className="mb-3 flex items-center gap-2 rounded-lg border border-amber-300 bg-amber-50 px-4 py-2.5 text-sm font-semibold text-stone-800">
+          <span className="size-2 shrink-0 rounded-full bg-amber-500" />
+          Données mises en cache à {new Date(cacheNotice.cachedAt).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })} — hors ligne
+        </div>
+      )}
 
       {!mounted ? (
         // Placeholder stable SSR/client : la vue réelle n'est montée qu'après

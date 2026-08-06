@@ -14,6 +14,7 @@ import VaccinationRecord from '@/components/dashboard/VaccinationRecord'
 import ReferringPractitionersWidget from './ReferringPractitionersWidget'
 import SharePatientWidget from './SharePatientWidget'
 import PatientAvatar from '@/components/dashboard/PatientAvatar'
+import OfflineDossierCache from '@/components/dashboard/OfflineDossierCache'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 
@@ -213,6 +214,10 @@ export default async function PatientDetailPage({ params }: Props) {
           Allergie connue : {patient.allergies} — à vérifier avant toute prescription
         </div>
       )}
+
+      {/* SX-100 : repli hors ligne du dossier (visible uniquement si le
+          réseau a coupé et qu'une version en cache existe) */}
+      {canViewClinical && <OfflineDossierCache patientId={patient.id} />}
 
       {/* Onglets */}
       <Tabs defaultValue="resume" className="mt-2">

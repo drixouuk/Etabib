@@ -80,6 +80,11 @@ export default function LoginPage() {
     // manuel (router.refresh() ne suffisait pas en conditions réelles).
     // window.location = chargement document complet → cache client vidé.
     const target = isPlatformAdmin ? '/dashboard/billing-admin' : '/dashboard'
+    // SX-100 : reconnexion → demande de vidage de la file d'écriture (le
+    // dashboard monté déclenche aussi un vidage initial via initQueueSync).
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new Event('etabib:sync-requested'))
+    }
     window.location.assign(target)
   }
 
