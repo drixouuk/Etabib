@@ -93,7 +93,7 @@ export default function ConsultationsTabContent({
   return (
     <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
       <div className="rounded-xl border border-warm bg-white shadow-sm">
-        <div className="flex items-center justify-between border-b border-stone-100 px-4 py-3">
+        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-stone-100 px-4 py-3">
           <div className="flex items-center gap-2">
             <h2 className="font-heading text-lg font-semibold text-stone-800">Consultations</h2>
             {consultations.length > 0 && (
@@ -126,7 +126,7 @@ export default function ConsultationsTabContent({
       </div>
 
       <div className="rounded-xl border border-warm bg-white shadow-sm">
-        <div className="flex items-center justify-between border-b border-stone-100 px-4 py-3">
+        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-stone-100 px-4 py-3">
           <div className="flex items-center gap-2">
             <h2 className="font-heading text-lg font-semibold text-stone-800">Ordonnances</h2>
             {prescriptions.length > 0 && (

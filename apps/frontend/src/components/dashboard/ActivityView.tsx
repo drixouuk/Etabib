@@ -121,9 +121,9 @@ export default function ActivityView({
 
       <div className="grid grid-cols-12 gap-3">
         {/* Rangée 1 — KPI : bande unique, segments séparés */}
-        <div className="col-span-12 flex flex-col divide-y divide-warm overflow-hidden rounded-xl border border-warm bg-white shadow-sm sm:flex-row sm:divide-x sm:divide-y-0">
+        <div className="col-span-12 grid grid-cols-1 gap-3 sm:grid-cols-3">
           {kpiCards.map((k) => (
-            <div key={k.label} className="flex flex-1 items-center gap-3 px-4 py-2">
+            <div key={k.label} className="flex items-center gap-3 rounded-xl border border-warm bg-white px-4 py-2 shadow-sm">
               <div className={`flex size-8 shrink-0 items-center justify-center rounded-[9px] ${k.iconClass}`}>{k.icon}</div>
               <div>
                 <div className="font-heading text-[19px] font-semibold leading-none text-stone-800">{k.value}</div>
@@ -156,13 +156,13 @@ export default function ActivityView({
           </ChartContainer>
           {peak && trough && (
             <div className="mt-2 flex flex-wrap gap-x-6 gap-y-1 border-t border-dashed border-warm pt-2 text-[12px] text-stone-500">
-              <span>
-                <span className="font-semibold text-success-600">↗ Pic :</span>{' '}
-                <strong className="font-semibold text-stone-800">{formatNoteDate(peak.date)}</strong> — {peak.consultations} {peak.consultations > 1 ? 'consultations' : 'consultation'}
+              <span className="text-success-700">
+                <span className="font-bold">↗ Pic :</span>{' '}
+                <strong className="font-bold">{formatNoteDate(peak.date)}</strong> — {peak.consultations} {peak.consultations > 1 ? 'consultations' : 'consultation'}
               </span>
-              <span>
-                <span className="font-semibold text-error-500">↘ Creux :</span>{' '}
-                <strong className="font-semibold text-stone-800">{formatNoteDate(trough.date)}</strong> — {trough.consultations} {trough.consultations > 1 ? 'consultations' : 'consultation'}
+              <span className="text-error-600">
+                <span className="font-bold">↘ Creux :</span>{' '}
+                <strong className="font-bold">{formatNoteDate(trough.date)}</strong> — {trough.consultations} {trough.consultations > 1 ? 'consultations' : 'consultation'}
               </span>
             </div>
           )}
@@ -220,7 +220,7 @@ export default function ActivityView({
           <div className="flex flex-1 items-center gap-4">
             <ResponsiveContainer width={88} height={88}>
               <PieChart>
-                <Pie data={reasonData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={46} innerRadius={30}>
+                <Pie data={reasonData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={38} innerRadius={25}>
                   {reasonData.map((_, i) => <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />)}
                 </Pie>
               </PieChart>

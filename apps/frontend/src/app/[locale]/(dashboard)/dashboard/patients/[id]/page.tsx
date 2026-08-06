@@ -193,7 +193,7 @@ export default async function PatientDetailPage({ params }: Props) {
         <div className="flex items-center gap-4">
           <PatientAvatar fullName={patient.fullName} gender={patient.gender as 'boy' | 'girl' | null} size="lg" />
           <div>
-            <h1 className="flex items-center gap-2.5 font-heading text-[27px] font-bold tracking-tight text-stone-800">
+            <h1 className="flex flex-wrap items-center gap-2.5 font-heading text-[27px] font-bold tracking-tight text-stone-800">
                 {patient.fullName}
                 <Link
                   href={`/dashboard/patients/${patient.id}/edit`}
@@ -215,7 +215,7 @@ export default async function PatientDetailPage({ params }: Props) {
             </div>
             <div className="mt-0.5 text-sm text-stone-600">
               {patient.address && <span>{patient.address}</span>}
-              {patient.email && <span className="ml-3">{patient.email}</span>}
+              {patient.email && <span className="ms-3">{patient.email}</span>}
             </div>
           </div>
         </div>
@@ -236,7 +236,7 @@ export default async function PatientDetailPage({ params }: Props) {
 
       {/* Onglets */}
       <Tabs defaultValue="resume" className="mt-2">
-        <TabsList variant="line" className="mb-6 w-full justify-start gap-6 border-b border-warm">
+        <TabsList variant="line" className="mb-6 w-full justify-start gap-6 overflow-x-auto border-b border-warm whitespace-nowrap [&>*]:shrink-0 max-md:gap-3">
           <TabsTrigger value="resume" className="data-[state=active]:text-primary-700 data-[state=active]:font-semibold after:bg-primary-500">Résumé</TabsTrigger>
           <TabsTrigger value="dossier" className="data-[state=active]:text-primary-700 data-[state=active]:font-semibold after:bg-primary-500">Dossier clinique</TabsTrigger>
           <TabsTrigger value="croissance" className="data-[state=active]:text-primary-700 data-[state=active]:font-semibold after:bg-primary-500">Croissance</TabsTrigger>
