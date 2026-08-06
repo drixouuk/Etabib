@@ -52,9 +52,6 @@ export default async function PresentationSection({ locale, doctor }: Props) {
             <p className="mb-4 text-[1.03rem] text-stone-600">
               Sa pratique privilégie une médecine attentive, bienveillante et à l&apos;écoute — une approche que ses patients soulignent régulièrement dans leurs avis.
             </p>
-            <span className="mt-6 inline-flex rounded-full border border-primary-200 bg-primary-50 px-4 py-2 text-[.88rem] font-semibold text-primary-700">
-              {doctor.specialty || 'Pédiatre'}
-            </span>
           </div>
         </div>
       </div>

@@ -69,12 +69,18 @@ export default async function HomePage({ params }: Props) {
 
         <div className="container relative z-10 mx-auto grid max-w-[1160px] grid-cols-1 items-center gap-14 lg:grid-cols-[1.1fr_0.9fr]">
           <div>
-            {city && (
-              <span className="mb-5 inline-flex items-center gap-2 rounded-full bg-primary-50 px-4 py-2 text-[.82rem] font-bold tracking-wide text-primary-700">
-                <MapPin className="size-3.5" />
-                {city}
+            <div className="mb-5 flex flex-wrap items-center gap-2">
+              {city && (
+                <span className="inline-flex items-center gap-2 rounded-full bg-primary-50 px-4 py-2 text-[.82rem] font-bold tracking-wide text-primary-700">
+                  <MapPin className="size-3.5" />
+                  {city}
+                </span>
+              )}
+              <span className="inline-flex items-center gap-2 rounded-full bg-primary-50 px-4 py-2 text-[.82rem] font-bold tracking-wide text-primary-700">
+                <Stethoscope className="size-3.5" />
+                {specialty}
               </span>
-            )}
+            </div>
             <h1 className="mb-5 max-w-[520px] font-heading text-[clamp(2.15rem,4vw,3.15rem)] font-extrabold leading-tight tracking-[-.01em] text-stone-800">
               {practiceInfo?.tagline || t('tagline')}
             </h1>
