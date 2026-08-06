@@ -84,7 +84,7 @@ export default function ActivityView({
   const rankTitle = ranking ? rankTitles[ranking.unit] : null
 
   return (
-    <div className="flex flex-col gap-3 lg:h-[calc(100vh-110px)]">
+    <div className="flex flex-col gap-3">
       {/* En-tête + période — sticky sous la barre d'app mobile (57px) :
           sans cela, scrolé, le sélecteur passe SOUS la barre sticky (z-30)
           et les taps sur « Mois »/« Année » ne déclenchent rien (B2). */}
@@ -107,45 +107,41 @@ export default function ActivityView({
         </div>
       </div>
 
-      {/* Rangée 1 — KPI */}
-      <div className="grid shrink-0 grid-cols-1 gap-3 sm:grid-cols-3">
+      {/* Rangée 1 — KPI : bande unique, segments séparés (bento) */}
+      <div className="flex shrink-0 flex-col divide-y divide-warm overflow-hidden rounded-xl border border-warm bg-white shadow-sm sm:flex-row sm:divide-x sm:divide-y-0">
         {kpiCards.map((k) => (
-          <div key={k.label} className={`rounded-xl border border-warm border-t-[3px] rounded-t-[4px] bg-white px-3.5 py-3 shadow-sm ${k.topClass}`}>
-            <div className="flex items-center gap-2">
-              <div className={`flex size-[26px] items-center justify-center rounded-lg ${k.iconClass}`}>{k.icon}</div>
-              <span className="text-[20px] font-bold text-stone-800">{k.value}</span>
-              {trendFor(period, k.value) && (
-                <span className="text-[10.5px] font-semibold bg-primary-50 text-primary-700 px-2 py-0.5 rounded-full">{trendFor(period, k.value)}</span>
-              )}
+          <div key={k.label} className="flex flex-1 items-center gap-2.5 px-4 py-2.5">
+            <div className={`flex size-8 shrink-0 items-center justify-center rounded-lg ${k.iconClass}`}>{k.icon}</div>
+            <div>
+              <div className="text-[15px] font-semibold leading-tight text-stone-800">{k.value}</div>
+              <div className="text-[11px] text-stone-500">{k.label}</div>
             </div>
-            <p className="mt-1 text-[12px] text-stone-600">{k.label}</p>
           </div>
         ))}
       </div>
 
-      {/* Rangée 2 — chart activité + cumulé + motifs */}
-      <div className="grid min-h-0 flex-1 grid-cols-1 gap-3 lg:grid-cols-3">
-        <div className={`${cardClass} h-full`}>
+      {/* Rangée 2 — bento 2fr/1fr (importance) */}
+      <div className="grid grid-cols-1 gap-3 lg:grid-cols-[2fr_1fr]">
+        <div className="flex h-[200px] flex-col justify-between rounded-xl border border-warm bg-white p-3.5 shadow-sm">
           <h3 className={cardTitleClass}>Consultations par {period === 'year' ? 'mois' : 'jour'}</h3>
-          <ChartContainer config={chartConfig} className="h-[120px] w-full">
+          <ChartContainer config={chartConfig} className="h-[130px] w-full">
             <BarChart data={chartData} margin={{ top: 4, right: 4, bottom: 0, left: -16 }}>
               <CartesianGrid strokeDasharray="3 3" stroke={LIGHT_GRID} vertical={false} />
               <XAxis dataKey="date" tick={{ fontSize: 10, fill: '#B9B2A4' }} tickLine={false} axisLine={false} />
               <YAxis tick={{ fontSize: 10, fill: '#B9B2A4' }} width={28} allowDecimals={false} />
               <ChartTooltip content={<ChartTooltipContent />} />
-              <Bar dataKey="consultations" name="Consultations" fill="var(--chart-1)" radius={[4, 4, 0, 0]} barSize={10} />
-              <Bar dataKey="newPatients" name="Nouveaux patients" fill="var(--chart-3)" radius={[4, 4, 0, 0]} barSize={10} />
+              <Bar dataKey="consultations" name="Consultations" fill="var(--chart-1)" radius={[4, 4, 0, 0]} barSize={12} />
+              <Bar dataKey="newPatients" name="Nouveaux patients" fill="var(--chart-3)" radius={[4, 4, 0, 0]} barSize={12} />
             </BarChart>
           </ChartContainer>
         </div>
 
-        <div className={`${cardClass} h-full`}>
-          <div className="flex items-baseline justify-between">
-            <p className="text-[11.5px] font-semibold uppercase tracking-wider text-stone-600">Total patients suivis</p>
-            <span className="rounded-full bg-primary-50 px-2.5 py-0.5 text-[10.5px] font-semibold text-primary-700">cumulé</span>
+        <div className="flex h-[200px] flex-col justify-between rounded-xl border border-warm bg-white p-3.5 shadow-sm">
+          <div>
+            <p className="text-[11.5px] font-semibold uppercase tracking-wider text-stone-500">Total patients suivis</p>
+            <p className="mt-0.5 text-[22px] font-semibold text-stone-800">{cumulativeTotal} patients</p>
           </div>
-          <p className="text-[15px] font-bold text-stone-800">{cumulativeTotal} patients</p>
-          <ChartContainer config={{ patients: { label: 'Patients', color: 'var(--chart-1)' } }} className="mt-1 h-[92px] w-full">
+          <ChartContainer config={{ patients: { label: 'Patients', color: 'var(--chart-1)' } }} className="h-[70px] w-full">
             <AreaChart data={cumulativePatients} margin={{ top: 4, right: 4, bottom: 0, left: 4 }}>
               <defs>
                 <linearGradient id="growthGrad" x1="0" y1="0" x2="0" y2="1">
@@ -161,32 +157,11 @@ export default function ActivityView({
             </AreaChart>
           </ChartContainer>
         </div>
-
-        <div className={`${cardClass} h-full`}>
-          <h3 className={cardTitleClass}>Motifs de visite</h3>
-          <div className="flex items-center gap-5">
-            <ResponsiveContainer width={92} height={92}>
-              <PieChart>
-                <Pie data={reasonData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={40} innerRadius={26}>
-                  {reasonData.map((_, i) => <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />)}
-                </Pie>
-              </PieChart>
-            </ResponsiveContainer>
-            <div className="flex flex-col gap-1.5 text-[12px] text-stone-800">
-              {reasonData.map((r, i) => (
-                <div key={r.name} className="flex items-center gap-1.5">
-                  <i className="size-2 rounded-sm shrink-0 inline-block" style={{ background: PIE_COLORS[i % PIE_COLORS.length] }} />
-                  {r.name} <b className="text-stone-600 font-medium ms-0.5">{r.value}</b>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
       </div>
 
-      {/* Rangée 3 — âge + arrivées + présence */}
-      <div className="grid min-h-0 flex-1 grid-cols-1 gap-3 lg:grid-cols-3">
-        <div className={`${cardClass} h-full`}>
+      {/* Rangée 3 — 3 colonnes égales */}
+      <div className="grid grid-cols-1 gap-3 lg:grid-cols-3">
+        <div className="flex h-[150px] flex-col justify-between rounded-xl border border-warm bg-white p-3.5 shadow-sm">
           <h3 className={cardTitleClass}>Répartition par âge</h3>
           <div className="flex flex-col gap-2">
             {ageData.map((a) => (
@@ -202,9 +177,9 @@ export default function ActivityView({
           </div>
         </div>
 
-        <div className={`${cardClass} h-full`}>
+        <div className="flex h-[150px] flex-col justify-between rounded-xl border border-warm bg-white p-3.5 shadow-sm">
           <h3 className={cardTitleClass}>Arrivées par heure</h3>
-          <ChartContainer config={chartConfig} className="h-[96px] w-full">
+          <ChartContainer config={chartConfig} className="h-[90px] w-full">
             <BarChart data={hourlyData} margin={{ top: 4, right: 4, bottom: 0, left: -16 }}>
               <CartesianGrid strokeDasharray="3 3" stroke={LIGHT_GRID} vertical={false} />
               <XAxis dataKey="hour" tick={{ fontSize: 10, fill: '#B9B2A4' }} tickLine={false} axisLine={false} />
@@ -215,27 +190,48 @@ export default function ActivityView({
           </ChartContainer>
         </div>
 
-        <div className={`${cardClass} h-full`}>
-          <h3 className={cardTitleClass}>Présence aux rendez-vous</h3>
-          <p className="text-[26px] font-bold text-stone-800">{attendanceRate !== null ? `${attendanceRate}%` : '—'}</p>
-          <p className="text-[12px] text-stone-600">{totalBookings > 0 ? `${totalBookings - cancelledBookings} présents / ${totalBookings} rendez-vous` : 'Aucun rendez-vous sur cette période'}</p>
+        <div className="flex h-[150px] flex-col justify-between rounded-xl border border-warm bg-white p-3.5 shadow-sm">
+          <div>
+            <h3 className={cardTitleClass}>Motifs de visite</h3>
+            <div className="flex items-center gap-2.5">
+              <ResponsiveContainer width={36} height={36}>
+                <PieChart>
+                  <Pie data={reasonData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={16} innerRadius={10}>
+                    {reasonData.map((_, i) => <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />)}
+                  </Pie>
+                </PieChart>
+              </ResponsiveContainer>
+              <div className="flex flex-col gap-1 text-[11.5px] leading-snug text-stone-800">
+                {reasonData.slice(0, 3).map((r, i) => (
+                  <span key={r.name} className="flex items-center gap-1.5">
+                    <i className="size-2 rounded-sm shrink-0 inline-block" style={{ background: PIE_COLORS[i % PIE_COLORS.length] }} />
+                    {r.name} {r.value}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+          <div className="border-t border-warm pt-2">
+            <div className="text-[12px] text-stone-500">Présence aux rendez-vous</div>
+            <div className="text-[18px] font-semibold leading-tight text-stone-800">{attendanceRate !== null ? `${attendanceRate}%` : '—'}</div>
+          </div>
         </div>
       </div>
 
       {/* Rangée 4 — classement + provenance */}
-      <div className="grid min-h-0 flex-1 grid-cols-1 gap-3 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-3 lg:grid-cols-3">
         {rankTitle && ranking && (
-          <div className={`${cardClass} h-full`}>
+          <div className="flex h-[120px] flex-col rounded-xl border border-warm bg-white p-3.5 shadow-sm">
             <h3 className={cardTitleClass}>
               <TrendingUp className="me-1.5 inline size-3.5 text-emerald-600" />
               {rankTitle.top}
             </h3>
-            <div className="flex flex-col gap-1.5">
+            <div className="flex flex-col gap-1">
               {ranking.top.map((d, i) => (
-                <div key={d.label} className="flex items-center gap-2.5">
-                  <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-primary-50 text-[11px] font-bold text-primary-700">{i + 1}</span>
-                  <span className="flex-1 truncate text-[12.5px] text-stone-800">{d.label}</span>
-                  <span className="text-[12.5px] font-semibold text-stone-800">{d.count} cons.</span>
+                <div key={d.label} className="flex items-center gap-2 text-[12px] leading-tight text-stone-800">
+                  <span className="w-3.5 text-[11px] font-bold text-stone-400">{i + 1}</span>
+                  <span className="flex-1 truncate">{d.label}</span>
+                  <span className="font-semibold">{d.count}</span>
                 </div>
               ))}
             </div>
@@ -243,24 +239,24 @@ export default function ActivityView({
         )}
 
         {rankTitle && ranking && (
-          <div className={`${cardClass} h-full`}>
+          <div className="flex h-[120px] flex-col rounded-xl border border-warm bg-white p-3.5 shadow-sm">
             <h3 className={cardTitleClass}>
               <TrendingDown className="me-1.5 inline size-3.5 text-red-500" />
               {rankTitle.bottom}
             </h3>
-            <div className="flex flex-col gap-1.5">
+            <div className="flex flex-col gap-1">
               {ranking.bottom.map((d, i) => (
-                <div key={d.label} className="flex items-center gap-2.5">
-                  <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-stone-100 text-[11px] font-bold text-stone-600">{i + 1}</span>
-                  <span className="flex-1 truncate text-[12.5px] text-stone-800">{d.label}</span>
-                  <span className="text-[12.5px] font-semibold text-stone-800">{d.count} cons.</span>
+                <div key={d.label} className="flex items-center gap-2 text-[12px] leading-tight text-stone-800">
+                  <span className="w-3.5 text-[11px] font-bold text-stone-400">{i + 1}</span>
+                  <span className="flex-1 truncate">{d.label}</span>
+                  <span className="font-semibold">{d.count}</span>
                 </div>
               ))}
             </div>
           </div>
         )}
 
-        <div className={`${cardClass} h-full`}>
+        <div className="flex h-[120px] flex-col justify-between rounded-xl border border-warm bg-white p-3.5 shadow-sm">
           <h3 className={cardTitleClass}>Provenance des patients</h3>
           {(sourceData || []).length === 0 ? (
             <p className="text-[12.5px] text-stone-500">Aucune donnée sur cette période.</p>
