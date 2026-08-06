@@ -119,7 +119,7 @@ export default async function InfosSection({ locale, practiceInfo }: Props) {
             )}
             <div className="flex items-center gap-2 border-t border-stone-200 px-5 py-3 text-sm text-stone-500">
               <MapPin className="size-4 text-primary-600" />
-              {practiceInfo?.address || 'Inezgane'}
+              {practiceInfo?.address || 'Adresse non renseignée'}
             </div>
           </div>
 

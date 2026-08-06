@@ -89,6 +89,41 @@ function mergeChartData(
     })
 }
 
+// Complète la période avec tous ses jours/mois (y compris à zéro) : le chart
+// et le classement « jours/mois les moins actifs » doivent voir les jours
+// sans activité, pas seulement ceux qui ont une ligne en base.
+function fillChartData(
+  data: { date: string; consultations: number; newPatients: number }[],
+  period: Period,
+  startDate: Date,
+): { date: string; consultations: number; newPatients: number }[] {
+  const keys = new Set(data.map((d) => d.date))
+  const filled: { date: string; consultations: number; newPatients: number }[] = [...data]
+  const cursor = new Date(startDate)
+
+  if (period === 'year') {
+    for (let m = 0; m < 12; m++) {
+      const key = `${m + 1}/${cursor.getFullYear()}`
+      if (!keys.has(key)) filled.push({ date: key, consultations: 0, newPatients: 0 })
+      cursor.setMonth(m + 1)
+    }
+  } else {
+    const daysInMonth = new Date(cursor.getFullYear(), cursor.getMonth() + 1, 0).getDate()
+    const total = period === 'week' ? 7 : period === 'day' ? 1 : daysInMonth
+    for (let d = 0; d < total; d++) {
+      const key = `${cursor.getDate()}/${cursor.getMonth() + 1}`
+      if (!keys.has(key)) filled.push({ date: key, consultations: 0, newPatients: 0 })
+      cursor.setDate(cursor.getDate() + 1)
+    }
+  }
+
+  return filled.sort((a, b) => {
+    const [da, ma] = a.date.split('/').map(Number)
+    const [db, mb] = b.date.split('/').map(Number)
+    return da + ma * 31 - (db + mb * 31)
+  })
+}
+
 export default async function ActivityPage({ searchParams }: Props) {
   const { period: periodParam } = await searchParams
   const period: Period = (['day', 'week', 'month', 'year'] as const).includes(periodParam as any) ? (periodParam as Period) : 'week'
@@ -120,7 +155,7 @@ export default async function ActivityPage({ searchParams }: Props) {
 
   const consultationsByDay = groupByPeriod(consultations, 'date', period)
   const patientsByDay = groupByPeriod(patients, 'createdAt', period)
-  const chartData = mergeChartData(consultationsByDay, patientsByDay)
+  const chartData = fillChartData(mergeChartData(consultationsByDay, patientsByDay), period, startDate)
 
   const cumulativePatients = patientsByDay.reduce((acc, day, i) => {
     const prev = i > 0 ? acc[i - 1].cumulative : 0

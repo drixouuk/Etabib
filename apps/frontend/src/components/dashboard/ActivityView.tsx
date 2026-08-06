@@ -1,9 +1,10 @@
 'use client'
 
+import { useMemo } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { BarChart, Bar, AreaChart, Area, XAxis, YAxis, CartesianGrid, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts'
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart'
-import { UserPlus, Stethoscope, CheckCheck } from 'lucide-react'
+import { UserPlus, Stethoscope, CheckCheck, TrendingUp, TrendingDown } from 'lucide-react'
 
 type Props = {
   period: 'day' | 'week' | 'month' | 'year'
@@ -33,7 +34,7 @@ function trendFor(period: string, count: number): string | null {
 const PIE_COLORS = ['var(--chart-1)', 'var(--chart-3)', 'var(--chart-4)', 'var(--chart-5)']
 const LIGHT_GRID = '#E7E5E4'
 
-const cardClass = 'rounded-xl border border-warm bg-white p-4 shadow-sm'
+const cardClass = 'rounded-xl border border-warm bg-white p-3.5 shadow-sm'
 const cardTitleClass = 'mb-2 font-heading text-[13.5px] font-semibold text-stone-800'
 
 export default function ActivityView({
@@ -73,8 +74,31 @@ export default function ActivityView({
     { label: 'Patients vus', value: completedToday, icon: <CheckCheck className="size-4" />, iconClass: 'bg-primary-50 text-primary-700', topClass: 'border-t-primary-700' },
   ]
 
+  // Classement des jours (mois) / mois (année) les plus et les moins actifs.
+  // La page complète la période (jours/mois à zéro inclus) — le bas du
+  // classement reflète réellement les jours sans activité.
+  const ranked = useMemo(() => {
+    if (period !== 'month' && period !== 'year') return null
+    const sorted = [...chartData].sort((a, b) => b.consultations - a.consultations)
+    const top = sorted.slice(0, 3)
+    const bottom = [...chartData].sort((a, b) => a.consultations - b.consultations).slice(0, 3)
+    return { top, bottom }
+  }, [chartData, period])
+
+  const rankLabel = (date: string): string => {
+    const [num, month, year] = date.split('/').map(Number)
+    if (period === 'year') {
+      const names = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sep', 'Oct', 'Nov', 'Déc']
+      return `${names[(month || 1) - 1]} ${year}`
+    }
+    return `${num} ${['janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin', 'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.'][(month || 1) - 1]}`
+  }
+
+  const rankTitle = period === 'year' ? 'mois' : 'jours'
+  const rankValue = (d: { date: string; consultations: number }) => `${d.consultations} cons.`
+
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-3">
       {/* En-tête + période — sticky sous la barre d'app mobile (57px) :
           sans cela, scrolé, le sélecteur passe SOUS la barre sticky (z-30)
           et les taps sur « Mois »/« Année » ne déclenchent rien (B2). */}
@@ -97,50 +121,24 @@ export default function ActivityView({
         </div>
       </div>
 
-      {/* KPI — le plus important */}
-      <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-3">
+      {/* Rangée 1 — KPI */}
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
         {kpiCards.map((k) => (
-          <div key={k.label} className={`rounded-xl border border-warm border-t-[3px] rounded-t-[4px] bg-white p-4 shadow-sm ${k.topClass}`}>
-            <div className={`flex size-[30px] items-center justify-center rounded-lg ${k.iconClass} mb-2`}>{k.icon}</div>
-            <div className="flex items-baseline gap-2 flex-wrap">
-              <span className="text-[24px] font-bold text-stone-800">{k.value}</span>
+          <div key={k.label} className={`rounded-xl border border-warm border-t-[3px] rounded-t-[4px] bg-white px-3.5 py-3 shadow-sm ${k.topClass}`}>
+            <div className="flex items-center gap-2">
+              <div className={`flex size-[26px] items-center justify-center rounded-lg ${k.iconClass}`}>{k.icon}</div>
+              <span className="text-[20px] font-bold text-stone-800">{k.value}</span>
               {trendFor(period, k.value) && (
-                <span className="text-[11px] font-semibold bg-primary-50 text-primary-700 px-2 py-0.5 rounded-full">{trendFor(period, k.value)}</span>
+                <span className="text-[10.5px] font-semibold bg-primary-50 text-primary-700 px-2 py-0.5 rounded-full">{trendFor(period, k.value)}</span>
               )}
             </div>
-            <p className="mt-0.5 text-[12.5px] text-stone-600">{k.label}</p>
+            <p className="mt-1 text-[12px] text-stone-600">{k.label}</p>
           </div>
         ))}
       </div>
 
-      {/* Croissance du cabinet — chiffre phare */}
-      <div className={cardClass}>
-        <div className="flex items-baseline justify-between">
-          <div>
-            <p className="text-[11.5px] font-semibold uppercase tracking-wider text-stone-600">Total patients suivis</p>
-            <p className="text-lg font-bold text-stone-800">{cumulativeTotal} patients</p>
-          </div>
-          <span className="rounded-full bg-primary-50 px-2.5 py-0.5 text-[10.5px] font-semibold text-primary-700">cumulé</span>
-        </div>
-        <ChartContainer config={{ patients: { label: 'Patients', color: 'var(--chart-1)' } }} className="mt-1 h-[110px] w-full">
-          <AreaChart data={cumulativePatients} margin={{ top: 4, right: 4, bottom: 0, left: 4 }}>
-            <defs>
-              <linearGradient id="growthGrad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="var(--chart-1)" stopOpacity={0.25} />
-                <stop offset="100%" stopColor="var(--chart-1)" stopOpacity={0} />
-              </linearGradient>
-            </defs>
-            <CartesianGrid strokeDasharray="3 3" stroke={LIGHT_GRID} vertical={false} />
-            <XAxis dataKey="date" tick={{ fontSize: 10, fill: '#B9B2A4' }} tickLine={false} axisLine={false} interval="preserveStartEnd" />
-            <YAxis tick={{ fontSize: 10, fill: '#B9B2A4' }} width={28} tickLine={false} axisLine={false} allowDecimals={false} />
-            <ChartTooltip content={<ChartTooltipContent />} />
-            <Area type="monotone" dataKey="cumulative" name="Patients" stroke="var(--chart-1)" strokeWidth={2.2} fill="url(#growthGrad)" />
-          </AreaChart>
-        </ChartContainer>
-      </div>
-
-      {/* Activité clinique */}
-      <div className="grid grid-cols-1 gap-3.5 lg:grid-cols-3">
+      {/* Rangée 2 — chart activité + cumulé + motifs */}
+      <div className="grid grid-cols-1 gap-3 lg:grid-cols-3">
         <div className={cardClass}>
           <h3 className={cardTitleClass}>Consultations par {period === 'year' ? 'mois' : 'jour'}</h3>
           <ChartContainer config={chartConfig} className="h-[120px] w-full">
@@ -156,11 +154,34 @@ export default function ActivityView({
         </div>
 
         <div className={cardClass}>
+          <div className="flex items-baseline justify-between">
+            <p className="text-[11.5px] font-semibold uppercase tracking-wider text-stone-600">Total patients suivis</p>
+            <span className="rounded-full bg-primary-50 px-2.5 py-0.5 text-[10.5px] font-semibold text-primary-700">cumulé</span>
+          </div>
+          <p className="text-[15px] font-bold text-stone-800">{cumulativeTotal} patients</p>
+          <ChartContainer config={{ patients: { label: 'Patients', color: 'var(--chart-1)' } }} className="mt-1 h-[92px] w-full">
+            <AreaChart data={cumulativePatients} margin={{ top: 4, right: 4, bottom: 0, left: 4 }}>
+              <defs>
+                <linearGradient id="growthGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="var(--chart-1)" stopOpacity={0.25} />
+                  <stop offset="100%" stopColor="var(--chart-1)" stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke={LIGHT_GRID} vertical={false} />
+              <XAxis dataKey="date" tick={{ fontSize: 10, fill: '#B9B2A4' }} tickLine={false} axisLine={false} interval="preserveStartEnd" />
+              <YAxis tick={{ fontSize: 10, fill: '#B9B2A4' }} width={28} tickLine={false} axisLine={false} allowDecimals={false} />
+              <ChartTooltip content={<ChartTooltipContent />} />
+              <Area type="monotone" dataKey="cumulative" name="Patients" stroke="var(--chart-1)" strokeWidth={2.2} fill="url(#growthGrad)" />
+            </AreaChart>
+          </ChartContainer>
+        </div>
+
+        <div className={cardClass}>
           <h3 className={cardTitleClass}>Motifs de visite</h3>
           <div className="flex items-center gap-5">
-            <ResponsiveContainer width={104} height={104}>
+            <ResponsiveContainer width={92} height={92}>
               <PieChart>
-                <Pie data={reasonData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={46} innerRadius={30}>
+                <Pie data={reasonData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={40} innerRadius={26}>
                   {reasonData.map((_, i) => <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />)}
                 </Pie>
               </PieChart>
@@ -175,10 +196,13 @@ export default function ActivityView({
             </div>
           </div>
         </div>
+      </div>
 
+      {/* Rangée 3 — âge + arrivées + présence */}
+      <div className="grid grid-cols-1 gap-3 lg:grid-cols-3">
         <div className={cardClass}>
           <h3 className={cardTitleClass}>Répartition par âge</h3>
-          <div className="flex flex-col gap-2.5">
+          <div className="flex flex-col gap-2">
             {ageData.map((a) => (
               <div key={a.range} className="flex items-center gap-2.5">
                 <span className="w-[62px] shrink-0 text-[12px] text-stone-800">{a.range} ans</span>
@@ -191,19 +215,10 @@ export default function ActivityView({
             ))}
           </div>
         </div>
-      </div>
-
-      {/* Fonctionnement */}
-      <div className="grid grid-cols-1 gap-3.5 lg:grid-cols-3">
-        <div className={cardClass}>
-          <h3 className={cardTitleClass}>Présence aux rendez-vous</h3>
-          <p className="text-[30px] font-bold text-stone-800">{attendanceRate !== null ? `${attendanceRate}%` : '—'}</p>
-          <p className="text-[12px] text-stone-600">{totalBookings > 0 ? `${totalBookings - cancelledBookings} présents / ${totalBookings} rendez-vous` : 'Aucun rendez-vous sur cette période'}</p>
-        </div>
 
         <div className={cardClass}>
           <h3 className={cardTitleClass}>Arrivées par heure</h3>
-          <ChartContainer config={chartConfig} className="h-[100px] w-full">
+          <ChartContainer config={chartConfig} className="h-[96px] w-full">
             <BarChart data={hourlyData} margin={{ top: 4, right: 4, bottom: 0, left: -16 }}>
               <CartesianGrid strokeDasharray="3 3" stroke={LIGHT_GRID} vertical={false} />
               <XAxis dataKey="hour" tick={{ fontSize: 10, fill: '#B9B2A4' }} tickLine={false} axisLine={false} />
@@ -215,11 +230,60 @@ export default function ActivityView({
         </div>
 
         <div className={cardClass}>
+          <h3 className={cardTitleClass}>Présence aux rendez-vous</h3>
+          <p className="text-[26px] font-bold text-stone-800">{attendanceRate !== null ? `${attendanceRate}%` : '—'}</p>
+          <p className="text-[12px] text-stone-600">{totalBookings > 0 ? `${totalBookings - cancelledBookings} présents / ${totalBookings} rendez-vous` : 'Aucun rendez-vous sur cette période'}</p>
+        </div>
+      </div>
+
+      {/* Rangée 4 — classement + provenance */}
+      <div className="grid grid-cols-1 gap-3 lg:grid-cols-3">
+        <div className={cardClass}>
+          <h3 className={cardTitleClass}>
+            <TrendingUp className="me-1.5 inline size-3.5 text-emerald-600" />
+            {period === 'year' ? 'Mois' : 'Jours'} les plus actifs
+          </h3>
+          {ranked ? (
+            <div className="flex flex-col gap-1.5">
+              {ranked.top.map((d, i) => (
+                <div key={d.date} className="flex items-center gap-2.5">
+                  <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-primary-50 text-[11px] font-bold text-primary-700">{i + 1}</span>
+                  <span className="flex-1 truncate text-[12.5px] text-stone-800">{rankLabel(d.date)}</span>
+                  <span className="text-[12.5px] font-semibold text-stone-800">{rankValue(d)}</span>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-[12.5px] text-stone-500">Disponible en vue Mois ou Année.</p>
+          )}
+        </div>
+
+        <div className={cardClass}>
+          <h3 className={cardTitleClass}>
+            <TrendingDown className="me-1.5 inline size-3.5 text-red-500" />
+            {period === 'year' ? 'Mois' : 'Jours'} les moins actifs
+          </h3>
+          {ranked ? (
+            <div className="flex flex-col gap-1.5">
+              {ranked.bottom.map((d, i) => (
+                <div key={d.date} className="flex items-center gap-2.5">
+                  <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-stone-100 text-[11px] font-bold text-stone-600">{i + 1}</span>
+                  <span className="flex-1 truncate text-[12.5px] text-stone-800">{rankLabel(d.date)}</span>
+                  <span className="text-[12.5px] font-semibold text-stone-800">{rankValue(d)}</span>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-[12.5px] text-stone-500">Disponible en vue Mois ou Année.</p>
+          )}
+        </div>
+
+        <div className={cardClass}>
           <h3 className={cardTitleClass}>Provenance des patients</h3>
           {(sourceData || []).length === 0 ? (
             <p className="text-[12.5px] text-stone-500">Aucune donnée sur cette période.</p>
           ) : (
-            <div className="flex flex-col gap-2.5">
+            <div className="flex flex-col gap-2">
               {(sourceData || []).map((s, i) => (
                 <div key={s.name} className="flex items-center gap-2.5">
                   <span className="w-[110px] shrink-0 truncate text-[12px] text-stone-800">{s.name}</span>
