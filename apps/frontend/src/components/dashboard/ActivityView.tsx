@@ -156,11 +156,11 @@ export default function ActivityView({
           </ChartContainer>
           {peak && trough && (
             <div className="mt-2 flex flex-wrap gap-x-6 gap-y-1 border-t border-dashed border-warm pt-2 text-[12px] text-stone-500">
-              <span className="text-success-700">
+              <span className="text-success">
                 <span className="font-bold">↗ Pic :</span>{' '}
                 <strong className="font-bold">{formatNoteDate(peak.date)}</strong> — {peak.consultations} {peak.consultations > 1 ? 'consultations' : 'consultation'}
               </span>
-              <span className="text-error-600">
+              <span className="text-danger">
                 <span className="font-bold">↘ Creux :</span>{' '}
                 <strong className="font-bold">{formatNoteDate(trough.date)}</strong> — {trough.consultations} {trough.consultations > 1 ? 'consultations' : 'consultation'}
               </span>

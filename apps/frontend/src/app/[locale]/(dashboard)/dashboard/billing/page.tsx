@@ -8,8 +8,8 @@ const STATUS_INFO: Record<SubscriptionStatus, { label: string; badge: string; me
   trialing: { label: 'Essai gratuit', badge: 'bg-primary-50 text-primary-700', message: 'Votre essai gratuit est en cours. Aucun paiement requis jusqu’à la fin de la période.' },
   active: { label: 'Actif', badge: 'bg-success/10 text-success', message: 'Votre abonnement est à jour.' },
   past_due: { label: 'Paiement en retard', badge: 'bg-warning/10 text-warning', message: 'Votre paiement est en retard. Votre espace reste accessible, régularisez avant la fin du délai.' },
-  grace: { label: 'Lecture seule', badge: 'bg-error/10 text-error', message: 'Paiement en retard : votre espace est en lecture seule. Régularisez pour retrouver toutes les fonctionnalités.' },
-  suspended: { label: 'Suspendu', badge: 'bg-error/10 text-error', message: 'Votre abonnement est suspendu. Vos données sont conservées — contactez-nous pour restaurer votre espace.' },
+  grace: { label: 'Lecture seule', badge: 'bg-danger/10 text-danger', message: 'Paiement en retard : votre espace est en lecture seule. Régularisez pour retrouver toutes les fonctionnalités.' },
+  suspended: { label: 'Suspendu', badge: 'bg-danger/10 text-danger', message: 'Votre abonnement est suspendu. Vos données sont conservées — contactez-nous pour restaurer votre espace.' },
   expired: { label: 'Expiré', badge: 'bg-stone-100 text-stone-600', message: 'Votre abonnement est expiré. Vos données sont conservées — contactez-nous pour reprendre.' },
   canceled: { label: 'Résilié', badge: 'bg-stone-100 text-stone-600', message: 'Votre abonnement a été résilié. Vos données sont conservées.' },
 }
@@ -73,7 +73,7 @@ export default async function BillingPage() {
           )}
 
           {(blocked || readOnly) && (
-            <div className="rounded-xl border border-error/20 bg-error/5 p-4">
+            <div className="rounded-xl border border-error/20 bg-danger/5 p-4">
               <p className="text-sm font-medium text-stone-800">Pour régulariser</p>
               <p className="mt-1 text-sm text-stone-600">
                 Contactez le support par email à <a className="font-medium text-primary-700" href="mailto:contact@etabibi.ma">contact@etabibi.ma</a> pour organiser le paiement (virement ou carte).

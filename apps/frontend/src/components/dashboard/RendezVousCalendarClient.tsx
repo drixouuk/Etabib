@@ -34,8 +34,8 @@ const STATUS_LABELS: Record<string, string> = {
 const STATUS_CLASSES: Record<string, string> = {
   accepted: 'bg-success/10 text-success',
   pending: 'bg-warning/10 text-warning',
-  cancelled: 'bg-error/10 text-error',
-  rejected: 'bg-error/10 text-error',
+  cancelled: 'bg-danger/10 text-danger',
+  rejected: 'bg-danger/10 text-danger',
 }
 
 // Formatters Intl créés une seule fois (module scope) — pas d'instanciation par render
@@ -621,7 +621,7 @@ export default function RendezVousCalendarClient({ initialBookings, tenantId }: 
                           e.stopPropagation()
                           cancelBooking(b)
                         }}
-                        className="text-[12px] font-semibold text-error transition-colors hover:underline"
+                        className="text-[12px] font-semibold text-danger transition-colors hover:underline"
                       >
                         Annuler
                       </button>

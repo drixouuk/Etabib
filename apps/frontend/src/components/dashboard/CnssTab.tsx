@@ -173,7 +173,7 @@ export default function CnssTab({ patient, consultations, doctorInfo }: Props) {
                 />
               </div>
             </div>
-            {cnssError && <p className="text-[12.5px] font-medium text-error-600">{cnssError}</p>}
+            {cnssError && <p className="text-[12.5px] font-medium text-danger">{cnssError}</p>}
             <div className="flex items-center gap-3">
               <button
                 type="button"

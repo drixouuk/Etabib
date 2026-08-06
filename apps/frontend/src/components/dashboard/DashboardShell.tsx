@@ -65,7 +65,7 @@ export default function DashboardShell({ user, tenant, billingStatus, children }
           </div>
         )}
         {billingStatus === 'grace' && (
-          <div className="border-b border-error/25 bg-error/10 px-4 py-2 text-center text-xs font-medium text-stone-800">
+          <div className="border-b border-danger/25 bg-danger/10 px-4 py-2 text-center text-xs font-medium text-stone-800">
             Paiement en retard : espace en <strong>lecture seule</strong> —{' '}
             <Link href="/dashboard/billing" className="font-semibold underline underline-offset-2">régularisez pour retrouver toutes les fonctionnalités</Link>.
           </div>

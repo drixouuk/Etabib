@@ -211,7 +211,7 @@ export default function WaitingRoomList({ tenantId, isClinique, currentDoctorId 
                     <span className={`inline-block rounded px-1.5 py-0.5 font-medium ${
                       item.visitReason === 'controle' ? 'bg-info/10 text-info' :
                       item.visitReason === 'vaccin' ? 'bg-secondary/10 text-secondary-700' :
-                      item.visitReason === 'urgence' ? 'bg-error/10 text-error' :
+                      item.visitReason === 'urgence' ? 'bg-danger/10 text-danger' :
                       'bg-stone-100 text-stone-800'
                     }`}>
                       {visitReasonLabel(item.visitReason)}
