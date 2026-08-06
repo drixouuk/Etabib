@@ -315,6 +315,18 @@ export interface Media {
 export interface Patient {
   id: number;
   healthIdentifier?: string | null;
+  /**
+   * Numéro figurant sur la carte d’affiliation — nécessaire pour la feuille de soins électronique (FSE) et le futur dossier patient partagé (DMP).
+   */
+  cnssRegistrationNumber?: string | null;
+  /**
+   * Anticipe la logique de remboursement différenciée par régime.
+   */
+  cnssRegime?: ('independant' | 'salarie' | 'ayant_droit' | 'etudiant') | null;
+  /**
+   * Traçabilité de l’upload de la carte d’affiliation (OCR à venir).
+   */
+  cnssCardUploadedAt?: string | null;
   tenant: number | Tenant;
   fullName: string;
   gender: 'boy' | 'girl';
@@ -1014,6 +1026,9 @@ export interface UsersSelect<T extends boolean = true> {
  */
 export interface PatientsSelect<T extends boolean = true> {
   healthIdentifier?: T;
+  cnssRegistrationNumber?: T;
+  cnssRegime?: T;
+  cnssCardUploadedAt?: T;
   tenant?: T;
   fullName?: T;
   gender?: T;

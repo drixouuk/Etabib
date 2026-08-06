@@ -146,6 +146,34 @@ export const Patients: CollectionConfig = {
       type: 'text',
       label: 'Identifiant santé unique (CNSS) — à connecter plus tard',
     },
+    // Bloc CNSS/AMO (roadmap FSE/DMP) — champs optionnels, aucune contrainte
+    // de format stricte (la CNSS n'a pas publié de format canonique unique) :
+    // le numéro d'immatriculation sera la clé de référence de la future FSE
+    // et du DMP. `cnssCardUploadedAt` trace l'upload de carte (OCR futur).
+    {
+      name: 'cnssRegistrationNumber',
+      type: 'text',
+      label: "Numéro d'immatriculation CNSS/AMO",
+      admin: { description: 'Numéro figurant sur la carte d\u2019affiliation — nécessaire pour la feuille de soins électronique (FSE) et le futur dossier patient partagé (DMP).' },
+    },
+    {
+      name: 'cnssRegime',
+      type: 'select',
+      options: [
+        { label: 'Indépendant', value: 'independant' },
+        { label: 'Salarié', value: 'salarie' },
+        { label: 'Ayant droit', value: 'ayant_droit' },
+        { label: 'Étudiant', value: 'etudiant' },
+      ],
+      label: 'Régime CNSS/AMO',
+      admin: { description: 'Anticipe la logique de remboursement différenciée par régime.' },
+    },
+    {
+      name: 'cnssCardUploadedAt',
+      type: 'date',
+      label: 'Carte CNSS uploadée le',
+      admin: { date: { pickerAppearance: 'dayOnly' }, description: 'Traçabilité de l\u2019upload de la carte d\u2019affiliation (OCR à venir).' },
+    },
     {
       name: 'tenant',
       type: 'relationship',
