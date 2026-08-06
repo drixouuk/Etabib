@@ -1,9 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 import { generateConsultationPDF, type DoctorInfo, type PatientInfo } from '@/lib/generate-pdf'
-import FseStatusBadge, { FSE_STATUS_OPTIONS, type FseStatus } from '@/components/dashboard/FseStatusBadge'
+import FseStatusBadge from '@/components/dashboard/FseStatusBadge'
 import CnssPortalEmbed from '@/components/dashboard/CnssPortalEmbed'
 
 type Consultation = {
@@ -27,7 +26,6 @@ type Props = {
 }
 
 export default function ConsultationHistory({ consultations, doctorInfo, patientInfo, onEdit }: Props) {
-  const router = useRouter()
   const [filterQuery, setFilterQuery] = useState('')
   const [filterDateFrom, setFilterDateFrom] = useState('')
   const [filterDateTo, setFilterDateTo] = useState('')
@@ -45,22 +43,6 @@ export default function ConsultationHistory({ consultations, doctorInfo, patient
     }
     return true
   })
-
-  // Mise à jour manuelle du statut FSE (déclaratif — retour CNSS).
-  // Quand le statut passe à 'envoyee' sans date d'envoi, la date du jour est
-  // posée par défaut (base de l'alerte de délai anormal).
-  const updateFseStatus = async (c: Consultation, value: string) => {
-    const body: Record<string, unknown> = { fseStatus: value }
-    if (value === 'envoyee' && !c.fseSentAt) {
-      body.fseSentAt = new Date().toISOString()
-    }
-    const res = await fetch(`/api/cms-proxy/consultations/${c.id}`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body),
-    }).catch(() => null)
-    if (res && res.ok) router.refresh()
-  }
 
   return (
     <div>
@@ -116,17 +98,6 @@ export default function ConsultationHistory({ consultations, doctorInfo, patient
                 </span>
                 <span className="flex items-center gap-2">
                   <FseStatusBadge status={c.fseStatus} sentAt={c.fseSentAt} />
-                  <select
-                    value={c.fseStatus || 'non_envoyee'}
-                    onChange={(e) => updateFseStatus(c, e.target.value)}
-                    title="Mettre à jour le statut FSE (après retour CNSS)"
-                    aria-label="Statut FSE"
-                    className="rounded-md border border-warm bg-white px-1.5 py-0.5 text-[10.5px] font-semibold text-stone-700 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20"
-                  >
-                    {FSE_STATUS_OPTIONS.map((o) => (
-                      <option key={o.value} value={o.value}>{o.label}</option>
-                    ))}
-                  </select>
                   {c.diagnostic && doctorInfo && patientInfo && (
                     <button
                       onClick={() => generateConsultationPDF(doctorInfo, patientInfo, {

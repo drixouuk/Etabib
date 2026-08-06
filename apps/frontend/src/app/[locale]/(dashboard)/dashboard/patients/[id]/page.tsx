@@ -15,6 +15,7 @@ import ReferringPractitionersWidget from './ReferringPractitionersWidget'
 import SharePatientWidget from './SharePatientWidget'
 import PatientAvatar from '@/components/dashboard/PatientAvatar'
 import OfflineDossierCache from '@/components/dashboard/OfflineDossierCache'
+import CnssTab from '@/components/dashboard/CnssTab'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 
@@ -30,6 +31,9 @@ type Patient = {
   phone?: string | null
   email?: string | null
   nationalId?: string | null
+  cnssRegistrationNumber?: string | null
+  cnssRegime?: string | null
+  cnssCardUploadedAt?: string | null
   antecedents?: string
   allergies?: string
   traitementsEnCours?: string
@@ -229,6 +233,7 @@ export default async function PatientDetailPage({ params }: Props) {
           <TabsTrigger value="croissance" className="data-[state=active]:text-primary-700 data-[state=active]:font-semibold after:bg-primary-500">Croissance</TabsTrigger>
           <TabsTrigger value="vaccins" className="data-[state=active]:text-primary-700 data-[state=active]:font-semibold after:bg-primary-500">Carnet vaccinal</TabsTrigger>
           <TabsTrigger value="consultations" className="data-[state=active]:text-primary-700 data-[state=active]:font-semibold after:bg-primary-500">Consultations & ordonnances</TabsTrigger>
+          <TabsTrigger value="cnss" className="data-[state=active]:text-primary-700 data-[state=active]:font-semibold after:bg-primary-500">CNSS</TabsTrigger>
           <TabsTrigger value="documents" className="data-[state=active]:text-primary-700 data-[state=active]:font-semibold after:bg-primary-500">Documents</TabsTrigger>
         </TabsList>
 
@@ -326,6 +331,16 @@ export default async function PatientDetailPage({ params }: Props) {
               tenantId={tenantId}
               doctorInfo={doctorInfo}
               patientInfo={patientInfo}
+            />
+          )}
+        </TabsContent>
+
+        <TabsContent value="cnss">
+          {canViewClinical && (
+            <CnssTab
+              patient={patient}
+              consultations={consultations}
+              doctorInfo={doctorInfo}
             />
           )}
         </TabsContent>
