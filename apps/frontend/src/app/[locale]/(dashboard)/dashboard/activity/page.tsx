@@ -126,7 +126,7 @@ function fillChartData(
 
 export default async function ActivityPage({ searchParams }: Props) {
   const { period: periodParam } = await searchParams
-  const period: Period = (['day', 'week', 'month', 'year'] as const).includes(periodParam as any) ? (periodParam as Period) : 'week'
+  const period: Period = (['day', 'week', 'month', 'year'] as const).includes(periodParam as any) ? (periodParam as Period) : 'year'
   const { user } = await requireTier(['cabinet'])
   if (isSecretaryOnly(user)) redirect('/dashboard/rendez-vous')
   const tenantId = getTenantId(user)
