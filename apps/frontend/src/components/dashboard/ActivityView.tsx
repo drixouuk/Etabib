@@ -74,6 +74,19 @@ export default function ActivityView({
     { label: 'Patients vus', value: completedToday, icon: <CheckCheck className="size-4" />, iconClass: 'bg-primary-50 text-primary-700', topClass: 'border-t-primary-700' },
   ]
 
+  // Libellé de la note Pic/Creux selon la période : mois en lettres
+  // (année), jour en nombre (mois), jour en lettres (semaine/jour).
+  const formatNoteDate = (date: string): string => {
+    const [a, b] = date.split('/').map(Number)
+    if (period === 'year') {
+      const months = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre']
+      return months[(a || 1) - 1]
+    }
+    if (period === 'month') return String(a)
+    const d = new Date(new Date().getFullYear(), (b || 1) - 1, a)
+    return d.toLocaleDateString('fr-FR', { weekday: 'long' })
+  }
+
   // Pic / Creux de la période (note sous le graphique mensuel)
   const peak = chartData.length > 0
     ? chartData.reduce((a, b) => (b.consultations > a.consultations ? b : a), chartData[0])
@@ -145,11 +158,11 @@ export default function ActivityView({
             <div className="mt-2 flex flex-wrap gap-x-6 gap-y-1 border-t border-dashed border-warm pt-2 text-[12px] text-stone-500">
               <span>
                 <span className="font-semibold text-emerald-600">↗ Pic :</span>{' '}
-                <strong className="font-semibold text-stone-800">{peak.date}</strong> — {peak.consultations} {peak.consultations > 1 ? 'consultations' : 'consultation'}
+                <strong className="font-semibold text-stone-800">{formatNoteDate(peak.date)}</strong> — {peak.consultations} {peak.consultations > 1 ? 'consultations' : 'consultation'}
               </span>
               <span>
                 <span className="font-semibold text-red-500">↘ Creux :</span>{' '}
-                <strong className="font-semibold text-stone-800">{trough.date}</strong> — {trough.consultations} {trough.consultations > 1 ? 'consultations' : 'consultation'}
+                <strong className="font-semibold text-stone-800">{formatNoteDate(trough.date)}</strong> — {trough.consultations} {trough.consultations > 1 ? 'consultations' : 'consultation'}
               </span>
             </div>
           )}
