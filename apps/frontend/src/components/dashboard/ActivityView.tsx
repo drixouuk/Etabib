@@ -123,7 +123,7 @@ export default function ActivityView({
         {/* Rangée 1 — KPI : bande unique, segments séparés */}
         <div className="col-span-12 flex flex-col divide-y divide-warm overflow-hidden rounded-xl border border-warm bg-white shadow-sm sm:flex-row sm:divide-x sm:divide-y-0">
           {kpiCards.map((k) => (
-            <div key={k.label} className="flex flex-1 items-center gap-3 px-4 py-2.5">
+            <div key={k.label} className="flex flex-1 items-center gap-3 px-4 py-2">
               <div className={`flex size-8 shrink-0 items-center justify-center rounded-[9px] ${k.iconClass}`}>{k.icon}</div>
               <div>
                 <div className="font-heading text-[19px] font-semibold leading-none text-stone-800">{k.value}</div>
@@ -134,7 +134,7 @@ export default function ActivityView({
         </div>
 
         {/* Rangée 2 — rythme d'activité (lecture principale) + croissance fichier */}
-        <div className="col-span-12 flex min-h-0 flex-col rounded-xl border border-warm bg-white p-4 shadow-sm lg:col-span-8">
+        <div className="col-span-12 flex min-h-0 flex-col rounded-xl border border-warm bg-white p-3.5 shadow-sm lg:col-span-8">
           <div className="mb-2 flex flex-wrap items-baseline justify-between gap-2">
             <h3 className="font-heading text-[15px] font-semibold text-stone-800">
               Consultations par {period === 'year' ? 'mois' : 'jour'}
@@ -144,7 +144,7 @@ export default function ActivityView({
               <span className="flex items-center gap-1.5"><i className="size-2 rounded-full bg-[var(--chart-3)]" />Nouveaux patients</span>
             </div>
           </div>
-          <ChartContainer config={chartConfig} className="h-[150px] w-full">
+          <ChartContainer config={chartConfig} className="h-[135px] w-full">
             <BarChart data={chartData} margin={{ top: 4, right: 4, bottom: 0, left: -16 }}>
               <CartesianGrid strokeDasharray="3 3" stroke={LIGHT_GRID} vertical={false} />
               <XAxis dataKey="date" tick={{ fontSize: 10, fill: '#B9B2A4' }} tickLine={false} axisLine={false} />
@@ -168,7 +168,7 @@ export default function ActivityView({
           )}
         </div>
 
-        <div className="col-span-12 flex flex-col rounded-xl border border-warm bg-white p-4 shadow-sm lg:col-span-4">
+        <div className="col-span-12 flex flex-col rounded-xl border border-warm bg-white p-3.5 shadow-sm lg:col-span-4">
           <p className="text-[11px] font-semibold uppercase tracking-wider text-stone-500">Total patients suivis</p>
           <p className="mt-1 font-heading text-[26px] font-semibold leading-none tracking-[-.01em] text-stone-800">{cumulativeTotal} patients</p>
           <ChartContainer config={{ patients: { label: 'Patients', color: 'var(--chart-1)' } }} className="mt-auto h-[64px] w-full">
@@ -195,11 +195,11 @@ export default function ActivityView({
         </div>
 
         {/* Rangée 3 — présence (jauge) + motifs + âge */}
-        <div className="col-span-12 flex flex-col rounded-xl border border-warm bg-white p-4 shadow-sm lg:col-span-4">
+        <div className="col-span-12 flex flex-col rounded-xl border border-warm bg-white p-3.5 shadow-sm lg:col-span-4">
           <h3 className={cardTitleClass}>Présence aux rendez-vous</h3>
           {attendanceRate !== null ? (
             <div className="flex flex-1 items-center gap-4">
-              <svg width="84" height="84" viewBox="0 0 92 92" role="img" aria-label={`${attendanceRate}% de présence`}>
+              <svg width="80" height="80" viewBox="0 0 92 92" role="img" aria-label={`${attendanceRate}% de présence`}>
                 <circle cx="46" cy="46" r="38" fill="none" strokeWidth="10" className="stroke-stone-200" />
                 <circle cx="46" cy="46" r="38" fill="none" strokeWidth="10"
                   strokeDasharray={`${(2 * Math.PI * 38 * attendanceRate) / 100} ${2 * Math.PI * 38}`}
@@ -215,10 +215,10 @@ export default function ActivityView({
           )}
         </div>
 
-        <div className="col-span-12 flex flex-col rounded-xl border border-warm bg-white p-4 shadow-sm lg:col-span-4">
+        <div className="col-span-12 flex flex-col rounded-xl border border-warm bg-white p-3.5 shadow-sm lg:col-span-4">
           <h3 className={cardTitleClass}>Motifs de visite</h3>
           <div className="flex flex-1 items-center gap-4">
-            <ResponsiveContainer width={92} height={92}>
+            <ResponsiveContainer width={88} height={88}>
               <PieChart>
                 <Pie data={reasonData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={46} innerRadius={30}>
                   {reasonData.map((_, i) => <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />)}
@@ -237,7 +237,7 @@ export default function ActivityView({
           </div>
         </div>
 
-        <div className="col-span-12 flex flex-col rounded-xl border border-warm bg-white p-4 shadow-sm lg:col-span-4">
+        <div className="col-span-12 flex flex-col rounded-xl border border-warm bg-white p-3.5 shadow-sm lg:col-span-4">
           <h3 className={cardTitleClass}>Répartition par âge</h3>
           <div className="flex flex-1 flex-col justify-center gap-3">
             {ageData.map((a) => (
@@ -254,9 +254,9 @@ export default function ActivityView({
         </div>
 
         {/* Rangée 4 — arrivées (large) + provenance */}
-        <div className="col-span-12 flex flex-col rounded-xl border border-warm bg-white p-4 shadow-sm lg:col-span-7">
+        <div className="col-span-12 flex flex-col rounded-xl border border-warm bg-white p-3.5 shadow-sm lg:col-span-7">
           <h3 className={cardTitleClass}>Arrivées par heure</h3>
-          <ChartContainer config={chartConfig} className="h-[105px] w-full">
+          <ChartContainer config={chartConfig} className="h-[95px] w-full">
             <BarChart data={hourlyData} margin={{ top: 4, right: 4, bottom: 0, left: -16 }}>
               <CartesianGrid strokeDasharray="3 3" stroke={LIGHT_GRID} vertical={false} />
               <XAxis dataKey="hour" tick={{ fontSize: 10, fill: '#B9B2A4' }} tickLine={false} axisLine={false} />
@@ -267,7 +267,7 @@ export default function ActivityView({
           </ChartContainer>
         </div>
 
-        <div className="col-span-12 flex flex-col rounded-xl border border-warm bg-white p-4 shadow-sm lg:col-span-5">
+        <div className="col-span-12 flex flex-col rounded-xl border border-warm bg-white p-3.5 shadow-sm lg:col-span-5">
           <h3 className={cardTitleClass}>Provenance des patients</h3>
           {(sourceData || []).length === 0 ? (
             <p className="text-[12.5px] text-stone-500">Aucune donnée sur cette période.</p>
