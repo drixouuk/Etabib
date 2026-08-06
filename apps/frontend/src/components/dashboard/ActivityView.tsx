@@ -4,8 +4,7 @@
 import { useRouter, useSearchParams } from 'next/navigation'
 import { BarChart, Bar, AreaChart, Area, XAxis, YAxis, CartesianGrid, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts'
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart'
-import { UserPlus, Stethoscope, CheckCheck, TrendingUp, TrendingDown } from 'lucide-react'
-import type { ActivityRanking } from '@/app/[locale]/(dashboard)/dashboard/activity/page'
+import { UserPlus, Stethoscope, CheckCheck } from 'lucide-react'
 
 type Props = {
   period: 'day' | 'week' | 'month' | 'year'
@@ -22,7 +21,6 @@ type Props = {
   attendanceRate: number | null
   totalBookings: number
   cancelledBookings: number
-  ranking: ActivityRanking
 }
 
 function trendFor(period: string, count: number): string | null {
@@ -40,7 +38,7 @@ const cardClass = 'rounded-xl border border-warm bg-white p-3.5 shadow-sm'
 const cardTitleClass = 'mb-2 font-heading text-[13.5px] font-semibold text-stone-800'
 
 export default function ActivityView({
-  period, newPatients, consultationsDone, completedToday, reasonData, hourlyData, sourceData, chartData, cumulativePatients, cumulativeTotal, ageData, attendanceRate, totalBookings, cancelledBookings, ranking,
+  period, newPatients, consultationsDone, completedToday, reasonData, hourlyData, sourceData, chartData, cumulativePatients, cumulativeTotal, ageData, attendanceRate, totalBookings, cancelledBookings,
 }: Props) {
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -76,12 +74,13 @@ export default function ActivityView({
     { label: 'Patients vus', value: completedToday, icon: <CheckCheck className="size-4" />, iconClass: 'bg-primary-50 text-primary-700', topClass: 'border-t-primary-700' },
   ]
 
-  const rankTitles: Record<string, { top: string; bottom: string }> = {
-    'month-day': { top: 'Jours du mois les plus actifs', bottom: 'Jours du mois les moins actifs' },
-    weekday: { top: 'Jours de la semaine les plus actifs', bottom: 'Jours de la semaine les moins actifs' },
-    month: { top: 'Mois les plus actifs', bottom: 'Mois les moins actifs' },
-  }
-  const rankTitle = ranking ? rankTitles[ranking.unit] : null
+  // Pic / Creux de la période (note sous le graphique mensuel)
+  const peak = chartData.length > 0
+    ? chartData.reduce((a, b) => (b.consultations > a.consultations ? b : a), chartData[0])
+    : null
+  const trough = chartData.length > 0
+    ? chartData.reduce((a, b) => (b.consultations < a.consultations ? b : a), chartData[0])
+    : null
 
   return (
     <div className="flex flex-col gap-3">
@@ -107,24 +106,32 @@ export default function ActivityView({
         </div>
       </div>
 
-      {/* Rangée 1 — KPI : bande unique, segments séparés (bento) */}
-      <div className="flex shrink-0 flex-col divide-y divide-warm overflow-hidden rounded-xl border border-warm bg-white shadow-sm sm:flex-row sm:divide-x sm:divide-y-0">
-        {kpiCards.map((k) => (
-          <div key={k.label} className="flex flex-1 items-center gap-2.5 px-4 py-2.5">
-            <div className={`flex size-8 shrink-0 items-center justify-center rounded-lg ${k.iconClass}`}>{k.icon}</div>
-            <div>
-              <div className="text-[15px] font-semibold leading-tight text-stone-800">{k.value}</div>
-              <div className="text-[11px] text-stone-500">{k.label}</div>
+      <div className="grid grid-cols-12 gap-3">
+        {/* Rangée 1 — KPI : bande unique, segments séparés */}
+        <div className="col-span-12 flex flex-col divide-y divide-warm overflow-hidden rounded-xl border border-warm bg-white shadow-sm sm:flex-row sm:divide-x sm:divide-y-0">
+          {kpiCards.map((k) => (
+            <div key={k.label} className="flex flex-1 items-center gap-3 px-5 py-3">
+              <div className={`flex size-9 shrink-0 items-center justify-center rounded-[9px] ${k.iconClass}`}>{k.icon}</div>
+              <div>
+                <div className="font-heading text-[22px] font-semibold leading-none text-stone-800">{k.value}</div>
+                <div className="mt-1 text-[12.5px] text-stone-500">{k.label}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Rangée 2 — rythme d'activité (lecture principale) + croissance fichier */}
+        <div className="col-span-12 flex min-h-0 flex-col rounded-xl border border-warm bg-white p-4 shadow-sm lg:col-span-8">
+          <div className="mb-2 flex flex-wrap items-baseline justify-between gap-2">
+            <h3 className="font-heading text-[15px] font-semibold text-stone-800">
+              Consultations par {period === 'year' ? 'mois' : 'jour'}
+            </h3>
+            <div className="flex gap-3.5 text-[11.5px] text-stone-500">
+              <span className="flex items-center gap-1.5"><i className="size-2 rounded-full bg-[var(--chart-1)]" />Consultations</span>
+              <span className="flex items-center gap-1.5"><i className="size-2 rounded-full bg-[var(--chart-3)]" />Nouveaux patients</span>
             </div>
           </div>
-        ))}
-      </div>
-
-      {/* Rangée 2 — bento 2fr/1fr (importance) */}
-      <div className="grid grid-cols-1 gap-3 lg:grid-cols-[2fr_1fr]">
-        <div className="flex h-[200px] flex-col justify-between rounded-xl border border-warm bg-white p-3.5 shadow-sm">
-          <h3 className={cardTitleClass}>Consultations par {period === 'year' ? 'mois' : 'jour'}</h3>
-          <ChartContainer config={chartConfig} className="h-[130px] w-full">
+          <ChartContainer config={chartConfig} className="h-[190px] w-full">
             <BarChart data={chartData} margin={{ top: 4, right: 4, bottom: 0, left: -16 }}>
               <CartesianGrid strokeDasharray="3 3" stroke={LIGHT_GRID} vertical={false} />
               <XAxis dataKey="date" tick={{ fontSize: 10, fill: '#B9B2A4' }} tickLine={false} axisLine={false} />
@@ -134,14 +141,24 @@ export default function ActivityView({
               <Bar dataKey="newPatients" name="Nouveaux patients" fill="var(--chart-3)" radius={[4, 4, 0, 0]} barSize={12} />
             </BarChart>
           </ChartContainer>
+          {peak && trough && (
+            <div className="mt-2.5 flex flex-wrap gap-x-6 gap-y-1 border-t border-dashed border-warm pt-2.5 text-[12.5px] text-stone-500">
+              <span>
+                <span className="font-semibold text-emerald-600">↗ Pic :</span>{' '}
+                <strong className="font-semibold text-stone-800">{peak.date}</strong> — {peak.consultations} {peak.consultations > 1 ? 'consultations' : 'consultation'}
+              </span>
+              <span>
+                <span className="font-semibold text-red-500">↘ Creux :</span>{' '}
+                <strong className="font-semibold text-stone-800">{trough.date}</strong> — {trough.consultations} {trough.consultations > 1 ? 'consultations' : 'consultation'}
+              </span>
+            </div>
+          )}
         </div>
 
-        <div className="flex h-[200px] flex-col justify-between rounded-xl border border-warm bg-white p-3.5 shadow-sm">
-          <div>
-            <p className="text-[11.5px] font-semibold uppercase tracking-wider text-stone-500">Total patients suivis</p>
-            <p className="mt-0.5 text-[22px] font-semibold text-stone-800">{cumulativeTotal} patients</p>
-          </div>
-          <ChartContainer config={{ patients: { label: 'Patients', color: 'var(--chart-1)' } }} className="h-[70px] w-full">
+        <div className="col-span-12 flex flex-col rounded-xl border border-warm bg-white p-4 shadow-sm lg:col-span-4">
+          <p className="text-[11px] font-semibold uppercase tracking-wider text-stone-500">Total patients suivis</p>
+          <p className="mt-1 font-heading text-[30px] font-semibold leading-none tracking-[-.01em] text-stone-800">{cumulativeTotal} patients</p>
+          <ChartContainer config={{ patients: { label: 'Patients', color: 'var(--chart-1)' } }} className="mt-auto h-[80px] w-full">
             <AreaChart data={cumulativePatients} margin={{ top: 4, right: 4, bottom: 0, left: 4 }}>
               <defs>
                 <linearGradient id="growthGrad" x1="0" y1="0" x2="0" y2="1">
@@ -156,125 +173,107 @@ export default function ActivityView({
               <Area type="monotone" dataKey="cumulative" name="Patients" stroke="var(--chart-1)" strokeWidth={2.2} fill="url(#growthGrad)" />
             </AreaChart>
           </ChartContainer>
+          {cumulativePatients.length > 1 && (
+            <div className="mt-1 flex justify-between font-mono text-[10px] text-stone-500">
+              <span>{cumulativePatients[0].date}</span>
+              <span>{cumulativePatients[cumulativePatients.length - 1].date}</span>
+            </div>
+          )}
         </div>
-      </div>
 
-      {/* Rangée 3 — 3 colonnes égales */}
-      <div className="grid grid-cols-1 gap-3 lg:grid-cols-3">
-        <div className="flex h-[150px] flex-col justify-between rounded-xl border border-warm bg-white p-3.5 shadow-sm">
+        {/* Rangée 3 — présence (jauge) + motifs + âge */}
+        <div className="col-span-12 flex flex-col rounded-xl border border-warm bg-white p-4 shadow-sm lg:col-span-4">
+          <h3 className={cardTitleClass}>Présence aux rendez-vous</h3>
+          {attendanceRate !== null ? (
+            <div className="flex flex-1 items-center gap-4">
+              <svg width="92" height="92" viewBox="0 0 92 92" role="img" aria-label={`${attendanceRate}% de présence`}>
+                <circle cx="46" cy="46" r="38" fill="none" strokeWidth="10" className="stroke-stone-200" />
+                <circle cx="46" cy="46" r="38" fill="none" strokeWidth="10"
+                  strokeDasharray={`${(2 * Math.PI * 38 * attendanceRate) / 100} ${2 * Math.PI * 38}`}
+                  transform="rotate(-90 46 46)" strokeLinecap="round" className="stroke-[var(--chart-1)]" />
+                <text x="46" y="51" textAnchor="middle" className="fill-stone-800 font-heading text-[19px] font-semibold">{attendanceRate}%</text>
+              </svg>
+              <p className="max-w-[140px] text-[12.5px] text-stone-500">
+                de patients présents sur la période ({totalBookings - cancelledBookings} / {totalBookings})
+              </p>
+            </div>
+          ) : (
+            <p className="text-[12.5px] text-stone-500">Aucun rendez-vous sur cette période.</p>
+          )}
+        </div>
+
+        <div className="col-span-12 flex flex-col rounded-xl border border-warm bg-white p-4 shadow-sm lg:col-span-4">
+          <h3 className={cardTitleClass}>Motifs de visite</h3>
+          <div className="flex flex-1 items-center gap-4">
+            <ResponsiveContainer width={104} height={104}>
+              <PieChart>
+                <Pie data={reasonData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={46} innerRadius={30}>
+                  {reasonData.map((_, i) => <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />)}
+                </Pie>
+              </PieChart>
+            </ResponsiveContainer>
+            <ul className="flex flex-1 flex-col gap-2 text-[13px] text-stone-800">
+              {reasonData.map((r, i) => (
+                <li key={r.name} className="flex items-center gap-2">
+                  <i className="size-2 shrink-0 rounded-full" style={{ background: PIE_COLORS[i % PIE_COLORS.length] }} />
+                  <span className="flex-1">{r.name}</span>
+                  <b className="font-mono text-[12px] font-medium text-stone-600">{r.value}</b>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
+        <div className="col-span-12 flex flex-col rounded-xl border border-warm bg-white p-4 shadow-sm lg:col-span-4">
           <h3 className={cardTitleClass}>Répartition par âge</h3>
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-1 flex-col justify-center gap-3">
             {ageData.map((a) => (
-              <div key={a.range} className="flex items-center gap-2.5">
-                <span className="w-[62px] shrink-0 text-[12px] text-stone-800">{a.range} ans</span>
-                <div className="h-2 flex-1 rounded-md bg-stone-200 overflow-hidden">
-                  <div className="h-full rounded-md bg-primary-500 transition-all duration-700"
+              <div key={a.range} className="grid grid-cols-[86px_1fr_22px] items-center gap-2.5 text-[13px]">
+                <span className="text-stone-800">{a.range} ans</span>
+                <span className="h-2 overflow-hidden rounded-full bg-stone-200">
+                  <span className="block h-full rounded-full bg-primary-500 transition-all duration-700"
                     style={{ width: `${Math.round((a.count / maxAge) * 100)}%` }} />
-                </div>
-                <span className="w-[26px] text-end text-[12px] font-semibold text-stone-800">{a.count}</span>
+                </span>
+                <b className="text-end font-mono text-[12px] font-medium text-stone-600">{a.count}</b>
               </div>
             ))}
           </div>
         </div>
 
-        <div className="flex h-[150px] flex-col justify-between rounded-xl border border-warm bg-white p-3.5 shadow-sm">
+        {/* Rangée 4 — arrivées (large) + provenance */}
+        <div className="col-span-12 flex flex-col rounded-xl border border-warm bg-white p-4 shadow-sm lg:col-span-7">
           <h3 className={cardTitleClass}>Arrivées par heure</h3>
-          <ChartContainer config={chartConfig} className="h-[90px] w-full">
+          <ChartContainer config={chartConfig} className="h-[130px] w-full">
             <BarChart data={hourlyData} margin={{ top: 4, right: 4, bottom: 0, left: -16 }}>
               <CartesianGrid strokeDasharray="3 3" stroke={LIGHT_GRID} vertical={false} />
               <XAxis dataKey="hour" tick={{ fontSize: 10, fill: '#B9B2A4' }} tickLine={false} axisLine={false} />
               <YAxis tick={{ fontSize: 10, fill: '#B9B2A4' }} width={28} allowDecimals={false} />
               <ChartTooltip content={<ChartTooltipContent />} />
-              <Bar dataKey="count" name="Arrivées" fill="var(--chart-1)" radius={[4, 4, 0, 0]} barSize={12} />
+              <Bar dataKey="count" name="Arrivées" fill="var(--chart-1)" radius={[4, 4, 0, 0]} barSize={14} />
             </BarChart>
           </ChartContainer>
         </div>
 
-        <div className="flex h-[150px] flex-col justify-between rounded-xl border border-warm bg-white p-3.5 shadow-sm">
-          <div>
-            <h3 className={cardTitleClass}>Motifs de visite</h3>
-            <div className="flex items-center gap-2.5">
-              <ResponsiveContainer width={36} height={36}>
-                <PieChart>
-                  <Pie data={reasonData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={16} innerRadius={10}>
-                    {reasonData.map((_, i) => <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />)}
-                  </Pie>
-                </PieChart>
-              </ResponsiveContainer>
-              <div className="flex flex-col gap-1 text-[11.5px] leading-snug text-stone-800">
-                {reasonData.slice(0, 3).map((r, i) => (
-                  <span key={r.name} className="flex items-center gap-1.5">
-                    <i className="size-2 rounded-sm shrink-0 inline-block" style={{ background: PIE_COLORS[i % PIE_COLORS.length] }} />
-                    {r.name} {r.value}
-                  </span>
-                ))}
-              </div>
-            </div>
-          </div>
-          <div className="border-t border-warm pt-2">
-            <div className="text-[12px] text-stone-500">Présence aux rendez-vous</div>
-            <div className="text-[18px] font-semibold leading-tight text-stone-800">{attendanceRate !== null ? `${attendanceRate}%` : '—'}</div>
-          </div>
-        </div>
-      </div>
-
-      {/* Rangée 4 — classement + provenance */}
-      <div className="grid grid-cols-1 gap-3 lg:grid-cols-3">
-        {rankTitle && ranking && (
-          <div className="flex h-[120px] flex-col rounded-xl border border-warm bg-white p-3.5 shadow-sm">
-            <h3 className={cardTitleClass}>
-              <TrendingUp className="me-1.5 inline size-3.5 text-emerald-600" />
-              {rankTitle.top}
-            </h3>
-            <div className="flex flex-col gap-1">
-              {ranking.top.map((d, i) => (
-                <div key={d.label} className="flex items-center gap-2 text-[12px] leading-tight text-stone-800">
-                  <span className="w-3.5 text-[11px] font-bold text-stone-400">{i + 1}</span>
-                  <span className="flex-1 truncate">{d.label}</span>
-                  <span className="font-semibold">{d.count}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {rankTitle && ranking && (
-          <div className="flex h-[120px] flex-col rounded-xl border border-warm bg-white p-3.5 shadow-sm">
-            <h3 className={cardTitleClass}>
-              <TrendingDown className="me-1.5 inline size-3.5 text-red-500" />
-              {rankTitle.bottom}
-            </h3>
-            <div className="flex flex-col gap-1">
-              {ranking.bottom.map((d, i) => (
-                <div key={d.label} className="flex items-center gap-2 text-[12px] leading-tight text-stone-800">
-                  <span className="w-3.5 text-[11px] font-bold text-stone-400">{i + 1}</span>
-                  <span className="flex-1 truncate">{d.label}</span>
-                  <span className="font-semibold">{d.count}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        <div className="flex h-[120px] flex-col justify-between rounded-xl border border-warm bg-white p-3.5 shadow-sm">
+        <div className="col-span-12 flex flex-col rounded-xl border border-warm bg-white p-4 shadow-sm lg:col-span-5">
           <h3 className={cardTitleClass}>Provenance des patients</h3>
           {(sourceData || []).length === 0 ? (
             <p className="text-[12.5px] text-stone-500">Aucune donnée sur cette période.</p>
           ) : (
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-1 flex-col justify-center gap-3">
               {(sourceData || []).map((s, i) => (
-                <div key={s.name} className="flex items-center gap-2.5">
-                  <span className="w-[110px] shrink-0 truncate text-[12px] text-stone-800">{s.name}</span>
-                  <div className="h-2 flex-1 rounded-md bg-stone-200 overflow-hidden">
-                    <div className={`h-full rounded-md transition-all duration-700 ${['bg-primary-500', 'bg-amber-500', 'bg-orange-500', 'bg-stone-400'][i % 4]}`}
+                <div key={s.name} className="grid grid-cols-[86px_1fr_22px] items-center gap-2.5 text-[13px]">
+                  <span className="truncate text-stone-800">{s.name}</span>
+                  <span className="h-2 overflow-hidden rounded-full bg-stone-200">
+                    <span className={`block h-full rounded-full transition-all duration-700 ${['bg-primary-500', 'bg-amber-500', 'bg-orange-500', 'bg-stone-400'][i % 4]}`}
                       style={{ width: `${Math.round((s.value / maxSource) * 100)}%` }} />
-                  </div>
-                  <span className="w-[26px] text-end text-[12px] font-semibold text-stone-800">{s.value}</span>
+                  </span>
+                  <b className="text-end font-mono text-[12px] font-medium text-stone-600">{s.value}</b>
                 </div>
               ))}
             </div>
           )}
         </div>
+
       </div>
     </div>
   )
