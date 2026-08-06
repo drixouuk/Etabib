@@ -177,7 +177,7 @@ export default async function PatientDetailPage({ params }: Props) {
   } : undefined
 
   return (
-    <div className="mx-auto max-w-container px-4 py-12 md:px-6 lg:px-8">
+    <div className="mx-auto max-w-container px-4 py-8 md:px-6 lg:px-8">
       {/* Back link */}
       <Link href="/dashboard/patients" className="inline-flex items-center gap-1.5 pb-3.5 text-[13px] text-stone-600 hover:text-primary-700">
         <ArrowLeft className="size-[15px]" />
@@ -189,7 +189,7 @@ export default async function PatientDetailPage({ params }: Props) {
         <div className="flex items-center gap-4">
           <PatientAvatar fullName={patient.fullName} gender={patient.gender as 'boy' | 'girl' | null} size="lg" />
           <div>
-            <h1 className="font-heading text-3xl font-bold text-stone-800">{patient.fullName}</h1>
+            <h1 className="font-heading text-[27px] font-bold tracking-tight text-stone-800">{patient.fullName}</h1>
             <div className="mt-1 flex flex-wrap gap-x-3 gap-y-0.5 text-sm text-stone-600">
               {patient.nationalId && <span>CIN : {patient.nationalId}</span>}
               {patient.birthDate && (
