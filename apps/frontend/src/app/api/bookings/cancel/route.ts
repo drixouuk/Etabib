@@ -30,8 +30,10 @@ export async function GET(request: NextRequest) {
     body: JSON.stringify({ status: 'cancelled' }),
   })
 
-  // B7 — annulation : les lectures calbookings mises en cache se rafraîchissent.
-  revalidateTag('col:calbookings', 'default')
+  // B7 — annulation : les lectures calbookings mises en cache se rafraîchissent,
+  // scopées au tenant du rendez-vous annulé.
+  const cancelTenantId = typeof booking.tenant === 'object' ? booking.tenant.id : booking.tenant
+  revalidateTag(cancelTenantId ? `col:calbookings:tenant:${cancelTenantId}` : 'col:calbookings', 'default')
 
   return new NextResponse('Votre rendez-vous a été annulé.', { status: 200 })
 }

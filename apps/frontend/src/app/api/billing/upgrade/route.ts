@@ -50,9 +50,9 @@ export async function POST(req: NextRequest) {
   }
 
   // B7 — le tier et les créneaux viennent de changer : les lectures mises en
-  // cache (accès par tier, widget RDV) se rafraîchissent immédiatement.
-  revalidateTag('col:tenants', 'default')
-  revalidateTag('col:availability-slots', 'default')
+  // cache (accès par tier, widget RDV) se rafraîchissent, scopées au tenant.
+  revalidateTag(`col:tenants:tenant:${tenantId}`, 'default')
+  revalidateTag(`col:availability-slots:tenant:${tenantId}`, 'default')
 
   return NextResponse.json({ success: true, tier: targetTier })
 }

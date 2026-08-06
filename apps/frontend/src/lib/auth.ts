@@ -2,6 +2,7 @@ import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { cache } from 'react'
 import { revalidateTag } from 'next/cache'
+import { createHash } from 'node:crypto'
 
 const CMS_URL = process.env.NEXT_PUBLIC_CMS_URL || 'https://cms.etabibi.ma'
 
@@ -9,24 +10,17 @@ const CMS_URL = process.env.NEXT_PUBLIC_CMS_URL || 'https://cms.etabibi.ma'
 // ou de périmètre met jusqu'à ce délai à se propager (voir DECISIONS.md).
 const AUTH_TTL = 20
 
-// Tag de cache dérivé du token de session — hash FNV-1a 32 bits, jamais le
-// token brut dans une clé ou un tag (évite de fuiter le secret en logs/cache).
-export function authTagForToken(token: string): string {
-  let h = 0x811c9dc5
-  for (let i = 0; i < token.length; i++) {
-    h ^= token.charCodeAt(i)
-    h = Math.imul(h, 0x01000193)
-  }
-  return `auth:${(h >>> 0).toString(36)}`
+// Clé de cache de session — SHA-256 tronqué à 16 hex (source UNIQUE du hash).
+// FNV-1a 32 bits retiré : risque de collision inutile pour une clé de cache.
+// Jamais le token brut dans une clé, un tag ou un log.
+export function sessionCacheKey(token: string): string {
+  return createHash('sha256').update(token).digest('hex').slice(0, 16)
 }
 
-// Clé de session pour le Data Cache Next : la clé d'entrée du cache est
-// l'URL SEULE (les headers Authorization/Cookie n'y entrent PAS — vérifié
-// empiriquement : /api/users/me était partagé entre comptes). On rend la
-// clé explicitement dépendante de la session via un param _ck dans l'URL,
-// dérivé du token (jamais le token brut). Deux sessions → deux clés.
-export function sessionCacheKey(token: string): string {
-  return authTagForToken(token).replace('auth:', '')
+// Tag du profil utilisateur (namespace auth:), dérivé de la même clé que le
+// _ck — la purge au logout revalide exactement l'entrée de la session.
+export function authTagForToken(token: string): string {
+  return `auth:${sessionCacheKey(token)}`
 }
 
 export type PayloadUser = {

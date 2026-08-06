@@ -135,8 +135,9 @@ export async function POST(request: NextRequest) {
   }
 
   // B7 — le créneau vient d'être réservé : les lectures calbookings mises en
-  // cache (agenda praticien, widget public) doivent refléter le changement.
-  revalidateTag('col:calbookings', 'default')
+  // cache (agenda praticien, widget public) reflètent le changement,
+  // scopées au tenant du booking.
+  revalidateTag(`col:calbookings:tenant:${tenantId}`, 'default')
 
   return NextResponse.json({ success: true })
 }
