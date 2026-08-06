@@ -123,11 +123,11 @@ export default function ActivityView({
         {/* Rangée 1 — KPI : bande unique, segments séparés */}
         <div className="col-span-12 grid grid-cols-1 gap-3 sm:grid-cols-3">
           {kpiCards.map((k) => (
-            <div key={k.label} className="flex items-center gap-3 rounded-xl border border-warm bg-white px-4 py-2 shadow-sm">
+            <div key={k.label} className="flex items-center gap-3 rounded-xl border border-warm bg-white px-4 py-2.5 shadow-sm">
               <div className={`flex size-8 shrink-0 items-center justify-center rounded-[9px] ${k.iconClass}`}>{k.icon}</div>
-              <div>
-                <div className="font-heading text-[19px] font-semibold leading-none text-stone-800">{k.value}</div>
-                <div className="mt-0.5 text-[12px] text-stone-500">{k.label}</div>
+              <div className="flex min-w-0 flex-1 items-baseline gap-2">
+                <span className="font-heading text-[19px] font-semibold leading-none text-stone-800">{k.value}</span>
+                <span className="truncate text-[12.5px] text-stone-500">{k.label}</span>
               </div>
             </div>
           ))}
