@@ -89,6 +89,7 @@ export interface Config {
     'contact-messages': ContactMessage;
     'referring-practitioners': ReferringPractitioner;
     'availability-slots': AvailabilitySlot;
+    'audit-ledger': AuditLedger;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -118,6 +119,7 @@ export interface Config {
     'contact-messages': ContactMessagesSelect<false> | ContactMessagesSelect<true>;
     'referring-practitioners': ReferringPractitionersSelect<false> | ReferringPractitionersSelect<true>;
     'availability-slots': AvailabilitySlotsSelect<false> | AvailabilitySlotsSelect<true>;
+    'audit-ledger': AuditLedgerSelect<false> | AuditLedgerSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -739,6 +741,46 @@ export interface AvailabilitySlot {
   durationMinutes: number;
   bufferMinutes?: number | null;
   isActive?: boolean | null;
+  /**
+   * Ex. FREQ=WEEKLY;BYDAY=MO,WE;INTERVAL=1 — vide = hebdomadaire simple
+   */
+  recurrenceRule?: string | null;
+  recurrenceEnd?: string | null;
+  exceptions?:
+    | {
+        date: string;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "audit-ledger".
+ */
+export interface AuditLedger {
+  id: number;
+  patient?: (number | null) | Patient;
+  actor?: (number | null) | User;
+  tenant?: (number | null) | Tenant;
+  action: string;
+  entity: string;
+  entityId?: string | null;
+  detail?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  /**
+   * Index unique partiel WHERE dedup_key IS NOT NULL
+   */
+  dedupKey?: string | null;
+  occurredAt?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -853,6 +895,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'availability-slots';
         value: number | AvailabilitySlot;
+      } | null)
+    | ({
+        relationTo: 'audit-ledger';
+        value: number | AuditLedger;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -1326,6 +1372,31 @@ export interface AvailabilitySlotsSelect<T extends boolean = true> {
   durationMinutes?: T;
   bufferMinutes?: T;
   isActive?: T;
+  recurrenceRule?: T;
+  recurrenceEnd?: T;
+  exceptions?:
+    | T
+    | {
+        date?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "audit-ledger_select".
+ */
+export interface AuditLedgerSelect<T extends boolean = true> {
+  patient?: T;
+  actor?: T;
+  tenant?: T;
+  action?: T;
+  entity?: T;
+  entityId?: T;
+  detail?: T;
+  dedupKey?: T;
+  occurredAt?: T;
   updatedAt?: T;
   createdAt?: T;
 }

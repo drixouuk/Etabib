@@ -4,10 +4,10 @@ import { notFound } from 'next/navigation'
 import { headers } from 'next/headers'
 import { routing } from '@/i18n/routing'
 import {
-  Figtree,
   Noto_Sans,
+  Noto_Sans_Arabic,
   Noto_Sans_Tifinagh,
-  Rubik,
+  Vazirmatn,
 } from 'next/font/google'
 import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
@@ -18,15 +18,26 @@ import { getDoctorProfile, getPracticeInfo } from '@/lib/payload'
 import '../globals.css'
 import { BRAND, SITE_DOMAIN } from '@/lib/brand'
 
-const figtree = Figtree({
-  subsets: ['latin', 'latin-ext'],
-  weight: ['300', '400', '500', '600', '700'],
+// Titrage unifié fr/en/ar : Vazirmatn — une seule famille pour les trois
+// locales (pendant latin natif + écriture arabe dans la même fonte), plus de
+// bascule Figtree/Rubik par script.
+const vazirmatn = Vazirmatn({
+  subsets: ['latin', 'arabic'],
+  weight: ['500', '600', '700', '800'],
   variable: '--font-heading',
 })
 
 const notoSans = Noto_Sans({
   subsets: ['latin', 'latin-ext'],
-  weight: ['300', '400', '500', '700'],
+  weight: ['300', '400', '500', '600', '700'],
+  variable: '--font-body',
+})
+
+// Corps arabe : Noto Sans Arabic (garde son rôle de corps, comme fr/en avec
+// Noto Sans). Le 600 comble le gap signalé par MASTER.md §3.4 v1.1.
+const notoSansArabic = Noto_Sans_Arabic({
+  subsets: ['arabic', 'latin', 'latin-ext'],
+  weight: ['300', '400', '500', '600', '700'],
   variable: '--font-body',
 })
 
@@ -34,14 +45,6 @@ const notoSansTifinagh = Noto_Sans_Tifinagh({
   subsets: ['tifinagh'],
   weight: ['400'],
   variable: '--font-tifinagh',
-})
-
-// Rubik unifié pour l'arabe : couvre le latin ET l'arabe (subset latin inclus),
-// utilisé pour les titres et le corps de la locale `ar`. fr/en et tzm inchangés.
-const rubik = Rubik({
-  subsets: ['latin', 'latin-ext', 'arabic'],
-  weight: ['400', '500', '600', '700', '800'],
-  variable: '--font-heading',
 })
 
 const DATA_LOCALE: Record<string, string> = {
@@ -123,16 +126,16 @@ const dirByLocale: Record<string, 'ltr' | 'rtl'> = {
 }
 
 const fontsByLocale: Record<string, string> = {
-  fr: `${figtree.variable} ${notoSans.variable}`,
-  en: `${figtree.variable} ${notoSans.variable}`,
-  ar: `${rubik.variable}`,
-  tzm: `${figtree.variable} ${notoSansTifinagh.variable}`,
+  fr: `${vazirmatn.variable} ${notoSans.variable}`,
+  en: `${vazirmatn.variable} ${notoSans.variable}`,
+  ar: `${vazirmatn.variable} ${notoSansArabic.variable}`,
+  tzm: `${vazirmatn.variable} ${notoSansTifinagh.variable}`,
 }
 
 const bodyFontByLocale: Record<string, string> = {
   fr: 'font-body',
   en: 'font-body',
-  ar: 'font-heading',
+  ar: 'font-body',
   tzm: 'font-tifinagh',
 }
 

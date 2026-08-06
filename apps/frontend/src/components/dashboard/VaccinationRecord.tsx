@@ -21,7 +21,7 @@ const ROUTE_OPTIONS = [
   { value: 'intradermal', label: 'ID' },
 ]
 
-const inputClass = 'rounded border border-stone-300 px-2 py-1 text-xs focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none'
+const inputClass = 'rounded border border-stone-300 px-2 py-1 text-xs focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20'
 
 function computeAgeMonths(birthDate: string): number {
   const now = new Date(); const birth = new Date(birthDate)
@@ -113,7 +113,7 @@ export default function VaccinationRecord({ patientId, schedule, vaccinations, p
       <h3 className="mb-3 font-heading text-lg font-semibold text-stone-800">Carnet vaccinal</h3>
       <p className="mb-3 text-xs text-stone-600">Âge du patient : {Math.floor(ageMonths / 12)} ans {ageMonths % 12} mois</p>
       <div className="overflow-x-auto rounded-xl border border-warm bg-white shadow-sm">
-        <table className="min-w-[640px] w-full text-left text-sm">
+        <table className="min-w-[640px] w-full text-start text-sm">
           <thead className="border-b border-warm text-xs uppercase text-stone-600">
             <tr>
               <th className="px-4 py-2.5 font-medium">Vaccin</th>
@@ -160,7 +160,7 @@ export default function VaccinationRecord({ patientId, schedule, vaccinations, p
               return (
                 <tr key={key} className={`hover:bg-stone-50 ${rowBg}`}>
                   <td className="px-4 py-2.5 font-medium text-stone-800">{entry.vaccineName}</td>
-                  <td className="px-4 py-2.5 text-stone-600">{entry.doseLabel}{entry.notes && <span className="ml-1 text-xs text-stone-600">({entry.notes})</span>}</td>
+                  <td className="px-4 py-2.5 text-stone-600">{entry.doseLabel}{entry.notes && <span className="ms-1 text-xs text-stone-600">({entry.notes})</span>}</td>
                   <td className="px-4 py-2.5 text-stone-600">{entry.ageMonths < 1 ? 'Naissance' : entry.ageMonths >= 12 ? `${Math.floor(entry.ageMonths / 12)} ans` : `${entry.ageMonths} mois`}</td>
                   <td className={`px-4 py-2.5 ${statusColor}`}><span className="flex items-center gap-1.5">{statusIcon}{statusText}</span></td>
                   <td className="px-4 py-2.5 text-stone-600 hidden md:table-cell">{done?.administrationRoute || '—'}</td>

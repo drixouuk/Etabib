@@ -22,9 +22,13 @@
     "tagline": "Your children's health, in caring hands",
     "cta_primary": "Book an appointment",
     "cta_secondary": "Learn more",
-    "badge_langues": "Multiple languages"
+    "badge_langues": "Multiple languages",
+    "badge_rating": "{rating}/5 · {count} Google reviews",
+    "badge_experience": "Confirmed experience",
+    "photoPlaceholder": "Photo coming soon"
   },
   "presentation": {
+    "title": "About the doctor",
     "section1_title": "Background",
     "section2_title": "Approach"
   },
@@ -48,12 +52,17 @@
       "fri": "Friday",
       "sat": "Saturday",
       "sun": "Sunday"
-    }
+    },
+    "badge": "Info",
+    "phone_title": "Phone",
+    "mapUnavailable": "Map unavailable"
   },
   "rdv": {
     "title": "Book an appointment",
     "subtitle": "Choose the slot that works for you",
-    "loading": "Loading calendar…"
+    "loading": "Loading calendar…",
+    "unavailable": "Online booking is temporarily unavailable",
+    "unavailableCall": "Call the practice at {phone}"
   },
   "contact": {
     "title": "Contact us",
@@ -67,7 +76,10 @@
     "message_placeholder": "Your message"
   },
   "reviews": {
-    "title": "What our patients say"
+    "title": "What our patients say",
+    "heading": "What our patients say",
+    "countLabel": "based on {count} Google reviews",
+    "google": "Google"
   },
   "dashboard": {
     "overview": "Overview",
@@ -292,5 +304,13 @@
     "doctorCountLabel": "Number of doctors",
     "doctorCountHint": "Each additional doctor adds 199 MAD/month",
     "totalPrice": "Total: {price} MAD/month"
+  },
+  "notFound": {
+    "title": "Page not found",
+    "description": "The page you are looking for does not exist or has been moved.",
+    "back": "Back to home"
+  },
+  "theme": {
+    "toggleLabel": "Toggle light/dark theme"
   }
 }

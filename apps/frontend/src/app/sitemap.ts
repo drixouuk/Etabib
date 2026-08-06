@@ -11,16 +11,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
   for (const locale of locales) {
     entries.push(
       {
-        url: `${siteUrl}/${locale}`,
-        lastModified: new Date(),
-        changeFrequency: 'monthly',
-        priority: locale === 'fr' ? 1 : 0.8,
-      },
-      {
+        // Landing SaaS localisée (les racines /[locale] redirigent en 308
+        // vers /[locale]/landing depuis le point 10 — on ne liste que l'URL finale).
         url: `${siteUrl}/${locale}/landing`,
         lastModified: new Date(),
         changeFrequency: 'weekly',
-        priority: 0.9,
+        priority: locale === 'fr' ? 1 : 0.8,
       },
       {
         url: `${siteUrl}/${locale}/mentions-legales`,

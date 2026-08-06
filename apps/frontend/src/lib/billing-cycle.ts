@@ -11,6 +11,10 @@ export type CmsApi = (
 export type CycleOptions = {
   now?: Date
   sendEmails?: boolean
+  // Hook infra (revalidation de cache) : appelé après chaque écriture réussie
+  // d'un tenant (ensure + transitions + downgrade). La lib reste pure —
+  // c'est la route appelante qui branche next/cache dessus.
+  onTenantProcessed?: (tenantId: string) => void
 }
 
 export type CycleResult = {
@@ -91,6 +95,7 @@ export async function runBillingCycle(cms: CmsApi, options: CycleOptions = {}): 
       if (created.ok) {
         result.ensured++
         byTenant.set(String(tenant.id), created.data?.doc as RawSubscription)
+        options.onTenantProcessed?.(String(tenant.id))
       } else {
         result.errors.push(`ensure sub tenant ${tenant.id}: ${created.status}`)
       }
@@ -110,6 +115,7 @@ export async function runBillingCycle(cms: CmsApi, options: CycleOptions = {}): 
       const res = await cms('PATCH', `/api/subscriptions/${sub.id}`, { status: to, ...extra })
       if (res.ok) {
         result.transitions.push({ id: sub.id, tenantId, from: status, to })
+        options.onTenantProcessed?.(tenantId)
       } else {
         result.errors.push(`transition ${sub.id} ${status}→${to}: ${res.status}`)
       }
@@ -119,7 +125,11 @@ export async function runBillingCycle(cms: CmsApi, options: CycleOptions = {}): 
       const t = await cms('GET', `/api/tenants/${tenantId}?depth=0`)
       const settings = { ...(t.data?.settings || {}), activeTier: tier }
       const res = await cms('PATCH', `/api/tenants/${tenantId}`, { settings })
-      if (!res.ok) result.errors.push(`downgrade tenant ${tenantId}: ${res.status}`)
+      if (res.ok) {
+        options.onTenantProcessed?.(tenantId)
+      } else {
+        result.errors.push(`downgrade tenant ${tenantId}: ${res.status}`)
+      }
     }
 
     const email = async (subject: string, html: string) => {

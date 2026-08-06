@@ -27,7 +27,7 @@ export default function Header({ doctorName, doctorNameShort }: Props) {
 
   return (
     <header className={`navbar-floating transition-transform duration-300 ${isHidden ? 'nav-hidden' : ''}`}>
-      <nav className="mx-auto flex max-w-[1200px] items-center justify-between gap-4 rounded-2xl bg-white/80 px-4 py-3 shadow-sm backdrop-blur-md md:px-4">
+      <nav className="mx-auto flex max-w-[1160px] items-center justify-between gap-4 rounded-2xl bg-white/80 px-4 py-3 shadow-sm backdrop-blur-md md:px-4">
         <Link href="/" className="flex items-center gap-2.5 font-heading text-base font-bold text-primary-700">
           <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary-600">
             <Activity className="size-[17px] text-white" />
@@ -47,10 +47,10 @@ export default function Header({ doctorName, doctorNameShort }: Props) {
 
         <div className="flex items-center gap-2.5">
           <LanguageSwitcher />
-          <a href="/fr#rdv"
+          <Link href="/#rdv"
             className="hidden h-10 items-center justify-center rounded-xl bg-cta-600 px-[18px] text-[.87rem] font-semibold text-white shadow-sm transition-all duration-200 hover:bg-cta-700 hover:-translate-y-0.5 hover:shadow-md md:inline-flex">
             {t('cta')}
-          </a>
+          </Link>
           <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className="flex size-[34px] items-center justify-center rounded-lg md:hidden" aria-label="Menu">
             {mobileMenuOpen ? <X className="size-[21px]" /> : <Menu className="size-[21px]" />}
@@ -58,17 +58,17 @@ export default function Header({ doctorName, doctorNameShort }: Props) {
         </div>
 
         {mobileMenuOpen && (
-          <div className="absolute left-4 right-4 top-full mt-2 rounded-2xl border border-stone-200 bg-white p-2 shadow-lg md:hidden">
+          <div className="absolute start-4 end-4 top-full mt-2 rounded-2xl border border-stone-200 bg-white p-2 shadow-lg md:hidden">
             {navLinks.map(({ href, key }) => (
               <Link key={href} href={href} onClick={() => setMobileMenuOpen(false)}
                 className="block rounded-lg px-[14px] py-[11px] text-[.92rem] font-medium text-stone-600 hover:bg-cream-200">
                 {t(key)}
               </Link>
             ))}
-            <a href="/fr#rdv" onClick={() => setMobileMenuOpen(false)}
+            <Link href="/#rdv" onClick={() => setMobileMenuOpen(false)}
               className="block rounded-lg px-[14px] py-[11px] text-[.92rem] font-bold text-cta-700">
               {t('cta')}
-            </a>
+            </Link>
           </div>
         )}
       </nav>

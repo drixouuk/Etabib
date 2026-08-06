@@ -22,9 +22,13 @@
     "tagline": "ⴰⵙⵍⴰⵎ ⵏ ⵉⵣⵣⵉⴽⵉⵡⵏ, ⴷⴻⴳ ⵉⴼⴰⵙⵙⵏ ⵉⵎⴰⵏⴻⵏ",
     "cta_primary": "ⴰⵙⵏⵓⴱⴳ ⵏ ⵜⵎⵉⵔⵉⵜ",
     "cta_secondary": "ⵙⵙⵉⵏ ⴰⵎⵓⵔ",
-    "badge_langues": "ⵜⵓⴳⵜ ⵏ ⵜⵓⵜⵍⴰⵢⵉⵏ"
+    "badge_langues": "ⵜⵓⴳⵜ ⵏ ⵜⵓⵜⵍⴰⵢⵉⵏ",
+    "badge_rating": "{rating}/5 · {count} ⵏ ⵜⵡⵉⵙⵉⵡⵉⵏ ⴳ Google",
+    "badge_experience": "ⵜⴰⵔⵎⵉⵜ ⵜⴻⵜⵜⵡⴰⵙⵙⴰⵏ",
+    "photoPlaceholder": "الصورة قريبًا"
   },
   "presentation": {
+    "title": "ⵖⴼ ⵜⵙⵏⵉⵊⵉⵜ",
     "section1_title": "ⴰⵎⵓⴷⴷⵓ ⵏ ⵜⵡⵓⵔⵉ",
     "section2_title": "ⴰⵏⴰⵡ"
   },
@@ -48,12 +52,17 @@
       "fri": "ⴰⵙⵉⵎⵡⴰⵙ",
       "sat": "ⴰⵙⵉⴹⵢⴰⵙ",
       "sun": "ⴰⵙⴰⵎⴰⵙ"
-    }
+    },
+    "badge": "معلومات",
+    "phone_title": "الهاتف",
+    "mapUnavailable": "الخريطة غير متاحة"
   },
   "rdv": {
     "title": "ⴰⵙⵏⵓⴱⴳ ⵏ ⵜⵎⵉⵔⵉⵜ",
     "subtitle": "ⵙⵜⵉ ⵓⴽⵓⴷ ⵏⵏⴰ ⵉⵅⵚⴰⵏ ⴽ",
-    "loading": "ⴰⵙⵓⵖⵏ ⵏ ⵓⵙⵏⵉⵊⵉ…"
+    "loading": "ⴰⵙⵓⵖⵏ ⵏ ⵓⵙⵏⵉⵊⵉ…",
+    "unavailable": "الحجز عبر الإنترنت غير متاح مؤقتًا",
+    "unavailableCall": "اتصل بالعيادة على {phone}"
   },
   "contact": {
     "title": "ⴰⵎⵢⴰⵡⴰⴹ",
@@ -67,7 +76,10 @@
     "message_placeholder": "ⵉⵣⴻⵏ ⵏⵏⴽ"
   },
   "reviews": {
-    "title": "ⴰⵔⵉⵜⵏ ⵏ ⵉⵎⵓⴷⴰⵏ ⵏⵏⵖ"
+    "title": "ⴰⵔⵉⵜⵏ ⵏ ⵉⵎⵓⴷⴰⵏ ⵏⵏⵖ",
+    "heading": "ماذا يقول مرضانا",
+    "countLabel": "بناءً على {count} تقييمات Google",
+    "google": "Google"
   },
   "dashboard": {
     "overview": "ⵜⴰⵙⵖⵏⵉⵢⵜ ⵜⴰⵎⴰⵜⵓⵢⵜ",
@@ -292,5 +304,13 @@
     "doctorCountLabel": "ⵓⵟⵟⵓⵏ ⵏ ⵉⵙⵏⵉⵊⵉⵢⵏ",
     "doctorCountHint": "ⴽⵓ ⴰⵙⵏⵉⵊ ⵓⵔⵏⵉ ⵉⵔⵏⵓ 199 MAD/ⴰⵢⵢⵓⵔ",
     "totalPrice": "ⴰⵎⵎⵓ: {price} MAD/ⴰⵢⵢⵓⵔ"
+  },
+  "notFound": {
+    "title": "الصفحة غير موجودة",
+    "description": "الصفحة التي تبحث عنها غير موجودة أو تم نقلها.",
+    "back": "العودة إلى الرئيسية"
+  },
+  "theme": {
+    "toggleLabel": "تبديل المظهر الفاتح/الداكن"
   }
 }

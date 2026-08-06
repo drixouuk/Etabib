@@ -29,7 +29,7 @@ export default function PatientSearchAutocomplete({ initialQ = '' }: { initialQ?
     setLoading(true)
     try {
       const res = await fetch(
-        `/api/cms-proxy/patients?where[or][0][fullName][contains]=${encodeURIComponent(q)}&where[or][1][nationalId][contains]=${encodeURIComponent(q)}&limit=8&sort=-updatedAt&depth=0`,
+        `/api/cms-proxy/patients/search?q=${encodeURIComponent(q)}`,
       )
       const data = await res.json()
       setSuggestions(data.docs ?? [])
@@ -84,7 +84,7 @@ export default function PatientSearchAutocomplete({ initialQ = '' }: { initialQ?
           onBlur={closeSoon}
           placeholder="Rechercher par nom ou CIN…"
           autoComplete="off"
-          className="min-w-0 flex-1 border-none bg-transparent text-sm text-stone-800 placeholder:text-stone-600 focus:outline-none"
+          className="min-w-0 flex-1 border-none bg-transparent text-sm text-stone-800 placeholder:text-stone-600"
         />
         {query && (
           <button
@@ -98,7 +98,7 @@ export default function PatientSearchAutocomplete({ initialQ = '' }: { initialQ?
       </form>
 
       {open && suggestions.length > 0 && (
-        <div className="absolute left-0 right-0 top-full z-30 mt-1 overflow-hidden rounded-xl border border-warm bg-white shadow-lg">
+        <div className="absolute start-0 end-0 top-full z-30 mt-1 overflow-hidden rounded-xl border border-warm bg-white shadow-lg">
           <div className="max-h-[320px] overflow-y-auto py-1">
             {suggestions.map(p => (
               <Link
@@ -132,7 +132,7 @@ export default function PatientSearchAutocomplete({ initialQ = '' }: { initialQ?
       )}
 
       {showNoResults && (
-        <div className="absolute left-0 right-0 top-full z-30 mt-1 rounded-xl border border-warm bg-white px-3 py-3 text-sm text-stone-500 shadow-lg">
+        <div className="absolute start-0 end-0 top-full z-30 mt-1 rounded-xl border border-warm bg-white px-3 py-3 text-sm text-stone-500 shadow-lg">
           Aucun patient trouvé.
         </div>
       )}

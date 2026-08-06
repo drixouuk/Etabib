@@ -29,7 +29,7 @@ export default function DashboardShell({ user, tenant, billingStatus, children }
   }, [sidebarOpen])
 
   return (
-    <div className="flex min-h-screen bg-cream-100">
+    <div data-module="patients" className="flex min-h-screen bg-cream-100">
       <aside className="hidden md:flex w-[252px] shrink-0 flex-col border-r border-primary-600/15 bg-cream-50">
         <Sidebar user={user} tenant={tenant} />
       </aside>
@@ -37,7 +37,7 @@ export default function DashboardShell({ user, tenant, billingStatus, children }
       {sidebarOpen && (
         <div className="fixed inset-0 z-50 md:hidden">
           <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setSidebarOpen(false)} />
-          <aside className="absolute inset-y-0 left-0 flex w-64 flex-col border-r border-primary-600/15 bg-cream-50 shadow-xl transition-transform duration-300 translate-x-0">
+          <aside className="absolute inset-y-0 start-0 flex w-64 flex-col border-r border-primary-600/15 bg-cream-50 shadow-xl transition-transform duration-300 translate-x-0">
             <div className="flex items-center justify-end px-3 pt-3">
               <button onClick={() => setSidebarOpen(false)} className="rounded-lg p-2 text-stone-600 hover:bg-stone-100 hover:text-stone-800" aria-label="Fermer le menu">
                 <X className="size-5" />
@@ -68,7 +68,7 @@ export default function DashboardShell({ user, tenant, billingStatus, children }
           </button>
           <span className="truncate font-heading text-sm font-semibold text-stone-800">{tenant?.name || 'Cabinet'}</span>
         </div>
-        <main className="flex-1 min-h-0 overflow-auto">{children}</main>
+        <main className="flex-1 min-h-0 overflow-visible md:overflow-auto">{children}</main>
       </div>
     </div>
   )

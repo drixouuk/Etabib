@@ -19,7 +19,7 @@ export default async function EditPatientPage({ params }: Props) {
   const { id } = await params
   await requireTier(['cabinet'])
 
-  const patient = await fetchCMS<Patient>(`/api/patients/${id}`, { revalidate: 0 })
+  const patient = await fetchCMS<Patient>(`/api/patients/${id}`)
   if (!patient) notFound()
 
   return (

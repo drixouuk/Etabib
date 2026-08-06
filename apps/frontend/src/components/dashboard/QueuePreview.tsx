@@ -19,7 +19,6 @@ export default async function QueuePreview() {
 
   const data = await fetchCMS<{ docs: QueueItem[] }>(
     `/api/queue-items?where[tenant][equals]=${tenantId}&where[status][in]=waiting&where[status][in]=in_consultation&sort=arrivalTime&depth=1&limit=5`,
-    { revalidate: 0 },
   )
   const items = data?.docs ?? []
 
@@ -43,7 +42,7 @@ export default async function QueuePreview() {
                   </div>
                 </div>
                 {item.arrivalTime && (
-                  <span className="ml-auto shrink-0 rounded-full bg-amber-50 px-2.5 py-0.5 text-xs font-semibold text-amber-700">
+                  <span className="ms-auto shrink-0 rounded-full bg-amber-50 px-2.5 py-0.5 text-xs font-semibold text-amber-700">
                     {new Date(item.arrivalTime).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
                   </span>
                 )}

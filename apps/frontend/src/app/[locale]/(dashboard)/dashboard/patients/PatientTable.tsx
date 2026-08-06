@@ -41,7 +41,7 @@ export default function PatientTable({
   return (
     <div>
       <div className="overflow-x-auto rounded-xl border border-warm bg-white shadow-sm">
-        <table className="min-w-[640px] w-full text-left text-sm">
+        <table className="min-w-[640px] w-full text-start text-sm">
           <thead className="border-b border-warm">
             <tr>
               <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-wider text-stone-600">Nom</th>
@@ -69,7 +69,7 @@ export default function PatientTable({
                           <PatientActionsDropdown patientId={p.id} patientName={p.fullName} />
                           <Link
                             href={`/dashboard/patients/${p.id}`}
-                            className="font-medium text-stone-800 hover:text-primary-600 transition-colors duration-200"
+                            className="font-medium text-stone-800 transition-colors duration-200 hover:text-primary-600"
                           >
                             {p.fullName}
                           </Link>

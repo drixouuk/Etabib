@@ -75,8 +75,10 @@ export default function ActivityView({
 
   return (
     <div className="flex flex-col gap-4">
-      {/* En-tête + période */}
-      <div className="flex flex-wrap items-center justify-between gap-4">
+      {/* En-tête + période — sticky sous la barre d'app mobile (57px) :
+          sans cela, scrolé, le sélecteur passe SOUS la barre sticky (z-30)
+          et les taps sur « Mois »/« Année » ne déclenchent rien (B2). */}
+      <div className="sticky top-[57px] z-20 -mx-4 -mt-2 flex flex-wrap items-center justify-between gap-4 bg-background px-4 pb-3 pt-2 md:static md:mx-0 md:mt-0 md:bg-transparent md:p-0 md:pb-0">
         <div>
           <h1 className="text-[27px] font-bold tracking-tight text-stone-800">Activité</h1>
           <p className="mt-0.5 text-[13.5px] text-stone-600">{periodLabel}</p>
@@ -167,7 +169,7 @@ export default function ActivityView({
               {reasonData.map((r, i) => (
                 <div key={r.name} className="flex items-center gap-1.5">
                   <i className="size-2 rounded-sm shrink-0 inline-block" style={{ background: PIE_COLORS[i % PIE_COLORS.length] }} />
-                  {r.name} <b className="text-stone-600 font-medium ml-0.5">{r.value}</b>
+                  {r.name} <b className="text-stone-600 font-medium ms-0.5">{r.value}</b>
                 </div>
               ))}
             </div>
@@ -184,7 +186,7 @@ export default function ActivityView({
                   <div className="h-full rounded-md bg-primary-500 transition-all duration-700"
                     style={{ width: `${Math.round((a.count / maxAge) * 100)}%` }} />
                 </div>
-                <span className="w-[26px] text-right text-[12px] font-semibold text-stone-800">{a.count}</span>
+                <span className="w-[26px] text-end text-[12px] font-semibold text-stone-800">{a.count}</span>
               </div>
             ))}
           </div>
@@ -225,7 +227,7 @@ export default function ActivityView({
                     <div className={`h-full rounded-md transition-all duration-700 ${['bg-primary-500', 'bg-amber-500', 'bg-orange-500', 'bg-stone-400'][i % 4]}`}
                       style={{ width: `${Math.round((s.value / maxSource) * 100)}%` }} />
                   </div>
-                  <span className="w-[26px] text-right text-[12px] font-semibold text-stone-800">{s.value}</span>
+                  <span className="w-[26px] text-end text-[12px] font-semibold text-stone-800">{s.value}</span>
                 </div>
               ))}
             </div>

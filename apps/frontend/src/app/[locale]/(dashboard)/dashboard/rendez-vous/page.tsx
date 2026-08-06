@@ -48,7 +48,6 @@ export default async function RendezVousPage() {
 
     const data = await fetchCMS<{ docs: CalBooking[] }>(
       `/api/calbookings?where[tenant][equals]=${tenantId}&where[startTime][greater_than_equal]=${pastStart.toISOString()}&where[startTime][less_than]=${futureEnd.toISOString()}&sort=startTime&depth=0&limit=200`,
-      { revalidate: 0 },
     )
     bookings = data?.docs ?? []
   } catch (e) {

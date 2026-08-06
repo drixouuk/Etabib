@@ -30,8 +30,8 @@ export default async function ServicesSection({ locale, services }: Props) {
   if (services.length === 0) return null
 
   return (
-    <section id="services" className="scroll-mt-24 border-y border-stone-200 bg-white px-4 py-[88px] md:py-[60px]">
-      <div className="container mx-auto max-w-[1200px]">
+    <section id="services" className="scroll-mt-24 border-y border-stone-200 bg-white px-4 py-[68px] md:py-[104px]">
+      <div className="container mx-auto max-w-[1160px]">
         <div className="mx-auto mb-12 max-w-[620px] text-center">
           <span className="mb-4 inline-flex items-center gap-1.5 rounded-full bg-cream-200 px-3.5 py-1.5 text-[.8rem] font-bold text-primary-700">
             Services

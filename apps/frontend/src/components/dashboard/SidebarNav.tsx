@@ -29,7 +29,7 @@ export default function SidebarNav({ items, adminItems, onNavigate }: Props) {
   return (
     <nav className="relative flex flex-1 flex-col gap-0.5 pt-1">
       <div
-        className="absolute left-0 right-0 h-10 rounded-[10px] bg-primary-50 transition-all duration-300 ease-out z-0"
+        className="absolute start-0 end-0 h-10 rounded-[10px] bg-primary-50 transition-all duration-300 ease-out z-0"
         style={{
           transform: `translateY(${activeIndex >= 0 && activeIndex < items.length ? activeIndex * 42 : 0}px)`,
           opacity: activeIndex >= 0 ? 1 : 0,

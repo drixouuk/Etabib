@@ -24,7 +24,7 @@ export default function AuditLogTable({ logs }: { logs: AuditLog[] }) {
   return (
     <div>
       <div className="overflow-x-auto rounded-xl border border-warm bg-white shadow-sm">
-        <table className="min-w-[640px] w-full text-left text-sm">
+        <table className="min-w-[640px] w-full text-start text-sm">
           <thead className="border-b border-warm text-xs uppercase text-stone-600">
             <tr>
               <th className="px-4 py-3 font-medium">Action</th>

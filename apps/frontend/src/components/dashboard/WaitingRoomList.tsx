@@ -158,7 +158,7 @@ export default function WaitingRoomList({ tenantId, isClinique, currentDoctorId 
             <select
               value={selectedDoctorId || ''}
               onChange={(e) => setSelectedDoctorId(e.target.value || undefined)}
-              className="rounded-lg border border-warm bg-white px-3 py-1.5 text-sm text-stone-800 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
+              className="rounded-lg border border-warm bg-white px-3 py-1.5 text-sm text-stone-800 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20"
             >
               <option value="">Tous les médecins</option>
               {doctors.map((d) => (

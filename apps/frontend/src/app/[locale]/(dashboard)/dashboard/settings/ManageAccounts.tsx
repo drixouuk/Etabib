@@ -49,7 +49,7 @@ function ResetPasswordButton({ userId }: { userId: string }) {
     <div className="flex items-center gap-2">
       <input type="password" value={newPassword} onChange={e => setNewPassword(e.target.value)}
         placeholder="Nouveau MDP" minLength={8}
-        className="w-36 rounded-lg border border-warm bg-white px-2 py-1 text-sm focus:border-primary-500 focus:outline-none" />
+        className="w-36 rounded-lg border border-warm bg-white px-2 py-1 text-sm focus:border-primary-500" />
       <button onClick={handleReset} disabled={saving}
         className="text-sm font-medium text-primary-600 hover:text-primary-700 disabled:opacity-50">OK</button>
       <button onClick={() => setShowForm(false)} className="text-sm text-stone-600 hover:text-stone-600">✕</button>
@@ -127,7 +127,7 @@ export default function ManageAccounts({ users, currentUserId, isAdmin = true }:
     router.refresh()
   }
 
-  const inputClass = 'w-full rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm text-stone-800 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none'
+  const inputClass = 'w-full rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm text-stone-800 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20'
   const labelClass = 'mb-0.5 block text-xs text-stone-600'
 
   return (
@@ -196,7 +196,7 @@ export default function ManageAccounts({ users, currentUserId, isAdmin = true }:
                 <div className="min-w-0 flex-1 basis-full sm:basis-auto">
                   <p className="truncate text-[13.5px] font-semibold text-stone-800">
                     {u.name || u.email}
-                    {u.id === currentUserId && <span className="ml-2 text-xs font-normal text-stone-600">(vous)</span>}
+                    {u.id === currentUserId && <span className="ms-2 text-xs font-normal text-stone-600">(vous)</span>}
                   </p>
                   <p className="truncate text-xs text-stone-500">{u.email}</p>
                 </div>

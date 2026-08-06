@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { revalidateTag } from 'next/cache'
 
 function getCMSURL(): string {
   const url = process.env.NEXT_PUBLIC_CMS_URL
@@ -28,6 +29,11 @@ export async function GET(request: NextRequest) {
     headers: apiHeaders,
     body: JSON.stringify({ status: 'cancelled' }),
   })
+
+  // B7 — annulation : les lectures calbookings mises en cache se rafraîchissent,
+  // scopées au tenant du rendez-vous annulé.
+  const cancelTenantId = typeof booking.tenant === 'object' ? booking.tenant.id : booking.tenant
+  revalidateTag(cancelTenantId ? `col:calbookings:tenant:${cancelTenantId}` : 'col:calbookings', 'default')
 
   return new NextResponse('Votre rendez-vous a été annulé.', { status: 200 })
 }

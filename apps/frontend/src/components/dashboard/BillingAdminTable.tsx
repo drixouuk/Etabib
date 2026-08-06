@@ -109,7 +109,7 @@ export default function BillingAdminTable({ initialRows }: { initialRows: Billin
       {message && <p className="border-b border-stone-100 bg-primary-50/50 px-4 py-2 text-xs text-primary-700">{message}</p>}
 
       <div className="overflow-x-auto">
-        <table className="w-full text-left text-sm">
+        <table className="w-full text-start text-sm">
           <thead>
             <tr className="border-b border-stone-100 text-xs uppercase text-stone-500">
               <th className="px-4 py-2.5 font-semibold">Cabinet</th>
@@ -120,7 +120,7 @@ export default function BillingAdminTable({ initialRows }: { initialRows: Billin
               <th className="px-4 py-2.5 font-semibold">Montant</th>
               <th className="px-4 py-2.5 font-semibold">Dernière relance</th>
               <th className="px-4 py-2.5 font-semibold">Notes</th>
-              <th className="px-4 py-2.5 text-right font-semibold">Actions</th>
+              <th className="px-4 py-2.5 text-end font-semibold">Actions</th>
             </tr>
           </thead>
           <tbody>

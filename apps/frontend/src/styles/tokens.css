@@ -1,0 +1,189 @@
+/**
+ * Module: Design Tokens (Phase A — A1)
+ * But: tokens privé/public + rôles de surface work/raised/glass.
+ *
+ * Invariants (gardés par scripts/guard-design.mjs) :
+ *   1. Les tokens privés --_x ne sont écrits QUE dans :root et les blocs dark.
+ *   2. Les tokens publics ne sont JAMAIS assignés à une valeur littérale —
+ *      uniquement l'indirection var(--_x) — sauf allowlist bordures en contexte
+ *      dark (décision A2, cf. yuvomi v1.57.0 : bordures fixées indépendamment).
+ *   3. L'API Tailwind passe exclusivement par @theme inline (référence les
+ *      variables runtime, ne les gèle pas).
+ *
+ * Noms non disponibles (possédés par shadcn dans globals.css) :
+ *   --color-accent (hover cream), --color-border (via --border), --color-ring…
+ *   L'accent applicatif s'appelle donc --color-accent-brand.
+ *
+ * Ratios mesurés (WCAG, calculés le 2026-08-03) — ne jamais dériver le dark
+ * de la rampe neutre : la rampe dark est si proche de la surface qu'une
+ * dérivation donnerait ~1.00:1 (bordure invisible).
+ */
+
+:root {
+  /* --------------------------------------------------------
+   * 1. Fonds & rôles de surface
+   *    work = surfaces de travail lisibles (listes, tableaux, formulaires)
+   *    raised = élévation subtile (hover)
+   *    glass = décoratif uniquement (nav, overlays) — jamais de contenu dense
+   * -------------------------------------------------------- */
+  --_color-bg: #EFEDE3;                 /* toile chaude (= --color-page-bg) */
+  --color-bg: var(--_color-bg);
+  --_color-surface: #FFFFFF;
+  --color-surface: var(--_color-surface);
+  --_color-surface-work: #FFFFFF;
+  --color-surface-work: var(--_color-surface-work);
+  --_color-surface-raised: #FAF9F4;
+  --color-surface-raised: var(--_color-surface-raised);
+  --_color-surface-glass: rgba(255, 255, 255, 0.70);
+  --color-surface-glass: var(--_color-surface-glass);
+
+  /* --------------------------------------------------------
+   * 2. Texte
+   * -------------------------------------------------------- */
+  --_color-text-primary: #232018;       /* 16.26:1 sur surface · 13.86:1 sur bg */
+  --color-text-primary: var(--_color-text-primary);
+  --_color-text-secondary: #5C5A52;     /* 6.91:1 sur surface · 5.89:1 sur bg — AA */
+  --color-text-secondary: var(--_color-text-secondary);
+  --_color-text-tertiary: #6A6860;      /* 5.58:1 sur surface — AA (légendes) */
+  --color-text-tertiary: var(--_color-text-tertiary);
+
+  /* --------------------------------------------------------
+   * 3. Arêtes — rampe light. La base --color-border appartient à shadcn
+   *    (globals.css : --border) ; subtle/strong sont nôtres.
+   *    Valeurs décoratives documentées SOUS le 3:1 de WCAG 1.4.11 pour les
+   *    contrôles — décision délibérée (cf. yuvomi tokens.css §9) ; les
+   *    frontières de contrôles utilisent --color-input (shadcn).
+   * -------------------------------------------------------- */
+  --_color-border-subtle: #E9E5DB;      /* 1.26:1 — séparateurs, cartes calmes */
+  --color-border-subtle: var(--_color-border-subtle);
+  --_color-border-strong: #C9C3B4;      /* 1.76:1 — hover, cadres accentués */
+  --color-border-strong: var(--_color-border-strong);
+
+  /* --------------------------------------------------------
+   * 4. Accent applicatif (marque = teal, aligné sur --color-primary shadcn)
+   *    --color-accent est pris par shadcn (hover cream) → --color-accent-brand.
+   * -------------------------------------------------------- */
+  --_color-accent-brand: #0F766E;       /* teal-700 · 5.47:1 sur surface · 4.66:1 sur bg — AA */
+  --color-accent-brand: var(--_color-accent-brand);
+  --_color-accent-brand-hover: #115E59; /* teal-800 · 7.58:1 sur surface */
+  --color-accent-brand-hover: var(--_color-accent-brand-hover);
+  --_color-on-accent-brand: #FFFFFF;    /* 5.47:1 sur #0F766E — AA */
+  --color-on-accent-brand: var(--_color-on-accent-brand);
+
+  /* --------------------------------------------------------
+   * 5. Focus ring — 3 tokens, PAS de shorthand (cf. yuvomi v1.60.0) :
+   *    un `--focus-ring` combiné sur :root bâclerait la couleur à la
+   *    déclaration et rendrait les overrides locaux muets. Les composants
+   *    écrivent les deux lignes (width+color, offset), et une exception
+   *    justifiée ne surcharge QUE --focus-ring-color.
+   *    Couleur = accent du module actif (--active-module-accent, posé par
+   *    les layouts, item A6) ; fallback --color-accent-brand.
+   *    --focus-ring-offset-inset : pour les éléments sur bord clippé
+   *    (overflow: hidden sur un ancêtre coupe un offset positif).
+   * -------------------------------------------------------- */
+  --focus-ring-width:        2px;
+  --focus-ring-color:        var(--active-module-accent, var(--color-accent-brand));
+  --focus-ring-offset:       2px;
+  --focus-ring-offset-inset: -2px;
+
+  /* --------------------------------------------------------
+   * 6. Sévérité — hue-séparées des accents de module (A6) : un module ne
+   *    partage jamais un hue avec un statut (guard A6 vérifie l'égalité).
+   *    Ratios mesurés contre la surface (blanc) et le fond crème #EFEDE3.
+   * -------------------------------------------------------- */
+  --_color-danger:  #B91C1C;  /* rouge 0°  · 6.47:1 sur blanc · 5.51:1 sur crème — AA */
+  --color-danger:   var(--_color-danger);
+  --_color-success: #15803D;  /* vert 145° · 5.02:1 sur blanc · 4.27:1 sur crème — AA */
+  --color-success:  var(--_color-success);
+  --_color-warning: #A15C0A;  /* ambre 38° · 5.18:1 sur blanc · 4.42:1 sur crème — AA */
+  --color-warning:  var(--_color-warning);
+  --_color-info:    #0B66C3;  /* bleu 210° · 5.67:1 sur blanc · 4.83:1 sur crème — AA */
+  --color-info:     var(--_color-info);
+
+  /* --------------------------------------------------------
+   * 7. Accents de module (A6) — un accent par section de niveau 1, MAX 3-4.
+   *    Hue-séparés entre eux (≥28°) et des sévérités ci-dessus (≥60°).
+   *    Ratios mesurés contre la surface de travail (blanc) ET le fond crème.
+   * -------------------------------------------------------- */
+  --module-appointments: #4F46E5;  /* indigo 242° · 6.29:1 sur blanc · 5.36:1 sur crème — AA */
+  --module-patients:     #9E1E88;  /* fuchsia 311° · 7.01:1 sur blanc · 5.97:1 sur crème — AA */
+  --module-documents:    #6C3AED;  /* violet 270° · 6.06:1 sur blanc · 5.16:1 sur crème — AA */
+
+  /* Accent du module actif — fallback marque tant qu'aucun data-module n'est
+     posé (login, onboarding) ; les règles [data-module="x"] plus bas
+     surchargent ces deux valeurs à la racine de leur section. */
+  --module-accent:          var(--color-accent-brand);
+  --active-module-accent:   var(--color-accent-brand);
+}
+
+/* --------------------------------------------------------
+ * API Tailwind — exclusivement via @theme inline.
+ * (--color-bg reste un token CSS runtime, pas une utility : éviterait bg-bg.)
+ * -------------------------------------------------------- */
+@theme inline {
+  --color-surface: var(--_color-surface);
+  --color-surface-work: var(--_color-surface-work);
+  --color-surface-raised: var(--_color-surface-raised);
+  --color-surface-glass: var(--_color-surface-glass);
+  --color-border-subtle: var(--_color-border-subtle);
+  --color-border-strong: var(--_color-border-strong);
+  --color-text-primary: var(--_color-text-primary);
+  --color-text-secondary: var(--_color-text-secondary);
+  --color-text-tertiary: var(--_color-text-tertiary);
+  --color-accent-brand: var(--_color-accent-brand);
+  --color-accent-brand-hover: var(--_color-accent-brand-hover);
+  --color-on-accent-brand: var(--_color-on-accent-brand);
+}
+
+/* --------------------------------------------------------
+ * Dark — blocs privés SEULEMENT ; la rampe neutre reste la même, seules les
+ * surfaces/textes/accents basculent.
+ * Convention projet : classe .dark (shadcn) ; [data-theme="dark"] en alias.
+ * -------------------------------------------------------- */
+.dark,
+[data-theme="dark"] {
+  --_color-bg: #181612;
+  --_color-surface: #201D17;
+  --_color-surface-work: #232019;
+  --_color-surface-raised: #2A261E;
+  --_color-surface-glass: rgba(24, 22, 16, 0.78);
+
+  --_color-text-primary: #F2EFE7;       /* 14.63:1 sur surface */
+  --_color-text-secondary: #B0AA9C;     /* 7.26:1 sur surface — AA */
+  --_color-text-tertiary: #9A938A;      /* 5.53:1 sur surface — AA */
+
+  --_color-accent-brand: #2DD4BF;       /* teal-400 · 9.03:1 sur surface */
+  --_color-accent-brand-hover: #14B8A6; /* teal-500 · 6.75:1 sur surface */
+  --_color-on-accent-brand: #04211C;    /* 9.10:1 sur #2DD4BF */
+
+  /* --------------------------------------------------------
+   * Arêtes dark — 3 paliers, hex FIXES mesurés, jamais dérivés de la rampe
+   * neutre : la rampe dark est si proche de la surface qu'une dérivation
+   * donnerait ~1.00:1 (bordure dans la couleur de sa propre face).
+   * Ratios mesurés contre la surface de travail dark #232019 (2026-08-03).
+   * subtle/strong = tokens maison ; base = --border shadcn (--color-border
+   * y est mappé dans globals.css) — le seam vit ici, un seul bloc dark.
+   * -------------------------------------------------------- */
+  --_color-border-subtle: #3A3A37;  /* 1.42:1 sur #232019 — séparateurs, cartes calmes */
+  --border:                #484844; /* 1.77:1 sur #232019 — standard, champs */
+  --_color-border-strong:  #6A6A66; /* 2.99:1 sur #232019 — hover, cadres accentués */
+}
+
+/* --------------------------------------------------------
+ * A6 — Mécanisme d'accent par section, SANS JS : les layouts de section
+ * posent data-module="x" sur leur racine ; ces règles activent l'accent du
+ * module pour toute la sous-arborescence (nav, toolbars, cartes, focus ring
+ * via --active-module-accent). Hors data-module, :root retombe sur la marque.
+ * -------------------------------------------------------- */
+[data-module="appointments"] {
+  --module-accent: var(--module-appointments);
+  --active-module-accent: var(--module-appointments);
+}
+[data-module="patients"] {
+  --module-accent: var(--module-patients);
+  --active-module-accent: var(--module-patients);
+}
+[data-module="documents"] {
+  --module-accent: var(--module-documents);
+  --active-module-accent: var(--module-documents);
+}

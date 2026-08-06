@@ -41,7 +41,7 @@ export default function ReferringPractitionersManager() {
     fetchAll(); router.refresh()
   }
 
-  const inputClass = 'w-full rounded-lg border border-warm bg-white px-3 py-2 text-sm focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none'
+  const inputClass = 'w-full rounded-lg border border-warm bg-white px-3 py-2 text-sm focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20'
 
   if (loading) return <p className="text-sm text-stone-600">Chargement…</p>
 
@@ -79,7 +79,7 @@ export default function ReferringPractitionersManager() {
                 <p className="text-sm font-medium text-stone-800">{p.name}</p>
                 <p className="text-xs text-stone-600">{[p.specialty, p.city, p.phone].filter(Boolean).join(' · ') || '—'}</p>
               </div>
-              <div className="flex items-center gap-1 ml-2">
+              <div className="flex items-center gap-1 ms-2">
                 <button onClick={() => openEdit(p)} className="rounded p-1 text-stone-600 hover:text-primary-600"><Pencil className="size-3.5" /></button>
                 <button onClick={() => handleDelete(p.id)} className="rounded p-1 text-stone-600 hover:text-red-600"><Trash2 className="size-3.5" /></button>
               </div>

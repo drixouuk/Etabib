@@ -1,6 +1,7 @@
 'use client'
 
 import { forwardRef, useEffect, useImperativeHandle, useRef } from 'react'
+import { useLocale } from 'next-intl'
 
 declare global {
   interface Window {
@@ -53,11 +54,16 @@ const Turnstile = forwardRef<TurnstileHandle, Props>(function Turnstile({ onToke
   const tokenCbRef = useRef(onTokenChange)
   tokenCbRef.current = onTokenChange
 
+  // Point 5 — widget localisé (fr/en/ar ; tzm n'est pas supporté par Turnstile → fr).
+  const locale = useLocale()
+  const turnstileLanguage = locale === 'tzm' ? 'fr' : locale
+
   const renderWidget = () => {
     if (!containerRef.current || !window.turnstile || widgetId.current) return
     widgetId.current = window.turnstile.render(containerRef.current, {
       sitekey: SITE_KEY,
       action: ACTION,
+      language: turnstileLanguage,
       callback: (token: string) => tokenCbRef.current(token),
       'expired-callback': () => {
         tokenCbRef.current(null)

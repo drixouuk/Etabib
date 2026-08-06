@@ -1,13 +1,13 @@
 import { setRequestLocale, getTranslations } from "next-intl/server";
 import { headers } from "next/headers";
-import { MapPin, Star, Stethoscope, ArrowRight } from "lucide-react";
+import { MapPin, Star, Stethoscope, ArrowRight, BadgeCheck, Languages } from "lucide-react";
 import PresentationSection from "@/components/sections/PresentationSection";
 import ServicesSection from "@/components/sections/ServicesSection";
 import ReviewsSection from "@/components/sections/ReviewsSection";
 import PublicBookingWidget from "@/components/booking/PublicBookingWidget";
 import InfosSection from "@/components/sections/InfosSection";
 import ClosureBanner from "@/components/sections/ClosureBanner";
-import { getServices, getPracticeInfo, getReviews, getTenantById, getDoctorProfile } from "@/lib/payload";
+import { getServices, getPracticeInfo, getReviews, getTenantById, getDoctorProfile, resolveMediaUrl } from "@/lib/payload";
 import type { Service, PracticeInfo, Review, Doctor } from "@/lib/payload";
 
 const DATA_LOCALE: Record<string, string> = {
@@ -47,7 +47,10 @@ export default async function HomePage({ params }: Props) {
     console.error("=== [DEBUG FRONTEND] ERREUR FETCH CMS ===", err)
   }
 
-  const doctorName = doctor?.name || 'Dr Guinane Aicha'
+  const doctorName = doctor?.name || 'Dr Demo'
+  const doctorPhotoUrl = resolveMediaUrl(
+    typeof doctor?.photo === 'string' ? doctor.photo : doctor?.photo?.url,
+  )
   const city = practiceInfo?.city || 'Inezgane, Souss-Massa'
   const specialty = doctor?.specialty || 'Pédiatre'
 
@@ -56,11 +59,15 @@ export default async function HomePage({ params }: Props) {
       <ClosureBanner closures={(practiceInfo?.exceptionalClosures ?? []) as any} />
       <main className="flex-1">
       {/* ============ HERO ============ */}
-      <section className="relative overflow-hidden px-4 pb-[70px] pt-[132px] md:pt-[110px]">
-        <span className="absolute left-[60%] -top-[100px] z-0 size-[340px] rounded-full bg-amber-100/70 blur-[60px]" />
-        <span className="absolute -bottom-[60px] -left-[80px] z-0 size-[260px] rounded-full bg-primary-100/80 blur-[60px]" />
+      <section className="relative overflow-hidden px-4 pb-[60px] pt-[112px] md:pt-[130px]">
+        {/* Blobs décoratifs : dégradés radiaux calibrés pour reproduire
+            l'ampleur du rendu flouté original (340px/70% blur 60 → halo ~460px),
+            SANS filter/blur — un filtre dans le flux de scroll crée un layer
+            GPU (famille #166, guard A3). */}
+        <span className="absolute left-[60%] -top-[100px] z-0 size-[460px] rounded-full bg-[radial-gradient(closest-side,rgba(254,243,199,0.55),transparent)]" />
+        <span className="absolute -bottom-[60px] -left-[80px] z-0 size-[380px] rounded-full bg-[radial-gradient(closest-side,rgba(204,251,241,0.65),transparent)]" />
 
-        <div className="container relative z-10 mx-auto grid max-w-[1200px] grid-cols-1 items-center gap-14 lg:grid-cols-[1.1fr_0.9fr]">
+        <div className="container relative z-10 mx-auto grid max-w-[1160px] grid-cols-1 items-center gap-14 lg:grid-cols-[1.1fr_0.9fr]">
           <div>
             <span className="mb-5 inline-flex items-center gap-1.5 rounded-full border border-primary-200 bg-primary-50 px-3.5 py-1.5 text-[.82rem] font-semibold text-primary-700">
               <MapPin className="size-3.5" />
@@ -83,26 +90,48 @@ export default async function HomePage({ params }: Props) {
                 {t('cta_secondary')}
               </a>
             </div>
-            <div className="flex flex-wrap items-center gap-x-[18px] gap-y-2 text-[.87rem] font-medium text-stone-500">
+            <div className="flex flex-wrap gap-[18px] text-[.87rem] font-semibold text-[#B9B2A4]">
+              {reviewsData.length > 0 && (
+                <span className="inline-flex items-center gap-1.5">
+                  <Star className="size-3.5 text-primary-500" />
+                  {t('badge_rating', {
+                    rating: (reviewsData.reduce((sum, r) => sum + r.rating, 0) / reviewsData.length)
+                      .toFixed(1)
+                      .replace('.', ','),
+                    count: reviewsData.length,
+                  })}
+                </span>
+              )}
               <span className="inline-flex items-center gap-1.5">
-                <Star className="size-3.5 fill-amber-400 text-amber-400" />
-                4,9/5 · 11 avis Google
+                <BadgeCheck className="size-3.5 text-primary-500" />
+                {t('badge_experience')}
               </span>
-              <span className="size-1.5 rounded-full bg-primary-400" />
-              <span>20 ans d'expérience</span>
-              <span className="size-1.5 rounded-full bg-primary-400" />
-              <span>{t('badge_langues')}</span>
+              <span className="inline-flex items-center gap-1.5">
+                <Languages className="size-3.5 text-primary-500" />
+                {t('badge_langues')}
+              </span>
             </div>
           </div>
 
           <div className="relative order-first mx-auto max-w-[280px] md:order-none md:max-w-[360px]">
             <div className="relative flex aspect-[4/5] w-full items-center justify-center overflow-hidden rounded-[26px] bg-gradient-to-br from-primary-50 via-primary-100 to-primary-200 shadow-lg">
-              <div className="flex size-[104px] items-center justify-center rounded-full bg-white/70 shadow-sm">
-                <Stethoscope className="size-12 text-primary-700" />
-              </div>
-              <span className="absolute bottom-3.5 right-3.5 rounded-full bg-stone-800/55 px-2.5 py-1 text-[.68rem] font-semibold text-white">
-                Photo à intégrer
-              </span>
+              {doctorPhotoUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={doctorPhotoUrl}
+                  alt={t('photoPlaceholder')}
+                  className="absolute inset-0 h-full w-full object-cover"
+                />
+              ) : (
+                <>
+                  <div className="flex size-[104px] items-center justify-center rounded-full bg-white/70 shadow-sm">
+                    <Stethoscope className="size-12 text-primary-700" />
+                  </div>
+                  <span className="absolute bottom-3.5 right-3.5 rounded-full bg-stone-800/55 px-2.5 py-1 text-[.68rem] font-semibold text-white">
+                    {t('photoPlaceholder')}
+                  </span>
+                </>
+              )}
             </div>
             <p className="mt-4 text-center font-heading text-base font-bold text-stone-800">
               {doctorName}

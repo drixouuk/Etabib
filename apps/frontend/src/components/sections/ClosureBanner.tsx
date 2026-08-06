@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { X } from 'lucide-react'
+import { useLocale } from 'next-intl'
 
 type Closure = { startDate: string; endDate?: string; label: string }
 
@@ -12,12 +13,14 @@ function toLocalDate(d: Date): string {
   return `${y}-${m}-${day}`
 }
 
-function formatDateRange(start: string, end?: string): string {
-  const fmt = (iso: string) => new Date(iso).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })
+function formatDateRange(start: string, end: string | undefined, locale: string): string {
+  // Point 2 — date au format de la locale active, jamais d'ISO brute ni de fr-FR en dur.
+  const fmt = (iso: string) => new Intl.DateTimeFormat(locale, { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(iso))
   return end ? `${fmt(start)} au ${fmt(end)}` : `le ${fmt(start)}`
 }
 
 export default function ClosureBanner({ closures }: { closures: Closure[] }) {
+  const locale = useLocale()
   const [dismissed, setDismissed] = useState(() =>
     typeof document !== 'undefined' && document.cookie.includes('closure-dismissed=1'),
   )
@@ -37,7 +40,7 @@ export default function ClosureBanner({ closures }: { closures: Closure[] }) {
   return (
     <div className="border-b border-amber-200 bg-amber-50 px-4 py-3 text-center">
       <p className="inline text-sm font-semibold text-amber-800">
-        ⚠️ {active.label} — {formatDateRange(active.startDate, active.endDate)}
+        ⚠️ {active.label} — {formatDateRange(active.startDate, active.endDate, locale)}
       </p>
       <button
         onClick={dismiss}

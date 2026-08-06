@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { revalidateTag } from 'next/cache'
 import { runBillingCycle, type CmsApi } from '@/lib/billing-cycle'
 
 function getCMSURL(): string {
@@ -28,6 +29,16 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  const result = await runBillingCycle(cms, { sendEmails: true })
+  const result = await runBillingCycle(cms, {
+    sendEmails: true,
+    // B7 — le cron change les statuts tenant par tenant : revalidation scopée,
+    // chaque tenant traité invalide SES lectures (subscriptions/tenants), pas
+    // le cache de tous les autres.
+    onTenantProcessed: (tenantId) => {
+      revalidateTag(`col:subscriptions:tenant:${tenantId}`, 'default')
+      revalidateTag(`col:tenants:tenant:${tenantId}`, 'default')
+    },
+  })
+
   return NextResponse.json(result)
 }

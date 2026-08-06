@@ -1,3 +1,4 @@
+@import '../styles/tokens.css';
 @import 'tailwindcss';
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
@@ -56,11 +57,14 @@
   --color-cream-800: #D4A02D;
   --color-cream-900: #A67C1A;
 
-  --font-heading: var(--font-heading), Figtree, sans-serif;
+  --font-heading: var(--font-heading), Vazirmatn, sans-serif;
   --font-body: var(--font-body), 'Noto Sans', sans-serif;
   --font-tifinagh: var(--font-tifinagh), 'Noto Sans Tifinagh', 'Noto Sans', sans-serif;
 
-  --font-sans: var(--font-heading);
+  /* Corps par défaut = --font-body (Noto Sans / Noto Sans Arabic selon la
+     locale) — jamais le titrage : --font-heading est réservé aux éléments
+     explicitement marqués comme titres. */
+  --font-sans: var(--font-body);
   --font-mono: 'ui-monospace', 'SFMono-Regular', monospace;
 
   --width-container: 1200px;
@@ -77,7 +81,7 @@
 
 @theme inline {
   --font-heading: var(--font-heading);
-  --font-sans: var(--font-heading);
+  --font-sans: var(--font-body);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -139,7 +143,9 @@
   --destructive: #EF4444;
   --border: #E7E5E4;
   --input: #D6D3D1;
-  --ring: #14B8A6;
+  /* A5 — seam shadcn : --ring suit le focus ring tokenisé, les composants
+     ui/ (ring-ring, outline-ring/50) suivent sans être édités. */
+  --ring: var(--focus-ring-color);
   --chart-1: #0D9488;
   --chart-2: #14B8A6;
   --chart-3: #F59E0B;
@@ -174,4 +180,60 @@
   html {
     @apply font-sans;
   }
+  /* A5 — règle de focus UNIQUE, tokenisée (tokens.css §5). Les composants
+     ne posent pas d'outline eux-mêmes ; une exception justifiée surcharge
+     --focus-ring-color localement, jamais width/offset. */
+  :focus-visible {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: var(--focus-ring-offset);
+  }
+}
+
+/* A5 — prefers-contrast: more redéfinit les TOKENS, jamais outline-width en
+   dur dans les composants : une propriété posée sur :focus-visible (0,1,0)
+   perdrait contre chaque règle composant (cf. yuvomi). */
+@media (prefers-contrast: more) {
+  :root {
+    --focus-ring-width: 3px;
+    --focus-ring-offset: 1px;
+    --focus-ring-offset-inset: -1px;
+  }
+}
+
+/* --------------------------------------------------------
+ * A3 — Discipline no-blur dans le conteneur scrollable (cf. yuvomi #166).
+ *
+ * Le scroll de l'app se fait sur <body> ; .app-scroll (posé par LayoutShell)
+ * marque la région de contenu dans le flux de scroll. Tout élément avec
+ * backdrop-filter OU filter y devient un layer GPU indépendant → compositor
+ * mobile saturé → écran blanc au scroll sur iOS WebKit / Android Blink.
+ * (filter: est de la même famille que backdrop-filter : il force aussi un
+ * layer — d'où sa neutralisation ici, pas seulement le blur.)
+ *
+ * Les overlays shadcn (Sheet, Dialog, Toaster) sont portalisés sur <body>,
+ * HORS de .app-scroll : ils gardent leur blur. Idem pour les nav fixes
+ * (Header) et scrims d'overlay, qui ne scrollent pas.
+ * -------------------------------------------------------- */
+.app-scroll *,
+.app-scroll *::before,
+.app-scroll *::after {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  filter: none !important;
+}
+
+/* --------------------------------------------------------
+ * A6 — Texte sur fond teinté de l'accent du module (chips actifs, badges,
+ * avatars initials). Délibérément PAS un token : une variable --accent-on-tint
+ * définie sur :root serait évaluée là où --module-accent n'est pas encore
+ * posé (les sections le posent sur leur racine data-module) — le fallback
+ * marque serait figé puis hérité par tout l'arbre, et chaque module aurait
+ * la couleur de la marque. La formule doit vivre ici, au scope où
+ * --module-accent s'applique (cf. yuvomi tokens.css §KONVENTION).
+ * Les 30 % d'encre textuelle écartent le texte du fond teinté dans la
+ * direction du thème (plus sombre en light) ; ICÔNES exceptées — elles
+ * gardent l'accent pur (3:1 suffit).
+ * -------------------------------------------------------- */
+.accent-text-tint {
+  color: color-mix(in srgb, var(--module-accent, var(--color-accent-brand)) 70%, var(--color-text-primary));
 }

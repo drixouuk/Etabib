@@ -5,6 +5,7 @@ import { useLocale } from 'next-intl'
 import { useRouter } from 'next/navigation'
 import { ChevronLeft, ChevronRight, Check, Mail, Phone, Video } from 'lucide-react'
 import BookingSheet, { type BookingDraft } from './BookingSheet'
+import { RdvDetailView, type RdvDetail } from '@/components/agenda/RdvDetailView'
 import type { CalBooking } from '@/lib/booking'
 
 const TZ = 'Africa/Casablanca'
@@ -56,10 +57,39 @@ function minutesOf(iso: string): number {
   const [h, m] = clockFmt.format(new Date(iso)).split(':').map(Number)
   return h * 60 + m
 }
-function mondayOf(d: Date): Date {
+
+// B4 — persistance par device : vue (mois|semaine) et début de semaine.
+// Le choix manuel écrase le défaut et survit aux visites suivantes.
+const VIEW_STORAGE_KEY = 'rdv-calendar-view'
+const WEEK_START_STORAGE_KEY = 'rdv-week-start'
+
+type WeekStart = 'monday' | 'sunday' | 'saturday'
+
+function readStorage(key: string): string | null {
+  try {
+    return typeof window !== 'undefined' ? localStorage.getItem(key) : null
+  } catch {
+    return null // localStorage bloqué (privé)
+  }
+}
+
+function writeStorage(key: string, value: string): void {
+  try {
+    localStorage.setItem(key, value)
+  } catch {
+    /* silencieux */
+  }
+}
+
+/** Début de semaine selon la préférence utilisateur (lundi par défaut). */
+function weekStartOf(d: Date, start: WeekStart): Date {
+  const day = d.getDay() // 0 = dimanche
+  let diff: number
+  if (start === 'monday') diff = (day + 6) % 7
+  else if (start === 'sunday') diff = day
+  else diff = (day + 1) % 7 // samedi : le samedi est le jour 1 de la semaine
   const date = new Date(d.getFullYear(), d.getMonth(), d.getDate())
-  const diff = date.getDay() === 0 ? -6 : 1 - date.getDay()
-  date.setDate(date.getDate() + diff)
+  date.setDate(date.getDate() - diff)
   return date
 }
 
@@ -82,8 +112,34 @@ export default function RendezVousCalendarClient({ initialBookings, tenantId }: 
 
   const today = useMemo(() => new Date(), [])
   const [events, setEvents] = useState<CalBooking[]>(initialBookings)
-  const [view, setView] = useState<View>('semaine')
+  // B4 — vue persistée par device. Défaut serveur STABLE ('mois') : les
+  // lectures localStorage/matchMedia sont des API client-only — les faire
+  // dans l'initialiseur paresseux créerait un mismatch d'hydratation pour
+  // tout visiteur ayant une préférence stockée (SSR ≠ premier rendu client).
+  // La préférence réelle est lue APRÈS montage (voir effet ci-dessous).
+  const [view, setView] = useState<View>('mois')
+  const [weekStart, setWeekStart] = useState<WeekStart>('monday')
+  const [mounted, setMounted] = useState(false)
+  const changeView = (v: View) => {
+    setView(v)
+    writeStorage(VIEW_STORAGE_KEY, v)
+  }
+  const changeWeekStart = (w: WeekStart) => {
+    setWeekStart(w)
+    writeStorage(WEEK_START_STORAGE_KEY, w)
+  }
   const [cursor, setCursor] = useState(() => new Date(today.getFullYear(), today.getMonth(), 1))
+
+  useEffect(() => {
+    // B4 — après hydratation : préférence stockée, sinon défaut par device
+    // (tactile → semaine, pointeur précis → mois).
+    const saved = readStorage(VIEW_STORAGE_KEY)
+    if (saved === 'mois' || saved === 'semaine') setView(saved)
+    else if (window.matchMedia('(pointer: coarse)').matches) setView('semaine')
+    const ws = readStorage(WEEK_START_STORAGE_KEY)
+    if (ws === 'sunday' || ws === 'saturday') setWeekStart(ws)
+    setMounted(true)
+  }, [])
   const [listMode, setListMode] = useState<'avenir' | 'passes'>('avenir')
   const [editing, setEditing] = useState<CalBooking | null>(null)
   const [creating, setCreating] = useState<string | null>(null)
@@ -105,7 +161,7 @@ export default function RendezVousCalendarClient({ initialBookings, tenantId }: 
       start = new Date(cursor.getFullYear(), cursor.getMonth(), 1 - 7)
       end = new Date(cursor.getFullYear(), cursor.getMonth() + 1, 8)
     } else {
-      const ws = mondayOf(cursor)
+      const ws = weekStartOf(cursor, weekStart)
       start = new Date(ws.getFullYear(), ws.getMonth(), ws.getDate() - 1)
       end = new Date(ws.getFullYear(), ws.getMonth(), ws.getDate() + 30)
     }
@@ -119,7 +175,7 @@ export default function RendezVousCalendarClient({ initialBookings, tenantId }: 
     if (view === 'mois') {
       setEvents(await loadRange(new Date(cursor.getFullYear(), cursor.getMonth(), 1 - 7), new Date(cursor.getFullYear(), cursor.getMonth() + 1, 8)))
     } else {
-      const ws = mondayOf(cursor)
+      const ws = weekStartOf(cursor, weekStart)
       setEvents(await loadRange(new Date(ws.getFullYear(), ws.getMonth(), ws.getDate() - 1), new Date(ws.getFullYear(), ws.getMonth(), ws.getDate() + 30)))
     }
     router.refresh()
@@ -163,7 +219,7 @@ export default function RendezVousCalendarClient({ initialBookings, tenantId }: 
   }, [view])
 
   const goToday = useCallback(() => {
-    setCursor(view === 'mois' ? new Date(today.getFullYear(), today.getMonth(), 1) : mondayOf(today))
+    setCursor(view === 'mois' ? new Date(today.getFullYear(), today.getMonth(), 1) : weekStartOf(today, weekStart))
   }, [view, today])
 
   // Grille du mois (lundi en tête), rangées flex qui remplissent la hauteur fixe
@@ -182,29 +238,29 @@ export default function RendezVousCalendarClient({ initialBookings, tenantId }: 
   for (let i = 0; i < monthCells.length; i += 7) monthRows.push(monthCells.slice(i, i + 7))
 
   // Semaine courante
-  const weekStart = mondayOf(cursor)
-  const weekEnd = new Date(weekStart.getFullYear(), weekStart.getMonth(), weekStart.getDate() + 6)
+  const weekStartDate = weekStartOf(cursor, weekStart)
+  const weekEnd = new Date(weekStartDate.getFullYear(), weekStartDate.getMonth(), weekStartDate.getDate() + 6)
   const weekCells = Array.from({ length: 7 }, (_, i) => {
-    const date = new Date(weekStart.getFullYear(), weekStart.getMonth(), weekStart.getDate() + i, 12, 0)
+    const date = new Date(weekStartDate.getFullYear(), weekStartDate.getMonth(), weekStartDate.getDate() + i, 12, 0)
     const key = dayKeyOf(date)
     return { date, key, appts: eventsByDay.get(key) ?? [] }
   })
 
   const weekLabel =
-    weekStart.getFullYear() === weekEnd.getFullYear()
-      ? `${shortFmt.format(weekStart)} – ${shortFmt.format(weekEnd)} ${weekEnd.getFullYear()}`
-      : `${shortFmt.format(weekStart)} ${weekStart.getFullYear()} – ${shortFmt.format(weekEnd)} ${weekEnd.getFullYear()}`
+    weekStartDate.getFullYear() === weekEnd.getFullYear()
+      ? `${shortFmt.format(weekStartDate)} – ${shortFmt.format(weekEnd)} ${weekEnd.getFullYear()}`
+      : `${shortFmt.format(weekStartDate)} ${weekStartDate.getFullYear()} – ${shortFmt.format(weekEnd)} ${weekEnd.getFullYear()}`
 
   const calendarLabel = view === 'mois' ? `${MONTHS_FR[m]} ${y}` : weekLabel
   const dateInputValue = view === 'mois'
     ? `${y}-${pad2(m + 1)}-01`
-    : dayKeyOf(weekStart)
+    : dayKeyOf(weekStartDate)
 
   const onDateInput = (value: string) => {
     const parts = value.split('-')
     if (parts.length !== 3) return
     const picked = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]))
-    setCursor(view === 'mois' ? new Date(picked.getFullYear(), picked.getMonth(), 1) : mondayOf(picked))
+    setCursor(view === 'mois' ? new Date(picked.getFullYear(), picked.getMonth(), 1) : weekStartOf(picked, weekStart))
   }
 
   const openEdit = (b: CalBooking) => {
@@ -266,7 +322,7 @@ export default function RendezVousCalendarClient({ initialBookings, tenantId }: 
             e.stopPropagation()
             openEdit(b)
           }}
-          className="truncate rounded-md bg-primary-50 px-1.5 py-0.5 text-left text-[10.5px] leading-[1.35] text-primary-700 transition-colors hover:bg-primary-100"
+          className="truncate rounded-md bg-primary-50 px-1.5 py-0.5 text-start text-[10.5px] leading-[1.35] text-primary-700 transition-colors hover:bg-primary-100"
         >
           <b className="font-bold">{fmtTime(b.startTime)}</b> {b.attendeeName || 'Patient'}
         </button>
@@ -286,6 +342,13 @@ export default function RendezVousCalendarClient({ initialBookings, tenantId }: 
         <p className="text-[13.5px] text-stone-600 capitalize">{fmtDayLong(today.toISOString())}</p>
       </div>
 
+      {!mounted ? (
+        // Placeholder stable SSR/client : la vue réelle n'est montée qu'après
+        // hydratation (lecture de la préférence) — aucun flash de vue.
+        <div className="rounded-2xl border border-stone-200 bg-white p-8 text-center text-sm text-stone-500 shadow-sm">
+          Chargement du calendrier…
+        </div>
+      ) : (
       <div className="grid grid-cols-1 gap-6 lg:h-[calc(100vh-190px)] lg:grid-cols-3">
         {/* Calendrier — 2/3 */}
         <div className="lg:col-span-2 lg:flex lg:min-h-0 lg:flex-col">
@@ -318,12 +381,22 @@ export default function RendezVousCalendarClient({ initialBookings, tenantId }: 
             <div className="flex items-center gap-2.5">
               <select
                 value={view}
-                onChange={(e) => setView(e.target.value as View)}
+                onChange={(e) => changeView(e.target.value as View)}
                 className="cursor-pointer rounded-[9px] border border-primary-600/20 bg-white px-3 py-2 text-[12.5px] text-stone-800"
                 aria-label="Vue"
               >
                 <option value="mois">Mois</option>
                 <option value="semaine">Semaine</option>
+              </select>
+              <select
+                value={weekStart}
+                onChange={(e) => changeWeekStart(e.target.value as WeekStart)}
+                className="hidden cursor-pointer rounded-[9px] border border-primary-600/20 bg-white px-3 py-2 text-[12.5px] text-stone-800 md:block"
+                aria-label="Début de semaine"
+              >
+                <option value="monday">Lundi</option>
+                <option value="sunday">Dimanche</option>
+                <option value="saturday">Samedi</option>
               </select>
               <input
                 type="date"
@@ -399,7 +472,7 @@ export default function RendezVousCalendarClient({ initialBookings, tenantId }: 
                 {Array.from({ length: DAY_HOURS + 1 }, (_, i) => DAY_START + i).map((h) => (
                   <span
                     key={h}
-                    className="absolute right-1.5 text-[9.5px] font-medium text-stone-400"
+                    className="absolute end-1.5 text-[9.5px] font-medium text-stone-400"
                     style={{
                       top: `calc(${((h - DAY_START) / DAY_HOURS) * 100}% + 3px)`,
                       transform: h === DAY_END ? 'translateY(-100%)' : undefined,
@@ -439,7 +512,7 @@ export default function RendezVousCalendarClient({ initialBookings, tenantId }: 
                           e.stopPropagation()
                           openEdit(b)
                         }}
-                        className="absolute inset-x-1 z-10 truncate rounded-md border-l-2 border-primary-600 bg-primary-50 px-1.5 text-left text-[10.5px] leading-snug text-primary-700 transition-colors hover:bg-primary-100"
+                        className="absolute inset-x-1 z-10 truncate rounded-md border-s-2 border-primary-600 bg-primary-50 px-1.5 text-start text-[10.5px] leading-snug text-primary-700 transition-colors hover:bg-primary-100"
                         style={{ top: `${topPct}%`, height: `max(${MIN_BLOCK_PX}px, ${heightPct}%)` }}
                       >
                         <b className="font-bold">{fmtTime(b.startTime)}</b> {b.attendeeName || 'Patient'}
@@ -476,7 +549,7 @@ export default function RendezVousCalendarClient({ initialBookings, tenantId }: 
             </button>
           </div>
 
-          <div className="min-h-0 flex-1 overflow-y-auto rounded-2xl border border-stone-200 bg-white shadow-sm lg:pr-0.5">
+          <div className="min-h-0 flex-1 overflow-y-auto rounded-2xl border border-stone-200 bg-white shadow-sm lg:pe-0.5">
             {activeList.length === 0 && (
               <div className="px-9 py-9 text-center text-[13px] text-stone-500">
                 Aucun rendez-vous {listMode === 'avenir' ? 'à venir' : 'passé'} sur cette période.
@@ -543,10 +616,23 @@ export default function RendezVousCalendarClient({ initialBookings, tenantId }: 
           </div>
         </div>
       </div>
+      )}
 
+      {/* B1 — « look first, edit second » : le tap ouvre la vue lecture ;
+          « Modifier » y monte le formulaire. La création reste en formulaire. */}
+      {editingDraft && (
+        <RdvDetailView
+          tenantId={tenantId}
+          booking={editingDraft as RdvDetail}
+          whenLabel={sheetWhen}
+          onClose={() => { setEditing(null); setCreating(null) }}
+          onSaved={refresh}
+          onToast={showToast}
+        />
+      )}
       <BookingSheet
         tenantId={tenantId}
-        booking={editingDraft}
+        booking={null}
         initialStart={creating}
         whenLabel={sheetWhen}
         onClose={() => { setEditing(null); setCreating(null) }}

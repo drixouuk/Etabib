@@ -17,4 +17,35 @@ if git diff --cached --name-only | grep -q "\.env\.example$"; then
   fi
 fi
 
+if git diff --cached --name-only | grep -q "apps/cms/src/"; then
+  node apps/cms/scripts/guard-audit.mjs || {
+    echo "⚠️  Guard audit (D1) a échoué — invariants du ledger non respectés."
+    exit 1
+  }
+fi
+
+if git diff --cached --name-only | grep -q "apps/frontend/src/"; then
+  pnpm --filter frontend guard:design || {
+    echo "⚠️  Guard design system (A1) a échoué — invariants tokens non respectés."
+    exit 1
+  }
+  node apps/frontend/scripts/guard-a4.mjs || {
+    echo "⚠️  Guard A4 a échoué — utilité directionnelle physique dans le staging (utiliser ms/me/ps/pe/start/end/text-start|end)."
+    exit 1
+  }
+  node apps/frontend/scripts/guard-phase-b.mjs || {
+    echo "⚠️  Guard Phase B a échoué — invariants agenda patient non respectés."
+    exit 1
+  }
+fi
+
+# D2 — layer-boundary couvre LES DEUX apps : un commit cms-only qui importerait
+# du frontend (ou l'inverse) doit échouer aussi. Le scan est rapide.
+if git diff --cached --name-only | grep -qE "apps/(frontend|cms)/src/"; then
+  node apps/frontend/scripts/guard-architecture.mjs || {
+    echo "⚠️  Guard Architecture (D2) a échoué — layer-boundary / parité i18n / breakpoints canoniques."
+    exit 1
+  }
+fi
+
 

@@ -38,7 +38,7 @@ export default async function PatientsListPage({ searchParams }: Props) {
     apiPath = `/api/patients?where[tenant][equals]=${tenantId}&sort=-updatedAt&limit=50`
   }
 
-  const data = await fetchCMS<{ docs: Patient[] }>(apiPath, { revalidate: 0 })
+  const data = await fetchCMS<{ docs: Patient[] }>(apiPath)
   const patients = data?.docs ?? []
 
   const patientIds = patients.map(p => p.id)
@@ -47,7 +47,7 @@ export default async function PatientsListPage({ searchParams }: Props) {
   if (patientIds.length > 0) {
     const inParams = patientIds.map(id => `where[patient][in]=${id}`).join('&')
     const consPath = `/api/consultations?where[tenant][equals]=${tenantId}&${inParams}&sort=-date&depth=0&limit=${patientIds.length}`
-    const consData = await fetchCMS<{ docs: Consultation[] }>(consPath, { revalidate: 0 })
+    const consData = await fetchCMS<{ docs: Consultation[] }>(consPath)
     const consultations = consData?.docs ?? []
 
     for (const c of consultations) {

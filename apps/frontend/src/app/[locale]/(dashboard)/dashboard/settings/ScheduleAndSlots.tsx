@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Plus, X } from 'lucide-react'
+import { TimeInput } from '@/components/ui/time-input'
+import { nextOccurrenceDate, toDateKey } from '@/lib/rrule'
 
 const DAY_LABELS: Record<number, string> = {
   1: 'Lundi', 2: 'Mardi', 3: 'Mercredi', 4: 'Jeudi', 5: 'Vendredi', 6: 'Samedi', 7: 'Dimanche',
@@ -21,11 +23,17 @@ type Slot = {
   durationMinutes: number
   bufferMinutes: number
   isActive: boolean
+  // Récurrence (B3) — règle iCal optionnelle ; vide = hebdomadaire simple
+  recurrenceRule?: string
+  recurrenceEnd?: string
+  exceptions?: string[]
 }
+
+type ScopeChoice = 'seul' | 'suivants' | 'serie'
 
 type Closure = { id?: string; startDate: string; endDate?: string; label: string }
 
-const inputClass = 'w-full rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm text-stone-800 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none'
+const inputClass = 'w-full rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm text-stone-800 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20'
 
 export default function ScheduleAndSlots() {
   const router = useRouter()
@@ -79,6 +87,9 @@ export default function ScheduleAndSlots() {
             durationMinutes: s.durationMinutes ?? 30,
             bufferMinutes: s.bufferMinutes ?? 15,
             isActive: s.isActive ?? true,
+            recurrenceRule: s.recurrenceRule ?? undefined,
+            recurrenceEnd: s.recurrenceEnd ? String(s.recurrenceEnd).slice(0, 10) : undefined,
+            exceptions: (s.exceptions ?? []).map((e: any) => String(e.date ?? '').slice(0, 10)),
           })),
         )
         const tenant = tenantData.docs?.[0]
@@ -187,6 +198,9 @@ export default function ScheduleAndSlots() {
       durationMinutes: slot.durationMinutes,
       bufferMinutes: slot.bufferMinutes,
       isActive: slot.isActive,
+      recurrenceRule: slot.recurrenceRule ?? null,
+      recurrenceEnd: slot.recurrenceEnd ?? null,
+      exceptions: (slot.exceptions ?? []).map((d) => ({ date: d })),
     }
     if (slot.id) {
       await fetch(`/api/cms-proxy/availability-slots/${slot.id}`, {
@@ -205,6 +219,57 @@ export default function ScheduleAndSlots() {
 
   const updateSlot = (i: number, patch: Partial<Slot>) => {
     setSlots(slots.map((s, j) => (j === i ? { ...s, ...patch } : s)))
+  }
+
+  // ---- B3 — portée de suppression d'un créneau récurrent -------------------
+  // Série locale uniquement (pas de sync externe) : le choix de scope est
+  // offert pour tout créneau portant une règle. Défaut = « ce créneau seul »,
+  // l'option la moins destructive (une exception, la série continue).
+  const [scopeDialog, setScopeDialog] = useState<{ index: number; scope: ScopeChoice; nextDate: string } | null>(null)
+
+  const dayBefore = (key: string) => {
+    const d = new Date(`${key}T00:00:00`)
+    d.setDate(d.getDate() - 1)
+    return toDateKey(d)
+  }
+
+  const confirmScopeDelete = async () => {
+    const dlg = scopeDialog
+    if (!dlg) return
+    const slot = slots[dlg.index]
+    if (!slot) return
+    setScopeDialog(null)
+
+    if (dlg.scope === 'serie') {
+      if (slot.id) await fetch(`/api/cms-proxy/availability-slots/${slot.id}`, { method: 'DELETE' })
+      setSlots(slots.filter((_, j) => j !== dlg.index))
+      return
+    }
+
+    if (dlg.scope === 'seul') {
+      // Exception (EXDATE) à la prochaine occurrence : la série continue.
+      const exceptions = [...new Set([...(slot.exceptions ?? []), dlg.nextDate])]
+      if (slot.id) {
+        await fetch(`/api/cms-proxy/availability-slots/${slot.id}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ exceptions: exceptions.map((d) => ({ date: d })) }),
+        })
+      }
+      setSlots(slots.map((s, j) => (j === dlg.index ? { ...s, exceptions } : s)))
+      return
+    }
+
+    // « Ce créneau et les suivants » → troncature : fin de série la veille.
+    const recurrenceEnd = dayBefore(dlg.nextDate)
+    if (slot.id) {
+      await fetch(`/api/cms-proxy/availability-slots/${slot.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ recurrenceEnd }),
+      })
+    }
+    setSlots(slots.map((s, j) => (j === dlg.index ? { ...s, recurrenceEnd } : s)))
   }
 
   const saveClosures = async () => {
@@ -258,11 +323,11 @@ export default function ScheduleAndSlots() {
               </div>
               <div>
                 <label className="mb-0.5 block text-xs text-stone-600">Ouverture</label>
-                <input type="time" value={s.open} onChange={e => setSchedules(schedules.map((r, j) => j === i ? { ...r, open: e.target.value } : r))} className={inputClass} />
+                <TimeInput value={s.open} onChange={v => setSchedules(schedules.map((r, j) => j === i ? { ...r, open: v } : r))} className={inputClass} />
               </div>
               <div>
                 <label className="mb-0.5 block text-xs text-stone-600">Fermeture</label>
-                <input type="time" value={s.close} onChange={e => setSchedules(schedules.map((r, j) => j === i ? { ...r, close: e.target.value } : r))} className={inputClass} />
+                <TimeInput value={s.close} onChange={v => setSchedules(schedules.map((r, j) => j === i ? { ...r, close: v } : r))} className={inputClass} />
               </div>
               <button onClick={() => setSchedules(schedules.filter((_, j) => j !== i))} className="pb-1 text-xs text-red-500 hover:text-red-700">Retirer</button>
             </div>
@@ -307,11 +372,11 @@ export default function ScheduleAndSlots() {
               </div>
               <div>
                 <label className="mb-0.5 block text-xs text-stone-600">Début</label>
-                <input type="time" value={s.startTime} disabled={!customSlots} onChange={e => updateSlot(i, { startTime: e.target.value })} className={inputClass} />
+                <TimeInput value={s.startTime} disabled={!customSlots} onChange={v => updateSlot(i, { startTime: v })} className={inputClass} />
               </div>
               <div>
                 <label className="mb-0.5 block text-xs text-stone-600">Fin</label>
-                <input type="time" value={s.endTime} disabled={!customSlots} onChange={e => updateSlot(i, { endTime: e.target.value })} className={inputClass} />
+                <TimeInput value={s.endTime} disabled={!customSlots} onChange={v => updateSlot(i, { endTime: v })} className={inputClass} />
               </div>
               <div>
                 <label className="mb-0.5 block text-xs text-stone-600">Durée (min)</label>
@@ -323,14 +388,103 @@ export default function ScheduleAndSlots() {
               </div>
               {customSlots && (
                 <>
+                  {/* ---- B3 — récurrence (règle iCal FREQ=WEEKLY;BYDAY) ---- */}
+                  <div className="w-full">
+                    <label className="mb-0.5 flex items-center gap-1.5 text-xs text-stone-600">
+                      <input
+                        type="checkbox"
+                        checked={!!s.recurrenceRule}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            const letter = ['SU', 'MO', 'TU', 'WE', 'TH', 'FR', 'SA'][Number(s.dayOfWeek)]
+                            updateSlot(i, { recurrenceRule: `FREQ=WEEKLY;BYDAY=${letter};INTERVAL=1` })
+                          } else {
+                            updateSlot(i, { recurrenceRule: undefined, recurrenceEnd: undefined, exceptions: [] })
+                          }
+                        }}
+                      />
+                      Répéter (plusieurs jours)
+                    </label>
+                    {s.recurrenceRule && (
+                      <div className="mt-1.5 space-y-2 rounded-lg border border-warm bg-stone-50 p-2">
+                        <div className="flex flex-wrap gap-1">
+                          {(['MO', 'TU', 'WE', 'TH', 'FR', 'SA', 'SU'] as const).map((d, idx) => {
+                            const letters = s.recurrenceRule!.match(/BYDAY=([A-Z,]+)/)?.[1].split(',') ?? []
+                            const checked = letters.includes(d)
+                            const order = ['MO', 'TU', 'WE', 'TH', 'FR', 'SA', 'SU']
+                            return (
+                              <button
+                                key={d}
+                                type="button"
+                                onClick={() => {
+                                  const next = checked ? letters.filter((x) => x !== d) : [...letters, d]
+                                  if (next.length === 0) return
+                                  if (next.length === 1) {
+                                    // Un seul jour → retour au comportement hebdomadaire simple
+                                    updateSlot(i, { recurrenceRule: undefined, dayOfWeek: String(order.indexOf(next[0])) })
+                                  } else {
+                                    const sorted = [...next].sort((a, b) => order.indexOf(a) - order.indexOf(b))
+                                    updateSlot(i, { recurrenceRule: `FREQ=WEEKLY;BYDAY=${sorted.join(',')};INTERVAL=1` })
+                                  }
+                                }}
+                                className={`rounded-full px-2 py-0.5 text-[11px] ${checked ? 'bg-primary-600 text-white' : 'border border-stone-300 bg-white text-stone-600'}`}
+                              >
+                                {DAY_LABELS[idx + 1]?.slice(0, 3)}
+                              </button>
+                            )
+                          })}
+                        </div>
+                        <div className="flex flex-wrap items-center gap-2">
+                          <label className="text-[11px] text-stone-600">Fin de série</label>
+                          <input
+                            type="date"
+                            value={s.recurrenceEnd ?? ''}
+                            onChange={(e) => updateSlot(i, { recurrenceEnd: e.target.value || undefined })}
+                            className="rounded-lg border border-stone-300 bg-white px-2 py-1 text-xs"
+                          />
+                        </div>
+                        <div className="flex flex-wrap items-center gap-1.5">
+                          <label className="text-[11px] text-stone-600">Exceptions</label>
+                          {(s.exceptions ?? []).map((ex) => (
+                            <span key={ex} className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2 py-0.5 text-[11px] text-amber-800">
+                              {ex}
+                              <button
+                                type="button"
+                                onClick={() => updateSlot(i, { exceptions: (s.exceptions ?? []).filter((x) => x !== ex) })}
+                                aria-label="Retirer l'exception"
+                              >
+                                ×
+                              </button>
+                            </span>
+                          ))}
+                          <input
+                            type="date"
+                            aria-label="Ajouter une exception"
+                            className="rounded-lg border border-stone-300 bg-white px-2 py-1 text-xs"
+                            onBlur={(e) => {
+                              if (e.target.value) {
+                                updateSlot(i, { exceptions: [...new Set([...(s.exceptions ?? []), e.target.value])] })
+                                e.target.value = ''
+                              }
+                            }}
+                          />
+                        </div>
+                      </div>
+                    )}
+                  </div>
                   <label className="flex items-center gap-1.5 pb-2 text-xs text-stone-600">
                     <input type="checkbox" checked={s.isActive} onChange={e => updateSlot(i, { isActive: e.target.checked })} />
                     Actif
                   </label>
                   <button
-                    onClick={async () => {
-                      if (s.id) await fetch(`/api/cms-proxy/availability-slots/${s.id}`, { method: 'DELETE' })
-                      setSlots(slots.filter((_, j) => j !== i))
+                    onClick={() => {
+                      if (s.recurrenceRule) {
+                        // B3 — série récurrente : choix de portée, défaut « seul »
+                        setScopeDialog({ index: i, scope: 'seul', nextDate: nextOccurrenceDate(s, new Date()) })
+                      } else {
+                        if (s.id) fetch(`/api/cms-proxy/availability-slots/${s.id}`, { method: 'DELETE' })
+                        setSlots(slots.filter((_, j) => j !== i))
+                      }
                     }}
                     className="pb-1 text-xs text-red-500 hover:text-red-700">Supprimer</button>
                 </>
@@ -353,6 +507,36 @@ export default function ScheduleAndSlots() {
           )}
         </div>
       </div>
+
+      {/* ---- B3 — portée de suppression d'une série récurrente ---- */}
+      {scopeDialog && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" onClick={() => setScopeDialog(null)}>
+          <div className="w-full max-w-sm rounded-2xl bg-white p-5 shadow-xl" onClick={(e) => e.stopPropagation()}>
+            <h3 className="font-heading text-base font-semibold text-stone-800">Supprimer ce créneau récurrent</h3>
+            <p className="mt-1 text-xs text-stone-600">
+              Ce créneau se répète. Prochaine occurrence : <b>{scopeDialog.nextDate || '—'}</b>
+            </p>
+            <label className="mt-3 block text-xs text-stone-600">Portée de la suppression</label>
+            <select
+              value={scopeDialog.scope}
+              onChange={(e) => setScopeDialog({ ...scopeDialog, scope: e.target.value as ScopeChoice })}
+              className="mt-1 w-full rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm"
+            >
+              <option value="seul">Ce créneau seul (défaut)</option>
+              <option value="suivants">Ce créneau et les suivants</option>
+              <option value="serie">Toute la série</option>
+            </select>
+            <div className="mt-4 flex justify-end gap-2">
+              <button onClick={() => setScopeDialog(null)} className="rounded-lg border border-stone-300 px-3 py-1.5 text-xs text-stone-700">
+                Annuler
+              </button>
+              <button onClick={confirmScopeDelete} className="rounded-lg bg-red-600 px-3 py-1.5 text-xs text-white">
+                Supprimer
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ===== Fermetures exceptionnelles ===== */}
       <div className="rounded-xl border border-warm bg-white shadow-sm">

@@ -1,4 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { revalidateTag } from 'next/cache'
+import { authenticate } from '@/lib/auth'
+import { getTenantId } from '@/lib/tenant'
 import { requireWritable } from '@/lib/subscription'
 
 function getCMSURL(): string {
@@ -78,6 +81,18 @@ async function proxyRequest(request: NextRequest, method: string, path: string[]
     } as any)
 
     const data = await res.json().catch(() => null)
+
+    // B7 — après une écriture réussie, invalide les lectures mises en cache
+    // de la collection touchée, scopées au tenant de l'auteur : il voit sa
+    // donnée immédiatement, les autres tenants gardent leur cache (TTL 30s).
+    // Tenant dérivé de la même source d'authentification que le proxy
+    // (authenticate, dédupliqué par cache() avec requireWritable).
+    if (res.ok && method !== 'GET' && path[0]) {
+      const user = await authenticate()
+      const tenantId = user ? getTenantId(user) : undefined
+      revalidateTag(tenantId ? `col:${path[0]}:tenant:${tenantId}` : `col:${path[0]}`, 'default')
+    }
+
     return NextResponse.json(data, { status: res.status })
   } catch {
     return NextResponse.json({ error: 'Erreur de proxy' }, { status: 502 })

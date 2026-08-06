@@ -39,9 +39,9 @@ export default async function Footer({ locale }: Props) {
     <footer>
       <div className="h-2 bg-gradient-to-b from-cream-100 to-primary-800" />
       <div className="bg-primary-800">
-        <div className="mx-auto max-w-[1200px] px-6 py-6">
+        <div className="mx-auto max-w-[1160px] px-6 py-6">
           <div className="flex flex-col items-center gap-4 text-center md:grid md:grid-cols-3 md:items-center">
-            <p className="text-sm font-medium text-stone-300 md:text-left">
+            <p className="text-sm font-medium text-stone-300 md:text-start">
               {doctorName}{doctorName && specialty ? ' — ' : ''}
               <span className="font-normal text-stone-200">{specialty}</span>
             </p>
@@ -52,7 +52,7 @@ export default async function Footer({ locale }: Props) {
                 </Link>
               ))}
             </nav>
-            <p className="text-sm text-stone-200 md:text-right">{city}</p>
+            <p className="text-sm text-stone-200 md:text-end">{city}</p>
           </div>
           <div className="mt-4 text-center">
             <Link href="/login" className="text-xs text-stone-400 transition-colors duration-200 hover:text-stone-200">

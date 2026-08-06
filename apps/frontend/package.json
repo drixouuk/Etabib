@@ -6,7 +6,12 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "guard:design": "node scripts/guard-design.mjs",
+    "guard:phase-b": "node scripts/guard-phase-b.mjs",
+    "guard:architecture": "node scripts/guard-architecture.mjs",
+    "test:time-input": "tsx --test src/lib/time-input.test.ts",
+    "test:rrule": "tsx --test src/lib/rrule.test.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.6.0",

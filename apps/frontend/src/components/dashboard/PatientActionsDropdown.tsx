@@ -34,7 +34,7 @@ export default function PatientActionsDropdown({ patientId, patientName }: Props
         <MoreHorizontal className="size-4" />
       </button>
       {open && (
-        <div className="absolute left-0 top-full z-20 mt-1 w-40 rounded-lg border border-warm bg-white py-1 shadow-lg">
+        <div className="absolute start-0 top-full z-20 mt-1 w-40 rounded-lg border border-warm bg-white py-1 shadow-lg">
           <Link
             href={`/dashboard/patients/${patientId}/edit`}
             onClick={() => setOpen(false)}

@@ -85,14 +85,14 @@ export default function QueueBar() {
           } ${isAboveAverage ? 'text-success-500' : 'text-stone-800'} ${justBrokeRecord ? 'ring-1 ring-cta-200 rounded' : ''}`}>
             {stats.todayTotal}
           </span>
-          <p className="text-[9px] text-stone-400 leading-none mt-0.5">aujourd&apos;hui</p>
+          <p className="text-[10px] text-stone-600 leading-none mt-0.5">aujourd&apos;hui</p>
         </div>
       </div>
 
       {/* Ligne de progression */}
       <div className="relative mt-2.5 h-[3px] rounded-full bg-stone-200">
         <div
-          className={`absolute inset-y-0 left-0 rounded-full transition-all duration-700 ease-out ${
+          className={`absolute inset-y-0 start-0 rounded-full transition-all duration-700 ease-out ${
             isAboveAverage ? 'bg-success-500' : 'bg-primary-500'
           }`}
           style={{ width: `${todayPct}%` }}
@@ -110,15 +110,15 @@ export default function QueueBar() {
       </div>
 
       {/* Labels sous les marqueurs */}
-      <div className="relative h-3 mt-0.5">
+      <div className="relative h-3.5 mt-0.5">
         <span
-          className="absolute -translate-x-1/2 text-[8px] text-stone-400"
+          className="absolute -translate-x-1/2 text-[10px] font-medium text-stone-600"
           style={{ left: `${avgPct}%` }}
         >
           {stats.dailyAverage}
         </span>
         <span
-          className="absolute -translate-x-1/2 text-[8px] text-stone-400"
+          className="absolute -translate-x-1/2 text-[10px] font-medium text-stone-600"
           style={{ left: `${recPct}%` }}
         >
           {stats.dailyRecord}
