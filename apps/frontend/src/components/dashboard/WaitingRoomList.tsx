@@ -150,7 +150,7 @@ export default function WaitingRoomList({ tenantId, isClinique, currentDoctorId 
   const activeItems = items.filter((i) => i.status === 'waiting' || i.status === 'in_consultation')
 
   return (
-    <div className="rounded-xl border border-warm bg-white shadow-sm">
+    <div className="min-h-full rounded-xl border border-warm bg-white shadow-sm">
       <div className="flex flex-wrap items-center justify-between gap-2 border-b border-stone-100 px-4 py-3">
         <h2 className="font-heading text-lg font-semibold text-stone-800">File d&apos;attente en direct</h2>
         <div className="flex items-center gap-2">
@@ -211,7 +211,7 @@ export default function WaitingRoomList({ tenantId, isClinique, currentDoctorId 
                     <span className={`inline-block rounded px-1.5 py-0.5 font-medium ${
                       item.visitReason === 'controle' ? 'bg-info/10 text-info' :
                       item.visitReason === 'vaccin' ? 'bg-secondary/10 text-secondary-700' :
-                      item.visitReason === 'urgence' ? 'bg-error/10 text-error' :
+                      item.visitReason === 'urgence' ? 'bg-danger/10 text-danger' :
                       'bg-stone-100 text-stone-800'
                     }`}>
                       {visitReasonLabel(item.visitReason)}

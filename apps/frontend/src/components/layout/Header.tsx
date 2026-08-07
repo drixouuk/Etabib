@@ -39,7 +39,7 @@ export default function Header({ doctorName, doctorNameShort }: Props) {
         <div className="hidden items-center gap-0.5 md:flex">
           {navLinks.map(({ href, key }) => (
             <Link key={href} href={href}
-              className="rounded-lg px-[13px] py-2.5 text-[.92rem] font-medium text-stone-600 transition-colors duration-150 hover:bg-cream-200 hover:text-primary-700">
+              className="rounded-[10px] px-3 py-2 text-[.92rem] font-semibold text-[#8A8175] transition-colors duration-150 hover:bg-primary-50 hover:text-primary-700">
               {t(key)}
             </Link>
           ))}
@@ -48,7 +48,7 @@ export default function Header({ doctorName, doctorNameShort }: Props) {
         <div className="flex items-center gap-2.5">
           <LanguageSwitcher />
           <Link href="/#rdv"
-            className="hidden h-10 items-center justify-center rounded-xl bg-cta-600 px-[18px] text-[.87rem] font-semibold text-white shadow-sm transition-all duration-200 hover:bg-cta-700 hover:-translate-y-0.5 hover:shadow-md md:inline-flex">
+            className="hidden h-10 items-center justify-center rounded-full bg-cta-600 px-5 py-2.5 text-[.88rem] font-bold text-white shadow-sm transition-all duration-200 hover:bg-cta-700 hover:-translate-y-0.5 hover:shadow-md md:inline-flex">
             {t('cta')}
           </Link>
           <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -61,7 +61,7 @@ export default function Header({ doctorName, doctorNameShort }: Props) {
           <div className="absolute start-4 end-4 top-full mt-2 rounded-2xl border border-stone-200 bg-white p-2 shadow-lg md:hidden">
             {navLinks.map(({ href, key }) => (
               <Link key={href} href={href} onClick={() => setMobileMenuOpen(false)}
-                className="block rounded-lg px-[14px] py-[11px] text-[.92rem] font-medium text-stone-600 hover:bg-cream-200">
+                className="block rounded-lg px-[14px] py-[11px] text-[.92rem] font-semibold text-[#8A8175] hover:bg-primary-50 hover:text-primary-700">
                 {t(key)}
               </Link>
             ))}

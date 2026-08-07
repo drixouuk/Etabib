@@ -51,7 +51,7 @@ export default async function HomePage({ params }: Props) {
   const doctorPhotoUrl = resolveMediaUrl(
     typeof doctor?.photo === 'string' ? doctor.photo : doctor?.photo?.url,
   )
-  const city = practiceInfo?.city || 'Inezgane, Souss-Massa'
+  const city = practiceInfo?.city || ''
   const specialty = doctor?.specialty || 'Pédiatre'
 
   return (
@@ -69,24 +69,32 @@ export default async function HomePage({ params }: Props) {
 
         <div className="container relative z-10 mx-auto grid max-w-[1160px] grid-cols-1 items-center gap-14 lg:grid-cols-[1.1fr_0.9fr]">
           <div>
-            <span className="mb-5 inline-flex items-center gap-1.5 rounded-full border border-primary-200 bg-primary-50 px-3.5 py-1.5 text-[.82rem] font-semibold text-primary-700">
-              <MapPin className="size-3.5" />
-              {city}
-            </span>
-            <h1 className="mb-[18px] max-w-[520px] font-heading text-[clamp(2rem,3.6vw,2.9rem)] font-extrabold leading-tight text-stone-800">
+            <div className="mb-5 flex flex-wrap items-center gap-2">
+              {city && (
+                <span className="inline-flex items-center gap-2 rounded-full bg-primary-50 px-4 py-2 text-[.82rem] font-bold tracking-wide text-primary-700">
+                  <MapPin className="size-3.5" />
+                  {city}
+                </span>
+              )}
+              <span className="inline-flex items-center gap-2 rounded-full bg-primary-50 px-4 py-2 text-[.82rem] font-bold tracking-wide text-primary-700">
+                <Stethoscope className="size-3.5" />
+                {specialty}
+              </span>
+            </div>
+            <h1 className="mb-5 max-w-[520px] font-heading text-[clamp(2.15rem,4vw,3.15rem)] font-extrabold leading-tight tracking-[-.01em] text-stone-800">
               {practiceInfo?.tagline || t('tagline')}
             </h1>
             <p className="mb-8 max-w-[480px] text-[1.08rem] text-stone-600">
-              {t('subtitle') || "Consultations, suivi de croissance et vaccination, de la naissance à l'adolescence — cabinet pédiatrique installé à Inezgane."}
+              {t('subtitle') || `Consultations, suivi de croissance et vaccination, de la naissance à l'adolescence — cabinet pédiatrique installé à ${city || 'votre ville'}.`}
             </p>
-            <div className="mb-6 flex flex-wrap gap-3">
+            <div className="mb-6 flex flex-wrap gap-3.5">
               <a href={`/${locale}#rdv`}
-                className="inline-flex items-center gap-2 rounded-xl bg-cta-600 px-[26px] py-3.5 text-[.95rem] font-semibold text-white shadow-sm transition-all duration-200 hover:bg-cta-700 hover:-translate-y-0.5 hover:shadow-md">
+                className="inline-flex items-center gap-2 rounded-full bg-cta-600 px-7 py-3.5 text-[.97rem] font-bold text-white shadow-sm transition-all duration-200 hover:bg-cta-700 hover:-translate-y-0.5 hover:shadow-md">
                 {t('cta_primary')}
-                <ArrowRight className="size-[17px]" />
+                <ArrowRight className="size-[18px]" />
               </a>
               <a href="/#presentation"
-                className="inline-flex items-center gap-2 rounded-xl border border-stone-400 bg-white px-[26px] py-3.5 text-[.95rem] font-semibold text-stone-600 shadow-sm transition-all duration-200 hover:bg-cream-200">
+                className="inline-flex items-center gap-2 rounded-full border border-stone-200/50 bg-white px-7 py-3.5 text-[.97rem] font-bold text-stone-800 transition-all duration-200 hover:border-primary-500 hover:text-primary-700">
                 {t('cta_secondary')}
               </a>
             </div>
@@ -113,32 +121,34 @@ export default async function HomePage({ params }: Props) {
             </div>
           </div>
 
-          <div className="relative order-first mx-auto max-w-[280px] md:order-none md:max-w-[360px]">
-            <div className="relative flex aspect-[4/5] w-full items-center justify-center overflow-hidden rounded-[26px] bg-gradient-to-br from-primary-50 via-primary-100 to-primary-200 shadow-lg">
-              {doctorPhotoUrl ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={doctorPhotoUrl}
-                  alt={t('photoPlaceholder')}
-                  className="absolute inset-0 h-full w-full object-cover"
-                />
-              ) : (
-                <>
-                  <div className="flex size-[104px] items-center justify-center rounded-full bg-white/70 shadow-sm">
-                    <Stethoscope className="size-12 text-primary-700" />
-                  </div>
-                  <span className="absolute bottom-3.5 right-3.5 rounded-full bg-stone-800/55 px-2.5 py-1 text-[.68rem] font-semibold text-white">
-                    {t('photoPlaceholder')}
-                  </span>
-                </>
-              )}
+          <div className="relative order-first mx-auto w-full max-w-[280px] md:order-none md:max-w-[360px]">
+            <div className="rounded-[28px] border border-stone-200/50 bg-white p-[26px_26px_20px] shadow-lg">
+              <div className="relative flex aspect-[4/5] w-full items-center justify-center overflow-hidden rounded-[22px] bg-gradient-to-br from-primary-50 via-primary-100 to-primary-200">
+                {doctorPhotoUrl ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={doctorPhotoUrl}
+                    alt={t('photoPlaceholder')}
+                    className="absolute inset-0 h-full w-full object-cover"
+                  />
+                ) : (
+                  <>
+                    <div className="flex size-[104px] items-center justify-center rounded-full bg-white/70 shadow-sm">
+                      <Stethoscope className="size-12 text-primary-700" />
+                    </div>
+                    <span className="absolute bottom-3.5 right-3.5 rounded-full bg-stone-800/55 px-2.5 py-1 text-[.68rem] font-semibold text-white">
+                      {t('photoPlaceholder')}
+                    </span>
+                  </>
+                )}
+              </div>
+              <p className="mt-4 text-center font-heading text-base font-bold text-stone-800">
+                {doctorName}
+                <span className="mt-0.5 block font-body text-[.85rem] font-medium text-stone-500">
+                  {specialty} — {city.replace(', Souss-Massa', '')}
+                </span>
+              </p>
             </div>
-            <p className="mt-4 text-center font-heading text-base font-bold text-stone-800">
-              {doctorName}
-              <span className="mt-0.5 block font-body text-[.85rem] font-medium text-stone-500">
-                {specialty} — {city.replace(', Souss-Massa', '').replace('Inezgane', 'Inezgane')}
-              </span>
-            </p>
           </div>
         </div>
       </section>

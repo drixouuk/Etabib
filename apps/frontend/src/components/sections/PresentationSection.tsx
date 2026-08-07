@@ -20,7 +20,7 @@ export default async function PresentationSection({ locale, doctor }: Props) {
     <section className="scroll-mt-24 px-4 py-[68px] md:py-[104px]" id="presentation">
       <div className="container mx-auto max-w-[1160px]">
         <div className="mx-auto mb-12 max-w-[620px] text-center">
-          <span className="mb-4 inline-flex items-center gap-1.5 rounded-full bg-cream-200 px-3.5 py-1.5 text-[.8rem] font-bold text-primary-700">
+          <span className="mb-4 inline-flex items-center gap-2 rounded-full bg-primary-50 px-4 py-2 text-[.82rem] font-bold tracking-wide text-primary-700">
             {t('title')}
           </span>
           <h2 className="text-[clamp(1.6rem,3vw,2.15rem)] font-heading font-extrabold text-stone-800">
@@ -52,9 +52,6 @@ export default async function PresentationSection({ locale, doctor }: Props) {
             <p className="mb-4 text-[1.03rem] text-stone-600">
               Sa pratique privilégie une médecine attentive, bienveillante et à l&apos;écoute — une approche que ses patients soulignent régulièrement dans leurs avis.
             </p>
-            <span className="mt-6 inline-flex rounded-full border border-primary-200 bg-primary-50 px-4 py-2 text-[.88rem] font-semibold text-primary-700">
-              {doctor.specialty || 'Pédiatre'}
-            </span>
           </div>
         </div>
       </div>

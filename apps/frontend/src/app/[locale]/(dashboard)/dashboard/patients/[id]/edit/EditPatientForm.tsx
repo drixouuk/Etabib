@@ -170,10 +170,7 @@ export default function EditPatientForm({ patient }: Props) {
       <div>
         <label htmlFor="nationalId" className="mb-1 block text-sm font-medium text-stone-800">CIN (optionnel)</label>
         <input id="nationalId" value={nationalId} onChange={e => setNationalId(e.target.value)} type="text" className={inputClass} />
-      </div>
 
-      <div>
-        <label className="mb-1 block text-sm font-medium text-stone-800">Provenance</label>
         <select value={patientSource} onChange={e => setPatientSource(e.target.value)} className={inputClass}>
           <option value="">Non renseigné</option>
           <option value="referring_practitioner">Médecin référent</option>

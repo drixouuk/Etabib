@@ -33,8 +33,8 @@ const STATUS_LABELS: Record<string, string> = {
 const STATUS_CLASSES: Record<string, string> = {
   accepted: 'bg-success/10 text-success',
   pending: 'bg-warning/10 text-warning',
-  cancelled: 'bg-error/10 text-error',
-  rejected: 'bg-error/10 text-error',
+  cancelled: 'bg-danger/10 text-danger',
+  rejected: 'bg-danger/10 text-danger',
 }
 
 // Formatters Intl créés une seule fois (module scope) — pas d'instanciation par render
@@ -98,6 +98,7 @@ async function loadRange(start: Date, end: Date): Promise<CalBooking[]> {
     const res = await fetch(
       `/api/cms-proxy/calbookings?where[startTime][greater_than_equal]=${encodeURIComponent(start.toISOString())}&where[startTime][less_than]=${encodeURIComponent(end.toISOString())}&sort=startTime&depth=0&limit=200`
     )
+    if (!res.ok) throw new Error(`HTTP ${res.status}`)
     const data = await res.json()
     return (data.docs ?? []) as CalBooking[]
   } catch {
@@ -341,6 +342,7 @@ export default function RendezVousCalendarClient({ initialBookings, tenantId }: 
         <h1 className="font-heading text-[27px] font-bold tracking-tight text-stone-800">Rendez-vous</h1>
         <p className="text-[13.5px] text-stone-600 capitalize">{fmtDayLong(today.toISOString())}</p>
       </div>
+
 
       {!mounted ? (
         // Placeholder stable SSR/client : la vue réelle n'est montée qu'après
@@ -604,7 +606,7 @@ export default function RendezVousCalendarClient({ initialBookings, tenantId }: 
                           e.stopPropagation()
                           cancelBooking(b)
                         }}
-                        className="text-[12px] font-semibold text-error transition-colors hover:underline"
+                        className="text-[12px] font-semibold text-danger transition-colors hover:underline"
                       >
                         Annuler
                       </button>
