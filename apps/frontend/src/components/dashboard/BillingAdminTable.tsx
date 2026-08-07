@@ -24,7 +24,7 @@ const STATUS_STYLES: Record<string, string> = {
   trialing: 'bg-primary-50 text-primary-700',
   active: 'bg-success/10 text-success',
   past_due: 'bg-warning/10 text-warning',
-  grace: 'bg-error/10 text-error',
+  grace: 'bg-danger/10 text-danger',
   suspended: 'bg-stone-800 text-white',
   expired: 'bg-stone-100 text-stone-600',
   canceled: 'bg-stone-100 text-stone-600',
@@ -159,7 +159,7 @@ export default function BillingAdminTable({ initialRows }: { initialRows: Billin
                     </button>
                     {row.status !== 'suspended' && row.status !== 'expired' && (
                       <button onClick={() => act('suspend', row)} disabled={busy} title="Suspendre"
-                        className="inline-flex items-center gap-1 rounded-md bg-error/10 px-2 py-1 text-xs font-medium text-error hover:bg-error/20 disabled:opacity-50">
+                        className="inline-flex items-center gap-1 rounded-md bg-danger/10 px-2 py-1 text-xs font-medium text-danger hover:bg-danger/20 disabled:opacity-50">
                         <Ban className="size-3" />Suspendre
                       </button>
                     )}

@@ -11,9 +11,9 @@ function ErrorState({ message }: { message: string }) {
   const dateLabel = formatDateMorocco(today.toISOString())
 
   return (
-    <div className="mx-auto max-w-container px-4 py-12 md:px-6 lg:px-8">
-      <h1 className="font-heading text-2xl font-bold text-stone-800">Rendez-vous</h1>
-      <p className="mt-1 text-sm text-stone-600 capitalize">{dateLabel}</p>
+    <div className="mx-auto max-w-container px-4 py-8 md:px-6 lg:px-8">
+      <h1 className="font-heading text-[27px] font-bold tracking-tight text-stone-800">Rendez-vous</h1>
+      <p className="mt-1 text-[13.5px] text-stone-600 capitalize">{dateLabel}</p>
       <div className="mt-6 flex flex-col items-center justify-center rounded-2xl border border-warm bg-white py-16 text-center shadow-sm">
         <Calendar className="size-12 text-stone-300" />
         <h2 className="mt-4 font-heading text-lg font-semibold text-stone-800">Service temporairement indisponible</h2>
@@ -60,7 +60,7 @@ export default async function RendezVousPage() {
   }
 
   return (
-    <div className="mx-auto max-w-container px-4 py-12 md:px-6 lg:px-8">
+    <div className="mx-auto max-w-container px-4 py-8 md:px-6 lg:px-8">
       <RendezVousCalendarClient tenantId={tenantId} initialBookings={bookings} />
     </div>
   )

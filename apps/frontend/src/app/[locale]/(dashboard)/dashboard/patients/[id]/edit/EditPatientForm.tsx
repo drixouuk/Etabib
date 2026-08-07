@@ -182,6 +182,7 @@ export default function EditPatientForm({ patient }: Props) {
         <label htmlFor="nationalId" className="mb-1 block text-sm font-medium text-stone-800">CIN (optionnel)</label>
         <input id="nationalId" value={nationalId} onChange={e => setNationalId(e.target.value)} type="text" className={inputClass} />
 
+
         <div className="rounded-xl border border-warm bg-primary-50/40 p-4">
           <p className="mb-3 text-[12.5px] font-semibold uppercase tracking-wider text-primary-700">
             Couverture CNSS / AMO

@@ -83,8 +83,8 @@ export default function LandingPage() {
       <main>
         {/* ========== HERO ========== */}
         <section className="relative overflow-hidden pt-[130px] pb-[60px] max-md:pt-[112px]">
-          <span className="absolute size-[420px] rounded-full bg-primary-500/35 blur-[70px] -top-[140px] -left-[160px] z-0" />
-          <span className="absolute size-[340px] rounded-full bg-amber-500/28 blur-[70px] -bottom-[120px] -right-[100px] z-0" />
+          <span className="absolute -top-[140px] start-[-160px] z-0 size-[420px] rounded-full bg-[radial-gradient(closest-side,rgba(204,251,241,0.65),transparent)]" />
+          <span className="absolute -bottom-[120px] end-[-100px] z-0 size-[340px] rounded-full bg-[radial-gradient(closest-side,rgba(254,243,199,0.55),transparent)]" />
           <div className="container relative z-10 mx-auto max-w-[1160px] px-6 grid grid-cols-1 md:grid-cols-[1.05fr_0.95fr] items-center gap-14">
             <div>
               <span className="mb-5 inline-flex items-center gap-2 rounded-full bg-primary-50 px-4 py-2 text-[.82rem] font-bold text-primary-700 tracking-wide">
@@ -100,7 +100,7 @@ export default function LandingPage() {
                   {t('hero_cta_primary')} <ArrowRight className="size-[18px]" />
                 </a>
                 <a href="#tarifs"
-                  className="inline-flex items-center gap-2 rounded-full border border-stone-200/50 bg-transparent px-7 py-3.5 text-[.97rem] font-bold text-[#2A241C] transition-all hover:border-primary-500 hover:text-primary-700 hover:bg-white">
+                  className="inline-flex items-center gap-2 rounded-full border border-stone-200/50 bg-white px-7 py-3.5 text-[.97rem] font-bold text-[#2A241C] transition-all hover:border-primary-500 hover:text-primary-700">
                   {t('hero_cta_secondary')}
                 </a>
               </div>

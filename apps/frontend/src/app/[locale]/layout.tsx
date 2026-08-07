@@ -82,10 +82,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 
   const descriptions: Record<string, string> = {
-    fr: name ? `${specialty} à Inezgane, ${name} accompagne vos enfants avec une médecine attentive et bienveillante. Consultations en plusieurs langues.` : '',
-    en: name ? `${specialty} in Inezgane, ${name} cares for your children with attentive and compassionate medicine. Consultations in multiple languages.` : '',
-    ar: name ? `${specialty} في إنزكان، ترافق أطفالكم بطب رفيق ومتفهم. استشارات بعدة لغات.` : '',
-    tzm: name ? `${specialty} deg Inezgan, tettawi izdanen s tɣawsa d tmusni. Asqadci s tugt n tutlayin.` : '',
+    fr: name ? `${specialty}, ${name} accompagne vos enfants avec une médecine attentive et bienveillante. Consultations en plusieurs langues.` : '',
+    en: name ? `${specialty}, ${name} cares for your children with attentive and compassionate medicine. Consultations in multiple languages.` : '',
+    ar: name ? `${specialty}، ترافق أطفالكم بطب رفيق ومتفهم. استشارات بعدة لغات.` : '',
+    tzm: name ? `${specialty}, tettawi izdanen s tɣawsa d tmusni. Asqadci s tugt n tutlayin.` : '',
   }
 
   const title = titles[locale] || titles.fr

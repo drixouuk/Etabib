@@ -20,10 +20,10 @@ export default async function DashboardPage() {
     <div className="flex flex-col p-9 lg:h-[calc(100vh-24px)]">
       <div className="mb-6 flex shrink-0 flex-wrap items-start justify-between gap-5">
         <div>
-          <h1 className="text-[27px] font-bold tracking-tight text-[#2A241C]">
+          <h1 className="font-heading text-[27px] font-bold tracking-tight text-stone-800">
             Bonjour{user.name ? `, Dr. ${user.name.replace(/^Dr\.?\s*/i, '')}` : ''} 👋
           </h1>
-          <p className="mt-1 text-[13.5px] text-[#2A241C]-soft">
+          <p className="mt-1 text-[13.5px] text-stone-600">
             {new Date().toLocaleDateString('fr-FR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
           </p>
         </div>

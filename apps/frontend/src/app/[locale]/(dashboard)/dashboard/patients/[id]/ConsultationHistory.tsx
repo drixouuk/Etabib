@@ -82,7 +82,7 @@ export default function ConsultationHistory({ consultations, doctorInfo, patient
         <div className="divide-y divide-stone-100">
           {filtered.map(c => (
             <div key={c.id} className="px-4 py-3">
-              <div className="flex items-baseline justify-between">
+              <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1.5">
                 <span
                   className={`text-sm font-medium ${onEdit ? 'cursor-pointer text-primary-700 hover:text-primary-600' : 'text-stone-800'}`}
                   onClick={() => onEdit?.(c)}

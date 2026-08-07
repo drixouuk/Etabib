@@ -70,7 +70,7 @@ export default async function VaccinationAlerts() {
               </div>
             </div>
             <span className={`ml-3 shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${
-              a!.status === 'overdue' ? 'bg-error/10 text-error' : 'bg-warning/10 text-warning'
+              a!.status === 'overdue' ? 'bg-danger/10 text-danger' : 'bg-warning/10 text-warning'
             }`}>
               {a!.status === 'overdue' ? 'En retard' : 'À venir'}
             </span>
