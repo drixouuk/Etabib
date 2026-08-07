@@ -5,7 +5,7 @@
 // Seuil configurable ici (30 j par défaut, délai normal évoqué dans
 // l'audit marché). Aucune automatisation API — mise à jour manuelle.
 
-export const FSE_ALERT_DAYS = 30
+export const FSE_ALERT_DAYS = 45
 
 export type FseStatus = 'non_envoyee' | 'envoyee' | 'acceptee' | 'remboursee' | 'rejetee'
 
