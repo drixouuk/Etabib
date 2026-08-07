@@ -137,6 +137,17 @@ export const Consultations: CollectionConfig = {
         if (operation === 'create' && !data.practitioner && req.user?.id) {
           data.practitioner = req.user.id
         }
+        // FSE (CNSS) : fseStatusUpdatedAt suit automatiquement chaque
+        // changement de fseStatus (création comprise). Aucune écriture
+        // manuelle de ce champ possible côté admin (readOnly).
+        // originalDoc est un argument du hook (pas req.originalDoc) —
+        // sinon la condition est toujours vraie et le champ se met à jour
+        // à chaque sauvegarde touchant fseStatus, pas au vrai changement.
+        if (data.fseStatus !== undefined) {
+          if (operation === 'create' || originalDoc?.fseStatus !== data.fseStatus) {
+            data.fseStatusUpdatedAt = new Date().toISOString()
+          }
+        }
         return data
       },
     ],
@@ -215,6 +226,35 @@ export const Consultations: CollectionConfig = {
       unique: true,
       index: true,
       admin: { readOnly: true, description: 'UUID idempotence (SX-100) — généré côté client au moment du brouillon' },
+    },
+    // Suivi FSE (CNSS) — déclaratif : le statut est mis à jour manuellement
+    // après retour CNSS (aucune API CNSS disponible). Suivi interne, pas une
+    // source de vérité CNSS.
+    {
+      name: 'fseStatus',
+      type: 'select',
+      options: [
+        { label: 'Non envoyée', value: 'non_envoyee' },
+        { label: 'Envoyée', value: 'envoyee' },
+        { label: 'Acceptée', value: 'acceptee' },
+        { label: 'Remboursée', value: 'remboursee' },
+        { label: 'Rejetée', value: 'rejetee' },
+      ],
+      defaultValue: 'non_envoyee',
+      label: 'Statut FSE',
+      admin: { description: 'Mise à jour manuelle après retour CNSS — suivi interne.' },
+    },
+    {
+      name: 'fseSentAt',
+      type: 'date',
+      label: 'FSE envoyée le',
+      admin: { date: { pickerAppearance: 'dayOnly' }, description: 'Date d\u2019envoi — base de l\u2019alerte de délai anormal.' },
+    },
+    {
+      name: 'fseStatusUpdatedAt',
+      type: 'date',
+      label: 'Statut FSE mis à jour le',
+      admin: { readOnly: true, date: { pickerAppearance: 'dayOnly' } },
     },
   ],
 }

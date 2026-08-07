@@ -1,0 +1,210 @@
+SX-10a — Merger feature/sx100-idempotence dans main
+
+CONTEXTE
+Première des trois branches issues du split SX-9. Aucune dépendance sur
+les deux autres. Merge simple attendu — cette branche part de main sans
+aucun commit divergent en dehors de son propre contenu (14 fichiers,
++870/-23).
+
+ÉTAPE 0 — INVENTAIRE
+- `git fetch origin`
+- `git checkout main && git pull origin main`
+- `git diff main origin/feature/sx100-idempotence --stat` et confirmer que
+  ça correspond à : clientRequestId + isUniqueViolation + endpoint /upsert
+  + migration 20260806_add_consultation_client_request_id + offline-queue/
+  offline-cache/OfflineDossierCache + ConsultationForm (upsert/brouillon).
+  Si autre chose apparaît, s'arrêter et signaler avant de merger.
+
+CONSIGNE À NE PAS TOUCHER
+- Ne pas merger feature/cnss-fse ni feature/dashboard-bento dans ce prompt
+  — un seul merge, un seul prompt.
+- Ne pas modifier le contenu de la branche avant de merger.
+
+MÉTHODE
+git merge origin/feature/sx100-idempotence --no-ff -m "merge: sx100-idempotence dans main"
+
+Un conflit n'est PAS attendu ici (main n'a pas divergé depuis la création
+de cette branche). Si un conflit apparaît quand même, s'arrêter et
+signaler le(s) fichier(s) concerné(s) avant de le résoudre à l'aveugle.
+
+DISCIPLINE MIGRATION
+Après le merge, vérifier qu'une seule nouvelle migration a été ajoutée à
+apps/cms/src/migrations/index.ts : 20260806_add_consultation_client_request_id.
+NE PAS lancer `migrate` sans revue préalable du SQL généré si Payload
+signale un drift de schéma.
+
+BUILD GATE
+`pnpm --filter cms build` ET `pnpm --filter frontend build` doivent passer
+sur main après le merge.
+
+VÉRIFICATION FINALE
+- `git log main --oneline -1` doit montrer le commit de merge.
+- `grep -n "isUniqueViolation\|clientRequestId" apps/cms/src/collections/Consultations.ts`
+  doit montrer du contenu (confirmant l'intégration).
+- `git push origin main`
+- NE PAS supprimer feature/sx100-idempotence dans ce prompt — suppression
+  traitée séparément après validation complète des 3 merges.
+
+
+
+  SX-10b — Merger feature/cnss-fse dans main
+
+CONTEXTE
+À exécuter uniquement APRÈS SX-10a (sx100-idempotence déjà mergée et
+poussée dans main). Cette branche partage 7 fichiers avec sx100-idempotence,
+dont apps/cms/src/collections/Consultations.ts et
+apps/cms/src/migrations/index.ts — un conflit de merge est ATTENDU sur
+ces deux fichiers. C'est normal, pas un signe d'erreur.
+
+ÉTAPE 0 — INVENTAIRE (avant de merger)
+- `git fetch origin && git checkout main && git pull origin main`
+- Confirmer que le commit de merge SX-10a est bien présent dans l'historique
+  de main (`git log main --oneline | grep sx100-idempotence`). Si absent,
+  STOP — ne pas continuer sans lui.
+- Lire apps/cms/src/migrations/index.ts sur main : il doit contenir
+  20260806_add_consultation_client_request_id comme dernière entrée.
+
+MÉTHODE
+git merge origin/feature/cnss-fse --no-ff -m "merge: cnss-fse dans main"
+
+RÉSOLUTION DE CONFLIT ATTENDUE — apps/cms/src/migrations/index.ts :
+Les deux branches partagent une base identique jusqu'à
+20260803_add_audit_ledger, puis divergent chacune avec UNE entrée propre.
+La résolution correcte est d'AJOUTER les deux imports et les deux blocs
+{up,down,name} de patient_cnss_fields et consultation_fse_tracking APRÈS
+consultation_client_request_id (déjà mergé par SX-10a) — garder les TROIS
+entrées, dans n'importe quel ordre relatif entre elles puisqu'aucune ne
+dépend d'une autre (colonnes indépendantes sur des tables différentes/
+non liées). Ne supprimer aucune des trois.
+
+RÉSOLUTION DE CONFLIT ATTENDUE — apps/cms/src/collections/Consultations.ts :
+Garder le champ clientRequestId ET les champs fseStatus/fseSentAt/
+fseStatusUpdatedAt. Garder l'endpoint /upsert (avec isUniqueViolation) ET
+le hook beforeChange qui gère fseStatusUpdatedAt (avec le paramètre
+originalDoc destructuré directement — PAS via req, cf. fix CNSS-4 déjà
+appliqué sur cnss-fse). Si le hook beforeChange existe en deux versions
+distinctes après conflit, les FUSIONNER en un seul hook qui applique les
+deux logiques (ne pas garder deux hooks beforeChange séparés qui
+s'écrasent silencieusement — Payload exécute un tableau de hooks dans
+l'ordre, donc deux hooks distincts dans le tableau `beforeChange: [...]`
+est aussi une solution valide si plus simple que de les fusionner en un
+seul, du moment qu'aucun des deux n'écrase les champs de l'autre).
+
+CONSIGNE À NE PAS TOUCHER
+- Ne pas merger feature/dashboard-bento dans ce prompt.
+- Ne pas modifier la logique métier au-delà de ce qui est nécessaire pour
+  résoudre le conflit — pas de refactor opportuniste pendant un merge.
+
+DISCIPLINE MIGRATION
+Après résolution, `apps/cms/src/migrations/index.ts` doit contenir
+EXACTEMENT trois entrées 20260806_* :
+consultation_client_request_id, patient_cnss_fields,
+consultation_fse_tracking. Vérifier qu'aucune n'a été perdue ni dupliquée
+pendant la résolution du conflit.
+
+BUILD GATE
+`pnpm --filter cms build` ET `pnpm --filter frontend build` doivent passer.
+
+VÉRIFICATION FINALE
+- `grep -c "20260806_add_" apps/cms/src/migrations/index.ts` → doit
+  retourner 6 (3 imports + 3 entrées `name:`).
+- `grep -n "isUniqueViolation\|clientRequestId" apps/cms/src/collections/Consultations.ts`
+  ET `grep -n "fseStatus\|fseSentAt" apps/cms/src/collections/Consultations.ts`
+  doivent TOUS LES DEUX retourner du contenu (aucun des deux n'a écrasé
+  l'autre).
+- `git push origin main`
+
+
+
+SX-10c — Merger feature/dashboard-bento dans main
+
+CONTEXTE
+Dernière des trois branches du split SX-9. À exécuter uniquement après
+SX-10a et SX-10b. Recouvrement le plus faible des trois (4 fichiers avec
+cnss-fse, déjà mergée ; 1 fichier avec sx100-idempotence, déjà mergée) —
+conflits attendus mais mineurs, surtout des tweaks de layout/tokens à
+côté de champs CNSS déjà en place.
+
+ÉTAPE 0 — INVENTAIRE
+- `git fetch origin && git checkout main && git pull origin main`
+- Confirmer présence des deux commits de merge précédents dans
+  l'historique de main.
+
+MÉTHODE
+git merge origin/feature/dashboard-bento --no-ff -m "merge: dashboard-bento dans main"
+
+Conflits attendus sur : EditPatientForm.tsx, edit/page.tsx, patient
+page.tsx, NewPatientForm.tsx. Dans chaque cas, garder les champs/onglets
+CNSS déjà mergés (SX-10b) ET appliquer les changements de layout/tokens
+de dashboard-bento par-dessus — ce sont des couches différentes du même
+fichier (données vs présentation), pas des versions concurrentes du même
+contenu.
+
+CONSIGNE À NE PAS TOUCHER
+- Ne rien changer dans la logique CNSS/FSE pendant la résolution — cette
+  branche ne touche que présentation/layout.
+
+DISCIPLINE MIGRATION
+Aucune migration dans cette branche — rien à vérifier de ce côté.
+
+BUILD GATE
+`pnpm --filter frontend build` doit passer.
+
+VÉRIFICATION FINALE
+- `grep -n "cnss\|fseStatus" apps/frontend/src/app/\[locale\]/\(dashboard\)/dashboard/patients/\[id\]/edit/EditPatientForm.tsx`
+  doit toujours montrer le contenu CNSS (rien écrasé par le merge).
+- `git push origin main`
+
+SX-10d — Extraire le commit GlitchTip et nettoyer les branches obsolètes
+
+CONTEXTE
+À exécuter après SX-10a/b/c (main contient déjà sx100-idempotence +
+cnss-fse + dashboard-bento). feature/glitchtip-error-tracking contient un
+seul commit réellement nouveau (b85e453 — intégration Sentry/GlitchTip),
+le reste est redondant avec ce qui vient d'être mergé.
+
+ÉTAPE 0 — INVENTAIRE
+- `git fetch origin && git checkout main && git pull origin main`
+- `git log origin/feature/glitchtip-error-tracking --oneline | head -3`
+  et confirmer que b85e453 (ou son nouveau hash après rebase éventuel)
+  est bien le commit "feat(observability): integrate GlitchTip error
+  tracking via @sentry/nextjs" — 8 fichiers, package-lock.json inclus.
+
+PARTIE A — EXTRACTION
+git checkout -b feature/glitchtip-observability
+git cherry-pick b85e453
+Si conflit sur apps/frontend/src/app/[locale]/error.tsx : garder l'import
+`Sentry` et l'appel `Sentry.captureException(error)` ajoutés par ce
+commit, ne rien retirer d'autre dans ce fichier.
+
+BUILD GATE (partie A)
+`pnpm --filter frontend build` doit passer sur feature/glitchtip-observability.
+
+Si le build passe : `git push origin feature/glitchtip-observability`
+puis merger dans main de la même façon que les prompts précédents
+(`git checkout main && git merge feature/glitchtip-observability --no-ff && pnpm --filter frontend build && git push origin main`).
+
+PARTIE B — SUPPRESSION DES BRANCHES OBSOLÈTES
+Uniquement après confirmation que main est à jour avec les 4 merges
+(sx100-idempotence, cnss-fse, dashboard-bento, glitchtip-observability)
+et que le build est vert sur main :
+
+git push origin --delete feature/phase-d-audit-guards
+git push origin --delete feature/phase-d-dark-mode
+git push origin --delete feature/sx-100-network-resilience
+git push origin --delete feature/sx100-idempotence
+git push origin --delete feature/cnss-fse
+git push origin --delete feature/dashboard-bento
+git push origin --delete feature/glitchtip-error-tracking
+git push origin --delete feature/glitchtip-observability
+
+CONSIGNE À NE PAS TOUCHER
+- NE PAS supprimer feature/cnss-patient-fields dans ce prompt — elle reste
+  en filet de sécurité, suppression décidée séparément plus tard.
+- Ne supprimer aucune branche avant que le build sur main soit
+  explicitement confirmé vert.
+
+VÉRIFICATION FINALE
+- `git branch -r` (après fetch --prune) doit afficher uniquement :
+  main, feature/cnss-patient-fields.
+- Rapport final listant les 4 commits de merge sur main avec leurs hash.

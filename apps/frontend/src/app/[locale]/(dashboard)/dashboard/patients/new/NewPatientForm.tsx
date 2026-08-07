@@ -20,6 +20,10 @@ export default function NewPatientForm() {
   const [patientSourceDetail, setPatientSourceDetail] = useState('')
   const [referringIds, setReferringIds] = useState<string[]>([])
   const [referringOptions, setReferringOptions] = useState<{ id: string; name: string }[]>([])
+  const [cnssRegistrationNumber, setCnssRegistrationNumber] = useState('')
+  const [cnssRegime, setCnssRegime] = useState('')
+  const [cnssCardUploadedAt, setCnssCardUploadedAt] = useState('')
+  const [step, setStep] = useState(1)
   useEffect(() => {
     fetch('/api/cms-proxy/referring-practitioners?depth=0&limit=200')
       .then(r => r.json()).then(j => setReferringOptions(j.docs ?? []))
@@ -40,6 +44,9 @@ export default function NewPatientForm() {
       phone: phone || undefined,
       email: email || undefined,
       nationalId: nationalId || undefined,
+      cnssRegistrationNumber: cnssRegistrationNumber || undefined,
+      cnssRegime: cnssRegime || undefined,
+      cnssCardUploadedAt: cnssCardUploadedAt || undefined,
       patientSource: patientSource || undefined,
       patientSourceDetail: patientSourceDetail || undefined,
       referringPractitioners: referringIds.length > 0 ? referringIds : undefined,
@@ -77,155 +84,229 @@ export default function NewPatientForm() {
   }
 
   return (
-    <div className="mx-auto max-w-2xl px-4 py-12 md:px-6 lg:px-8">
-      <h1 className="font-heading text-3xl font-bold text-stone-800">Nouveau patient</h1>
+    <div className="mx-auto max-w-2xl px-4 py-8 md:px-6 lg:px-8">
+      <h1 className="font-heading text-[27px] font-bold tracking-tight text-stone-800">Nouveau patient</h1>
 
-      <form onSubmit={handleSubmit} className="mt-8 flex flex-col gap-4">
-        <div>
-          <label htmlFor="fullName" className="mb-1 block text-sm font-medium text-stone-800">
-            Nom complet *
-          </label>
-          <input
-            id="fullName"
-            value={fullName}
-            onChange={(e) => setFullName(e.target.value)}
-            type="text"
-            required
-            className={inputClass}
-          />
-        </div>
+      {/* Indicateur d'étapes */}
+      <ol className="mt-6 flex items-center gap-2" aria-label="Étapes du formulaire">
+        {['Identité', 'Contact & provenance', 'CNSS / AMO'].map((label, i) => {
+          const n = i + 1
+          return (
+            <li key={label} className="flex items-center gap-2">
+              <span className={`flex size-6 items-center justify-center rounded-full text-[11.5px] font-bold ${
+                step === n ? 'bg-primary-600 text-white' : step > n ? 'bg-primary-100 text-primary-700' : 'bg-stone-100 text-stone-500'
+              }`}>
+                {step > n ? '✓' : n}
+              </span>
+              <span className={`text-[12.5px] ${step === n ? 'font-semibold text-stone-800' : 'text-stone-500'}`}>{label}</span>
+              {n < 3 && <span className="mx-1 h-px w-6 bg-stone-200" />}
+            </li>
+          )
+        })}
+      </ol>
 
-        <div>
-          <label htmlFor="gender" className="mb-1 block text-sm font-medium text-stone-800">
-            Sexe *
-          </label>
-          <select
-            id="gender"
-            value={gender}
-            onChange={(e) => setGender(e.target.value)}
-            required
-            className={inputClass}
-          >
-            <option value="">Sélectionner…</option>
-            <option value="boy">Garçon</option>
-            <option value="girl">Fille</option>
-          </select>
-        </div>
+      <form onSubmit={handleSubmit} className="mt-6 flex flex-col gap-4">
+        {step === 1 && (
+          <>
+            <div>
+              <label htmlFor="fullName" className="mb-1 block text-sm font-medium text-stone-800">
+                Nom complet *
+              </label>
+              <input
+                id="fullName"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                type="text"
+                required
+                className={inputClass}
+              />
+            </div>
 
-        <div>
-          <label htmlFor="birthDate" className="mb-1 block text-sm font-medium text-stone-800">
-            Date de naissance
-          </label>
-          <input
-            id="birthDate"
-            value={birthDate}
-            onChange={(e) => setBirthDate(e.target.value)}
-            type="date"
-            className={inputClass}
-          />
-        </div>
+            <div>
+              <label htmlFor="gender" className="mb-1 block text-sm font-medium text-stone-800">
+                Sexe *
+              </label>
+              <select
+                id="gender"
+                value={gender}
+                onChange={(e) => setGender(e.target.value)}
+                required
+                className={inputClass}
+              >
+                <option value="">Sélectionner…</option>
+                <option value="boy">Garçon</option>
+                <option value="girl">Fille</option>
+              </select>
+            </div>
 
-        <div>
-          <label htmlFor="address" className="mb-1 block text-sm font-medium text-stone-800">
-            Adresse
-          </label>
-          <input
-            id="address"
-            value={address}
-            onChange={(e) => setAddress(e.target.value)}
-            type="text"
-            className={inputClass}
-          />
-        </div>
+            <div>
+              <label htmlFor="birthDate" className="mb-1 block text-sm font-medium text-stone-800">
+                Date de naissance
+              </label>
+              <input
+                id="birthDate"
+                value={birthDate}
+                onChange={(e) => setBirthDate(e.target.value)}
+                type="date"
+                className={inputClass}
+              />
+            </div>
 
-        <div>
-          <label htmlFor="phone" className="mb-1 block text-sm font-medium text-stone-800">
-            Téléphone
-          </label>
-          <input
-            id="phone"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            type="tel"
-            className={inputClass}
-          />
-        </div>
+            <div>
+              <label htmlFor="nationalId" className="mb-1 block text-sm font-medium text-stone-800">
+                CIN (optionnel)
+              </label>
+              <input
+                id="nationalId"
+                value={nationalId}
+                onChange={(e) => setNationalId(e.target.value)}
+                type="text"
+                className={inputClass}
+              />
+            </div>
+          </>
+        )}
 
-        <div>
-          <label htmlFor="email" className="mb-1 block text-sm font-medium text-stone-800">
-            Email
-          </label>
-          <input
-            id="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            type="email"
-            className={inputClass}
-          />
-        </div>
+        {step === 2 && (
+          <>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div>
+                <label htmlFor="address" className="mb-1 block text-sm font-medium text-stone-800">Adresse</label>
+                <input id="address" value={address} onChange={(e) => setAddress(e.target.value)} type="text" className={inputClass} />
+              </div>
+              <div>
+                <label htmlFor="phone" className="mb-1 block text-sm font-medium text-stone-800">Téléphone</label>
+                <input id="phone" value={phone} onChange={(e) => setPhone(e.target.value)} type="tel" className={inputClass} />
+              </div>
+            </div>
 
-        <div>
-          <label htmlFor="nationalId" className="mb-1 block text-sm font-medium text-stone-800">
-            CIN (optionnel)
-          </label>
-          <input
-            id="nationalId"
-            value={nationalId}
-            onChange={(e) => setNationalId(e.target.value)}
-            type="text"
-            className={inputClass}
-          />
-        </div>
+            <div>
+              <label htmlFor="email" className="mb-1 block text-sm font-medium text-stone-800">Email</label>
+              <input id="email" value={email} onChange={(e) => setEmail(e.target.value)} type="email" className={inputClass} />
+            </div>
 
-        <div>
-          <label className="mb-1 block text-sm font-medium text-stone-800">Provenance</label>
-          <select value={patientSource} onChange={e => setPatientSource(e.target.value)} className={inputClass}>
-            <option value="">Non renseigné</option>
-            <option value="referring_practitioner">Médecin référent</option>
-            <option value="google">Google</option>
-            <option value="facebook">Facebook</option>
-            <option value="instagram">Instagram</option>
-            <option value="autre_patient">Recommandé par un autre patient</option>
-            <option value="connaissance">Connaissance / Bouche-à-oreille</option>
-            <option value="professionnel_sante">Professionnel de santé</option>
-            <option value="autre">Autre</option>
-          </select>
-        </div>
+            <div>
+              <label className="mb-1 block text-sm font-medium text-stone-800">Provenance</label>
+              <select value={patientSource} onChange={e => setPatientSource(e.target.value)} className={inputClass}>
+                <option value="">Non renseigné</option>
+                <option value="referring_practitioner">Médecin référent</option>
+                <option value="google">Google</option>
+                <option value="facebook">Facebook</option>
+                <option value="instagram">Instagram</option>
+                <option value="autre_patient">Recommandé par un autre patient</option>
+                <option value="connaissance">Connaissance / Bouche-à-oreille</option>
+                <option value="professionnel_sante">Professionnel de santé</option>
+                <option value="autre">Autre</option>
+              </select>
+            </div>
 
-        {patientSource === 'referring_practitioner' && (
-          <div>
-            <label className="mb-1 block text-sm font-medium text-stone-800">Médecin référent</label>
-            <select value={referringIds[0] || ''} onChange={e => setReferringIds(e.target.value ? [e.target.value] : [])} className={inputClass}>
-              <option value="">Sélectionner…</option>
-              {referringOptions.map(r => <option key={r.id} value={r.id}>{r.name}</option>)}
-            </select>
+            {patientSource === 'referring_practitioner' && (
+              <div>
+                <label className="mb-1 block text-sm font-medium text-stone-800">Médecin référent</label>
+                <select value={referringIds[0] || ''} onChange={e => setReferringIds(e.target.value ? [e.target.value] : [])} className={inputClass}>
+                  <option value="">Sélectionner…</option>
+                  {referringOptions.map(r => <option key={r.id} value={r.id}>{r.name}</option>)}
+                </select>
+              </div>
+            )}
+
+            <div>
+              <label className="mb-1 block text-sm font-medium text-stone-800">Détail <span className="text-stone-600 font-normal">(optionnel)</span></label>
+              <input value={patientSourceDetail} onChange={e => setPatientSourceDetail(e.target.value)} type="text" placeholder="Ex: Groupe Facebook mamans Agadir, Dr. Martin..." className={inputClass} />
+            </div>
+
+            <label className="flex items-center gap-2 text-sm text-stone-600">
+              <input
+                type="checkbox"
+                checked={addToQueue}
+                onChange={(e) => setAddToQueue(e.target.checked)}
+                className="size-4 rounded border-stone-300 text-primary-600 focus:ring-primary-500/20"
+              />
+              Ajouter à la file d&apos;attente du jour
+            </label>
+          </>
+        )}
+
+        {step === 3 && (
+          <div className="rounded-xl border border-warm bg-primary-50/40 p-4">
+            <p className="mb-3 text-[12.5px] font-semibold uppercase tracking-wider text-primary-700">
+              Couverture CNSS / AMO <span className="font-normal normal-case text-stone-500">(optionnel)</span>
+            </p>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div>
+                <label htmlFor="cnssRegistrationNumber" className="mb-1 block text-sm font-medium text-stone-800">
+                  Numéro d&apos;immatriculation
+                </label>
+                <input
+                  id="cnssRegistrationNumber"
+                  value={cnssRegistrationNumber}
+                  onChange={(e) => setCnssRegistrationNumber(e.target.value)}
+                  type="text"
+                  placeholder="Ex : 100482193"
+                  className={inputClass}
+                />
+              </div>
+              <div>
+                <label htmlFor="cnssRegime" className="mb-1 block text-sm font-medium text-stone-800">Régime</label>
+                <select id="cnssRegime" value={cnssRegime} onChange={e => setCnssRegime(e.target.value)} className={inputClass}>
+                  <option value="">Non renseigné</option>
+                  <option value="ayant_droit">Ayant droit</option>
+                  <option value="salarie">Salarié</option>
+                  <option value="independant">Indépendant</option>
+                  <option value="etudiant">Étudiant</option>
+                </select>
+              </div>
+              <div>
+                <label htmlFor="cnssCardUploadedAt" className="mb-1 block text-sm font-medium text-stone-800">
+                  Carte CNSS uploadée le
+                </label>
+                <input
+                  id="cnssCardUploadedAt"
+                  value={cnssCardUploadedAt}
+                  onChange={(e) => setCnssCardUploadedAt(e.target.value)}
+                  type="date"
+                  className={inputClass}
+                />
+              </div>
+              <p className="self-end text-[12px] text-stone-500 sm:pb-1">
+                Nécessaire pour la feuille de soins électronique (FSE) et le futur DMP.
+              </p>
+            </div>
           </div>
         )}
 
-        <div>
-          <label className="mb-1 block text-sm font-medium text-stone-800">Détail <span className="text-stone-600 font-normal">(optionnel)</span></label>
-          <input value={patientSourceDetail} onChange={e => setPatientSourceDetail(e.target.value)} type="text" placeholder="Ex: Groupe Facebook mamans Agadir, Dr. Martin..." className={inputClass} />
-        </div>
-
         {error && <p className="text-sm font-medium text-red-600">{error}</p>}
 
-        <label className="flex items-center gap-2 text-sm text-stone-600">
-          <input
-            type="checkbox"
-            checked={addToQueue}
-            onChange={(e) => setAddToQueue(e.target.checked)}
-            className="size-4 rounded border-stone-300 text-primary-600 focus:ring-primary-500/20"
-          />
-          Ajouter à la file d'attente du jour
-        </label>
+        <div className="flex items-center justify-between gap-3">
+          {step > 1 ? (
+            <button
+              type="button"
+              onClick={() => setStep(step - 1)}
+              className="rounded-lg border border-warm bg-white px-5 py-2.5 text-sm font-medium text-stone-600 hover:bg-stone-50"
+            >
+              ← Retour
+            </button>
+          ) : <span />}
 
-        <button
-          type="submit"
-          disabled={saving}
-          className="w-fit rounded-lg bg-cta-600 px-6 py-2.5 text-sm font-medium text-white hover:bg-cta-700 disabled:opacity-50"
-        >
-          {saving ? 'Création…' : 'Créer le patient'}
-        </button>
+          {step < 3 ? (
+            <button
+              type="button"
+              onClick={() => setStep(step + 1)}
+              disabled={step === 1 && (!fullName.trim() || !gender)}
+              className="rounded-lg bg-cta-600 px-6 py-2.5 text-sm font-medium text-white hover:bg-cta-700 disabled:opacity-40"
+            >
+              Suivant →
+            </button>
+          ) : (
+            <button
+              type="submit"
+              disabled={saving}
+              className="rounded-lg bg-cta-600 px-6 py-2.5 text-sm font-medium text-white hover:bg-cta-700 disabled:opacity-50"
+            >
+              {saving ? 'Création…' : 'Enregistrer le patient'}
+            </button>
+          )}
+        </div>
       </form>
     </div>
   )

@@ -6,6 +6,14 @@ export const BRAND = {
 
 export const SITE_DOMAIN = process.env.NEXT_PUBLIC_SITE_DOMAIN || "etabibi.ma";
 export const SITE_URL = `https://${SITE_DOMAIN}`;
+// Portail CNSS des professionnels de santé (FSE) — jamais en dur dans les
+// composants ; NEXT_PUBLIC_* est build-time (rebuild requis après changement
+// sur Coolify). Le composant CnssPortalEmbed teste l'embeddabilité (headers
+// X-Frame-Options/CSP) via /api/cnss-portal avant de choisir iframe ou
+// nouvel onglet.
+export const CNSS_PORTAL_URL =
+  process.env.NEXT_PUBLIC_CNSS_PORTAL_URL ||
+  "https://portailps.cnss.ma/portailps/Authentification.xhtml";
 export const EMAIL_DOMAIN = process.env.EMAIL_FROM_DOMAIN || `mail.${SITE_DOMAIN}`;
 export const SUPPORT_EMAIL =
   process.env.NEXT_PUBLIC_SUPPORT_EMAIL || `contact@${EMAIL_DOMAIN}`;
