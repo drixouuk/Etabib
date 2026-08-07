@@ -2,6 +2,29 @@ import type { CollectionConfig } from 'payload'
 import { auditReadHook, auditWriteHook } from '../hooks/logPatientAccess'
 import { ledgerAfterChange } from '../hooks/auditLedger'
 
+// Idempotence (SX-100) : un UUID client par consultation, généré au moment de
+// la création du brouillon côté frontend. Le replay réseau d'une même
+// consultation réutilise la même valeur → l'endpoint /upsert la retourne sans
+// créer de doublon. La violation unique remonte soit en code PG 23505, soit
+// enveloppée par Payload en ValidationError « Value must be unique ».
+function isUniqueViolation(err: unknown): boolean {
+  let current: unknown = err
+  for (let i = 0; i < 4 && current; i++) {
+    const e = current as { code?: unknown; message?: unknown; cause?: unknown; data?: unknown }
+    const haystack =
+      String(e.code ?? '') +
+      ' ' +
+      String(e.message ?? '') +
+      ' ' +
+      JSON.stringify(e.data ?? '')
+    if (/23505|must be unique|unique constraint|duplicate/i.test(haystack)) {
+      return true
+    }
+    current = e.cause
+  }
+  return false
+}
+
 export const Consultations: CollectionConfig = {
   slug: 'consultations',
   admin: {
@@ -9,6 +32,60 @@ export const Consultations: CollectionConfig = {
     defaultColumns: ['patient', 'date', 'motif', 'practitioner'],
     group: 'Dossier médical',
   },
+  // Endpoint d'écriture idempotente (SX-100) : insert direct avec
+  // clientRequestId — PAS de SELECT+INSERT (race de replay). Sur violation
+  // de contrainte unique (23505), retourne l'enregistrement existant (200)
+  // au lieu d'une erreur. Mêmes contrôles d'accès que create.
+  endpoints: [
+    {
+      path: '/upsert',
+      method: 'post',
+      handler: async (req: any) => {
+        const roles: string[] = req.user?.roles ?? []
+        if (!(roles.includes('superadmin') || roles.includes('tenant_admin') || roles.includes('doctor'))) {
+          return Response.json({ errors: [{ message: 'Non autorisé' }] }, { status: 401 })
+        }
+
+        const body = (await req.json?.()) ?? {}
+        const clientRequestId = body?.clientRequestId
+        if (!clientRequestId || typeof clientRequestId !== 'string') {
+          return Response.json({ errors: [{ message: 'clientRequestId requis' }] }, { status: 400 })
+        }
+
+        // Tenant + praticien imposés depuis la session (la validation Payload
+        // court-circuite le beforeChange) — jamais de corps client pour ces
+        // deux champs : le praticien est l'utilisateur connecté, toujours.
+        const userTenantId =
+          req.user?.tenant && typeof req.user.tenant === 'object' ? req.user.tenant.id : req.user?.tenant
+        const data: Record<string, unknown> = {
+          ...body,
+          clientRequestId,
+          tenant: userTenantId,
+          practitioner: body.practitioner ?? req.user?.id,
+        }
+
+        try {
+          const doc = await req.payload.create({
+            collection: 'consultations',
+            data,
+          })
+          return Response.json({ doc }, { status: 201 })
+        } catch (err) {
+          if (isUniqueViolation(err)) {
+            const existing = await req.payload.find({
+              collection: 'consultations',
+              where: { clientRequestId: { equals: clientRequestId } },
+              limit: 1,
+              depth: 1,
+            })
+            const doc = existing?.docs?.[0]
+            if (doc) return Response.json({ doc }, { status: 200 })
+          }
+          throw err
+        }
+      },
+    },
+  ],
   access: {
     read: ({ req: { user } }: any) => {
       const roles: string[] = user?.roles ?? []
@@ -50,9 +127,15 @@ export const Consultations: CollectionConfig = {
   },
   hooks: {
     beforeChange: [
-      ({ req, data, operation }: any) => {
+      ({ req, data, operation, originalDoc }: any) => {
         if (operation === 'create' && req.user?.tenant) {
           data.tenant = typeof req.user.tenant === 'object' ? req.user.tenant.id : req.user.tenant
+        }
+        // Fix latent : le formulaire de consultation n'envoie jamais
+        // practitioner — le praticien est l'utilisateur connecté (champ
+        // requis). Couvre les deux chemins (POST générique + /upsert).
+        if (operation === 'create' && !data.practitioner && req.user?.id) {
+          data.practitioner = req.user.id
         }
         return data
       },
@@ -124,6 +207,14 @@ export const Consultations: CollectionConfig = {
       name: 'codeActe',
       type: 'text',
       label: 'Code acte (NGAP) — optionnel, préparation future',
+    },
+    {
+      name: 'clientRequestId',
+      type: 'text',
+      required: true,
+      unique: true,
+      index: true,
+      admin: { readOnly: true, description: 'UUID idempotence (SX-100) — généré côté client au moment du brouillon' },
     },
   ],
 }

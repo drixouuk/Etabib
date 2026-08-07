@@ -548,6 +548,10 @@ export interface Consultation {
   perimetreCranien?: number | null;
   diagnostic?: string | null;
   codeActe?: string | null;
+  /**
+   * UUID idempotence (SX-100) — généré côté client au moment du brouillon
+   */
+  clientRequestId: string;
   updatedAt: string;
   createdAt: string;
 }
@@ -1193,6 +1197,7 @@ export interface ConsultationsSelect<T extends boolean = true> {
   perimetreCranien?: T;
   diagnostic?: T;
   codeActe?: T;
+  clientRequestId?: T;
   updatedAt?: T;
   createdAt?: T;
 }
