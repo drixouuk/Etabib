@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect } from 'react'
+import * as Sentry from '@sentry/nextjs'
 import { Link } from '@/i18n/navigation'
 
 type Props = {
@@ -11,6 +12,7 @@ type Props = {
 export default function Error({ error, reset }: Props) {
   useEffect(() => {
     console.error(error)
+    Sentry.captureException(error)
   }, [error])
 
   return (
