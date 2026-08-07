@@ -26,6 +26,8 @@ import * as migration_20260731_add_subscriptions from './20260731_add_subscripti
 import * as migration_20260803_add_recurrence_to_availability_slots from './20260803_add_recurrence_to_availability_slots';
 import * as migration_20260803_add_unaccent_search from './20260803_add_unaccent_search';
 import * as migration_20260803_add_audit_ledger from './20260803_add_audit_ledger';
+import * as migration_20260806_add_patient_cnss_fields from './20260806_add_patient_cnss_fields';
+import * as migration_20260806_add_consultation_fse_tracking from './20260806_add_consultation_fse_tracking';
 
 export const migrations = [
   {
@@ -167,5 +169,15 @@ export const migrations = [
     up: migration_20260803_add_audit_ledger.up,
     down: migration_20260803_add_audit_ledger.down,
     name: '20260803_add_audit_ledger'
+  },
+  {
+    up: migration_20260806_add_patient_cnss_fields.up,
+    down: migration_20260806_add_patient_cnss_fields.down,
+    name: '20260806_add_patient_cnss_fields'
+  },
+  {
+    up: migration_20260806_add_consultation_fse_tracking.up,
+    down: migration_20260806_add_consultation_fse_tracking.down,
+    name: '20260806_add_consultation_fse_tracking'
   },
 ];

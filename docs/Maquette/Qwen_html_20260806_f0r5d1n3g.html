@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Activité — Cabinet Dr. Demo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Public+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F6F2E9; --card:#FCFBF7; --ink:#20302C; --muted:#71807B;
+    --line:#E5DECD; --line-soft:#EFE9DB;
+    --teal:#0E9384; --teal-soft:#E1F0ED;
+    --amber:#EF9509; --amber-soft:#FBEDD6;
+    --vermilion:#E4590C; --gray:#B9B4A7;
+    --display:"Fraunces",Georgia,serif;
+    --body:"Public Sans",system-ui,sans-serif;
+    --mono:"IBM Plex Mono",ui-monospace,monospace;
+  }
+  *{box-sizing:border-box;margin:0}
+  body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:14px;line-height:1.45;padding:28px clamp(16px,4vw,40px)}
+  button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+  button:focus-visible,a:focus-visible{outline:2px solid var(--teal);outline-offset:2px;border-radius:6px}
+
+  /* ---------- entête ---------- */
+  .page-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:20px;flex-wrap:wrap}
+  .page-head h1{font-family:var(--display);font-size:32px;font-weight:600;letter-spacing:-.01em}
+  .page-sub{display:flex;align-items:center;gap:10px;color:var(--muted);margin-top:2px}
+  .pulse{color:var(--teal)}
+  .period{display:flex;background:var(--line-soft);border:1px solid var(--line);border-radius:10px;padding:3px}
+  .period button{padding:6px 14px;border-radius:8px;color:var(--muted);font-weight:500}
+  .period button:hover{color:var(--ink)}
+  .period .is-active{background:var(--card);color:var(--teal);font-weight:600;box-shadow:0 1px 2px rgba(32,48,44,.12)}
+
+  /* ---------- grille bento ---------- */
+  .grid{display:grid;grid-template-columns:repeat(12,1fr);gap:14px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;display:flex;flex-direction:column;gap:14px;min-width:0}
+  .card h2{font-family:var(--display);font-size:16px;font-weight:600}
+  .card-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+  .span-12{grid-column:span 12}.span-8{grid-column:span 8}.span-7{grid-column:span 7}
+  .span-5{grid-column:span 5}.span-4{grid-column:span 4}
+
+  /* ---------- bandeau KPI ---------- */
+  .kpi{flex-direction:row;padding:14px 8px}
+  .kpi-item{flex:1;display:flex;align-items:center;gap:12px;padding:4px 20px}
+  .kpi-item + .kpi-item{border-left:1px solid var(--line)}
+  .kpi-chip{width:36px;height:36px;border-radius:9px;display:grid;place-items:center;flex:none}
+  .kpi-chip--teal{background:var(--teal-soft);color:var(--teal)}
+  .kpi-chip--amber{background:var(--amber-soft);color:var(--amber)}
+  .kpi-item strong{font-family:var(--display);font-size:22px;font-weight:600;display:block;line-height:1.1}
+  .kpi-item span{color:var(--muted);font-size:12.5px}
+
+  /* ---------- graphique mensuel ---------- */
+  .legend{display:flex;gap:14px;font-size:12px;color:var(--muted)}
+  .dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;vertical-align:1px}
+  .plot{display:grid;grid-template-columns:22px 1fr;gap:8px}
+  .yaxis{display:flex;flex-direction:column;justify-content:space-between;height:210px;text-align:right;font-family:var(--mono);font-size:10px;color:var(--muted);padding-bottom:0}
+  .bars-area{display:flex;gap:4px;height:210px;border-bottom:1px solid var(--line);
+    background-image:linear-gradient(var(--line-soft) 1px,transparent 1px);background-size:100% 33.333%}
+  .mcol{flex:1;display:flex;align-items:flex-end;justify-content:center;gap:3px}
+  .bar{width:12px;border-radius:4px 4px 0 0;height:calc(var(--v)/9*100%);transform-origin:bottom;animation:rise .5s cubic-bezier(.2,.7,.3,1) both}
+  .bar--teal{background:var(--teal)} .bar--amber{background:var(--amber);animation-delay:.15s}
+  .xlabels{display:grid;grid-template-columns:22px 1fr;gap:8px;margin-top:6px}
+  .xlabels div{display:flex;gap:4px}
+  .xlabels span{flex:1;text-align:center;font-family:var(--mono);font-size:10px;color:var(--muted)}
+  .trend-note{display:flex;gap:22px;flex-wrap:wrap;font-size:12.5px;color:var(--muted);border-top:1px dashed var(--line);padding-top:10px}
+  .trend-note strong{color:var(--ink);font-weight:600}
+  .note-up{color:var(--teal)} .note-down{color:var(--vermilion)}
+
+  /* ---------- patients suivis ---------- */
+  .big{font-family:var(--display);font-size:34px;font-weight:600;letter-spacing:-.01em}
+  .spark{width:100%;height:auto;margin-top:auto}
+  .spark .line{stroke:var(--teal);stroke-width:2;fill:none;stroke-dasharray:1;stroke-dashoffset:1;animation:draw 1s .2s ease-out forwards}
+  .spark .area{fill:var(--teal);opacity:.08}
+  .spark-labels{display:flex;justify-content:space-between;font-family:var(--mono);font-size:10px;color:var(--muted)}
+
+  /* ---------- jauge présence ---------- */
+  .gauge-wrap{display:flex;align-items:center;gap:18px;flex:1}
+  .gauge{flex:none}
+  .gauge .track{stroke:var(--line-soft)} .gauge .val{stroke:var(--teal);stroke-linecap:round}
+  .gauge-num{font-family:var(--display);font-size:30px;font-weight:600}
+  .gauge-txt{color:var(--muted);font-size:12.5px;max-width:150px}
+
+  /* ---------- donut motifs ---------- */
+  .donut-wrap{display:flex;align-items:center;gap:18px;flex:1}
+  .donut-legend{list-style:none;display:flex;flex-direction:column;gap:8px;font-size:13px;flex:1}
+  .donut-legend li{display:flex;align-items:center;gap:8px}
+  .donut-legend b{margin-left:auto;font-family:var(--mono);font-weight:500}
+
+  /* ---------- barres horizontales (âge, provenance) ---------- */
+  .hrows{display:flex;flex-direction:column;gap:12px;flex:1;justify-content:center}
+  .hrow{display:grid;grid-template-columns:86px 1fr 22px;gap:10px;align-items:center;font-size:13px}
+  .hrow b{font-family:var(--mono);font-weight:500;text-align:right}
+  .track{height:8px;border-radius:99px;background:var(--line-soft);overflow:hidden}
+  .fill{display:block;height:100%;border-radius:inherit;width:calc(var(--v)/var(--max)*100%);background:var(--teal);transform-origin:left;animation:grow .6s cubic-bezier(.2,.7,.3,1) both}
+  .fill--amber{background:var(--amber)} .fill--vermilion{background:var(--vermilion)} .fill--gray{background:var(--gray)}
+
+  /* ---------- arrivées par heure ---------- */
+  .hours{display:flex;gap:6px;flex:1;align-items:flex-end;min-height:130px;border-bottom:1px solid var(--line)}
+  .hcol{flex:1;display:flex;justify-content:center;align-items:flex-end;height:100%}
+  .hbar{width:14px;border-radius:4px 4px 0 0;background:var(--teal);height:calc(var(--v)/8*100%);transform-origin:bottom;animation:rise .5s both}
+  .hlabels{display:flex;gap:6px;margin-top:6px}
+  .hlabels span{flex:1;text-align:center;font-family:var(--mono);font-size:10px;color:var(--muted)}
+
+  @keyframes rise{from{transform:scaleY(0)}}
+  @keyframes grow{from{transform:scaleX(0)}}
+  @keyframes draw{to{stroke-dashoffset:0}}
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.spark .line{stroke-dashoffset:0}}
+
+  /* ---------- responsive ---------- */
+  @media (max-width:1000px){
+    .span-8,.span-7,.span-5{grid-column:span 12}
+    .span-4{grid-column:span 6}
+    .kpi{flex-direction:column;align-items:stretch}
+    .kpi-item + .kpi-item{border-left:0;border-top:1px solid var(--line)}
+  }
+  @media (max-width:640px){.span-4{grid-column:span 12}}
+</style>
+</head>
+<body>
+
+<header class="page-head">
+  <div>
+    <h1>Activité</h1>
+    <p class="page-sub">Année 2026
+      <svg class="pulse" width="72" height="16" viewBox="0 0 72 16" aria-hidden="true">
+        <path d="M0 8h24l5-6 7 12 5-6h31" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </p>
+  </div>
+  <nav class="period" aria-label="Période affichée">
+    <button>Jour</button><button>Semaine</button><button>Mois</button>
+    <button class="is-active" aria-current="true">Année</button>
+  </nav>
+</header>
+
+<main class="grid">
+
+  <!-- Chiffres clés -->
+  <section class="card kpi span-12" aria-label="Chiffres clés de la période">
+    <div class="kpi-item">
+      <span class="kpi-chip kpi-chip--teal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="8" r="3.5"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><path d="M18 8v6M15 11h6"/></svg></span>
+      <div><strong>7</strong><span>Nouveaux patients</span></div>
+    </div>
+    <div class="kpi-item">
+      <span class="kpi-chip kpi-chip--amber"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 10a8 8 0 0 1 14-3l2 2"/><path d="M20 4v5h-5"/><path d="M20 14a8 8 0 0 1-14 3l-2-2"/><path d="M4 20v-5h5"/></svg></span>
+      <div><strong>41</strong><span>Consultations réalisées</span></div>
+    </div>
+    <div class="kpi-item">
+      <span class="kpi-chip kpi-chip--teal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 13l5 5L20 7"/></svg></span>
+      <div><strong>90</strong><span>Patients vus</span></div>
+    </div>
+  </section>
+
+  <!-- Rythme d'activité : la lecture principale -->
+  <section class="card span-8" aria-label="Consultations par mois">
+    <div class="card-head">
+      <h2>Consultations par mois</h2>
+      <p class="legend"><span><i class="dot" style="background:var(--teal)"></i>Consultations</span><span><i class="dot" style="background:var(--amber)"></i>Contrôles</span></p>
+    </div>
+    <div class="plot" role="img" aria-label="Consultations par mois : janvier 9, février 8, mars 6, avril 6, mai 6, juin 3, juillet 7.">
+      <div class="yaxis"><span>9</span><span>6</span><span>3</span><span>0</span></div>
+      <div class="bars-area">
+        <div class="mcol"><i class="bar bar--teal" style="--v:9" title="Janvier : 7 consultations"></i><i class="bar bar--amber" style="--v:2" title="Janvier : 2 contrôles"></i></div>
+        <div class="mcol"><i class="bar bar--teal" style="--v:8" title="Février : 6"></i><i class="bar bar--amber" style="--v:2" title="Février : 2"></i></div>
+        <div class="mcol"><i class="bar bar--teal" style="--v:6" title="Mars : 5"></i><i class="bar bar--amber" style="--v:1" title="Mars : 1"></i></div>
+        <div class="mcol"><i class="bar bar--teal" style="--v:6" title="Avril : 5"></i><i class="bar bar--amber" style="--v:1" title="Avril : 1"></i></div>
+        <div class="mcol"><i class="bar bar--teal" style="--v:6" title="Mai : 5"></i><i class="bar bar--amber" style="--v:1" title="Mai : 1"></i></div>
+        <div class="mcol"><i class="bar bar--teal" style="--v:3" title="Juin : 3"></i></div>
+        <div class="mcol"><i class="bar bar--teal" style="--v:7" title="Juillet : 6"></i><i class="bar bar--amber" style="--v:1" title="Juillet : 1"></i></div>
+        <div class="mcol"></div><div class="mcol"></div><div class="mcol"></div><div class="mcol"></div><div class="mcol"></div>
+      </div>
+    </div>
+    <div class="xlabels" aria-hidden="true">
+      <span></span>
+      <div><span>Jan</span><span>Fév</span><span>Mar</span><span>Avr</span><span>Mai</span><span>Juin</span><span>Juil</span><span>Aoû</span><span>Sep</span><span>Oct</span><span>Nov</span><span>Déc</span></div>
+    </div>
+    <p class="trend-note">
+      <span class="note-up">↗ Pic : <strong>janvier — 9</strong> rendez-vous</span>
+      <span class="note-down">↘ Creux : <strong>juin — 3</strong> rendez-vous</span>
+    </p>
+  </section>
+
+  <!-- Croissance du fichier patients -->
+  <section class="card span-4" aria-label="Total patients suivis">
+    <p class="eyebrow">Total patients suivis</p>
+    <p class="big">7 patients</p>
+    <svg class="spark" viewBox="0 0 300 100" role="img" aria-label="Croissance du fichier patients : de 2 en janvier à 7 en mai.">
+      <path class="area" d="M10 78 L80 56 L150 45 L220 34 L290 23 L290 96 L10 96 Z"/>
+      <path class="line" pathLength="1" d="M10 78 L80 56 L150 45 L220 34 L290 23"/>
+      <circle cx="290" cy="23" r="3.5" fill="var(--teal)"/>
+    </svg>
+    <div class="spark-labels" aria-hidden="true"><span>1/2026</span><span>2/2026</span><span>3/2026</span><span>4/2026</span><span>5/2026</span></div>
+  </section>
+
+  <!-- Présence : indicateur actionnable, promu -->
+  <section class="card span-4" aria-label="Présence aux rendez-vous">
+    <h2>Présence aux rendez-vous</h2>
+    <div class="gauge-wrap">
+      <svg class="gauge" width="92" height="92" viewBox="0 0 92 92" role="img" aria-label="94 % de présence">
+        <circle class="track" cx="46" cy="46" r="38" fill="none" stroke-width="10"/>
+        <circle class="val" cx="46" cy="46" r="38" fill="none" stroke-width="10"
+          stroke-dasharray="224.4 238.8" transform="rotate(-90 46 46)"/>
+      </svg>
+      <div>
+        <p class="gauge-num">94%</p>
+        <p class="gauge-txt">de patients présents sur la période</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Motifs -->
+  <section class="card span-4" aria-label="Motifs de visite">
+    <h2>Motifs de visite</h2>
+    <div class="donut-wrap">
+      <svg width="104" height="104" viewBox="0 0 110 110" role="img" aria-label="Consultation 61, contrôle 21, vaccin 10">
+        <g transform="rotate(-90 55 55)" fill="none" stroke-width="14">
+          <circle cx="55" cy="55" r="44" stroke="var(--teal)" stroke-dasharray="183.3 276.5"/>
+          <circle cx="55" cy="55" r="44" stroke="var(--amber)" stroke-dasharray="63.1 276.5" stroke-dashoffset="-183.3"/>
+          <circle cx="55" cy="55" r="44" stroke="var(--vermilion)" stroke-dasharray="30.1 276.5" stroke-dashoffset="-246.4"/>
+        </g>
+      </svg>
+      <ul class="donut-legend">
+        <li><i class="dot" style="background:var(--teal)"></i>Consultation <b>61</b></li>
+        <li><i class="dot" style="background:var(--amber)"></i>Contrôle <b>21</b></li>
+        <li><i class="dot" style="background:var(--vermilion)"></i>Vaccin <b>10</b></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- Âge -->
+  <section class="card span-4" aria-label="Répartition par âge">
+    <h2>Répartition par âge</h2>
+    <div class="hrows">
+      <div class="hrow"><span>0-1 ans</span><span class="track"><span class="fill" style="--v:0;--max:10"></span></span><b>0</b></div>
+      <div class="hrow"><span>1-3 ans</span><span class="track"><span class="fill" style="--v:10;--max:10"></span></span><b>10</b></div>
+      <div class="hrow"><span>3-6 ans</span><span class="track"><span class="fill" style="--v:8;--max:10"></span></span><b>8</b></div>
+      <div class="hrow"><span>6+ ans</span><span class="track"><span class="fill" style="--v:7;--max:10"></span></span><b>7</b></div>
+    </div>
+  </section>
+
+  <!-- Heures : large car l'axe horaire a besoin d'espace -->
+  <section class="card span-7" aria-label="Arrivées par heure">
+    <h2>Arrivées par heure</h2>
+    <div class="hours" role="img" aria-label="Pic d'arrivées à 9 h et 11 h.">
+      <div class="hcol"><i class="hbar" style="--v:0"></i></div>
+      <div class="hcol"><i class="hbar" style="--v:8" title="9 h : 8 arrivées"></i></div>
+      <div class="hcol"><i class="hbar" style="--v:0"></i></div>
+      <div class="hcol"><i class="hbar" style="--v:8" title="11 h : 8 arrivées"></i></div>
+      <div class="hcol"><i class="hbar" style="--v:0"></i></div>
+      <div class="hcol"><i class="hbar" style="--v:5" title="13 h : 5 arrivées"></i></div>
+      <div class="hcol"><i class="hbar" style="--v:0"></i></div>
+      <div class="hcol"><i class="hbar" style="--v:3" title="15 h : 3 arrivées"></i></div>
+      <div class="hcol"><i class="hbar" style="--v:0"></i></div>
+      <div class="hcol"><i class="hbar" style="--v:0"></i></div>
+      <div class="hcol"><i class="hbar" style="--v:0"></i></div>
+    </div>
+    <div class="hlabels" aria-hidden="true">
+      <span>8h</span><span>9h</span><span>10h</span><span>11h</span><span>12h</span><span>13h</span><span>14h</span><span>15h</span><span>16h</span><span>17h</span><span>18h</span>
+    </div>
+  </section>
+
+  <!-- Provenance -->
+  <section class="card span-5" aria-label="Provenance des patients">
+    <h2>Provenance des patients</h2>
+    <div class="hrows">
+      <div class="hrow"><span>Google</span><span class="track"><span class="fill" style="--v:3;--max:3"></span></span><b>3</b></div>
+      <div class="hrow"><span>Patient</span><span class="track"><span class="fill fill--amber" style="--v:2;--max:3"></span></span><b>2</b></div>
+      <div class="hrow"><span>Facebook</span><span class="track"><span class="fill fill--vermilion" style="--v:1;--max:3"></span></span><b>1</b></div>
+      <div class="hrow"><span>Médecin réf.</span><span class="track"><span class="fill fill--gray" style="--v:1;--max:3"></span></span><b>1</b></div>
+    </div>
+  </section>
+
+</main>
+</body>
+</html>

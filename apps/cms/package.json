@@ -11,7 +11,8 @@
     "seed-demo": "tsx --env-file=.env src/seed-demo-runner.ts",
     "generate:types": "payload generate:types",
     "test:recurrence": "tsx --test src/lib/recurrence.test.ts",
-    "verify:unaccent": "node scripts/verify-unaccent.mjs"
+    "verify:unaccent": "node scripts/verify-unaccent.mjs",
+    "payload": "cross-env NODE_OPTIONS=--no-deprecation payload"
   },
   "dependencies": {
     "@payloadcms/db-postgres": "^3.85.1",
@@ -29,6 +30,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "tsx": "^4.22.4",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "cross-env": "^7.0.3"
   }
 }

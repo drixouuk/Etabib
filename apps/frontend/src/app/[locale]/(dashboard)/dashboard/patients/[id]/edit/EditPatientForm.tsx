@@ -14,6 +14,9 @@ type Props = {
     phone?: string | null
     email?: string | null
     nationalId?: string | null
+    cnssRegistrationNumber?: string | null
+    cnssRegime?: string | null
+    cnssCardUploadedAt?: string | null
     patientSource?: string | null
     patientSourceDetail?: string | null
     referringPractitioners?: (string | { id: string })[]
@@ -33,6 +36,11 @@ export default function EditPatientForm({ patient }: Props) {
   const [phone, setPhone] = useState(patient.phone || '')
   const [email, setEmail] = useState(patient.email || '')
   const [nationalId, setNationalId] = useState(patient.nationalId || '')
+  const [cnssRegistrationNumber, setCnssRegistrationNumber] = useState(patient.cnssRegistrationNumber || '')
+  const [cnssRegime, setCnssRegime] = useState(patient.cnssRegime || '')
+  const [cnssCardUploadedAt, setCnssCardUploadedAt] = useState(
+    patient.cnssCardUploadedAt ? patient.cnssCardUploadedAt.slice(0, 10) : '',
+  )
   const [patientSource, setPatientSource] = useState(patient.patientSource || '')
   const [patientSourceDetail, setPatientSourceDetail] = useState(patient.patientSourceDetail || '')
   const [referringIds, setReferringIds] = useState<string[]>(
@@ -56,6 +64,9 @@ export default function EditPatientForm({ patient }: Props) {
       phone: phone || undefined,
       email: email || undefined,
       nationalId: nationalId || undefined,
+      cnssRegistrationNumber: cnssRegistrationNumber || undefined,
+      cnssRegime: cnssRegime || undefined,
+      cnssCardUploadedAt: cnssCardUploadedAt || undefined,
       birthDate: birthDate || undefined,
       patientSource: patientSource || undefined,
       patientSourceDetail: patientSourceDetail || undefined,
@@ -170,6 +181,52 @@ export default function EditPatientForm({ patient }: Props) {
       <div>
         <label htmlFor="nationalId" className="mb-1 block text-sm font-medium text-stone-800">CIN (optionnel)</label>
         <input id="nationalId" value={nationalId} onChange={e => setNationalId(e.target.value)} type="text" className={inputClass} />
+
+        <div className="rounded-xl border border-warm bg-primary-50/40 p-4">
+          <p className="mb-3 text-[12.5px] font-semibold uppercase tracking-wider text-primary-700">
+            Couverture CNSS / AMO
+          </p>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div>
+              <label htmlFor="cnssRegistrationNumber" className="mb-1 block text-sm font-medium text-stone-800">
+                Numéro d&apos;immatriculation (optionnel)
+              </label>
+              <input
+                id="cnssRegistrationNumber"
+                value={cnssRegistrationNumber}
+                onChange={e => setCnssRegistrationNumber(e.target.value)}
+                type="text"
+                placeholder="Ex : 100482193"
+                className={inputClass}
+              />
+            </div>
+            <div>
+              <label htmlFor="cnssRegime" className="mb-1 block text-sm font-medium text-stone-800">Régime (optionnel)</label>
+              <select id="cnssRegime" value={cnssRegime} onChange={e => setCnssRegime(e.target.value)} className={inputClass}>
+                <option value="">Non renseigné</option>
+                <option value="ayant_droit">Ayant droit</option>
+                <option value="salarie">Salarié</option>
+                <option value="independant">Indépendant</option>
+                <option value="etudiant">Étudiant</option>
+              </select>
+            </div>
+            <div>
+              <label htmlFor="cnssCardUploadedAt" className="mb-1 block text-sm font-medium text-stone-800">
+                Carte CNSS uploadée le (optionnel)
+              </label>
+              <input
+                id="cnssCardUploadedAt"
+                value={cnssCardUploadedAt}
+                onChange={e => setCnssCardUploadedAt(e.target.value)}
+                type="date"
+                className={inputClass}
+              />
+            </div>
+            <p className="self-end text-[12px] text-stone-500 sm:pb-1">
+              Nécessaire pour la feuille de soins électronique (FSE) et le futur DMP.
+            </p>
+          </div>
+        </div>
       </div>
 
       <div>
