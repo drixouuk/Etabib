@@ -1,5 +1,7 @@
 if git diff --cached --name-only | grep -q "apps/cms/src/collections/"; then
-  MIGRATION_ADDED=$(git diff --cached --name-only | grep "apps/cms/src/migrations/" | grep -v "index.ts")
+  # `|| true` : husky exécute le hook sous `sh -e` — une substitution dont le
+  # grep ne matche rien sort en code 1 et tuerait le hook avant l'echo du bloc.
+  MIGRATION_ADDED=$(git diff --cached --name-only | grep "apps/cms/src/migrations/" | grep -v "index.ts" || true)
   if [ -z "$MIGRATION_ADDED" ]; then
     echo "⚠️  Modification détectée dans apps/cms/src/collections/ sans nouvelle migration."
     echo "   Lance 'npx payload migrate:create' avant de commit, ou force avec --no-verify."

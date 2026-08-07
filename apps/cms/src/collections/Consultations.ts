@@ -127,7 +127,7 @@ export const Consultations: CollectionConfig = {
   },
   hooks: {
     beforeChange: [
-      ({ req, data, operation }: any) => {
+      ({ req, data, operation, originalDoc }: any) => {
         if (operation === 'create' && req.user?.tenant) {
           data.tenant = typeof req.user.tenant === 'object' ? req.user.tenant.id : req.user.tenant
         }
@@ -140,9 +140,11 @@ export const Consultations: CollectionConfig = {
         // FSE (CNSS) : fseStatusUpdatedAt suit automatiquement chaque
         // changement de fseStatus (création comprise). Aucune écriture
         // manuelle de ce champ possible côté admin (readOnly).
+        // originalDoc est un argument du hook (pas req.originalDoc) —
+        // sinon la condition est toujours vraie et le champ se met à jour
+        // à chaque sauvegarde touchant fseStatus, pas au vrai changement.
         if (data.fseStatus !== undefined) {
-          const original = (req as any).originalDoc as { fseStatus?: string } | undefined
-          if (operation === 'create' || original?.fseStatus !== data.fseStatus) {
+          if (operation === 'create' || originalDoc?.fseStatus !== data.fseStatus) {
             data.fseStatusUpdatedAt = new Date().toISOString()
           }
         }
