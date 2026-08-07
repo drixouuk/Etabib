@@ -4,7 +4,7 @@ import { fetchCMS } from '@/lib/cms-fetch'
 import { getTenantById, getDoctorProfile, getPracticeInfo } from '@/lib/payload'
 import { notFound } from 'next/navigation'
 import { Link } from '@/i18n/navigation'
-import { ArrowLeft, AlertCircle } from 'lucide-react'
+import { ArrowLeft, AlertCircle, Pencil } from 'lucide-react'
 import PatientClinicalFields from './PatientClinicalFields'
 import AddToQueueButton from './AddToQueueButton'
 import ConsultationsTabContent from './ConsultationsTabContent'
@@ -14,6 +14,7 @@ import VaccinationRecord from '@/components/dashboard/VaccinationRecord'
 import ReferringPractitionersWidget from './ReferringPractitionersWidget'
 import SharePatientWidget from './SharePatientWidget'
 import PatientAvatar from '@/components/dashboard/PatientAvatar'
+import OfflineDossierCache from '@/components/dashboard/OfflineDossierCache'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 
@@ -174,7 +175,7 @@ export default async function PatientDetailPage({ params }: Props) {
   } : undefined
 
   return (
-    <div className="mx-auto max-w-container px-4 py-12 md:px-6 lg:px-8">
+    <div className="mx-auto max-w-container px-4 py-8 md:px-6 lg:px-8">
       {/* Back link */}
       <Link href="/dashboard/patients" className="inline-flex items-center gap-1.5 pb-3.5 text-[13px] text-stone-600 hover:text-primary-700">
         <ArrowLeft className="size-[15px]" />
@@ -186,7 +187,16 @@ export default async function PatientDetailPage({ params }: Props) {
         <div className="flex items-center gap-4">
           <PatientAvatar fullName={patient.fullName} gender={patient.gender as 'boy' | 'girl' | null} size="lg" />
           <div>
-            <h1 className="font-heading text-3xl font-bold text-stone-800">{patient.fullName}</h1>
+            <h1 className="flex flex-wrap items-center gap-2.5 font-heading text-[27px] font-bold tracking-tight text-stone-800">
+                {patient.fullName}
+                <Link
+                  href={`/dashboard/patients/${patient.id}/edit`}
+                  title="Modifier toutes les informations du patient"
+                  className="inline-flex size-7 items-center justify-center rounded-lg text-stone-400 transition-colors hover:bg-primary-50 hover:text-primary-700"
+                >
+                  <Pencil className="size-4" />
+                </Link>
+              </h1>
             <div className="mt-1 flex flex-wrap gap-x-3 gap-y-0.5 text-sm text-stone-600">
               {patient.nationalId && <span>CIN : {patient.nationalId}</span>}
               {patient.birthDate && (
@@ -199,7 +209,7 @@ export default async function PatientDetailPage({ params }: Props) {
             </div>
             <div className="mt-0.5 text-sm text-stone-600">
               {patient.address && <span>{patient.address}</span>}
-              {patient.email && <span className="ml-3">{patient.email}</span>}
+              {patient.email && <span className="ms-3">{patient.email}</span>}
             </div>
           </div>
         </div>
@@ -214,9 +224,13 @@ export default async function PatientDetailPage({ params }: Props) {
         </div>
       )}
 
+      {/* SX-100 : repli hors ligne du dossier (visible uniquement si le
+          réseau a coupé et qu'une version en cache existe) */}
+      {canViewClinical && <OfflineDossierCache patientId={patient.id} />}
+
       {/* Onglets */}
       <Tabs defaultValue="resume" className="mt-2">
-        <TabsList variant="line" className="mb-6 w-full justify-start gap-6 border-b border-warm">
+        <TabsList variant="line" className="mb-6 w-full justify-start gap-6 overflow-x-auto border-b border-warm whitespace-nowrap [&>*]:shrink-0 max-md:gap-3">
           <TabsTrigger value="resume" className="data-[state=active]:text-primary-700 data-[state=active]:font-semibold after:bg-primary-500">Résumé</TabsTrigger>
           <TabsTrigger value="dossier" className="data-[state=active]:text-primary-700 data-[state=active]:font-semibold after:bg-primary-500">Dossier clinique</TabsTrigger>
           <TabsTrigger value="croissance" className="data-[state=active]:text-primary-700 data-[state=active]:font-semibold after:bg-primary-500">Croissance</TabsTrigger>
@@ -322,6 +336,7 @@ export default async function PatientDetailPage({ params }: Props) {
             />
           )}
         </TabsContent>
+
 
         <TabsContent value="documents">
           {canViewClinical && (

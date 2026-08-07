@@ -1,8 +1,17 @@
 'use client'
 
-import { useState, useEffect, FormEvent } from 'react'
+import { useState, useEffect, FormEvent, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import type { DoctorInfo, PatientInfo } from '@/lib/generate-pdf'
+import {
+  enqueueConsultation,
+  listQueue,
+  subscribeQueue,
+  flushQueue,
+  SYNC_EVENT,
+  newClientRequestId,
+  type QueueEntry,
+} from '@/lib/offline-queue'
 
 type Consultation = {
   id: string
@@ -27,6 +36,18 @@ type Props = {
   onClose: () => void
 }
 
+type Draft = {
+  clientRequestId: string
+  motif?: string
+  examenClinique?: string
+  poids?: string
+  taille?: string
+  perimetreCranien?: string
+  diagnostic?: string
+  codeActe?: string
+  savedAt: number
+}
+
 export default function ConsultationForm({ patientId, consultations, isPediatrie, doctorInfo, patientInfo, editingConsultation, onClose }: Props) {
   const router = useRouter()
   const [saving, setSaving] = useState(false)
@@ -43,12 +64,108 @@ export default function ConsultationForm({ patientId, consultations, isPediatrie
   const [templateName, setTemplateName] = useState('')
   const [templates, setTemplates] = useState<{ id: string; name: string; motif?: string; examenClinique?: string; diagnostic?: string; codeActe?: string }[]>([])
 
+  // --- SX-100 : idempotence + file persistante + brouillon local ---
+  const draftKey = `draft:consultation:${patientId}:${editingConsultation?.id ?? 'new'}`
+  const isNew = !editingConsultation
+
+  // clientRequestId : généré une fois par brouillon, réutilisé à chaque
+  // replay réseau de la même consultation (jamais régénéré à l'envoi).
+  const [clientRequestId, setClientRequestId] = useState<string>(() => newClientRequestId())
+  const [queued, setQueued] = useState(false)
+  const [queueEntries, setQueueEntries] = useState<QueueEntry[]>([])
+  const [authExpired, setAuthExpired] = useState(false)
+  const [draftPrompt, setDraftPrompt] = useState<Draft | null>(null)
+  const [syncDone, setSyncDone] = useState(false)
+
+  const getDraft = (): Draft | null => {
+    try {
+      const raw = localStorage.getItem(draftKey)
+      return raw ? (JSON.parse(raw) as Draft) : null
+    } catch {
+      return null
+    }
+  }
+  const saveDraft = useCallback(() => {
+    if (!isNew) return
+    try {
+      localStorage.setItem(
+        draftKey,
+        JSON.stringify({ clientRequestId, motif, examenClinique, poids, taille, perimetreCranien, diagnostic, codeActe, savedAt: Date.now() } satisfies Draft),
+      )
+    } catch {
+      // localStorage plein/indisponible : le brouillon n'est pas critique
+    }
+  }, [draftKey, isNew, clientRequestId, motif, examenClinique, poids, taille, perimetreCranien, diagnostic, codeActe])
+  const clearDraft = () => {
+    try {
+      localStorage.removeItem(draftKey)
+    } catch {
+      // ignore
+    }
+  }
+
   useEffect(() => {
     fetch('/api/cms-proxy/templates?where[type][equals]=consultation&depth=0&limit=50')
       .then(r => r.json())
       .then(j => setTemplates(j.docs ?? []))
       .catch(() => {})
   }, [])
+
+  // Reprise de brouillon : proposer explicitement, jamais écraser ni charger
+  // silencieusement (SX-100 étape 4).
+  useEffect(() => {
+    if (!isNew) return
+    const d = getDraft()
+    if (d?.clientRequestId) {
+      setClientRequestId(d.clientRequestId)
+      setDraftPrompt(d)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  // Autosave du brouillon : debounce 4s d'inactivité sur la frappe.
+  useEffect(() => {
+    if (!isNew || draftPrompt || saving) return
+    const t = setTimeout(() => saveDraft(), 4000)
+    return () => clearTimeout(t)
+  }, [motif, examenClinique, poids, taille, perimetreCranien, diagnostic, codeActe, isNew, draftPrompt, saving, saveDraft])
+
+  // État de la file persistante (indicateur en ligne / en attente).
+  useEffect(() => {
+    const refresh = async () => {
+      const entries = await listQueue().catch(() => [])
+      setQueueEntries(entries)
+      setAuthExpired(entries.some(e => e.status === 'auth_expired'))
+    }
+    void refresh()
+    return subscribeQueue(() => void refresh())
+  }, [])
+
+  const resumeDraft = () => {
+    if (!draftPrompt) return
+    setMotif(draftPrompt.motif ?? '')
+    setExamenClinique(draftPrompt.examenClinique ?? '')
+    setPoids(draftPrompt.poids ?? '')
+    setTaille(draftPrompt.taille ?? '')
+    setPerimetreCranien(draftPrompt.perimetreCranien ?? '')
+    setDiagnostic(draftPrompt.diagnostic ?? '')
+    setCodeActe(draftPrompt.codeActe ?? '')
+    setDraftPrompt(null)
+  }
+  const discardDraft = () => {
+    clearDraft()
+    setClientRequestId(newClientRequestId())
+    setDraftPrompt(null)
+  }
+
+  const retrySync = async () => {
+    setSyncDone(false)
+    const result = await flushQueue().catch(() => null)
+    if (result && result.synced > 0 && result.authExpired === 0 && result.failed === 0) {
+      setSyncDone(true)
+      router.refresh()
+    }
+  }
 
   const saveAsTemplate = async () => {
     if (!templateName.trim()) return
@@ -91,23 +208,59 @@ export default function ConsultationForm({ patientId, consultations, isPediatrie
       codeActe: codeActe || undefined,
     }
 
-    const url = editingConsultation
-      ? `/api/cms-proxy/consultations/${editingConsultation.id}`
-      : '/api/cms-proxy/consultations'
-    const method = editingConsultation ? 'PATCH' : 'POST'
+    // Édition : chemin direct existant (PATCH). L'idempotence SX-100 couvre
+    // la création (clientRequestId) ; l'édition reste une mutation ponctuelle.
+    if (editingConsultation) {
+      const res = await fetch(`/api/cms-proxy/consultations/${editingConsultation.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      }).catch(() => null)
 
-    const res = await fetch(url, {
-      method,
+      if (res && res.ok) {
+        clearDraft()
+        onClose()
+        router.refresh()
+      } else {
+        setError("Erreur lors de l'enregistrement. Veuillez réessayer.")
+      }
+      setSaving(false)
+      return
+    }
+
+    // Création : endpoint idempotent /upsert — le serveur insère directement
+    // et retourne l'existant sur violation de contrainte unique (23505).
+    const res = await fetch('/api/cms-proxy/consultations/upsert', {
+      method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body),
-    })
+      body: JSON.stringify({ ...body, clientRequestId }),
+    }).catch(() => null)
 
-    if (res.ok) {
+    if (res && res.ok) {
+      clearDraft()
       onClose()
       router.refresh()
-    } else {
-      setError("Erreur lors de l'enregistrement. Veuillez réessayer.")
+      setSaving(false)
+      return
     }
+
+    // Échec réseau (fetch rejeté), erreur serveur (5xx) ou session expirée
+    // (401) : la consultation part en file persistante avec le MÊME
+    // clientRequestId — un replay ne créera pas de doublon.
+    if (res === null || res.status >= 500 || res.status === 401) {
+      if (res?.status === 401) {
+        await enqueueConsultation({ payload: body, patientId, clientRequestId, status: 'auth_expired' })
+        setAuthExpired(true)
+      } else {
+        await enqueueConsultation({ payload: body, patientId, clientRequestId })
+      }
+      setQueued(true)
+      setSaving(false)
+      return
+    }
+
+    // Autre erreur métier (validation 4xx) : afficher, ne pas mettre en file.
+    setError("Erreur lors de l'enregistrement. Veuillez réessayer.")
     setSaving(false)
   }
 
@@ -118,6 +271,46 @@ export default function ConsultationForm({ patientId, consultations, isPediatrie
       <h3 className="font-heading text-base font-semibold text-stone-800">
         {editingConsultation ? 'Modifier la consultation' : 'Nouvelle consultation'}
       </h3>
+      {draftPrompt && (
+        <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-amber-300 bg-amber-50 px-4 py-3">
+          <p className="text-sm font-medium text-stone-800">
+            Reprendre le brouillon de {new Date(draftPrompt.savedAt).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })} ?
+          </p>
+          <div className="flex items-center gap-2">
+            <button type="button" onClick={resumeDraft}
+              className="rounded-lg bg-primary-700 px-3 py-1.5 text-sm font-semibold text-white hover:bg-primary-800">
+              Reprendre
+            </button>
+            <button type="button" onClick={discardDraft} className="text-sm text-stone-600 hover:text-stone-800">
+              Repartir d'un formulaire vide
+            </button>
+          </div>
+        </div>
+      )}
+      {(queued || queueEntries.length > 0) && (
+        <div className="flex flex-col gap-2 rounded-lg border border-sky-300 bg-sky-50 px-4 py-3">
+          <p className="text-sm font-medium text-stone-800">
+            {queued ? 'Consultation mise en attente de synchronisation' : 'Hors ligne'} — {queueEntries.filter(e => e.status === 'pending').length} consultation(s) en file
+          </p>
+          {authExpired && (
+            <p className="text-sm font-semibold text-red-700">
+              Session expirée — reconnectez-vous pour synchroniser vos consultations en attente.
+            </p>
+          )}
+          {queueEntries.filter(e => e.status === 'failed').length > 0 && (
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <p className="text-sm text-red-700">
+                {queueEntries.filter(e => e.status === 'failed').length} consultation(s) en échec — synchronisation manuelle nécessaire.
+              </p>
+              <button type="button" onClick={retrySync}
+                className="rounded-lg border border-sky-400 bg-white px-3 py-1.5 text-sm font-medium text-sky-700 hover:bg-sky-100">
+                Réessayer la synchronisation
+              </button>
+            </div>
+          )}
+          {syncDone && <p className="text-sm font-medium text-emerald-700">Toutes les consultations sont synchronisées.</p>}
+        </div>
+      )}
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           {templates.length > 0 && (
             <div className="flex items-center gap-2">
