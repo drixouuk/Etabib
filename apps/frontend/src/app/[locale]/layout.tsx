@@ -149,6 +149,8 @@ export default async function LocaleLayout({ children, params }: Props) {
   const h = await headers()
   const tenantId = h.get('x-tenant-id') || 'default'
   const pathname = h.get('x-pathname') || ''
+  // Analytics Umami — pages vitrine du cabinet de démonstration uniquement
+  const isDemoDomain = (h.get('x-forwarded-host') || h.get('host') || '').startsWith('drdemo.')
   const isLanding = pathname.includes('/landing')
   // Pages légales plateforme : chrome landing (header/footer Etabib), pas celui du tenant
   const isLegal = /\/cgv$|\/confidentialite$|\/mentions-legales$/.test(pathname)
@@ -244,6 +246,9 @@ export default async function LocaleLayout({ children, params }: Props) {
             __html: "if('serviceWorker'in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register('/sw.js').catch(()=>{})})}",
           }}
         />
+        {isDemoDomain && (
+          <script defer src="https://umami.drixou.uk/script.js" data-website-id="3b498c75-e574-4817-a265-2ae5e6192afa" />
+        )}
       </body>
     </html>
   )
